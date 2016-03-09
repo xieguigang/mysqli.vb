@@ -117,7 +117,7 @@
     <Compile Include="Extensions\RunDll.vb" />
     <Compile Include="MYSQL.Client\Linq.vb" />
     <Compile Include="MYSQL.Client\Table.vb" />
-    <Compile Include="Reflection\SQL\SqlGenerateMethods.vb" />
+    <Compile Include="Reflection\SQL_LDM\SqlGenerateMethods.vb" />
     <Compile Include="CodeBridge\SQLTable.vb" />
     <Compile Include="GlobalSuppressions.vb" />
     <Compile Include="MYSQL.Client\RecordStatus.vb" />
@@ -145,11 +145,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Reflection\SQL\SQL.vb" />
-    <Compile Include="Reflection\SQL\Update.vb" />
-    <Compile Include="Reflection\SQL\Insert.vb" />
-    <Compile Include="Reflection\SQL\Delete.vb" />
-    <Compile Include="Reflection\SQL\CreateTable.vb" />
+    <Compile Include="Reflection\SQL_LDM\SQL.vb" />
+    <Compile Include="Reflection\SQL_LDM\Update.vb" />
+    <Compile Include="Reflection\SQL_LDM\Insert.vb" />
+    <Compile Include="Reflection\SQL_LDM\Delete.vb" />
+    <Compile Include="Reflection\SQL_LDM\CreateTable.vb" />
     <Compile Include="TinyServer\TinyServer.vb" />
     <Compile Include="Workbench\Dump\RestoreWorker.vb" />
     <Compile Include="Workbench\ServerInstances.vb" />
