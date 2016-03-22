@@ -37,7 +37,7 @@ Public Module CommonExtension
         Return Nothing
     End Function
 
-    Public ReadOnly Property MySqlDbTypes As Dictionary(Of Type, MySqlDbType) =
+    Public ReadOnly Property MySqlDbTypes As IReadOnlyDictionary(Of Type, MySqlDbType) =
         New Dictionary(Of Type, MySqlDbType) From {
  _
             {GetType(String), MySqlDbType.Text},
@@ -56,7 +56,7 @@ Public Module CommonExtension
     ''' <param name="Type"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    <Extension> Public Function GetDbDataType(Type As Type) As Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.MySqlDbType
+    <Extension> Public Function GetDbDataType(Type As Type) As MySqlDbType
         If MySqlDbTypes.ContainsKey(Type) Then
             Return MySqlDbTypes(Type)
         Else
@@ -64,11 +64,16 @@ Public Module CommonExtension
         End If
     End Function
 
-    Public ReadOnly Property Numerics As List(Of Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.MySqlDbType) =
-        New List(Of MySqlDbType) From {
+    Public ReadOnly Property Numerics As List(Of MySqlDbType) = New List(Of MySqlDbType) From {
  _
-            MySqlDbType.BigInt, MySqlDbType.Bit, MySqlDbType.Byte, MySqlDbType.Decimal, MySqlDbType.Double,
-            MySqlDbType.Enum, MySqlDbType.Float, MySqlDbType.Int16, MySqlDbType.Int24, MySqlDbType.Int32,
-            MySqlDbType.Int64, MySqlDbType.MediumInt, MySqlDbType.TinyInt, MySqlDbType.UByte, MySqlDbType.UInt16,
-            MySqlDbType.UInt24, MySqlDbType.UInt32, MySqlDbType.UInt64, MySqlDbType.Year}
+        MySqlDbType.BigInt, MySqlDbType.Bit, MySqlDbType.Byte,
+        MySqlDbType.Decimal, MySqlDbType.Double,
+        MySqlDbType.Enum,
+        MySqlDbType.Float,
+        MySqlDbType.Int16, MySqlDbType.Int24, MySqlDbType.Int32, MySqlDbType.Int64,
+        MySqlDbType.MediumInt,
+        MySqlDbType.TinyInt,
+        MySqlDbType.UByte, MySqlDbType.UInt16, MySqlDbType.UInt24, MySqlDbType.UInt32, MySqlDbType.UInt64,
+        MySqlDbType.Year
+    }
 End Module

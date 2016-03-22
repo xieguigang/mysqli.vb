@@ -448,8 +448,10 @@ NO_KEY:
                          In SqlDoc
                          Let SqlDef As String = If(TableSql.ContainsKey(Table.TableName), TableSql(Table.TableName), "")
                          Select ClassDef = GenerateTableClass(Table, SqlDef), Table).ToArray
-        Dim LQuery = (From Table In ClassList.AsParallel Select Table.Table, doc = GenerateSingleDocument(haveNamespace, [Namespace], Table.ClassDef)).ToArray
-        Return LQuery.ToDictionary(Function(obj) obj.Table.TableName, elementSelector:=Function(obj) obj.doc)
+        Dim LQuery = (From Table In ClassList.AsParallel
+                      Select Table.Table,
+                          doc = GenerateSingleDocument(haveNamespace, [Namespace], Table.ClassDef)).ToArray
+        Return LQuery.ToDictionary(Function(obj) obj.Table.TableName, Function(obj) obj.doc)
     End Function
 
     Private Function __schemaDb(DbName As String, ns As String) As String
