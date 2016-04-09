@@ -1,5 +1,5 @@
 ﻿Public Class InternalTableSchema
-    Implements System.Collections.Generic.IEnumerable(Of SchemaCache)
+    Implements IEnumerable(Of SchemaCache)
 
     Public Property TableName As String
     Public Property DatabaseFields As SchemaCache()

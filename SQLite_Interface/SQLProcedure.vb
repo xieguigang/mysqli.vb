@@ -284,7 +284,7 @@ Public Class SQLProcedure : Implements System.IDisposable
         Call FileIO.FileSystem.CreateDirectory(FileIO.FileSystem.GetParentPath(DumpFile))
 
         For Each Table In Tables
-            Dim SQLDump As String = InternalCreateSQLDump(Table.Group.ToArray)
+            Dim SQLDump As String = ___SQLDump(Table.Group.ToArray)
             Call FileIO.FileSystem.WriteAllText(DumpFile, SQLDump, append:=True)
         Next
 
@@ -297,7 +297,7 @@ Public Class SQLProcedure : Implements System.IDisposable
     ''' <param name="Table">The table schema of the target table which will be transfer.</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function InternalCreateSQLDump(Table As TableDump()) As String
+    Private Function ___SQLDump(Table As TableDump()) As String
         Dim SQLBuilder As StringBuilder = New StringBuilder(2048)
         Dim TableName As String = Table.First.TableName
         Dim SQL As String = [Interface].SchemaCache.CreateTableSQL(Table)
@@ -311,11 +311,10 @@ Public Class SQLProcedure : Implements System.IDisposable
         Dim SchemaCache = (From item In Table Select Field = item, p = DbReader.GetOrdinal(item.FieldName)).ToArray
 
         Do While DbReader.Read
-            Dim Values As String = String.Join(", ", (From p In SchemaCache Let InternalGetValue As Func(Of String) = Function() As String
-                                                                                                                          Dim value = DbReader.GetValue(p.p)
-                                                                                                                          Dim s As String = If(value Is Nothing, "", value.ToString)
-                                                                                                                          Return "'" & s & "'"
-                                                                                                                      End Function Select InternalGetValue()).ToArray)
+            Dim Values As String = String.Join(", ", (From p In SchemaCache
+                                                      Let value As Object = DbReader.GetValue(p.p)
+                                                      Let s As String = $"'{Scripting.ToString(value)}'"
+                                                      Select s).ToArray)
             Dim Columns As String = String.Join(", ", (From p In SchemaCache Select p.Field.FieldName).ToArray)
             Dim InsertSQL As String = String.Format("INSERT INTO '{0}' ({1}) VALUES ({2}) ;", TableName, Columns, Values)
             Call SQLBuilder.AppendLine(InsertSQL)
