@@ -1,4 +1,4 @@
-﻿Public Class InternalTableSchema
+﻿Public Class TableSchema
     Implements IEnumerable(Of SchemaCache)
 
     Public Property TableName As String
@@ -13,13 +13,13 @@
     Public Property PrimaryKey As SchemaCache()
 
     Sub New(TypeInfo As Type)
-        TableName = InternalGetTableName(TypeInfo)
+        TableName = GetTableName(TypeInfo)
         DatabaseFields = InternalGetSchemaCache(TypeInfo)
         PrimaryKey = (From item In DatabaseFields Where item.FieldEntryPoint.IsPrimaryKey Select item).ToArray
     End Sub
 
-    Public Shared Function CreateObject(Of T As Class)() As InternalTableSchema
-        Return New InternalTableSchema(TypeInfo:=GetType(T))
+    Public Shared Function CreateObject(Of T As Class)() As TableSchema
+        Return New TableSchema(TypeInfo:=GetType(T))
     End Function
 
     Public Overrides Function ToString() As String

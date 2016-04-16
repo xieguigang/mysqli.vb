@@ -104,9 +104,10 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TableDump.vb" />
     <Compile Include="QueryBuilder.vb" />
-    <Compile Include="Reflector\InternalTableSchema.vb" />
-    <Compile Include="Reflector\InternalSchemaCache.vb" />
+    <Compile Include="Reflector\TableSchema.vb" />
+    <Compile Include="Reflector\SchemaCache.vb" />
     <Compile Include="SQLProcedure.vb" />
     <Compile Include="Reflector\Reflector.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

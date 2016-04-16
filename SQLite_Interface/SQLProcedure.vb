@@ -9,11 +9,6 @@ Imports System.Data.Entity.Core
 ''' <remarks></remarks>
 Public Class SQLProcedure : Implements System.IDisposable
 
-    ''' <summary>
-    ''' 数据库文件的文件位置
-    ''' </summary>
-    ''' <remarks></remarks>
-    Dim _URL As String
     Dim URLConnection As DbConnection
 
     ''' <summary>
@@ -23,10 +18,6 @@ Public Class SQLProcedure : Implements System.IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public ReadOnly Property URL As String
-        Get
-            Return _URL
-        End Get
-    End Property
 
     Protected Sub New()
     End Sub
@@ -47,7 +38,7 @@ Public Class SQLProcedure : Implements System.IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function CreateTableFor(TypeInfo As System.Type) As String
-        Dim TableSchema = New InternalTableSchema(TypeInfo)
+        Dim TableSchema = New TableSchema(TypeInfo)
         Dim SQL As String = SchemaCache.CreateTableSQL(TableSchema.DatabaseFields, TableSchema.TableName)
         Call Me.Execute(SQL)
 
@@ -60,7 +51,7 @@ Public Class SQLProcedure : Implements System.IDisposable
                                        .FieldName = Field.DbFieldName,
                                        .IsPrimaryKey = If(Field.FieldEntryPoint.IsPrimaryKey, 1, 0),
                                        .TableName = TableSchema.TableName}).ToArray '由于需要生成递增的Guid，故而这里不能再使用并行拓展了
-        TableSchema = New InternalTableSchema(GetType(TableDump))
+        TableSchema = New TableSchema(GetType(TableDump))
         For Each item As TableDump In TableSchemaDumpInfo
             Call Me.Insert(TableSchema, item)
         Next
@@ -70,6 +61,7 @@ Public Class SQLProcedure : Implements System.IDisposable
 
     ''' <summary>
     ''' Get a value to knows that wether the target table is exists in the database or not.
+    ''' (判断某一个数据表是否存在)
     ''' </summary>
     ''' <param name="TableName"></param>
     ''' <returns></returns>
@@ -92,7 +84,7 @@ Public Class SQLProcedure : Implements System.IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function DeleteTable(SchemaInfo As Type) As Boolean
-        Dim TbName As String = Reflector.InternalGetTableName(SchemaInfo)
+        Dim TbName As String = Reflector.GetTableName(SchemaInfo)
         Call Execute("DROP TABLE '" & TbName & "';")
         Return True
     End Function
@@ -113,12 +105,12 @@ Public Class SQLProcedure : Implements System.IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function ExistsTable(Schema As Type) As Boolean
-        Dim TbName As String = Reflector.InternalGetTableName(Schema)
+        Dim TbName As String = Reflector.GetTableName(Schema)
         Return ExistsTable(TbName)
     End Function
 
     Public Function ExistsTableForType(Of T As Class)() As Boolean
-        Dim TbName As String = Reflector.InternalGetTableName(Of T)()
+        Dim TbName As String = Reflector.GetTableName(Of T)()
         Return ExistsTable(TbName)
     End Function
 
@@ -153,7 +145,7 @@ Public Class SQLProcedure : Implements System.IDisposable
         Dim DumpInfoSchema As Type = GetType(TableDump)
 
         If Not DBI.ExistsTable(DumpInfoSchema) Then
-            Dim TableSchema = New InternalTableSchema(DumpInfoSchema)
+            Dim TableSchema = New TableSchema(DumpInfoSchema)
             Dim SQL As String = SchemaCache.CreateTableSQL(TableSchema.DatabaseFields, TableSchema.TableName)
             Call DBI.Execute(SQL)
         End If
@@ -250,8 +242,8 @@ Public Class SQLProcedure : Implements System.IDisposable
     ''' <remarks></remarks>
     Public Function CreateSQLDump(Of Table As Class)() As String
         Dim SQLBuilder As StringBuilder = New StringBuilder(2048)
-        Dim SchemaCache As SchemaCache() = Reflector.InternalGetSchemaCache(Of Table)()
-        Dim TableName As String = Reflector.InternalGetTableName(Of Table)()
+        Dim SchemaCache As SchemaCache() = Reflector.__getSchemaCache(Of Table)()
+        Dim TableName As String = Reflector.GetTableName(Of Table)()
         Dim SQL As String = [Interface].SchemaCache.CreateTableSQL(SchemaCache, TableName)
 
         Call SQLBuilder.AppendLine("/* CREATE_TABLE_SCHEMA_INFORMATION */")
@@ -357,20 +349,4 @@ Public Class SQLProcedure : Implements System.IDisposable
         GC.SuppressFinalize(Me)
     End Sub
 #End Region
-
-End Class
-
-<Table(Name:="table_schema")>
-Public Class TableDump
-    <Column(Name:="guid", DbType:="int", IsPrimaryKey:=True)> Public Property Guid As Integer
-    <Column(Name:="table_name", DbType:="varchar(2048)")> Public Property TableName As String
-    <Column(Name:="field", DbType:="varchar(2048)")> Public Property FieldName As String
-    <Column(Name:="dbtype", DbType:="varchar(512)")> Public Property DbType As String
-    ''' <summary>
-    ''' 1或者0
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    <Column(Name:="is_primary_key", DbType:="int")> Public Property IsPrimaryKey As Integer
 End Class

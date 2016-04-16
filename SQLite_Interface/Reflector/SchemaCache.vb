@@ -137,7 +137,7 @@ Public Class SchemaCache
 
     Public Shared Function CreateTableSQL(TypeInfo As Type) As String
         Dim SchemaCache As SchemaCache() = InternalGetSchemaCache(TypeInfo)
-        Dim SQL As String = CreateTableSQL(SchemaCache, InternalGetTableName(TypeInfo))
+        Dim SQL As String = CreateTableSQL(SchemaCache, GetTableName(TypeInfo))
         Return SQL
     End Function
 

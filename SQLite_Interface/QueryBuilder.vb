@@ -78,7 +78,7 @@ Public Module QueryBuilder
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function QueryByStringCompares(Of T As Class)(Field As String, value As String, Optional ComparedMethod As StringCompareMethods = StringCompareMethods.LikeWithCaseInsensitive) As String
-        Dim SQL As String = QueryByStringCompares(Field, value, InternalGetTableName(Of T))
+        Dim SQL As String = QueryByStringCompares(Field, value, GetTableName(Of T))
         Return SQL
     End Function
 

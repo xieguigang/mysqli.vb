@@ -24,7 +24,7 @@ Public Module Reflector
     ''' <see cref="System.Data.Linq.Mapping.ColumnAttribute.DbType"></see>这几个参数
     ''' </remarks>
     <Extension> Public Function Load(Of T As Class)(DbTransaction As SQLProcedure, SQL As String) As T()
-        Dim Properties As SchemaCache() = Reflector.InternalGetSchemaCache(Of T)()
+        Dim Properties As SchemaCache() = Reflector.__getSchemaCache(Of T)()
         Dim DataSource As DbDataReader = DbTransaction.Execute(SQL)
         Dim Table As New List(Of T)
         Dim SchemaCache = (From Field As SchemaCache
@@ -96,7 +96,7 @@ Public Module Reflector
     ''' <remarks></remarks>
     <Extension> Public Function Load(DbTransaction As SQLProcedure, SchemaInfo As Type) As Object()
         Dim Properties As SchemaCache() = Reflector.InternalGetSchemaCache(SchemaInfo)
-        Dim TableName As String = InternalGetTableName(SchemaInfo)
+        Dim TableName As String = GetTableName(SchemaInfo)
         Dim DataSource As DbDataReader = DbTransaction.Execute(SQL:=String.Format("SELECT * FROM '{0}';", TableName))
         Dim Table As New List(Of Object)
         Dim SchemaCache = (From Field In Properties Let idx As Integer = DataSource.GetOrdinal(name:=Field.DbFieldName) Where idx > -1 Select idx, Field.FieldEntryPoint, Field.Property).ToArray
@@ -120,7 +120,7 @@ Public Module Reflector
     ''' <typeparam name="T"></typeparam>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Friend Function InternalGetSchemaCache(Of T As Class)() As SchemaCache()
+    Friend Function __getSchemaCache(Of T As Class)() As SchemaCache()
         Dim TypeInfo As Type = GetType(T)
         Dim Properties As SchemaCache() = InternalGetSchemaCache(TypeInfo)
         Return Properties
@@ -157,9 +157,9 @@ Public Module Reflector
     ''' <typeparam name="T"></typeparam>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function InternalGetTableName(Of T As Class)() As String
+    Public Function GetTableName(Of T As Class)() As String
         Dim TypeInfo As System.Type = GetType(T)
-        Return InternalGetTableName(TypeInfo)
+        Return GetTableName(TypeInfo)
     End Function
 
     ''' <summary>
@@ -168,7 +168,7 @@ Public Module Reflector
     ''' <param name="typeInfo"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function InternalGetTableName(typeInfo As System.Type) As String
+    <Extension> Public Function GetTableName(typeInfo As System.Type) As String
         Dim attrs As Object() = typeInfo.GetCustomAttributes(GetType(TableAttribute), inherit:=True)
         If attrs.IsNullOrEmpty Then
             Return typeInfo.Name
@@ -180,7 +180,7 @@ Public Module Reflector
 
     Public Function Delete(DbTransaction As SQLProcedure, obj As Object) As Boolean
         Dim TypeInfo = obj.GetType
-        Dim TableName As String = Reflector.InternalGetTableName(TypeInfo)
+        Dim TableName As String = Reflector.GetTableName(TypeInfo)
         Dim Properties As SchemaCache() = Reflector.InternalGetSchemaCache(TypeInfo)
         Dim SQL As String = SchemaCache.CreateDeleteSQL(Properties, obj, TableName)
 
@@ -193,8 +193,8 @@ Public Module Reflector
     End Function
 
     <Extension> Public Function Delete(Of T As Class)(DbTransaction As SQLProcedure, obj As T) As Boolean
-        Dim TableName As String = Reflector.InternalGetTableName(Of T)()
-        Dim Properties As SchemaCache() = Reflector.InternalGetSchemaCache(Of T)()
+        Dim TableName As String = Reflector.GetTableName(Of T)()
+        Dim Properties As SchemaCache() = Reflector.__getSchemaCache(Of T)()
         Dim SQL As String = SchemaCache.CreateDeleteSQL(Of T)(Properties, obj, TableName)
 
         Try
@@ -214,15 +214,15 @@ Public Module Reflector
     ''' <returns></returns>
     ''' <remarks></remarks>
     <Extension> Public Function FlushData(Of T As Class)(DbTransaction As SQLProcedure, data As IEnumerable(Of T)) As Boolean
-        Dim TableName As String = Reflector.InternalGetTableName(Of T)()
-        Dim Properties As SchemaCache() = Reflector.InternalGetSchemaCache(Of T)()
+        Dim TableName As String = Reflector.GetTableName(Of T)()
+        Dim Properties As SchemaCache() = Reflector.__getSchemaCache(Of T)()
         Dim SQLTransactions As String() = (From obj As T In data Select SchemaCache.CreateDeleteSQL(Of T)(Properties, obj, TableName)).ToArray
         Return DbTransaction.ExecuteTransaction(SQL:=SQLTransactions)
     End Function
 
     <Extension> Public Function Update(Of T As Class)(DbTransaction As SQLProcedure, obj As T) As Boolean
-        Dim TableName As String = Reflector.InternalGetTableName(Of T)()
-        Dim Properties As SchemaCache() = Reflector.InternalGetSchemaCache(Of T)()
+        Dim TableName As String = Reflector.GetTableName(Of T)()
+        Dim Properties As SchemaCache() = Reflector.__getSchemaCache(Of T)()
         Dim SQL As String = SchemaCache.CreateUpdateSQL(Of T)(Properties, obj, TableName)
 
         Try
@@ -235,7 +235,7 @@ Public Module Reflector
     End Function
 
     Public Function Update(DbTransaction As SQLProcedure, obj As Object) As Boolean
-        Dim Table = New InternalTableSchema(TypeInfo:=obj.GetType)
+        Dim Table = New TableSchema(TypeInfo:=obj.GetType)
         Dim SQL As String = SchemaCache.CreateUpdateSQL(Table.DatabaseFields, obj, Table.TableName)
 
         Try
@@ -256,8 +256,8 @@ Public Module Reflector
     ''' <returns></returns>
     ''' <remarks></remarks>
     <Extension> Public Function CommitData(Of T As Class)(DbTransaction As SQLProcedure, data As System.Collections.Generic.IEnumerable(Of T)) As Boolean
-        Dim TableName As String = Reflector.InternalGetTableName(Of T)()
-        Dim Properties As SchemaCache() = Reflector.InternalGetSchemaCache(Of T)()
+        Dim TableName As String = Reflector.GetTableName(Of T)()
+        Dim Properties As SchemaCache() = Reflector.__getSchemaCache(Of T)()
         Dim SQLTransactions As String() = (From obj As T In data Select SchemaCache.CreateUpdateSQL(Of T)(Properties, obj, TableName)).ToArray
         Return DbTransaction.ExecuteTransaction(SQL:=SQLTransactions)
     End Function
@@ -271,8 +271,8 @@ Public Module Reflector
     ''' <returns></returns>
     ''' <remarks></remarks>
     <Extension> Public Function Insert(Of T As Class)(DbTransaction As SQLProcedure, data As IEnumerable(Of T)) As Boolean
-        Dim TableName As String = Reflector.InternalGetTableName(Of T)()
-        Dim Properties As SchemaCache() = Reflector.InternalGetSchemaCache(Of T)()
+        Dim TableName As String = Reflector.GetTableName(Of T)()
+        Dim Properties As SchemaCache() = Reflector.__getSchemaCache(Of T)()
         Dim SQLTransactions As String() = (From obj As T In data Select SchemaCache.CreateInsertSQL(Of T)(Properties, obj, TableName)).ToArray
         Return DbTransaction.ExecuteTransaction(SQL:=SQLTransactions)
     End Function
@@ -287,8 +287,8 @@ Public Module Reflector
     ''' <returns></returns>
     ''' <remarks></remarks>
     <Extension> Public Function Insert(Of T As Class)(DbTransaction As SQLProcedure, obj As T) As Boolean
-        Dim TableName As String = Reflector.InternalGetTableName(Of T)()
-        Dim Properties As SchemaCache() = Reflector.InternalGetSchemaCache(Of T)()
+        Dim TableName As String = Reflector.GetTableName(Of T)()
+        Dim Properties As SchemaCache() = Reflector.__getSchemaCache(Of T)()
         Dim SQL As String = SchemaCache.CreateInsertSQL(Of T)(Properties, obj, TableName)
 
         Try
@@ -308,7 +308,7 @@ Public Module Reflector
     ''' <param name="obj"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    <Extension> Public Function Insert(Of T As Class)(DbTransaction As SQLProcedure, TableSchema As InternalTableSchema, obj As T) As Boolean
+    <Extension> Public Function Insert(Of T As Class)(DbTransaction As SQLProcedure, TableSchema As TableSchema, obj As T) As Boolean
         Dim TableName As String = TableSchema.TableName
         Dim Properties As SchemaCache() = TableSchema.DatabaseFields
         Dim SQL As String = SchemaCache.CreateInsertSQL(Of T)(Properties, obj, TableName)
@@ -324,7 +324,7 @@ Public Module Reflector
 
     Public Function Insert(DbTransaction As SQLProcedure, obj As Object) As Boolean
         Dim TypeInfo As System.Type = obj.GetType
-        Dim TableName As String = Reflector.InternalGetTableName(TypeInfo)
+        Dim TableName As String = Reflector.GetTableName(TypeInfo)
         Dim Properties As SchemaCache() = Reflector.InternalGetSchemaCache(TypeInfo)
         Dim SQL As String = SchemaCache.CreateInsertSQL(Properties, obj, TableName)
 
@@ -345,7 +345,7 @@ Public Module Reflector
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function RecordExists(DbTransaction As SQLProcedure, obj As Object) As Boolean
-        Dim TableSchema = New InternalTableSchema(TypeInfo:=obj.GetType)
+        Dim TableSchema = New TableSchema(TypeInfo:=obj.GetType)
         Dim PrimaryKey = TableSchema.PrimaryKey.First
         Dim SQL As String = String.Format("SELECT * FROM '{0}' WHERE {1} = {2};", TableSchema.TableName, PrimaryKey.DbFieldName, SchemaCache.__getValue(PrimaryKey, obj))
         Dim Result = DbTransaction.Execute(SQL)
