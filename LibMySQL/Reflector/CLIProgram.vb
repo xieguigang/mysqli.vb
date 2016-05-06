@@ -1,5 +1,10 @@
-﻿Imports Microsoft.VisualBasic.CommandLine.Reflection
+﻿Imports Microsoft.VisualBasic.CommandLine
+Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Linq
+Imports Microsoft.VisualBasic.Language.UnixBash
+Imports Oracle.LinuxCompatibility.MySQL
+Imports Microsoft.VisualBasic.ComponentModel
+Imports System.Text
 
 Module CLIProgram
 
@@ -7,82 +12,85 @@ Module CLIProgram
         Return GetType(CLIProgram).RunCLI(args:=App.CommandLine)
     End Function
 
+    Const InputsNotFound As String = "The required input parameter ""/sql"" is not specified!"
 
-    <ExportAPI("--reflects", Info:="Automatically generates visualbasic source code from the MySQL database schema dump.",
-                           Usage:="--reflects /sql <sql_path> [-o <output_path> /namespace <namespace> /split]",
-                           Example:="--reflects /sql ./test.sql")>
+    <ExportAPI("--reflects",
+               Info:="Automatically generates visualbasic source code from the MySQL database schema dump.",
+               Usage:="--reflects /sql <sql_path> [-o <output_path> /namespace <namespace> /split]",
+               Example:="--reflects /sql ./test.sql")>
     <ParameterInfo("/sql", False,
                    Description:="The file path of the MySQL database schema dump file."),
      ParameterInfo("-o", True,
                    Description:="The output file path of the generated visual basic source code file from the SQL dump file ""/sql"""),
      ParameterInfo("/namespace", True,
                    Description:="The namespace value will be insert into the generated source code if this parameter is not null.")>
-    Public Function Convert(argvs As Microsoft.VisualBasic.CommandLine.CommandLine) As Integer
+    Public Function ReflectsConvert(argvs As CommandLine) As Integer
         If Not argvs.CheckMissingRequiredParameters("/sql").IsNullOrEmpty Then
-            Call Console.WriteLine("The required input parameter ""/sql"" is not specified!")
+            Call VBDebugger.Warning(InputsNotFound)
             Return -1
         End If
 
-        Dim SQL As String = argvs("/sql"), Output As String = argvs("-o")
-        Dim [Namespace] As String = argvs("/namespace")
+        Dim SQL As String = argvs("/sql"), out As String = argvs("-o")
+        Dim ns As String = argvs("/namespace")
 
         If FileIO.FileSystem.FileExists(SQL) Then
-
-            If argvs.GetBoolean("/split") Then
-
-                If String.IsNullOrEmpty(Output) Then
-                    Output = FileIO.FileSystem.GetParentPath(SQL)
-                    Output = $"{Output}/{IO.Path.GetFileNameWithoutExtension(SQL)}/"
-                End If
-
-                Call FileIO.FileSystem.CreateDirectory(Output)
-
-                For Each doc In Oracle.LinuxCompatibility.MySQL.CodeGenerator.GenerateCodeSplit(SQL, [Namespace])
-                    Call doc.Value.SaveTo($"{Output}/{doc.Key}.vb", System.Text.Encoding.Unicode)
-                Next
-
-            Else
-                If String.IsNullOrEmpty(Output) Then
-                    Output = FileIO.FileSystem.GetParentPath(SQL)
-                    Output = $"{Output}/{IO.Path.GetFileNameWithoutExtension(SQL)}.vb"
-                End If
-
-                Dim doc As String = Oracle.LinuxCompatibility.MySQL.CodeGenerator.GenerateCode(SQL, [Namespace])  'Convert the SQL file into a visualbasic source code
-                Return CInt(doc.SaveTo(Output, System.Text.Encoding.Unicode))                                            'Save the vb source code into a text file
-
-            End If
-
+            Return __EXPORT(SQL, ns, out, argvs.GetBoolean("/split"))
         Else
-            Call Console.WriteLine($"The target schema sql dump file ""{SQL}"" is not exists on your file system!")
+            Dim msg As String = $"The target schema sql dump file ""{SQL}"" is not exists on your file system!"
+            Call VBDebugger.PrintException(msg)
             Return -2
         End If
 
         Return 0
     End Function
 
-    <ExportAPI("--export.dump", Usage:="--export.dump [-o <out_dir> /namespace <namespace> --dir <source_dir>]")>
-    Public Function ExportDumpDir(args As CommandLine.CommandLine) As Integer
-        Dim Dir As String = args("--dir")
+    Private Function __EXPORT(SQL As String, ns As String, out As String, split As Boolean) As Integer
+        If split Then
+            If String.IsNullOrEmpty(out) Then
+                out = FileIO.FileSystem.GetParentPath(SQL)
+                out = $"{out}/{IO.Path.GetFileNameWithoutExtension(SQL)}/"
+            End If
+
+            Call FileIO.FileSystem.CreateDirectory(out)
+
+            For Each doc As KeyValuePair(Of String, String) In CodeGenerator.GenerateCodeSplit(SQL, ns)
+                Call doc.Value.SaveTo($"{out}/{doc.Key}.vb", Encoding.Unicode)
+            Next
+        Else
+            If String.IsNullOrEmpty(out) Then
+                out = FileIO.FileSystem.GetParentPath(SQL)
+                out = $"{out}/{SQL.BaseName}.vb"
+            End If
+
+            Dim doc As String = CodeGenerator.GenerateCode(SQL, ns)  ' Convert the SQL file into a visualbasic source code
+            Return CInt(doc.SaveTo(out, Encoding.Unicode))           ' Save the vb source code into a text file
+        End If
+
+        Return 0
+    End Function
+
+    <ExportAPI("--export.dump",
+               Usage:="--export.dump [-o <out_dir> /namespace <namespace> --dir <source_dir>]")>
+    Public Function ExportDumpDir(args As CommandLine) As Integer
+        Dim DIR As String = args("--dir")
         Dim ns As String = args("/namespace")
-        Dim OutDir As String = args("-o")
+        Dim outDIR As String = args("-o")
 
-        If String.IsNullOrEmpty(Dir) Then
-            Dir = My.Computer.FileSystem.CurrentDirectory
+        If String.IsNullOrEmpty(DIR) Then
+            DIR = App.CurrentDirectory
         End If
-        If String.IsNullOrEmpty(OutDir) Then
-            OutDir = My.Computer.FileSystem.CurrentDirectory & "/MySQL_Tables/"
+        If String.IsNullOrEmpty(outDIR) Then
+            outDIR = App.CurrentDirectory & "/MySQL_Tables/"
         End If
 
-        Call FileIO.FileSystem.CreateDirectory(OutDir)
+        Call FileIO.FileSystem.CreateDirectory(outDIR)
 
-        Dim SQLs = FileIO.FileSystem.GetFiles(
-            Dir,
-            FileIO.SearchOption.SearchTopLevelOnly,
-            "*.sql").ToArray(Function(file) FileIO.FileSystem.ReadAllText(file))
-        Dim LQuery = SQLs.ToArray(Function(sql) Oracle.LinuxCompatibility.MySQL.CodeGenerator.GenerateClass(sql, ns))
+        Dim SQLs As IEnumerable(Of String) = ls - l - wildcards("*.sql") <= DIR
+        Dim LQuery = SQLs.ToArray(
+            Function(sql) CodeGenerator.GenerateClass(sql.ReadAllText, ns))
 
-        For Each cls In LQuery
-            Dim vb As String = $"{OutDir}/{cls.Key}.vb"
+        For Each cls As KeyValuePair In LQuery
+            Dim vb As String = $"{outDIR}/{cls.Key}.vb"
             Call cls.Value.SaveTo(vb)
         Next
 
