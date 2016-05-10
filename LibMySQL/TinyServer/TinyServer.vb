@@ -5,7 +5,7 @@
 ''' </summary>
 Public Class TinyServer
 
-    Dim Resource As Microsoft.VisualBasic.CommandLine.CliResCommon
+    Dim Resource As CliResCommon
 
     Public ReadOnly Property libmySQL As String
         Get
@@ -32,15 +32,14 @@ Public Class TinyServer
     End Property
 
     Sub New()
-        Resource = New CliResCommon(FileIO.FileSystem.GetParentPath(System.Windows.Forms.Application.ExecutablePath) & "/MySQL.Tiny/", GetType(My.Resources.Resources))
+        Resource = New CliResCommon(App.HOME & "/MySQL.Tiny/", GetType(My.Resources.Resources))
     End Sub
 
     ''' <summary>
     ''' Run server process, the thread will be stuck at this function until the server is stop.
     ''' </summary>
     Public Sub Start()
-        Dim Cli = New Microsoft.VisualBasic.CommandLine.IORedirectFile(mysqld)
-        Call Cli.Run()
+        Call New IORedirectFile(mysqld).Run()
     End Sub
 
 End Class

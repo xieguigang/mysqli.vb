@@ -71,13 +71,13 @@ Namespace Reflection.Schema
                 Field.ZeroFill = Not GetAttribute(Of ZeroFill)([Property]) Is Nothing
                 Field.PropertyInfo = [Property]
 
-                Dim DataType As DbAttributes.DataType = GetAttribute(Of DbAttributes.DataType)([Property])
+                Dim DataType As DataType = GetAttribute(Of DataType)([Property])
                 If DataType Is Nothing Then 'Not define this custom attribute.
                     DataType = [Property].PropertyType.GetDbDataType
                 End If
                 Field.DataType = DataType
 
-                Dim [Default] As DbAttributes.Default = GetAttribute(Of DbAttributes.Default)([Property])
+                Dim [Default] As [Default] = GetAttribute(Of [Default])([Property])
                 If Not [Default] Is Nothing Then
                     Field.Default = [Default].DefaultValue
                 End If

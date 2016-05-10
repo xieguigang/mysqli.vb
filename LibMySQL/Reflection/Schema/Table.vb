@@ -2,6 +2,7 @@
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.Language
 
 Namespace Reflection.Schema
 
@@ -26,6 +27,7 @@ Namespace Reflection.Schema
         ''' </summary>
         ''' <returns></returns>
         Public Property PrimaryFields As New List(Of String)
+
         Public ReadOnly Property Fields As Field()
             Get
                 Return _databaseFields.Values.ToArray
@@ -51,14 +53,18 @@ Namespace Reflection.Schema
         ''' <returns></returns>
         Public ReadOnly Property DatabaseField(FieldName As String) As Field
             Get
-                If _databaseFields.ContainsKey(FieldName) Then
-                    Return _databaseFields(FieldName)
-                Else
-                    Call $"{TableName} => {FieldName} is not exists....".__DEBUG_ECHO
-                    Return Nothing
-                End If
+                Return __getField(FieldName)
             End Get
         End Property
+
+        Private Function __getField(name As String) As Field
+            If _databaseFields.ContainsKey(name) Then
+                Return _databaseFields(name)
+            Else
+                Call $"{TableName} => {name} is not exists....".__DEBUG_ECHO
+                Return Nothing
+            End If
+        End Function
 
         Public Property Comment As String
 
@@ -79,7 +85,7 @@ Namespace Reflection.Schema
         End Sub
 
         Public Function GetPrimaryKeyFields() As Field()
-            Return PrimaryFields.ToArray(Function(name) DatabaseField(name))
+            Return PrimaryFields.ToArray(AddressOf __getField)
         End Function
 
         Public Overrides Function ToString() As String
@@ -129,27 +135,34 @@ Namespace Reflection.Schema
         ''' <param name="ItemProperty"></param>
         ''' <remarks></remarks>
         Private Sub __indexing(Index2 As String, Indexproperty2 As PropertyInfo, ItemProperty As PropertyInfo())
-            If Not String.IsNullOrEmpty(Index) Then Return 'If we have a unique index from previous work, then this operation is no more needed. 
+            If Not String.IsNullOrEmpty(Index) Then Return ' If we have a unique index from previous work, then this operation is no more needed. 
 
             If String.IsNullOrEmpty(Index2) Then
-                If PrimaryFields.Count > 0 Then      'Indexing from the primary key, the primary key may be more than one
-                    Dim LQuery As String() = (From Field In Fields
-                                              Where (Field.PrimaryKey AndAlso CommonExtension.Numerics.IndexOf(Field.DataType) > -1)
-                                              Select Field.FieldName).ToArray
-                    If LQuery.Length > 0 Then
-                        Index = LQuery(Scan0)
+                If PrimaryFields.Count > 0 Then            ' Indexing from the primary key, the primary key may be more than one
+                    Dim LQuery As String =
+                        LinqAPI.DefaultFirst(Of String) <=
+                        From Field In Fields
+                        Where (Field.PrimaryKey AndAlso
+                            CommonExtension.Numerics.IndexOf(Field.DataType) > -1)
+                        Select Field.FieldName
+
+                    If Not String.IsNullOrEmpty(LQuery) Then
+                        Index = LQuery
                     Else
                         Index = PrimaryFields.First
                     End If
 
-                    Dim PQuery As Generic.IEnumerable(Of PropertyInfo) = From iPinfo As PropertyInfo In ItemProperty
-                                                                         Let p As DatabaseField = GetAttribute(Of DatabaseField)(iPinfo)
-                                                                         Where Not p Is Nothing AndAlso String.Equals(p.Name, Index)
-                                                                         Select iPinfo '
-                    IndexProperty = PQuery.First
+                    IndexProperty =
+                        LinqAPI.DefaultFirst(Of PropertyInfo) <=
+                        From iPinfo As PropertyInfo
+                        In ItemProperty
+                        Let p As DatabaseField = GetAttribute(Of DatabaseField)(iPinfo)
+                        Where Not p Is Nothing AndAlso
+                            String.Equals(p.Name, Index)
+                        Select iPinfo '
                 End If
             Else
-                Index = Index2   'The data type of this index field is a text type. 
+                Index = Index2   ' The data type of this index field is a text type. 
                 IndexProperty = Indexproperty2
             End If
         End Sub
