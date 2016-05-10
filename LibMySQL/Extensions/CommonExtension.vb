@@ -47,7 +47,8 @@ Public Module CommonExtension
             {GetType(Decimal), MySqlDbType.Decimal},
             {GetType(Date), MySqlDbType.Date},
             {GetType(Byte), MySqlDbType.Byte},
-            {GetType([Enum]), MySqlDbType.Enum}}
+            {GetType([Enum]), MySqlDbType.Enum}
+    }
 
     ''' <summary>
     ''' Get the data type of a field in the data table.

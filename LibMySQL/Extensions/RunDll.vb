@@ -1,4 +1,5 @@
-﻿Imports Microsoft.VisualBasic.CommandLine.Reflection
+﻿Imports Microsoft.VisualBasic.CommandLine
+Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Scripting.MetaData
 
 ''' <summary>
@@ -10,7 +11,7 @@ Imports Microsoft.VisualBasic.Scripting.MetaData
 Public Module RunDll
 
     <ExportAPI("--start", Info:="Start the embedded tiny mysqld services.")>
-    Public Function StartTinyServices(args As Microsoft.VisualBasic.CommandLine.CommandLine) As Integer
+    Public Function StartTinyServices(args As CommandLine) As Integer
         Try
             Call New TinyServer().Start()
             Return 0

@@ -111,11 +111,11 @@ Public Module CodeGenerator
     ''' <param name="FileName"></param>
     ''' <param name="TableSql"></param>
     ''' <returns></returns>
-    Private Function __generateCode(SqlDoc As Generic.IEnumerable(Of Reflection.Schema.Table),
-                                          Head As String,
-                                          FileName As String,
-                                          TableSql As Dictionary(Of String, String),
-                                          [Namespace] As String) As String
+    Private Function __generateCode(SqlDoc As IEnumerable(Of Reflection.Schema.Table),
+                                    Head As String,
+                                    FileName As String,
+                                    TableSql As Dictionary(Of String, String),
+                                    [Namespace] As String) As String
 
         Dim VbCodeGenerator As StringBuilder = New StringBuilder(1024)
         Dim haveNamespace As Boolean = Not String.IsNullOrEmpty([Namespace])
@@ -384,17 +384,22 @@ NO_KEY:
     ''' <remarks></remarks>
     Public Function GenerateCode(SqlDump As String, Optional [Namespace] As String = "") As String
         Dim Schema As Reflection.Schema.Table() = SQLParser.LoadSQLDoc(SqlDump)
-        Dim CreateTables = Regex.Split(FileIO.FileSystem.ReadAllText(SqlDump), SCHEMA_SECTIONS)
-        Dim SchemaSQLLQuery = From tbl As String In CreateTables.Skip(1).ToArray           'The first block of the text splits is the SQL comments from the MySQL data exporter. 
+        Dim CreateTables As String() =
+            Regex.Split(FileIO.FileSystem.ReadAllText(SqlDump), SCHEMA_SECTIONS)
+        Dim SchemaSQLLQuery = From tbl As String
+                              In CreateTables.Skip(1)           ' The first block of the text splits is the SQL comments from the MySQL data exporter. 
                               Let s_TableName As String = Regex.Match(tbl, "`.+?`").Value
-                              Select tableName = Mid(s_TableName, 2, Len(s_TableName) - 2), tbl
-        Dim SchemaSQL = SchemaSQLLQuery.ToArray.ToDictionary(Function(obj) obj.tableName, elementSelector:=Function(obj) obj.tbl)
+                              Select tableName = Mid(s_TableName, 2, Len(s_TableName) - 2),
+                                  tbl
+        Dim SchemaSQL As Dictionary(Of String, String) =
+            SchemaSQLLQuery.ToDictionary(Function(x) x.tableName,
+                                         Function(x) x.tbl)
 
         Return __generateCode(Schema,
-                                    Head:=CreateTables.First,
-                                    FileName:=FileIO.FileSystem.GetFileInfo(SqlDump).Name,
-                                    TableSql:=SchemaSQL,
-                                    [Namespace]:=[Namespace])
+                              Head:=CreateTables.First,
+                              FileName:=FileIO.FileSystem.GetFileInfo(SqlDump).Name,
+                              TableSql:=SchemaSQL,
+                              [Namespace]:=[Namespace])
     End Function
 
     ''' <summary>
@@ -404,16 +409,19 @@ NO_KEY:
     ''' <param name="SqlDump">The SQL dumping file path.(Dump sql文件的文件路径)</param>
     Public Function GenerateCodeSplit(SqlDump As String, Optional [Namespace] As String = "") As Dictionary(Of String, String)
         Dim Schema As Reflection.Schema.Table() = SQLParser.LoadSQLDoc(SqlDump)
-        Dim CreateTables = Regex.Split(FileIO.FileSystem.ReadAllText(SqlDump), SCHEMA_SECTIONS)
+        Dim CreateTables As String() =
+            Regex.Split(FileIO.FileSystem.ReadAllText(SqlDump), SCHEMA_SECTIONS)
         Dim SchemaSQLLQuery = From tbl As String In CreateTables.Skip(1).ToArray           'The first block of the text splits is the SQL comments from the MySQL data exporter. 
                               Let s_TableName As String = Regex.Match(tbl, "`.+?`").Value
                               Select tableName = Mid(s_TableName, 2, Len(s_TableName) - 2), tbl
         Dim SchemaSQL As Dictionary(Of String, String) = Nothing
         Try
-            SchemaSQL = SchemaSQLLQuery.ToDictionary(Function(obj) obj.tableName, elementSelector:=Function(obj) obj.tbl)
+            SchemaSQL = SchemaSQLLQuery.ToDictionary(Function(x) x.tableName,
+                                                     Function(x) x.tbl)
         Catch ex As Exception
-            Dim Gr = SchemaSQLLQuery.ToArray.CheckDuplicated(Of String)(Function(obj) obj.tableName)
-            Dim dupliTables = String.Join(", ", Gr.ToArray(Function(tb) tb.TAG))
+            Dim Gr = SchemaSQLLQuery.ToArray.CheckDuplicated(Of String)(Function(x) x.tableName)
+            Dim dupliTables As String =
+                String.Join(", ", Gr.ToArray(Function(tb) tb.TAG))
             Throw New Exception("Duplicated tables:  " & dupliTables, ex)
         End Try
 
@@ -432,11 +440,11 @@ NO_KEY:
     ''' <param name="FileName"></param>
     ''' <param name="TableSql"></param>
     ''' <returns></returns>
-    Private Function __generateCodeSplit(SqlDoc As Generic.IEnumerable(Of Reflection.Schema.Table),
-                                          Head As String,
-                                          FileName As String,
-                                          TableSql As Dictionary(Of String, String),
-                                          [Namespace] As String) As Dictionary(Of String, String)
+    Private Function __generateCodeSplit(SqlDoc As IEnumerable(Of Reflection.Schema.Table),
+                                         Head As String,
+                                         FileName As String,
+                                         TableSql As Dictionary(Of String, String),
+                                         [Namespace] As String) As Dictionary(Of String, String)
 
         Dim haveNamespace As Boolean = Not String.IsNullOrEmpty([Namespace])
 
@@ -448,10 +456,12 @@ NO_KEY:
                          In SqlDoc
                          Let SqlDef As String = If(TableSql.ContainsKey(Table.TableName), TableSql(Table.TableName), "")
                          Select ClassDef = GenerateTableClass(Table, SqlDef), Table).ToArray
-        Dim LQuery = (From Table In ClassList.AsParallel
+        Dim LQuery = (From Table
+                      In ClassList.AsParallel
                       Select Table.Table,
                           doc = GenerateSingleDocument(haveNamespace, [Namespace], Table.ClassDef)).ToArray
-        Return LQuery.ToDictionary(Function(obj) obj.Table.TableName, Function(obj) obj.doc)
+        Return LQuery.ToDictionary(Function(x) x.Table.TableName,
+                                   Function(x) x.doc)
     End Function
 
     Private Function __schemaDb(DbName As String, ns As String) As String

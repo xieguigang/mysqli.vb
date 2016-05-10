@@ -54,7 +54,10 @@ Public Module SQLParser
                       Let TableName As String = Tokens.Value(Scan0)
                       Let PrimaryKey As String = Tokens.Key
                       Let FieldsTokens = Tokens.Value.Skip(1).ToArray
-                      Select PrimaryKey, TableName, Fields = FieldsTokens, Original = m.Value).ToArray
+                      Select PrimaryKey,
+                          TableName,
+                          Fields = FieldsTokens,
+                          Original = m.Value).ToArray
         Dim SqlSchema = (From Table In Tables
                          Select __createSchema(
                              Table.Fields,
