@@ -155,7 +155,7 @@ Namespace Reflection
         End Function
 
         ''' <summary>
-        ''' Linq to MySQL
+        ''' Linq to MySQL.(Linq to MySQL对象实体数据映射)
         ''' </summary>
         ''' <typeparam name="T"></typeparam>
         ''' <param name="SQL"></param>
@@ -178,7 +178,15 @@ Namespace Reflection
             Return Table.ToArray
         End Function
 
-        Private Function __queryEngine(Of T)(SQL As String, queryEngine As QueryInvoke(Of T), ByRef getError As String) As Generic.IEnumerable(Of T)
+        ''' <summary>
+        ''' 执行具体的数据映射操作
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="SQL"></param>
+        ''' <param name="queryEngine"></param>
+        ''' <param name="getError"></param>
+        ''' <returns></returns>
+        Private Function __queryEngine(Of T)(SQL As String, queryEngine As QueryInvoke(Of T), ByRef getError As String) As IEnumerable(Of T)
             Dim Type As Type = GetType(T)
             Dim MySql As MySqlConnection = New MySqlConnection(ConnectionString) '[ConnectionString] is a compiled mysql connection string from our class constructor.
             Dim MySqlCommand As MySqlCommand = New MySqlCommand(SQL, MySql)
