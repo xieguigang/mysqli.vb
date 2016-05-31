@@ -141,8 +141,8 @@ Public Class SQLProcedure : Implements System.IDisposable
 
         Try
 
-            If Not FileIO.FileSystem.FileExists(url) Then
-                Call FileIO.FileSystem.CreateDirectory(FileIO.FileSystem.GetParentPath(url))
+            If Not url.FileExists Then
+                Call FileIO.FileSystem.CreateDirectory(url.ParentPath)
                 Call SQLiteConnection.CreateFile(databaseFileName:=url)
             End If
         Catch ex As Exception
