@@ -3,6 +3,8 @@ Imports System.Text
 Imports System.Data.Linq.Mapping
 Imports System.Data.Entity.Core
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.FileIO.FileSystem
+Imports System.Reflection
 
 ''' <summary>
 ''' The API interface wrapper of the SQLite.(SQLite的存储引擎的接口)
@@ -44,17 +46,23 @@ Public Class SQLProcedure : Implements System.IDisposable
         Call Me.Execute(SQL)
 
         Dim p As Integer = Me.Load(Of TableDump).Count + 1
-        Dim TableSchemaDumpInfo = (From Field As SchemaCache
-                                   In TableSchema
-                                   Select New TableDump With {
-                                       .Guid = p.MoveNext,
-                                       .DbType = Field.DbType,
-                                       .FieldName = Field.DbFieldName,
-                                       .IsPrimaryKey = If(Field.FieldEntryPoint.IsPrimaryKey, 1, 0),
-                                       .TableName = TableSchema.TableName}).ToArray '由于需要生成递增的Guid，故而这里不能再使用并行拓展了
+        Dim dumpInfo As TableDump() =
+            LinqAPI.Exec(Of TableDump) <=
+            From Field As SchemaCache
+            In TableSchema
+            Let ipk As Integer = If(Field.FieldEntryPoint.IsPrimaryKey, 1, 0)
+            Select New TableDump With {
+                .Guid = p.MoveNext,
+                .DbType = Field.DbType,
+                .FieldName = Field.DbFieldName,
+                .IsPrimaryKey = ipk,
+                .TableName = TableSchema.TableName
+            } ' 由于需要生成递增的Guid，故而这里不能再使用并行拓展了
+
         TableSchema = New TableSchema(GetType(TableDump))
-        For Each item As TableDump In TableSchemaDumpInfo
-            Call Me.Insert(TableSchema, item)
+
+        For Each field As TableDump In dumpInfo
+            Call Me.Insert(TableSchema, field)
         Next
 
         Return SQL
@@ -169,17 +177,23 @@ Public Class SQLProcedure : Implements System.IDisposable
     ''' <param name="SQL"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function ExecuteTransaction(SQL As String()) As Boolean
-        Dim TrSQLBuilder As StringBuilder = New StringBuilder(1024)
+    Public Function ExecuteTransaction(ParamArray SQL As String()) As Boolean
+        Dim sb As New StringBuilder(1024)
 
-        Call TrSQLBuilder.AppendLine("BEGIN IMMEDIATE")
+        Call sb.AppendLine("BEGIN IMMEDIATE")
 
         For Each Line As String In SQL
-            Call TrSQLBuilder.AppendLine(Line)
+            Call sb.AppendLine(Line)
         Next
 
-        Call TrSQLBuilder.AppendLine("COMMIT")
-        Call Execute(TrSQLBuilder.ToString)
+        Call sb.AppendLine("COMMIT")
+
+        Try
+            Call Execute(sb.ToString)
+        Catch ex As Exception
+            Call App.LogException(ex)
+            Return False
+        End Try
 
         Return True
     End Function
@@ -191,39 +205,46 @@ Public Class SQLProcedure : Implements System.IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function Execute(SQL As String) As DbDataReader
-        Using EXECommand As IDbCommand = Me.URLConnection.CreateCommand
+        Using execRun As IDbCommand = URLConnection.CreateCommand
 
-            EXECommand.Connection = Me.URLConnection
-            EXECommand.CommandText = SQL
+            Dim type As String = SQL.Trim.Split.First.ToLower
+
+            execRun.Connection = URLConnection
+            execRun.CommandText = SQL
 
             Try
-                If InStr("insert, delete, update", SQL.Trim.Split.First.ToLower, CompareMethod.Text) > 0 Then
-                    Dim i As Integer = EXECommand.ExecuteNonQuery()
+                If InStr(ModifyTokens, type, CompareMethod.Text) > 0 Then
+                    Dim i As Integer = execRun.ExecuteNonQuery()
 
                     If i = 0 Then
                         Throw New Exception("No data row was effected!")
                     End If
-                ElseIf InStr("drop, create", SQL.Trim.Split.First.ToLower, CompareMethod.Text) > 0 Then
-                    Call EXECommand.ExecuteNonQuery()
+                ElseIf InStr("drop, create", type, CompareMethod.Text) > 0 Then
+                    Call execRun.ExecuteNonQuery()
                 Else
-                    Return EXECommand.ExecuteReader()
+                    Return execRun.ExecuteReader()
                 End If
             Catch ex As Exception
-                Dim Err As String = String.Format(SQL_EXECUTE_ERROR, SQL, ex.ToString)
-                Throw New EntitySqlException(Err)
+                Dim msg As String = SQL_EXECUTE_ERROR & SQL
+                Dim trace As String =
+                    MethodBase.GetCurrentMethod.GetFullName
+
+                ex = New EntitySqlException(msg, ex)
+                Call App.LogException(ex, trace)
+
+                Throw ex
             End Try
         End Using
 
         Return Nothing
     End Function
 
+    Const ModifyTokens As String = "insert, delete, update"
+
     Const SQL_EXECUTE_ERROR As String =
  _
         "Error occurred while trying to execute sql:  " & vbCrLf &
-        "      -----> {0}" & vbCrLf & vbCrLf &
- _
-        "Internal Exception Details:" & vbCrLf &
-        "{1}"
+        "      -----> "
 
     ''' <summary>
     ''' If the SQL is a SELECT statement, then this function returns a table object, if not then it returns nothing.
@@ -247,28 +268,33 @@ Public Class SQLProcedure : Implements System.IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function CreateSQLDump(Of Table As Class)() As String
-        Dim SQLBuilder As StringBuilder = New StringBuilder(2048)
+        Dim sb As StringBuilder = New StringBuilder(2048)
         Dim SchemaCache As SchemaCache() = Reflector.__getSchemaCache(Of Table)()
         Dim TableName As String = Reflector.GetTableName(Of Table)()
-        Dim SQL As String = [Interface].SchemaCache.CreateTableSQL(SchemaCache, TableName)
+        Dim SQL As String =
+            [Interface].SchemaCache.CreateTableSQL(SchemaCache, TableName)
 
-        Call SQLBuilder.AppendLine("/* CREATE_TABLE_SCHEMA_INFORMATION */")
-        Call SQLBuilder.AppendLine(SQL)
-        Call SQLBuilder.AppendLine()
-        Call SQLBuilder.AppendLine("/* DATA_STORAGES */")
+        Call sb.AppendLine("/* CREATE_TABLE_SCHEMA_INFORMATION */")
+        Call sb.AppendLine(SQL)
+        Call sb.AppendLine()
+        Call sb.AppendLine("/* DATA_STORAGES */")
 
-        Dim LQuery As String() = (From ItemRowObject As Table
-                                  In Me.Load(Of Table)()
-                                  Select [Interface].SchemaCache.CreateInsertSQL(Of Table)(SchemaCache, ItemRowObject, TableName)).ToArray
+        Dim LQuery As String() =
+            LinqAPI.Exec(Of String) <= From ItemRowObject As Table
+                                       In Me.Load(Of Table)()
+                                       Select [Interface].SchemaCache.CreateInsertSQL(
+                                           SchemaCache,
+                                           ItemRowObject,
+                                           TableName)
 
         For Each Line As String In LQuery
-            Call SQLBuilder.AppendLine(Line)
+            Call sb.AppendLine(Line)
         Next
 
-        Call SQLBuilder.AppendLine()
-        Call SQLBuilder.AppendLine("/* END_OF_SQL_DUMP */")
+        Call sb.AppendLine()
+        Call sb.AppendLine("/* END_OF_SQL_DUMP */")
 
-        Return SQLBuilder.ToString
+        Return sb.ToString
     End Function
 
     ''' <summary>
@@ -282,11 +308,11 @@ Public Class SQLProcedure : Implements System.IDisposable
                       Select dump
                       Group By dump.TableName Into Group).ToArray
 
-        Call FileIO.FileSystem.CreateDirectory(FileIO.FileSystem.GetParentPath(DumpFile))
+        Call FileIO.FileSystem.CreateDirectory(DumpFile.ParentPath)
 
         For Each Table In Tables
             Dim SQLDump As String = ___SQLDump(Table.Group.ToArray)
-            Call FileIO.FileSystem.WriteAllText(DumpFile, SQLDump, append:=True)
+            Call WriteAllText(DumpFile, SQLDump, append:=True)
         Next
 
         Return True
@@ -313,17 +339,19 @@ Public Class SQLProcedure : Implements System.IDisposable
                            In Table
                            Select Field = tField,
                                p = DbReader.GetOrdinal(tField.FieldName)).ToArray
-        Dim array As String() = LinqAPI.Exec(Of String) <= From p
-                                                           In SchemaCache
-                                                           Select p.Field.FieldName
+        Dim array As String() =
+            LinqAPI.Exec(Of String) <= From p
+                                       In SchemaCache
+                                       Select p.Field.FieldName
         Dim values As String
         Dim columns As String = String.Join(", ", array)
 
         Do While DbReader.Read
-            array = LinqAPI.Exec(Of String) <= From p In SchemaCache
-                                               Let value As Object = DbReader.GetValue(p.p)
-                                               Let s As String = $"'{Scripting.ToString(value)}'"
-                                               Select s
+            array =
+                LinqAPI.Exec(Of String) <= From p In SchemaCache
+                                           Let value As Object = DbReader.GetValue(p.p)
+                                           Let s As String = Scripting.ToString(value)
+                                           Select $"'{s}'"
             values = String.Join(", ", array)
 
             Dim InsertSQL As String = $"INSERT INTO '{TableName}' ({columns}) VALUES ({values}) ;"
