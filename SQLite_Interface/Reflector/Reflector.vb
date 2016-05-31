@@ -60,6 +60,9 @@ Public Module Reflector
 
             For Each field In SchemaCache
                 value = DataSource.GetValue(ordinal:=field.idx)
+                value = Scripting.CTypeDynamic(
+                    Scripting.ToString(value),
+                    field.Property.PropertyType)
                 Call field.Property.SetValue(FetchedObject, value)
             Next
 
