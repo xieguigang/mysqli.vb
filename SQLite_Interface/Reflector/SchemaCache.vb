@@ -18,6 +18,7 @@ Public Class SchemaCache
     ''' decimal(size,d)  容纳带有小数的数字。"size" 规定数字的最大位数。"d" 规定小数点右侧的最大位数。
     ''' numeric(size,d)
     ''' char(size)	     容纳固定长度的字符串（可容纳字母、数字以及特殊字符）。在括号中规定字符串的长度。
+    ''' 
     ''' varchar(size)	 容纳可变长度的字符串（可容纳字母、数字以及特殊的字符）。在括号中规定字符串的最大长度。
     ''' date(yyyymmdd)
     ''' </summary>

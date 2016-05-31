@@ -235,7 +235,7 @@ Public Module Reflector
     End Function
 
     Public Function Update(DbTransaction As SQLProcedure, obj As Object) As Boolean
-        Dim Table = New TableSchema(TypeInfo:=obj.GetType)
+        Dim Table = New TableSchema(type:=obj.GetType)
         Dim SQL As String = SchemaCache.CreateUpdateSQL(Table.DatabaseFields, obj, Table.TableName)
 
         Try
@@ -345,7 +345,7 @@ Public Module Reflector
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function RecordExists(DbTransaction As SQLProcedure, obj As Object) As Boolean
-        Dim TableSchema = New TableSchema(TypeInfo:=obj.GetType)
+        Dim TableSchema = New TableSchema(type:=obj.GetType)
         Dim PrimaryKey = TableSchema.PrimaryKey.First
         Dim SQL As String = String.Format("SELECT * FROM '{0}' WHERE {1} = {2};", TableSchema.TableName, PrimaryKey.DbFieldName, SchemaCache.__getValue(PrimaryKey, obj))
         Dim Result = DbTransaction.Execute(SQL)

@@ -2,6 +2,7 @@
 Imports System.Text
 Imports System.Data.Linq.Mapping
 Imports System.Data.Entity.Core
+Imports Microsoft.VisualBasic.Language
 
 ''' <summary>
 ''' The API interface wrapper of the SQLite.(SQLite的存储引擎的接口)
@@ -117,6 +118,11 @@ Public Class SQLProcedure : Implements System.IDisposable
     Const FILEIO_EXCEPTION As String = "Maybe we have a wrong file place for ""file:///{0}"", shuch as no sufficient privilege or a readonly place."
 
     ''' <summary>
+    ''' SQLite 连接字符串
+    ''' </summary>
+    Const SQLiteCnn As String = "Data Source=""{0}"";Pooling=true;FailIfMissing=false"
+
+    ''' <summary>
     ''' Establishing the protocol of the SQLite connection between you program and the database file "<paramref name="url"></paramref>".
     ''' </summary>
     ''' <param name="url">The path of the SQLite database file.</param>
@@ -137,8 +143,8 @@ Public Class SQLProcedure : Implements System.IDisposable
         End Try
 
         Dim URLConnection As DbConnection
-
-        URLConnection = New SQLiteConnection(String.Format("Data Source=""{0}"";Pooling=true;FailIfMissing=false", url))
+        Dim cnn As String = String.Format(SQLiteCnn, url)
+        URLConnection = New SQLiteConnection(cnn)
         URLConnection.Open()
 
         Dim DBI As SQLProcedure = New SQLProcedure With {._URL = url, .URLConnection = URLConnection}
@@ -271,7 +277,10 @@ Public Class SQLProcedure : Implements System.IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function DbDump(DumpFile As String) As Boolean
-        Dim Tables = (From item In Me.Load(Of TableDump)() Select item Group By item.TableName Into Group).ToArray
+        Dim Tables = (From dump As TableDump
+                      In Me.Load(Of TableDump)()
+                      Select dump
+                      Group By dump.TableName Into Group).ToArray
 
         Call FileIO.FileSystem.CreateDirectory(FileIO.FileSystem.GetParentPath(DumpFile))
 
@@ -290,32 +299,41 @@ Public Class SQLProcedure : Implements System.IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Private Function ___SQLDump(Table As TableDump()) As String
-        Dim SQLBuilder As StringBuilder = New StringBuilder(2048)
-        Dim TableName As String = Table.First.TableName
+        Dim TableName As String = Table(Scan0).TableName
         Dim SQL As String = [Interface].SchemaCache.CreateTableSQL(Table)
+        Dim sb As New StringBuilder(2048)
 
-        Call SQLBuilder.AppendLine("/* CREATE_TABLE_SCHEMA_INFORMATION */")
-        Call SQLBuilder.AppendLine(SQL)
-        Call SQLBuilder.AppendLine()
-        Call SQLBuilder.AppendLine(String.Format("/* DATA_STORAGES  ""{0}"" */", TableName))
+        Call sb.AppendLine("/* CREATE_TABLE_SCHEMA_INFORMATION */")
+        Call sb.AppendLine(SQL)
+        Call sb.AppendLine()
+        Call sb.AppendLine($"/* DATA_STORAGES  ""{TableName}"" */")
 
         Dim DbReader = Me.Execute("SELECT * FROM '{0}';", TableName)
-        Dim SchemaCache = (From item In Table Select Field = item, p = DbReader.GetOrdinal(item.FieldName)).ToArray
+        Dim SchemaCache = (From tField As TableDump
+                           In Table
+                           Select Field = tField,
+                               p = DbReader.GetOrdinal(tField.FieldName)).ToArray
+        Dim array As String() = LinqAPI.Exec(Of String) <= From p
+                                                           In SchemaCache
+                                                           Select p.Field.FieldName
+        Dim values As String
+        Dim columns As String = String.Join(", ", array)
 
         Do While DbReader.Read
-            Dim Values As String = String.Join(", ", (From p In SchemaCache
-                                                      Let value As Object = DbReader.GetValue(p.p)
-                                                      Let s As String = $"'{Scripting.ToString(value)}'"
-                                                      Select s).ToArray)
-            Dim Columns As String = String.Join(", ", (From p In SchemaCache Select p.Field.FieldName).ToArray)
-            Dim InsertSQL As String = String.Format("INSERT INTO '{0}' ({1}) VALUES ({2}) ;", TableName, Columns, Values)
-            Call SQLBuilder.AppendLine(InsertSQL)
+            array = LinqAPI.Exec(Of String) <= From p In SchemaCache
+                                               Let value As Object = DbReader.GetValue(p.p)
+                                               Let s As String = $"'{Scripting.ToString(value)}'"
+                                               Select s
+            values = String.Join(", ", array)
+
+            Dim InsertSQL As String = $"INSERT INTO '{TableName}' ({columns}) VALUES ({values}) ;"
+            Call sb.AppendLine(InsertSQL)
         Loop
 
-        Call SQLBuilder.AppendLine()
-        Call SQLBuilder.AppendLine(String.Format("/* END_OF_SQL_DUMP  ""{0}"" */", TableName))
+        Call sb.AppendLine()
+        Call sb.AppendLine($"/* END_OF_SQL_DUMP  ""{TableName}"" */")
 
-        Return SQLBuilder.ToString
+        Return sb.ToString
     End Function
 
 #Region "IDisposable Support"

@@ -1,4 +1,6 @@
-﻿Public Class TableSchema
+﻿Imports Microsoft.VisualBasic.Language
+
+Public Class TableSchema
     Implements IEnumerable(Of SchemaCache)
 
     Public Property TableName As String
@@ -12,14 +14,18 @@
     ''' <remarks></remarks>
     Public Property PrimaryKey As SchemaCache()
 
-    Sub New(TypeInfo As Type)
-        TableName = GetTableName(TypeInfo)
-        DatabaseFields = InternalGetSchemaCache(TypeInfo)
-        PrimaryKey = (From item In DatabaseFields Where item.FieldEntryPoint.IsPrimaryKey Select item).ToArray
+    Sub New(type As Type)
+        TableName = GetTableName(type)
+        DatabaseFields = InternalGetSchemaCache(type)
+        PrimaryKey =
+            LinqAPI.Exec(Of SchemaCache) <= From field As SchemaCache
+                                            In DatabaseFields
+                                            Where field.FieldEntryPoint.IsPrimaryKey
+                                            Select field
     End Sub
 
     Public Shared Function CreateObject(Of T As Class)() As TableSchema
-        Return New TableSchema(TypeInfo:=GetType(T))
+        Return New TableSchema(type:=GetType(T))
     End Function
 
     Public Overrides Function ToString() As String
