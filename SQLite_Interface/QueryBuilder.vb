@@ -6,6 +6,20 @@
 ''' <remarks></remarks>
 Public Module QueryBuilder
 
+    ''' <summary>
+    ''' 转码SQlite的分割字符 ( ' --> '' )
+    ''' </summary>
+    ''' <param name="fieldValue"></param>
+    ''' <returns></returns>
+    <Extension>
+    Public Function Escaping(fieldValue As String) As String
+        If fieldValue Is Nothing Then
+            Return ""
+        Else
+            Return fieldValue.Replace("'", "''")
+        End If
+    End Function
+
     Public Enum StringCompareMethods
         ''' <summary>
         ''' 模糊匹配，大小写敏感的
