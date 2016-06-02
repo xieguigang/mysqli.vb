@@ -110,7 +110,7 @@ Public Class SchemaCache
     Friend Shared Function __getValue(p As SchemaCache, obj As Object) As String
         Dim value = p.Property.GetValue(obj)
         Dim s As String = If(value Is Nothing, "", value.ToString)
-        Return "'" & s & "'"
+        Return "'" & s.Replace("'", "\'") & "'"
     End Function
 
     ''' <summary>
