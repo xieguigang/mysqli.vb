@@ -1,9 +1,10 @@
-﻿Imports Microsoft.VisualBasic.Language
+﻿Imports Microsoft.VisualBasic.ComponentModel.Collection.Generic
+Imports Microsoft.VisualBasic.Language
 
-Public Class TableSchema
+Public Class TableSchema : Implements sIdEnumerable
     Implements IEnumerable(Of SchemaCache)
 
-    Public Property TableName As String
+    Public Property TableName As String Implements sIdEnumerable.Identifier
     Public Property DatabaseFields As SchemaCache()
 
     ''' <summary>

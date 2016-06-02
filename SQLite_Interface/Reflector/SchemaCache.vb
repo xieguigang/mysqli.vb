@@ -1,4 +1,6 @@
 ﻿Imports System.Data.Linq.Mapping
+Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
+Imports Microsoft.VisualBasic.Language
 
 ''' <summary>
 ''' Cached for the database schema.
@@ -29,13 +31,17 @@ Public Class SchemaCache
                 Return FieldEntryPoint.DbType
             End If
 
-            Dim MyType As System.Type = [Property].PropertyType
-            Dim LQuery As String = (From item In TypeMapping
-                                    Where item.Value = MyType
-                                    Select item.Key).FirstOrDefault
+            Dim MyType As Type = [Property].PropertyType
+            Dim LQuery As String =
+                LinqAPI.DefaultFirst(Of String) <= From type As NamedValue(Of Type)
+                                                   In TypeMapping.Values
+                                                   Where type.x = MyType
+                                                   Select type.Name
 
             If String.IsNullOrEmpty(LQuery) Then
-                Throw New DataException(String.Format(DATA_TYPE_IS_NOT_SUPPORT, MyType.FullName))
+                Dim msg As String =
+                    String.Format(DATA_TYPE_IS_NOT_SUPPORT, MyType.FullName)
+                Throw New DataException(msg)
             Else
                 Return LQuery
             End If
@@ -48,18 +54,18 @@ Public Class SchemaCache
         Return DbFieldName
     End Function
 
-    Public Shared ReadOnly Property TypeMapping As Dictionary(Of String, Type) =
-        New Dictionary(Of String, Type) From {
+    Public Shared ReadOnly Property TypeMapping As Dictionary(Of NamedValue(Of Type)) =
+        New Dictionary(Of NamedValue(Of Type)) From {
  _
-            {"integer", GetType(Long)},
-            {"int", GetType(Integer)},
-            {"smallint", GetType(Short)},
-            {"tinyint", GetType(Byte)},
-            {"decimal", GetType(Decimal)},
-            {"numeric", GetType(Double)},
-            {"char", GetType(String)},
-            {"varchar", GetType(String)},
-            {"date", GetType(Date)}
+            {"integer", New NamedValue(Of Type)("integer", GetType(Long))},
+            {"int", New NamedValue(Of Type)("int", GetType(Integer))},
+            {"smallint", New NamedValue(Of Type)("smallint", GetType(Short))},
+            {"tinyint", New NamedValue(Of Type)("tinyint", GetType(Byte))},
+            {"decimal", New NamedValue(Of Type)("decimal", GetType(Decimal))},
+            {"numeric", New NamedValue(Of Type)("numeric", GetType(Double))},
+            {"char", New NamedValue(Of Type)("char", GetType(String))},
+            {"varchar", New NamedValue(Of Type)("varchar", GetType(String))},
+            {"date", New NamedValue(Of Type)("date", GetType(Date))}
     }
 
     ''' <summary>
@@ -73,6 +79,13 @@ Public Class SchemaCache
         Dim Columns As String = String.Join(", ", (From p As SchemaCache In SchemaCache Select p.DbFieldName).ToArray)
         Dim SQL As String = String.Format("INSERT INTO '{0}' ({1}) VALUES ({2}) ;", TableName, Columns, Values)
         Return SQL
+    End Function
+
+    Public Shared Function CreateInsertSQL(Of T As Class)(x As T) As String
+        Dim type As Type = GetType(T)
+        Dim schema = Reflector.InternalGetSchemaCache(type)
+        Dim tbl As String = type.GetTableName
+        Return CreateInsertSQL(schema, x, tbl)
     End Function
 
     ''' <summary>

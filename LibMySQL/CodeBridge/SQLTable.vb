@@ -1,11 +1,7 @@
-﻿''' <summary>
-''' MYSQL之中的一个数据表的抽象描述接口
-''' </summary>
-Public MustInherit Class SQLTable
+﻿Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 
-    Public MustOverride Function GetInsertSQL() As String
-    Public MustOverride Function GetUpdateSQL() As String
-    Public MustOverride Function GetDeleteSQL() As String
+Public MustInherit Class SQLTable : Inherits SchemaMaps.SQLTable
+
     ''' <summary>
     ''' 如果已经存在了一条相同主键值的记录，则删除它然后在插入更新值；
     ''' 假若不存在，则直接插入新数据，这条命令几乎等价于<see cref="GetInsertSQL"/>命令，所不同的是这个会自动处理旧记录，可能会不安全，
@@ -15,7 +11,4 @@ Public MustInherit Class SQLTable
     ''' <returns></returns>
     Public MustOverride Function GetReplaceSQL() As String
 
-    Public Overrides Function ToString() As String
-        Return GetInsertSQL()
-    End Function
 End Class

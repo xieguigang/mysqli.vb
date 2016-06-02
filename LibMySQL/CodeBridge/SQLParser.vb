@@ -36,7 +36,8 @@ Public Module SQLParser
         Dim TableName As String = Tokens.Value(Scan0)
         Dim PrimaryKey As String = Tokens.Key
         Dim FieldsTokens As String() = Tokens.Value.Skip(1).ToArray
-        Dim Table As Reflection.Schema.Table = __createSchema(FieldsTokens, TableName, PrimaryKey, SQL) _
+        Dim Table As Reflection.Schema.Table =
+            __createSchema(FieldsTokens, TableName, PrimaryKey, SQL) _
             .InvokeSet(NameOf(Reflection.Schema.Table.Database), DB)
         Return Table
     End Function
@@ -239,31 +240,31 @@ _SET_PRIMARYKEY:
             Type = Reflection.DbAttributes.MySqlDbType.Int64
             Parameter = __getNumberValue(TypeDef)
 
-        ElseIf Regex.Match(TypeDef, "varchar\(\d+\)", RegexOptions.IgnoreCase).Success OrElse Regex.Match(TypeDef, "char\(\d+\)", RegexOptions.IgnoreCase).Success
+        ElseIf Regex.Match(TypeDef, "varchar\(\d+\)", RegexOptions.IgnoreCase).Success OrElse Regex.Match(TypeDef, "char\(\d+\)", RegexOptions.IgnoreCase).Success Then
             Type = Reflection.DbAttributes.MySqlDbType.VarChar
             Parameter = __getNumberValue(TypeDef)
 
-        ElseIf Regex.Match(TypeDef, "double", RegexOptions.IgnoreCase).Success OrElse InStr(TypeDef, "float") > 0
+        ElseIf Regex.Match(TypeDef, "double", RegexOptions.IgnoreCase).Success OrElse InStr(TypeDef, "float") > 0 Then
             Type = Reflection.DbAttributes.MySqlDbType.Double
 
         ElseIf Regex.Match(TypeDef, "datetime", RegexOptions.IgnoreCase).Success OrElse
             Regex.Match(TypeDef, "date", RegexOptions.IgnoreCase).Success OrElse
-            Regex.Match(TypeDef, "timestamp", RegexOptions.IgnoreCase).Success
+            Regex.Match(TypeDef, "timestamp", RegexOptions.IgnoreCase).Success Then
 
             Type = Reflection.DbAttributes.MySqlDbType.DateTime
 
-        ElseIf Regex.Match(TypeDef, "text", RegexOptions.IgnoreCase).Success
+        ElseIf Regex.Match(TypeDef, "text", RegexOptions.IgnoreCase).Success Then
             Type = Reflection.DbAttributes.MySqlDbType.Text
 
-        ElseIf InStr(TypeDef, "enum(", CompareMethod.Text) > 0   ' enum类型转换为String类型？？？？
+        ElseIf InStr(TypeDef, "enum(", CompareMethod.Text) > 0 Then   ' enum类型转换为String类型？？？？
             Type = Reflection.DbAttributes.MySqlDbType.String
 
         ElseIf InStr(TypeDef, "Blob", CompareMethod.Text) > 0 OrElse
             Regex.Match(TypeDef, "varbinary\(\d+\)", RegexOptions.IgnoreCase).Success OrElse
-            Regex.Match(TypeDef, "binary\(\d+\)", RegexOptions.IgnoreCase).Success
+            Regex.Match(TypeDef, "binary\(\d+\)", RegexOptions.IgnoreCase).Success Then
             Type = Reflection.DbAttributes.MySqlDbType.Blob
 
-        ElseIf Regex.Match(TypeDef, "decimal\(", RegexOptions.IgnoreCase).Success
+        ElseIf Regex.Match(TypeDef, "decimal\(", RegexOptions.IgnoreCase).Success Then
             Type = Reflection.DbAttributes.MySqlDbType.Decimal
 
         Else
