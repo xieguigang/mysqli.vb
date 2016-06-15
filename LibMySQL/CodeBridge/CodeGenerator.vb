@@ -421,7 +421,7 @@ NO_KEY:
         Catch ex As Exception
             Dim Gr = SchemaSQLLQuery.ToArray.CheckDuplicated(Of String)(Function(x) x.tableName)
             Dim dupliTables As String =
-                String.Join(", ", Gr.ToArray(Function(tb) tb.TAG))
+                String.Join(", ", Gr.ToArray(Function(tb) tb.Tag))
             Throw New Exception("Duplicated tables:  " & dupliTables, ex)
         End Try
 
