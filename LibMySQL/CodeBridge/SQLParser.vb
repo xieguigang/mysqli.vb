@@ -1,33 +1,35 @@
 ﻿#Region "Microsoft.VisualBasic::534fd02a97727e6899ef33e6f496ab16, ..\LibMySQL\CodeBridge\SQLParser.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
 Imports System.Text
 Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Linq
 
 Public Module SQLParser
 
@@ -64,8 +66,13 @@ Public Module SQLParser
         Dim PrimaryKey As String = Tokens.Key
         Dim FieldsTokens As String() = Tokens.Value.Skip(1).ToArray
         Dim Table As Reflection.Schema.Table =
-            __createSchema(FieldsTokens, TableName, PrimaryKey, SQL) _
-            .InvokeSet(NameOf(Reflection.Schema.Table.Database), DB)
+            SetValue(Of Reflection.Schema.Table).InvokeSet(
+                __createSchema(FieldsTokens,
+                               TableName,
+                               PrimaryKey,
+                               SQL),
+                NameOf(Reflection.Schema.Table.Database),
+                DB)
         Return Table
     End Function
 
@@ -77,7 +84,8 @@ Public Module SQLParser
     Public Function LoadSQLDoc(Path As String) As Reflection.Schema.Table()
         Dim Doc As String = FileIO.FileSystem.ReadAllText(Path)
         Dim DB As String = __getDBName(Doc)
-        Dim Tables = (From m As Match In Regex.Matches(Doc, SQL_CREATE_TABLE, RegexOptions.Singleline)
+        Dim Tables = (From m As Match
+                      In Regex.Matches(Doc, SQL_CREATE_TABLE, RegexOptions.Singleline)
                       Let Tokens As KeyValuePair(Of String, String()) = __sqlParser(SQL:=m.Value)
                       Let TableName As String = Tokens.Value(Scan0)
                       Let PrimaryKey As String = Tokens.Key
@@ -86,12 +94,20 @@ Public Module SQLParser
                           TableName,
                           Fields = FieldsTokens,
                           Original = m.Value).ToArray
-        Dim SqlSchema = (From Table In Tables
-                         Select __createSchema(
-                             Table.Fields,
-                             Table.TableName,
-                             Table.PrimaryKey,
-                             Table.Original).InvokeSet(NameOf(Reflection.Schema.Table.Database), DB)).ToArray
+        Dim setValue = New SetValue(Of Reflection.Schema.Table)() _
+            .GetSet(NameOf(Reflection.Schema.Table.Database))
+        Dim SqlSchema =
+            LinqAPI.Exec(Of Reflection.Schema.Table) <=
+                From Table
+                In Tables
+                Let tbl As Reflection.Schema.Table =
+                    __createSchema(
+                    Table.Fields,
+                    Table.TableName,
+                    Table.PrimaryKey,
+                    Table.Original)
+                Select setValue(tbl, DB)
+
         Return SqlSchema
     End Function
 
