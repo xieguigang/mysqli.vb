@@ -191,7 +191,7 @@ Public Class MySQL : Implements IDisposable
         Call Reader.Read()
 
         Dim ObjValue As Object = Reader.GetValue(Scan0)
-        Dim value As T = DirectCast(ObjValue, T)
+        Dim value As T = CType(ObjValue, T)
 
         Return value
     End Function
