@@ -481,6 +481,20 @@ Public Class MySQL : Implements IDisposable
         }
     End Operator
 
+    ''' <summary>
+    ''' ``mysql.Connect(cnn)``
+    ''' </summary>
+    ''' <param name="mysql"></param>
+    ''' <param name="cnn"></param>
+    ''' <returns></returns>
+    Public Shared Operator <=(mysql As MySQL, cnn As ConnectionUri) As Double
+        Return mysql.Connect(cnn)
+    End Operator
+
+    Public Shared Operator >=(mysql As MySQL, cnn As ConnectionUri) As Double
+        Throw New NotSupportedException
+    End Operator
+
 #Region "IDisposable Support"
     Private disposedValue As Boolean ' To detect redundant calls
 
