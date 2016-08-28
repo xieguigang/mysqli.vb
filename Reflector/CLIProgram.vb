@@ -32,8 +32,10 @@ Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.ComponentModel
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Microsoft.VisualBasic.Linq
+Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Oracle.LinuxCompatibility.MySQL
 
+<PackageNamespace("MySQL.Reflector", Description:="Tools for convert the mysql schema dump sql script into VisualBasic classes source code.")>
 Module CLIProgram
 
     Public Function Main() As Integer
@@ -47,11 +49,17 @@ Module CLIProgram
                Usage:="--reflects /sql <sql_path/std_in> [-o <output_path> /namespace <namespace> /split]",
                Example:="--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
     <ParameterInfo("/sql", False,
+                   AcceptTypes:={GetType(String)},
                    Description:="The file path of the MySQL database schema dump file."),
      ParameterInfo("-o", True,
+                   AcceptTypes:={GetType(String)},
                    Description:="The output file path of the generated visual basic source code file from the SQL dump file ""/sql"""),
      ParameterInfo("/namespace", True,
+                   AcceptTypes:={GetType(String)},
                    Description:="The namespace value will be insert into the generated source code if this parameter is not null.")>
+    <ParameterInfo("/split", True,
+                   AcceptTypes:={GetType(Boolean)},
+                   Description:="Split the source code into sevral files and named by table name?")>
     Public Function ReflectsConvert(args As CommandLine) As Integer
         Dim split As Boolean = args.GetBoolean("/split")
         Dim SQL As String = args("/sql"), out As String = args("-o")

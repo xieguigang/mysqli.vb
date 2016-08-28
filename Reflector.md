@@ -1,5 +1,5 @@
 ﻿# Reflector [version 1.0.0.0]
-> Reflector.CLIProgram
+> Tools for convert the mysql schema dump sql script into VisualBasic classes source code.
 
 <!--more-->
 
@@ -7,7 +7,7 @@
 __
 Copyright ©  2015
 
-**Module AssemblyName**: file:///G:/GCModeller/src/runtime/visualbasic.DBI/LibMySQL/Reflector/bin/Publish/Reflector.exe
+**Module AssemblyName**: file:///G:/GCModeller/src/runtime/visualbasic.DBI/Reflector/bin/Publish/Reflector.exe
 **Root namespace**: ``Reflector.CLIProgram``
 
 
@@ -72,7 +72,39 @@ The namespace value will be insert into the generated source code if this parame
 ```bash
 
 ```
+##### [/split]
+Split the source code into sevral files and named by table name?
+
+###### Example
+```bash
+
+```
 ##### Accepted Types
 ###### /sql
+**Decalre**:  _System.String_
+Example: 
+```json
+"System.String"
+```
+
 ###### -o
+**Decalre**:  _System.String_
+Example: 
+```json
+"System.String"
+```
+
 ###### /namespace
+**Decalre**:  _System.String_
+Example: 
+```json
+"System.String"
+```
+
+###### /split
+**Decalre**:  _System.Boolean_
+Example: 
+```json
+true
+```
+
