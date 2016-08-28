@@ -212,7 +212,7 @@ Public Module CodeGenerator
             DBName = $", Database:=""{DBName}"""
         End If
 
-        Call CodeGenerator.AppendLine("```SQL")
+        Call CodeGenerator.AppendLine("''' ```SQL")
         If Not String.IsNullOrEmpty(Table.Comment) Then
             Call CodeGenerator.AppendLine("''' " & Table.Comment)
         End If
@@ -220,7 +220,7 @@ Public Module CodeGenerator
         For Each Line As String In Tokens
             Call CodeGenerator.AppendLine("''' " & Line)
         Next
-        Call CodeGenerator.AppendLine("```")
+        Call CodeGenerator.AppendLine("''' ```")
         Call CodeGenerator.AppendLine("''' </summary>")
         Call CodeGenerator.AppendLine("''' <remarks></remarks>")
 
@@ -259,19 +259,19 @@ Public Module CodeGenerator
         Call CodeGenerator.AppendLine(___DELETE_SQL(Table, SQLlist("DELETE")))
         Call CodeGenerator.AppendLine(___UPDATE_SQL(Table, SQLlist("UPDATE")))
         Call CodeGenerator.AppendLine("#End Region")
-        Call CodeGenerator.AppendLine(SQLlist("DELETE").SQLComments)
+        Call CodeGenerator.Append(SQLlist("DELETE").SQLComments)
         Call CodeGenerator.AppendLine("    Public Overrides Function GetDeleteSQL() As String")
         Call CodeGenerator.AppendLine(___DELETE_SQL_Invoke(Table, refConflict))
         Call CodeGenerator.AppendLine("    End Function")
-        Call CodeGenerator.AppendLine(SQLlist("INSERT").SQLComments)
+        Call CodeGenerator.Append(SQLlist("INSERT").SQLComments)
         Call CodeGenerator.AppendLine("    Public Overrides Function GetInsertSQL() As String")
         Call CodeGenerator.AppendLine(___INSERT_SQL_Invoke(Table, TrimAutoIncrement, refConflict))
         Call CodeGenerator.AppendLine("    End Function")
-        Call CodeGenerator.AppendLine(SQLlist("REPLACE").SQLComments)
+        Call CodeGenerator.Append(SQLlist("REPLACE").SQLComments)
         Call CodeGenerator.AppendLine("    Public Overrides Function GetReplaceSQL() As String")
         Call CodeGenerator.AppendLine(___REPLACE_SQL_Invoke(Table, TrimAutoIncrement, refConflict))
         Call CodeGenerator.AppendLine("    End Function")
-        Call CodeGenerator.AppendLine(SQLlist("UPDATE").SQLComments)
+        Call CodeGenerator.Append(SQLlist("UPDATE").SQLComments)
         Call CodeGenerator.AppendLine("    Public Overrides Function GetUpdateSQL() As String")
         Call CodeGenerator.AppendLine(___UPDATE_SQL_Invoke(Table, refConflict))
         Call CodeGenerator.AppendLine("    End Function")
