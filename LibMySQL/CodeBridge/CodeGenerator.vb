@@ -1,27 +1,27 @@
 ﻿#Region "Microsoft.VisualBasic::4875db9ec3242c834080ab84acbcc57b, ..\LibMySQL\CodeBridge\CodeGenerator.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
@@ -29,6 +29,8 @@ Imports System.Text.RegularExpressions
 Imports System.Text
 Imports Microsoft.VisualBasic.ComponentModel
 Imports Microsoft.VisualBasic.Linq.Extensions
+Imports Microsoft.VisualBasic.Language
+Imports System.Runtime.CompilerServices
 
 ''' <summary>
 ''' Automatically generates visualbasic source code from the SQL schema dump document.(根据SQL文档生成Visual Basic源代码)
@@ -200,7 +202,7 @@ Public Module CodeGenerator
     ''' <remarks></remarks>
     Public Function GenerateTableClass(Table As Reflection.Schema.Table, DefSql As String, Optional TrimAutoIncrement As Boolean = True) As String
         Dim Tokens As String() = Strings.Split(DefSql.Replace(vbLf, ""), vbCr)
-        Dim CodeGenerator As StringBuilder = New StringBuilder("''' <summary>" & vbCrLf)
+        Dim CodeGenerator As New StringBuilder("''' <summary>" & vbCrLf)
         Dim DBName As String = Table.Database
         Dim refConflict As Boolean = Not String.IsNullOrEmpty((From field As String
                                                                In Table.lstFieldName
@@ -210,6 +212,7 @@ Public Module CodeGenerator
             DBName = $", Database:=""{DBName}"""
         End If
 
+        Call CodeGenerator.AppendLine("```SQL")
         If Not String.IsNullOrEmpty(Table.Comment) Then
             Call CodeGenerator.AppendLine("''' " & Table.Comment)
         End If
@@ -217,6 +220,7 @@ Public Module CodeGenerator
         For Each Line As String In Tokens
             Call CodeGenerator.AppendLine("''' " & Line)
         Next
+        Call CodeGenerator.AppendLine("```")
         Call CodeGenerator.AppendLine("''' </summary>")
         Call CodeGenerator.AppendLine("''' <remarks></remarks>")
 
@@ -241,22 +245,33 @@ Public Module CodeGenerator
         Next
         Call CodeGenerator.AppendLine("#End Region")
 
+        Dim SQLlist As New Dictionary(Of String, Value(Of String)) From {
+            {"INSERT", New Value(Of String)},
+            {"REPLACE", New Value(Of String)},
+            {"DELETE", New Value(Of String)},
+            {"UPDATE", New Value(Of String)}
+        }
+
         Call CodeGenerator.AppendLine("#Region ""Public SQL Interface""")
         Call CodeGenerator.AppendLine("#Region ""Interface SQL""")
-        Call CodeGenerator.AppendLine(___INSERT_SQL(Table, TrimAutoIncrement))
-        Call CodeGenerator.AppendLine(___REPLACE_SQL(Table, TrimAutoIncrement))
-        Call CodeGenerator.AppendLine(___DELETE_SQL(Table))
-        Call CodeGenerator.AppendLine(___UPDATE_SQL(Table))
+        Call CodeGenerator.AppendLine(___INSERT_SQL(Table, TrimAutoIncrement, SQLlist("INSERT")))
+        Call CodeGenerator.AppendLine(___REPLACE_SQL(Table, TrimAutoIncrement, SQLlist("REPLACE")))
+        Call CodeGenerator.AppendLine(___DELETE_SQL(Table, SQLlist("DELETE")))
+        Call CodeGenerator.AppendLine(___UPDATE_SQL(Table, SQLlist("UPDATE")))
         Call CodeGenerator.AppendLine("#End Region")
+        Call CodeGenerator.AppendLine(SQLlist("DELETE").SQLComments)
         Call CodeGenerator.AppendLine("    Public Overrides Function GetDeleteSQL() As String")
         Call CodeGenerator.AppendLine(___DELETE_SQL_Invoke(Table, refConflict))
         Call CodeGenerator.AppendLine("    End Function")
+        Call CodeGenerator.AppendLine(SQLlist("INSERT").SQLComments)
         Call CodeGenerator.AppendLine("    Public Overrides Function GetInsertSQL() As String")
         Call CodeGenerator.AppendLine(___INSERT_SQL_Invoke(Table, TrimAutoIncrement, refConflict))
         Call CodeGenerator.AppendLine("    End Function")
+        Call CodeGenerator.AppendLine(SQLlist("REPLACE").SQLComments)
         Call CodeGenerator.AppendLine("    Public Overrides Function GetReplaceSQL() As String")
         Call CodeGenerator.AppendLine(___REPLACE_SQL_Invoke(Table, TrimAutoIncrement, refConflict))
         Call CodeGenerator.AppendLine("    End Function")
+        Call CodeGenerator.AppendLine(SQLlist("UPDATE").SQLComments)
         Call CodeGenerator.AppendLine("    Public Overrides Function GetUpdateSQL() As String")
         Call CodeGenerator.AppendLine(___UPDATE_SQL_Invoke(Table, refConflict))
         Call CodeGenerator.AppendLine("    End Function")
@@ -267,23 +282,48 @@ Public Module CodeGenerator
         Return CodeGenerator.ToString
     End Function
 
+    ''' <summary>
+    ''' ```SQL
+    ''' ....
+    ''' ```
+    ''' </summary>
+    ''' <param name="sql"></param>
+    ''' <returns></returns>
+    <Extension>
+    Private Function SQLComments(sql As Value(Of String)) As String
+        Dim sb As New StringBuilder
+        Call sb.AppendLine("''' <summary>")
+        Call sb.AppendLine("''' ```SQL")
+        Call sb.AppendLine("''' " & sql.ToString)
+        Call sb.AppendLine("''' ```")
+        Call sb.AppendLine("''' </summary>")
+
+        Return sb.ToString
+    End Function
+
 #Region "INSERT_SQL 假若有列是被标记为自动增长的，则不需要在INSERT_SQL之中在添加他的值了"
 
-    Private Function ___REPLACE_SQL(Schema As Reflection.Schema.Table, TrimAutoIncrement As Boolean) As String
-        Return __replaceInsertCommon(Schema, TrimAutoIncrement, True)
+    Private Function ___REPLACE_SQL(Schema As Reflection.Schema.Table, TrimAutoIncrement As Boolean, ByRef SQL As Value(Of String)) As String
+        Return __replaceInsertCommon(Schema, TrimAutoIncrement, True, SQL)
     End Function
 
     Private Function ___REPLACE_SQL_Invoke(Schema As Reflection.Schema.Table, TrimAutoIncrement As Boolean, refConflict As Boolean) As String
         Return __replaceInsertInvokeCommon(Schema, TrimAutoIncrement, True, refConflict)
     End Function
 
-    Private Function __replaceInsertCommon(Schema As Reflection.Schema.Table, TrimAutoIncrement As Boolean, Replace As Boolean) As String
-        Dim Name As String = If(Replace, "REPLACE", "INSERT")
+    Private Function __replaceInsertCommon(Schema As Reflection.Schema.Table,
+                                           TrimAutoIncrement As Boolean,
+                                           isReplace As Boolean,
+                                           ByRef SQL As Value(Of String)) As String
+        Dim Name As String = If(isReplace, "REPLACE", "INSERT")
         Dim SqlBuilder As New StringBuilder($"    Private Shared ReadOnly {Name}_SQL As String = <SQL>%s</SQL>")
-        Call SqlBuilder.Replace("%s", Reflection.SQL.SqlGenerateMethods.GenerateInsertSql(Schema, TrimAutoIncrement))
-        If Replace Then
-            Call SqlBuilder.Replace("INSERT INTO", "REPLACE INTO")
+        SQL.value = Reflection.SQL.SqlGenerateMethods.GenerateInsertSql(Schema, TrimAutoIncrement)
+
+        If isReplace Then
+            SQL = SQL.value.Replace("INSERT INTO", "REPLACE INTO")
         End If
+
+        Call SqlBuilder.Replace("%s", SQL.ToString)
 
         Return SqlBuilder.ToString
     End Function
@@ -305,8 +345,8 @@ Public Module CodeGenerator
         Return SqlBuilder.ToString
     End Function
 
-    Private Function ___INSERT_SQL(Schema As Reflection.Schema.Table, TrimAutoIncrement As Boolean) As String
-        Return __replaceInsertCommon(Schema, TrimAutoIncrement, False)
+    Private Function ___INSERT_SQL(Schema As Reflection.Schema.Table, TrimAutoIncrement As Boolean, ByRef SQL As Value(Of String)) As String
+        Return __replaceInsertCommon(Schema, TrimAutoIncrement, False, SQL)
     End Function
 
     Private Function ___INSERT_SQL_Invoke(Schema As Reflection.Schema.Table, TrimAutoIncrement As Boolean, refConflict As Boolean) As String
@@ -314,9 +354,10 @@ Public Module CodeGenerator
     End Function
 #End Region
 
-    Private Function ___UPDATE_SQL(Schema As Reflection.Schema.Table) As String
-        Dim SqlBuilder As StringBuilder = New StringBuilder("    Private Shared ReadOnly UPDATE_SQL As String = <SQL>%s</SQL>")
-        Call SqlBuilder.Replace("%s", Reflection.SQL.SqlGenerateMethods.GenerateUpdateSql(Schema))
+    Private Function ___UPDATE_SQL(Schema As Reflection.Schema.Table, ByRef SQL As Value(Of String)) As String
+        Dim SqlBuilder As New StringBuilder("    Private Shared ReadOnly UPDATE_SQL As String = <SQL>%s</SQL>")
+        SQL.value = Reflection.SQL.SqlGenerateMethods.GenerateUpdateSql(Schema)
+        Call SqlBuilder.Replace("%s", SQL.value)
 
         Return SqlBuilder.ToString
     End Function
@@ -336,9 +377,10 @@ Public Module CodeGenerator
         Return SqlBuilder.ToString
     End Function
 
-    Private Function ___DELETE_SQL(Schema As Reflection.Schema.Table) As String
+    Private Function ___DELETE_SQL(Schema As Reflection.Schema.Table, ByRef SQL As Value(Of String)) As String
         Dim SqlBuilder As StringBuilder = New StringBuilder("    Private Shared ReadOnly DELETE_SQL As String = <SQL>%s</SQL>")
-        Call SqlBuilder.Replace("%s", Reflection.SQL.SqlGenerateMethods.GenerateDeleteSql(Schema))
+        SQL.value = Reflection.SQL.SqlGenerateMethods.GenerateDeleteSql(Schema)
+        Call SqlBuilder.Replace("%s", SQL.value)
 
         Return SqlBuilder.ToString
     End Function
@@ -434,21 +476,24 @@ NO_KEY:
     ''' </summary>
     ''' <returns></returns>
     ''' <param name="SqlDump">The SQL dumping file path.(Dump sql文件的文件路径)</param>
-    Public Function GenerateCodeSplit(SqlDump As String, Optional [Namespace] As String = "") As Dictionary(Of String, String)
+    ''' <param name="ns">The namespace of the source code classes</param>
+    Public Function GenerateCodeSplit(SqlDump As String, Optional ns As String = "") As Dictionary(Of String, String)
         Dim Schema As Reflection.Schema.Table() = SQLParser.LoadSQLDoc(SqlDump)
         Dim CreateTables As String() =
             Regex.Split(FileIO.FileSystem.ReadAllText(SqlDump), SCHEMA_SECTIONS)
-        Dim SchemaSQLLQuery = From tbl As String In CreateTables.Skip(1).ToArray           'The first block of the text splits is the SQL comments from the MySQL data exporter. 
+        Dim SchemaSQLLQuery = From tbl As String
+                              In CreateTables.Skip(1)          ' The first block of the text splits is the SQL comments from the MySQL data exporter. 
                               Let s_TableName As String = Regex.Match(tbl, "`.+?`").Value
-                              Select tableName = Mid(s_TableName, 2, Len(s_TableName) - 2), tbl
+                              Select tableName = Mid(s_TableName, 2, Len(s_TableName) - 2),
+                                  tbl
         Dim SchemaSQL As Dictionary(Of String, String) = Nothing
         Try
             SchemaSQL = SchemaSQLLQuery.ToDictionary(Function(x) x.tableName,
                                                      Function(x) x.tbl)
         Catch ex As Exception
-            Dim Gr = SchemaSQLLQuery.ToArray.CheckDuplicated(Of String)(Function(x) x.tableName)
+            Dim g = SchemaSQLLQuery.ToArray.CheckDuplicated(Of String)(Function(x) x.tableName)
             Dim dupliTables As String =
-                String.Join(", ", Gr.ToArray(Function(tb) tb.Tag))
+                String.Join(", ", g.ToArray(Function(tb) tb.Tag))
             Throw New Exception("Duplicated tables:  " & dupliTables, ex)
         End Try
 
@@ -456,7 +501,7 @@ NO_KEY:
                                    Head:=CreateTables.First,
                                    FileName:=FileIO.FileSystem.GetFileInfo(SqlDump).Name,
                                    TableSql:=SchemaSQL,
-                                   [Namespace]:=[Namespace])
+                                   [Namespace]:=ns)
     End Function
 
     ''' <summary>

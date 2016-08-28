@@ -1,37 +1,37 @@
 ﻿#Region "Microsoft.VisualBasic::9de3879bfc56a02d8b1a2f936d632d12, ..\LibMySQL\Reflector\CLIProgram.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
+Imports System.Text
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
-Imports Microsoft.VisualBasic.Linq
-Imports Microsoft.VisualBasic.Language.UnixBash
-Imports Oracle.LinuxCompatibility.MySQL
 Imports Microsoft.VisualBasic.ComponentModel
-Imports System.Text
+Imports Microsoft.VisualBasic.Language.UnixBash
+Imports Microsoft.VisualBasic.Linq
+Imports Oracle.LinuxCompatibility.MySQL
 
 Module CLIProgram
 
@@ -51,17 +51,17 @@ Module CLIProgram
                    Description:="The output file path of the generated visual basic source code file from the SQL dump file ""/sql"""),
      ParameterInfo("/namespace", True,
                    Description:="The namespace value will be insert into the generated source code if this parameter is not null.")>
-    Public Function ReflectsConvert(argvs As CommandLine) As Integer
-        If Not argvs.CheckMissingRequiredParameters("/sql").IsNullOrEmpty Then
+    Public Function ReflectsConvert(args As CommandLine) As Integer
+        If Not args.CheckMissingRequiredParameters("/sql").IsNullOrEmpty Then
             Call VBDebugger.Warning(InputsNotFound)
             Return -1
         End If
 
-        Dim SQL As String = argvs("/sql"), out As String = argvs("-o")
-        Dim ns As String = argvs("/namespace")
+        Dim SQL As String = args("/sql"), out As String = args("-o")
+        Dim ns As String = args("/namespace")
 
         If FileIO.FileSystem.FileExists(SQL) Then
-            Return __EXPORT(SQL, ns, out, argvs.GetBoolean("/split"))
+            Return __EXPORT(SQL, ns, out, args.GetBoolean("/split"))
         Else
             Dim msg As String = $"The target schema sql dump file ""{SQL}"" is not exists on your file system!"
             Call VBDebugger.PrintException(msg)
