@@ -31,6 +31,7 @@ Imports Microsoft.VisualBasic.ComponentModel
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Language
 Imports System.Runtime.CompilerServices
+Imports System.IO
 
 ''' <summary>
 ''' Automatically generates visualbasic source code from the SQL schema dump document.(根据SQL文档生成Visual Basic源代码)
@@ -173,10 +174,13 @@ Public Module CodeGenerator
             Call VbCodeGenerator.AppendLine($"Namespace {[Namespace]}")
         End If
 
-        For Each Line As String In (From Table As Reflection.Schema.Table
-                                    In SqlDoc
-                                    Let SqlDef As String = If(TableSql.ContainsKey(Table.TableName), TableSql(Table.TableName), "")
-                                    Select GenerateTableClass(Table, SqlDef)).ToArray
+        For Each Line As String In From Table As Reflection.Schema.Table
+                                   In SqlDoc
+                                   Let SqlDef As String =
+                                       If(TableSql.ContainsKey(Table.TableName),
+                                       TableSql(Table.TableName),
+                                       "")
+                                   Select GenerateTableClass(Table, SqlDef)
 
             Call VbCodeGenerator.AppendLine()
             Call VbCodeGenerator.AppendLine(Line)
@@ -452,9 +456,16 @@ NO_KEY:
     ''' <returns>VisualBasic source code</returns>
     ''' <remarks></remarks>
     Public Function GenerateCode(SqlDump As String, Optional [Namespace] As String = "") As String
-        Dim Schema As Reflection.Schema.Table() = SQLParser.LoadSQLDoc(SqlDump)
-        Dim CreateTables As String() =
-            Regex.Split(FileIO.FileSystem.ReadAllText(SqlDump), SCHEMA_SECTIONS)
+        Return GenerateCode(New StreamReader(New FileStream(SqlDump, FileMode.Open)), [Namespace], SqlDump)
+    End Function
+
+    Public Function GenerateCode(file As StreamReader,
+                                 Optional [Namespace] As String = "",
+                                 Optional path As String = Nothing) As String
+
+        Dim SqlDump As String = ""
+        Dim Schema As Reflection.Schema.Table() = SQLParser.LoadSQLDoc(file, SqlDump)
+        Dim CreateTables As String() = Regex.Split(SqlDump, SCHEMA_SECTIONS)
         Dim SchemaSQLLQuery = From tbl As String
                               In CreateTables.Skip(1)           ' The first block of the text splits is the SQL comments from the MySQL data exporter. 
                               Let s_TableName As String = Regex.Match(tbl, "`.+?`").Value
@@ -466,7 +477,7 @@ NO_KEY:
 
         Return __generateCode(Schema,
                               Head:=CreateTables.First,
-                              FileName:=FileIO.FileSystem.GetFileInfo(SqlDump).Name,
+                              FileName:=FileIO.FileSystem.GetFileInfo(path).Name,
                               TableSql:=SchemaSQL,
                               [Namespace]:=[Namespace])
     End Function
@@ -478,9 +489,19 @@ NO_KEY:
     ''' <param name="SqlDump">The SQL dumping file path.(Dump sql文件的文件路径)</param>
     ''' <param name="ns">The namespace of the source code classes</param>
     Public Function GenerateCodeSplit(SqlDump As String, Optional ns As String = "") As Dictionary(Of String, String)
-        Dim Schema As Reflection.Schema.Table() = SQLParser.LoadSQLDoc(SqlDump)
-        Dim CreateTables As String() =
-            Regex.Split(FileIO.FileSystem.ReadAllText(SqlDump), SCHEMA_SECTIONS)
+        Return GenerateCodeSplit(New StreamReader(New FileStream(SqlDump, FileMode.Open)), ns, SqlDump)
+    End Function
+
+    ''' <summary>
+    ''' 返回 {类名, 类定义}
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <param name="file">The SQL dumping file path.(Dump sql文件的文件路径)</param>
+    ''' <param name="ns">The namespace of the source code classes</param>
+    Public Function GenerateCodeSplit(file As StreamReader, Optional ns As String = "", Optional path As String = Nothing) As Dictionary(Of String, String)
+        Dim sqlDump As String = Nothing
+        Dim Schema As Reflection.Schema.Table() = SQLParser.LoadSQLDoc(file, sqlDump)
+        Dim CreateTables As String() = Regex.Split(sqlDump, SCHEMA_SECTIONS)
         Dim SchemaSQLLQuery = From tbl As String
                               In CreateTables.Skip(1)          ' The first block of the text splits is the SQL comments from the MySQL data exporter. 
                               Let s_TableName As String = Regex.Match(tbl, "`.+?`").Value
@@ -499,7 +520,7 @@ NO_KEY:
 
         Return __generateCodeSplit(Schema,
                                    Head:=CreateTables.First,
-                                   FileName:=FileIO.FileSystem.GetFileInfo(SqlDump).Name,
+                                   FileName:=If(path.FileExists, FileIO.FileSystem.GetFileInfo(path).Name, ""),
                                    TableSql:=SchemaSQL,
                                    [Namespace]:=ns)
     End Function

@@ -25,6 +25,7 @@
 
 #End Region
 
+Imports System.IO
 Imports System.Text
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
@@ -43,8 +44,8 @@ Module CLIProgram
 
     <ExportAPI("--reflects",
                Info:="Automatically generates visualbasic source code from the MySQL database schema dump.",
-               Usage:="--reflects /sql <sql_path> [-o <output_path> /namespace <namespace> /split]",
-               Example:="--reflects /sql ./test.sql")>
+               Usage:="--reflects /sql <sql_path/std_in> [-o <output_path> /namespace <namespace> /split]",
+               Example:="--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
     <ParameterInfo("/sql", False,
                    Description:="The file path of the MySQL database schema dump file."),
      ParameterInfo("-o", True,
@@ -52,16 +53,23 @@ Module CLIProgram
      ParameterInfo("/namespace", True,
                    Description:="The namespace value will be insert into the generated source code if this parameter is not null.")>
     Public Function ReflectsConvert(args As CommandLine) As Integer
-        If Not args.CheckMissingRequiredParameters("/sql").IsNullOrEmpty Then
-            Call VBDebugger.Warning(InputsNotFound)
-            Return -1
-        End If
-
+        Dim split As Boolean = args.GetBoolean("/split")
         Dim SQL As String = args("/sql"), out As String = args("-o")
         Dim ns As String = args("/namespace")
 
+        If Not SQL.FileExists Then  ' 当文件不存在的时候可能是std_in，则判断是否存在out并且是split状态
+            If split AndAlso String.IsNullOrEmpty(out) Then
+                Call VBDebugger.Warning(InputsNotFound)
+                Return -1
+            End If
+        End If
+
         If FileIO.FileSystem.FileExists(SQL) Then
-            Return __EXPORT(SQL, ns, out, args.GetBoolean("/split"))
+            Dim writer As StreamWriter = Nothing
+            If Not split Then
+                writer = args.OpenStreamOutput("-o")
+            End If
+            Return __EXPORT(SQL, args.OpenStreamInput("/sql"), ns, out, writer, split)
         Else
             Dim msg As String = $"The target schema sql dump file ""{SQL}"" is not exists on your file system!"
             Call VBDebugger.PrintException(msg)
@@ -71,8 +79,8 @@ Module CLIProgram
         Return 0
     End Function
 
-    Private Function __EXPORT(SQL As String, ns As String, out As String, split As Boolean) As Integer
-        If split Then
+    Private Function __EXPORT(SQL As String, file As StreamReader, ns As String, out As String, output As StreamWriter, split As Boolean) As Integer
+        If split Then ' 分开文档的输出形式，则不能够使用stream了
             If String.IsNullOrEmpty(out) Then
                 out = FileIO.FileSystem.GetParentPath(SQL)
                 out = $"{out}/{IO.Path.GetFileNameWithoutExtension(SQL)}/"
@@ -80,17 +88,22 @@ Module CLIProgram
 
             Call FileIO.FileSystem.CreateDirectory(out)
 
-            For Each doc As KeyValuePair(Of String, String) In CodeGenerator.GenerateCodeSplit(SQL, ns)
+            For Each doc As KeyValuePair(Of String, String) In CodeGenerator.GenerateCodeSplit(file, ns, SQL)
                 Call doc.Value.SaveTo($"{out}/{doc.Key}.vb", Encoding.Unicode)
             Next
-        Else
-            If String.IsNullOrEmpty(out) Then
-                out = FileIO.FileSystem.GetParentPath(SQL)
-                out = $"{out}/{SQL.BaseName}.vb"
-            End If
+        Else ' 整个的文档形式
+            If output Is Nothing Then
+                If String.IsNullOrEmpty(out) Then
+                    out = FileIO.FileSystem.GetParentPath(SQL)
+                    out = $"{out}/{SQL.BaseName}.vb"
+                End If
 
-            Dim doc As String = CodeGenerator.GenerateCode(SQL, ns)  ' Convert the SQL file into a visualbasic source code
-            Return CInt(doc.SaveTo(out, Encoding.Unicode))           ' Save the vb source code into a text file
+                Dim doc As String = CodeGenerator.GenerateCode(file, ns, SQL)  ' Convert the SQL file into a visualbasic source code
+                Return doc.SaveTo(out, Encoding.Unicode).CLICode               ' Save the vb source code into a text file
+            Else
+                Call output.Write(CodeGenerator.GenerateCode(file, ns, SQL))
+                Call output.Flush()
+            End If
         End If
 
         Return 0
