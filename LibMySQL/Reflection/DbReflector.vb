@@ -28,6 +28,7 @@
 Imports System.Reflection
 Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports MySql.Data.MySqlClient
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
@@ -107,7 +108,7 @@ Namespace Reflection
                 Dim ObjValue As Object = source.GetValue(Ordinal)
 
                 If Not IsDBNull(ObjValue) Then
-                    Call prop.obj.SetValue(FillObject, ObjValue, Nothing)
+                    Call (+prop).SetValue(FillObject, ObjValue, Nothing)
                 End If
             Next
 
@@ -126,12 +127,12 @@ Namespace Reflection
                     Dim Ordinal As Integer = prop.i
                     Dim ObjValue As Object = reader.GetValue(Ordinal)
                     If Not IsDBNull(ObjValue) Then
-                        Call prop.obj.SetValue(FillObject, ObjValue, Nothing)
+                        Call (+prop).SetValue(FillObject, ObjValue, Nothing)
                     End If
                 Next
             Catch ex As Exception
                 Dim ErrorField = FieldList(FieldPointer)
-                ex = New Exception($"[{ErrorField.i}] => {ErrorField.obj.ToString}", ex)
+                ex = New Exception($"[{ErrorField.i}] => {ErrorField.value.ToString}", ex)
                 Throw ex
             End Try
 
@@ -162,7 +163,7 @@ Namespace Reflection
                 If Ordinal >= 0 Then
                     fields += New SeqValue(Of PropertyInfo) With {
                         .i = Ordinal,
-                        .obj = [property]
+                        .value = [property]
                     }
                 End If
             Next
