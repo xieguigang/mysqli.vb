@@ -109,6 +109,7 @@ Namespace Reflection.Schema
         Public Property SQL As String
 
         Protected Friend Sub New()
+            _databaseFields = New Dictionary(Of String, Field)
         End Sub
 
         Sub New(Schema As Type)
