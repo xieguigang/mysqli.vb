@@ -33,6 +33,7 @@ Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Text
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Public Module SQLParser
 
@@ -92,19 +93,25 @@ Public Module SQLParser
     End Function
 
     <Extension>
+    Private Function __splitInternal(sql$) As String()
+        Dim out$() = Regex.Matches(sql.Replace("<", "&lt;"), SQL_CREATE_TABLE, RegexOptions.Singleline).ToArray
+        Return out
+    End Function
+
+    <Extension>
     Public Function LoadSQLDoc(stream As StreamReader, Optional ByRef raw As String = Nothing) As Reflection.Schema.Table()
         Dim doc As String = stream.ReadToEnd
         Dim DB As String = __getDBName(doc)
-        Dim Tables = (From m As Match
-                      In Regex.Matches(doc, SQL_CREATE_TABLE, RegexOptions.Singleline)
-                      Let Tokens As KeyValuePair(Of String, String()) = __sqlParser(SQL:=m.Value)
-                      Let TableName As String = Tokens.Value(Scan0)
-                      Let PrimaryKey As String = Tokens.Key
-                      Let FieldsTokens = Tokens.Value.Skip(1).ToArray
+        Dim Tables = (From tbl As String
+                      In doc.__splitInternal
+                      Let tokens As KeyValuePair(Of String, String()) = __sqlParser(SQL:=tbl)
+                      Let TableName As String = tokens.Value(Scan0)
+                      Let PrimaryKey As String = tokens.Key
+                      Let FieldsTokens = tokens.Value.Skip(1).ToArray
                       Select PrimaryKey,
                           TableName,
                           Fields = FieldsTokens,
-                          Original = m.Value).ToArray
+                          Original = tbl).ToArray
         Dim setValue = New SetValue(Of Reflection.Schema.Table)() _
             .GetSet(NameOf(Reflection.Schema.Table.Database))
         Dim SqlSchema =
@@ -235,8 +242,8 @@ _SET_PRIMARYKEY:
 
         CreateTableSQL = ASCII.ReplaceQuot(CreateTableSQL, "\'")
 
-        Dim TableSchema As New Reflection.Schema.Table With {
-            ._databaseFields = FieldLQuery,        ' The database fields reflection result {Name, Attribute}
+        ' The database fields reflection result {Name, Attribute}
+        Dim TableSchema As New Table(FieldLQuery) With {
             .TableName = TableName,
             .PrimaryFields = PrimaryKeys.ToList,   ' Assuming at least only one primary key in a table
             .Index = PrimaryKey,
@@ -278,7 +285,7 @@ _SET_PRIMARYKEY:
 
         Dim FieldSchema As New Reflection.Schema.Field With {
             .FieldName = FieldName,
-            .DataType = __createDataType(DataType.Replace(",", "").Trim),  'Some data type can be merged into a same type when we mapping a database table
+            .DataType = __createDataType(DataType.Replace(",", "").Trim),  ' Some data type can be merged into a same type when we mapping a database table
             .Comment = Comment,
             .AutoIncrement = IsAutoIncrement,
             .NotNull = IsNotNull
