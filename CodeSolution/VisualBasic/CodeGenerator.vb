@@ -436,7 +436,7 @@ NO_KEY:
         ''' <returns></returns>
         Private Function __getExprInvoke(Field As Reflection.Schema.Field, dtype_conflicts As Boolean) As String
             If Field.DataType.MySQLType = Reflection.DbAttributes.MySqlDbType.Date OrElse
-            Field.DataType.MySQLType = Reflection.DbAttributes.MySqlDbType.DateTime Then
+                Field.DataType.MySQLType = Reflection.DbAttributes.MySqlDbType.DateTime Then
                 If dtype_conflicts Then
                     Dim ref As String = GetType(Reflection.DbAttributes.DataType).FullName
                     Return $"{ref}.ToMySqlDateTimeString({TrimKeyword(Field.FieldName)})"
