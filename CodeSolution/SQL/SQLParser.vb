@@ -94,13 +94,13 @@ Public Module SQLParser
 
     <Extension>
     Private Function __splitInternal(sql$) As String()
-        Dim out$() = Regex.Matches(sql.Replace("<", "&lt;"), SQL_CREATE_TABLE, RegexOptions.Singleline).ToArray
+        Dim out$() = Regex.Matches(sql, SQL_CREATE_TABLE, RegexOptions.Singleline).ToArray
         Return out
     End Function
 
     <Extension>
     Public Function LoadSQLDoc(stream As StreamReader, Optional ByRef raw As String = Nothing) As Reflection.Schema.Table()
-        Dim doc As String = stream.ReadToEnd
+        Dim doc As String = stream.ReadToEnd.Replace("<", "&lt;")
         Dim DB As String = __getDBName(doc)
         Dim Tables = (From tbl As String
                       In doc.__splitInternal
