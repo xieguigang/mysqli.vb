@@ -39,7 +39,7 @@ Namespace Reflection.Schema
     ''' <remarks></remarks>
     Public Class Table
 
-        Protected Friend _databaseFields As Dictionary(Of String, Field)
+        Protected _databaseFields As Dictionary(Of String, Field)
 
         ''' <summary>
         ''' 
@@ -113,10 +113,15 @@ Namespace Reflection.Schema
         End Sub
 
         Sub New(Schema As Type)
+            Call Me.New
             Call Me.__getSchema(Schema)
             SchemaType = Schema
         End Sub
 
+        ''' <summary>
+        ''' 这里不进行反射解析，直接使用已经存在的数据进行数据表模型的构造
+        ''' </summary>
+        ''' <param name="databaseFields"></param>
         Sub New(databaseFields As Dictionary(Of String, Field))
             _databaseFields = databaseFields
         End Sub
