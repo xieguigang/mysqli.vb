@@ -225,7 +225,7 @@ Namespace VisualBasic
             Dim CodeGenerator As New StringBuilder("''' <summary>" & vbCrLf)
             Dim DBName As String = Table.Database
             Dim refConflict As Boolean = Not String.IsNullOrEmpty((From field As String
-                                                               In Table.lstFieldName
+                                                               In Table.FieldNames
                                                                    Where String.Equals(field, "datatype", StringComparison.OrdinalIgnoreCase)
                                                                    Select field).FirstOrDefault)
             If Not String.IsNullOrEmpty(DBName) Then
