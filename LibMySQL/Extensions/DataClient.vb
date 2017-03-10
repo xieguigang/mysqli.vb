@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Public Module DataClient
@@ -16,8 +17,8 @@ Public Module DataClient
     ''' <returns></returns>
     <Extension>
     Public Function SelectALL(Of T As SQLTable)(mysql As MySQL) As T()
-        Dim table As New Table(GetType(T))
-        Dim SQL$ = $"SELECT * FROM `{table.Database}`.`{table.TableName}`;"
+        Dim table As TableName = GetType(T).GetAttribute(Of TableName)
+        Dim SQL$ = $"SELECT * FROM `{table.Database}`.`{table.Name}`;"
         Return mysql.Query(Of T)(SQL)
     End Function
 End Module

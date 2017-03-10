@@ -134,13 +134,14 @@ Namespace Reflection.Schema
             Return TableName
         End Function
 
-        Private Sub __getSchema(Schema As Type)
-            Dim ItemProperty = Schema.GetProperties
+        Private Sub __getSchema(schema As Type)
+            Dim ItemProperty = schema.GetProperties
             Dim Field As Field
             Dim Index2 As String = String.Empty
             Dim IndexProperty2 As PropertyInfo = Nothing
 
-            TableName = GetTableName(Schema)
+            TableName = GetTableName(schema)
+            Database = GetDatabaseName(schema)
 
             For i As Integer = 0 To ItemProperty.Length - 1
                 Field = ItemProperty(i) 'Parse the field attribute from the ctype operator, this property must have a DatabaseField custom attribute to indicate that it is a database field.
@@ -215,15 +216,11 @@ Namespace Reflection.Schema
         ''' <param name="type"></param>
         ''' <returns></returns>
         Public Shared Function GetTableName(type As Type) As String
-            Dim Attributes = type.CustomAttributes
+            Return type.GetAttribute(Of TableName).Name
+        End Function
 
-            For Each attr As CustomAttributeData In Attributes
-                If String.Equals(attr.AttributeType.Name, "TableName") Then
-                    Return attr.ConstructorArguments.First.Value
-                End If
-            Next
-
-            Return String.Empty
+        Public Shared Function GetDatabaseName(type As Type) As String
+            Return type.GetAttribute(Of TableName).Database
         End Function
 
         Public Shared Widening Operator CType(Schema As Type) As Table
