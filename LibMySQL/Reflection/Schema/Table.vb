@@ -203,6 +203,11 @@ Namespace Reflection.Schema
             End If
         End Sub
 
+        ''' <summary>
+        ''' 使用这个函数从类型的元数据之中解析出数据库表名
+        ''' </summary>
+        ''' <param name="type"></param>
+        ''' <returns></returns>
         Public Shared Function GetTableName(type As Type) As String
             Dim Attributes = type.CustomAttributes
 
