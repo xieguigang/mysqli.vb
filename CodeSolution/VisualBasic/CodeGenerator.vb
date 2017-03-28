@@ -29,7 +29,6 @@ Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports System.Text.RegularExpressions
-Imports Microsoft.VisualBasic.ComponentModel
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq.Extensions
@@ -49,15 +48,23 @@ Namespace VisualBasic
             "|GetType|GetXMLNamespace|Global|GoSub|GoTo|Handles|If|Implements|Imports|In|Inherits|Integer|Interface|Is|IsNot|Let|Lib|Like|Long|Loop|Me|Mod|Module|MustInherit|MustOverride|MyBase|MyClass|" &
             "|Namespace|Narrowing|New|Next|Not|Nothing|NotInheritable|NotOverridable|Object|Of|On|Operator|Option|Optional|Or|OrElse|Overloads|Overridable|Overrides|ParamArray|Partial|Private|Property|" &
             "|Protected|Public|RaiseEvent|ReadOnly|ReDim|REM|RemoveHandler|Resume|Return|SByte|Select|Set|Shadows|Shared|Short|Single|Static|Step|Stop|String|Structure|Sub|SyncLock|Then|Throw|To|True|" &
-            "|Try|TryCast|TypeOf|Variant|Wend|UInteger|ULong|UShort|Using|When|While|Widening|With|WithEvents|WriteOnly|Xor|NameOf|"
+            "|Try|TryCast|TypeOf|Variant|Wend|UInteger|ULong|UShort|Using|When|While|Widening|With|WithEvents|WriteOnly|Xor|NameOf|Yield|"
 
         ''' <summary>
         ''' Works with the conflicts of the VisualBasic keyword.(处理VB里面的关键词的冲突)
         ''' </summary>
         ''' <param name="name"></param>
         ''' <returns></returns>
+        ''' <remarks>处理所有的VB标识符之中的非法字符都可以在这个函数之中完成</remarks>
         Public Function TrimKeyword(name As String) As String
             name = name.Replace("-", "_")  ' mysql之中允许在名称中使用-，但是vb并不允许，在这里替换掉
+            name = name.Replace(" ", "_")
+            name = name.Replace("/", "_")
+            name = name.Replace("\", "_")
+            name = name.Replace(".", "_")
+            name = name.Replace("(", "_")
+            name = name.Replace(")", "_")
+            name = name.Replace("+", "_")
 
             If InStr(VBKeywords, $"|{name.ToLower}|", CompareMethod.Text) > 0 Then
                 Return $"[{name}]"
@@ -193,11 +200,11 @@ Namespace VisualBasic
             End If
 
             For Each Line As String In From Table As Reflection.Schema.Table
-                                   In SqlDoc
+                                       In SqlDoc
                                        Let SqlDef As String =
-                                       If(TableSql.ContainsKey(Table.TableName),
-                                       TableSql(Table.TableName),
-                                       "")
+                                           If(TableSql.ContainsKey(Table.TableName),
+                                           TableSql(Table.TableName),
+                                           "")
                                        Select GenerateTableClass(Table, SqlDef)
 
                 Call VbCodeGenerator.AppendLine()
@@ -547,8 +554,7 @@ NO_KEY:
                                   Function(x) x.tbl)
             Catch ex As Exception
                 Dim g = SchemaSQLLQuery.ToArray.CheckDuplicated(Of String)(Function(x) x.tableName)
-                Dim dupliTables As String =
-                String.Join(", ", g.ToArray(Function(tb) tb.Tag))
+                Dim dupliTables As String = String.Join(", ", g.ToArray(Function(tb) tb.Tag))
                 Throw New Exception("Duplicated tables:  " & dupliTables, ex)
             End Try
 
@@ -595,9 +601,9 @@ NO_KEY:
 
         Private Function __schemaDb(DbName As String, ns As String) As String
             Dim classDef As String =
-            $"Public MustInherits Class {DbName}: Inherits {GetType(SQLTable).FullName}" & vbCrLf &
-            $"" & vbCrLf &
-            $"End Class"
+                $"Public MustInherits Class {DbName}: Inherits {GetType(SQLTable).FullName}" & vbCrLf &
+                $"" & vbCrLf &
+                $"End Class"
             Return GenerateSingleDocument(Not String.IsNullOrEmpty(ns), ns, classDef)
         End Function
 
