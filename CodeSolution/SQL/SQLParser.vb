@@ -150,8 +150,8 @@ Public Module SQLParser
     Const DB_NAME As String = "CREATE\s+DATABASE\s+IF\s+NOT\s+EXISTS\s+`.+?`"
 
     Private Function __sqlParser(SQL As String) As KeyValuePair(Of String, String())
-        Dim Tokens As String() = Strings.Split(SQL.Replace(vbLf, ""), vbCr)
-        Dim p As Integer = Tokens.Lookup("PRIMARY KEY")
+        Dim tokens$() = SQL.lTokens
+        Dim p As Integer = tokens.Lookup("PRIMARY KEY")
         Dim PrimaryKey As String
 
         If p = -1 Then ' 没有设置主键
@@ -294,7 +294,8 @@ _SET_PRIMARYKEY:
     End Function
 
     Private Function __createField(FieldDef As String) As Reflection.Schema.Field
-        Dim Tokens As String() = FieldDef.Trim.Split
+        Dim name$ = Regex.Match(FieldDef, "`.+?`", RegexICSng).Value
+        Dim tokens$() = {name}.Join(FieldDef.Replace(name, "").Trim.Split)
         Try
             Return __createField(FieldDef, Tokens)
         Catch ex As Exception
