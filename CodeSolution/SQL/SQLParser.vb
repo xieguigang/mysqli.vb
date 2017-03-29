@@ -1,27 +1,28 @@
-﻿#Region "Microsoft.VisualBasic::534fd02a97727e6899ef33e6f496ab16, ..\LibMySQL\CodeBridge\SQLParser.vb"
+﻿#Region "Microsoft.VisualBasic::286b1637b0d94dd00ef347aa9f84732c, ..\visualbasic.DBI\CodeSolution\SQL\SQLParser.vb"
 
-' Author:
-' 
-'       asuka (amethyst.asuka@gcmodeller.org)
-'       xieguigang (xie.guigang@live.com)
-' 
-' Copyright (c) 2016 GPL3 Licensed
-' 
-' 
-' GNU GENERAL PUBLIC LICENSE (GPL3)
-' 
-' This program is free software: you can redistribute it and/or modify
-' it under the terms of the GNU General Public License as published by
-' the Free Software Foundation, either version 3 of the License, or
-' (at your option) any later version.
-' 
-' This program is distributed in the hope that it will be useful,
-' but WITHOUT ANY WARRANTY; without even the implied warranty of
-' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-' GNU General Public License for more details.
-' 
-' You should have received a copy of the GNU General Public License
-' along with this program. If not, see <http://www.gnu.org/licenses/>.
+    ' Author:
+    ' 
+    '       asuka (amethyst.asuka@gcmodeller.org)
+    '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
+    ' 
+    ' Copyright (c) 2016 GPL3 Licensed
+    ' 
+    ' 
+    ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
+    ' This program is free software: you can redistribute it and/or modify
+    ' it under the terms of the GNU General Public License as published by
+    ' the Free Software Foundation, either version 3 of the License, or
+    ' (at your option) any later version.
+    ' 
+    ' This program is distributed in the hope that it will be useful,
+    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ' GNU General Public License for more details.
+    ' 
+    ' You should have received a copy of the GNU General Public License
+    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
@@ -150,8 +151,8 @@ Public Module SQLParser
     Const DB_NAME As String = "CREATE\s+DATABASE\s+IF\s+NOT\s+EXISTS\s+`.+?`"
 
     Private Function __sqlParser(SQL As String) As KeyValuePair(Of String, String())
-        Dim Tokens As String() = Strings.Split(SQL.Replace(vbLf, ""), vbCr)
-        Dim p As Integer = Tokens.Lookup("PRIMARY KEY")
+        Dim tokens$() = SQL.lTokens
+        Dim p As Integer = tokens.Lookup("PRIMARY KEY")
         Dim PrimaryKey As String
 
         If p = -1 Then ' 没有设置主键
@@ -294,7 +295,8 @@ _SET_PRIMARYKEY:
     End Function
 
     Private Function __createField(FieldDef As String) As Reflection.Schema.Field
-        Dim Tokens As String() = FieldDef.Trim.Split
+        Dim name$ = Regex.Match(FieldDef, "`.+?`", RegexICSng).Value
+        Dim tokens$() = {name}.Join(FieldDef.Replace(name, "").Trim.Split)
         Try
             Return __createField(FieldDef, Tokens)
         Catch ex As Exception
@@ -358,4 +360,3 @@ _SET_PRIMARYKEY:
         Return Parameter
     End Function
 End Module
-
