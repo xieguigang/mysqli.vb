@@ -244,7 +244,15 @@ Public Module Extensions
         Call sb.AppendLine($"LOCK TABLES `{tableName}` WRITE;")
         Call sb.AppendLine($"/*!40000 ALTER TABLE `{tableName}` DISABLE KEYS */;")
 
-        Call sb.AppendLine(source.Select(SQL).JoinBy(ASCII.LF))
+        If type.TextEquals("insert") Then
+            For Each block In source.Split(200)
+                Dim INSERT$ = block(Scan0).GetInsertSQL
+                Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
+                Call sb.AppendLine(schema & block.Select(Function(r) r.GetDumpInsertValue).JoinBy(", ") & ";")
+            Next
+        Else
+            Call sb.AppendLine(source.Select(SQL).JoinBy(ASCII.LF))
+        End If
 
         Call sb.AppendLine($"/*!40000 ALTER TABLE `{tableName}` ENABLE KEYS */;")
         Call sb.AppendLine("UNLOCK TABLES;")
