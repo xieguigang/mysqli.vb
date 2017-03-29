@@ -356,7 +356,10 @@ Namespace VisualBasic
                 schema.Fields.Where(Function(f) Not f.AutoIncrement),
                 schema.Fields).SeqIterator
 
-                values = values.Replace("{" & field.i & "}", "{" & (+field).FieldName & "}")
+                ' 在代码之中应该是propertyName而不是数据库之中的fieldName
+                ' 因为schema对象是直接从SQL之中解析出来的，所以反射属性为空
+                ' 在这里使用TrimKeyword(Field.FieldName)来生成代码之中的属性的名称
+                values = values.Replace("{" & field.i & "}", "{" & TrimKeyword((+field).FieldName) & "}")
             Next
 
             Call sb.AppendLine($"Public Overrides Function {NameOf(SQLTable.GetDumpInsertValue)}() As String")
@@ -364,6 +367,17 @@ Namespace VisualBasic
             Call sb.AppendLine("End Function")
 
             Return sb.ToString
+        End Function
+
+        ''' <summary>
+        ''' 因为schema对象是直接从SQL之中解析出来的，所以反射属性为空
+        ''' 在这里使用TrimKeyword(Field.FieldName)来生成代码之中的属性的名称
+        ''' </summary>
+        ''' <param name="field"></param>
+        ''' <returns></returns>
+        <Extension>
+        Private Function PropertyName(field As Field) As String
+            Return TrimKeyword(field.FieldName)
         End Function
 
         Private Function __replaceInsertCommon(Schema As Reflection.Schema.Table,
