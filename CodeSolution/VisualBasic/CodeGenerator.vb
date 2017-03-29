@@ -228,7 +228,7 @@ Namespace VisualBasic
         ''' <param name="Table"></param>
         ''' <param name="DefSql"></param>
         ''' <returns></returns>
-        ''' <remarks></remarks>
+        ''' <remarks><see cref="SQLComments"/></remarks>
         Public Function GenerateTableClass(Table As Reflection.Schema.Table, DefSql As String, Optional trimAutoIncrement As Boolean = True) As String
             Dim tokens As String() = Strings.Split(DefSql.Replace(vbLf, ""), vbCr)
             Dim codeGenerator As New StringBuilder("''' <summary>" & vbCrLf)
@@ -302,6 +302,12 @@ Namespace VisualBasic
             Call codeGenerator.AppendLine("    Public Overrides Function GetInsertSQL() As String")
             Call codeGenerator.AppendLine(___INSERT_SQL_Invoke(Table, trimAutoIncrement, refConflict))
             Call codeGenerator.AppendLine("    End Function")
+            Call codeGenerator.AppendLine()
+            Call codeGenerator.AppendLine("''' <summary>")
+            Call codeGenerator.AppendLine($"''' <see cref=""{NameOf(SQLTable.GetInsertSQL)}""/>")
+            Call codeGenerator.AppendLine("''' </summary>")
+            Call codeGenerator.AppendLine(__INSERT_VALUES(Table, trimAutoIncrement))
+            Call codeGenerator.AppendLine()
             Call codeGenerator.Append(SQLlist("REPLACE").SQLComments)
             Call codeGenerator.AppendLine("    Public Overrides Function GetReplaceSQL() As String")
             Call codeGenerator.AppendLine(___REPLACE_SQL_Invoke(Table, trimAutoIncrement, refConflict))
@@ -310,7 +316,6 @@ Namespace VisualBasic
             Call codeGenerator.AppendLine("    Public Overrides Function GetUpdateSQL() As String")
             Call codeGenerator.AppendLine(___UPDATE_SQL_Invoke(Table, refConflict))
             Call codeGenerator.AppendLine("    End Function")
-            Call codeGenerator.AppendLine(__INSERT_VALUES(Table, trimAutoIncrement))
             Call codeGenerator.AppendLine("#End Region")
 
             Call codeGenerator.AppendLine("End Class")
@@ -362,9 +367,9 @@ Namespace VisualBasic
                 values = values.Replace("{" & field.i & "}", "{" & TrimKeyword((+field).FieldName) & "}")
             Next
 
-            Call sb.AppendLine($"Public Overrides Function {NameOf(SQLTable.GetDumpInsertValue)}() As String")
-            Call sb.AppendLine($"Return $""{values}""")
-            Call sb.AppendLine("End Function")
+            Call sb.AppendLine($"    Public Overrides Function {NameOf(SQLTable.GetDumpInsertValue)}() As String")
+            Call sb.AppendLine($"        Return $""{values}""")
+            Call sb.AppendLine($"    End Function")
 
             Return sb.ToString
         End Function
