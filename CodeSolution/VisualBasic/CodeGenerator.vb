@@ -635,17 +635,18 @@ NO_KEY:
                 TableSql = New Dictionary(Of String, String)
             End If
 
-            Dim ClassList = (From Table As Reflection.Schema.Table
+            Dim ClassList = (From Table As Table
                              In SqlDoc
                              Let SqlDef As String = If(TableSql.ContainsKey(Table.TableName), TableSql(Table.TableName), "")
                              Select ClassDef = GenerateTableClass(Table, SqlDef),
                                  Table).ToArray
-            Dim LQuery = (From Table
+            Dim LQuery = (From table
                           In ClassList
-                          Select Table.Table,
-                              doc = GenerateSingleDocument(haveNamespace, [Namespace], Table.ClassDef)).ToArray
-            Return LQuery.ToDictionary(Function(x) x.Table.TableName,
-                                   Function(x) x.doc)
+                          Select table.Table,
+                              doc = GenerateSingleDocument(haveNamespace, [Namespace], table.ClassDef)).ToArray
+            Return LQuery.ToDictionary(
+                Function(x) x.Table.TableName,
+                Function(x) x.doc)
         End Function
 
         Private Function __schemaDb(DbName As String, ns As String) As String
@@ -667,7 +668,8 @@ NO_KEY:
             Call VbCodeGenerator.AppendLine()
 
             Call VbCodeGenerator.AppendLine()
-            Call VbCodeGenerator.AppendLine("Imports " & GetType(Reflection.DbAttributes.MySqlDbType).FullName.Replace(".MySqlDbType", ""))
+            Call VbCodeGenerator.AppendLine("Imports " & LinqMappingNs)
+            Call VbCodeGenerator.AppendLine("Imports " & LibMySQLReflectionNs)
             Call VbCodeGenerator.AppendLine()
 
             If haveNamespace Then
