@@ -191,15 +191,17 @@ Public Module Extensions
     ''' <returns></returns>
     <Extension>
     Public Function MySqlEscaping(value As String) As String
-        Dim sb As New StringBuilder(value)
+        If value.StringEmpty Then
+            Return ""
+        Else
+            Dim sb As New StringBuilder(value)
 
-        Call sb.Replace("\", "\\")
-
-        For Each x In __esacps
-            Call sb.Replace(x.Key, x.Value)
-        Next
-
-        Return sb.ToString
+            Call sb.Replace("\", "\\")
+            For Each x In __esacps
+                Call sb.Replace(x.Key, x.Value)
+            Next
+            Return sb.ToString
+        End If
     End Function
 
     ''' <summary>
@@ -248,7 +250,10 @@ Public Module Extensions
         Call sb.AppendLine($"/*!40000 ALTER TABLE `{tableName}` DISABLE KEYS */;")
 
         If type.TextEquals("insert") Then
-            Dim insertBlocks$() = source.Select(Function(r) r.GetDumpInsertValue).ToArray
+            Dim insertBlocks$() = source _
+                .Where(Function(r) Not r Is Nothing) _
+                .Select(Function(r) r.GetDumpInsertValue) _
+                .ToArray
             Dim INSERT$ = schemaTable.GenerateInsertSql
             Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
 

@@ -26,6 +26,7 @@
 
 #End Region
 
+Imports System.Data.Linq.Mapping
 Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Text
@@ -55,12 +56,14 @@ Namespace VisualBasic
             "|Try|TryCast|TypeOf|Variant|Wend|UInteger|ULong|UShort|Using|When|While|Widening|With|WithEvents|WriteOnly|Xor|NameOf|Yield|"
 
         ''' <summary>
-        ''' Works with the conflicts of the VisualBasic keyword.(处理VB里面的关键词的冲突)
+        ''' Works with the conflicts of the VisualBasic keyword and strips for 
+        ''' the invalid characters in the mysql table field name.
+        ''' (处理VB里面的关键词的冲突以及清除mysql的表之中的域名中的相对于vb的标识符而言的非法字符)
         ''' </summary>
         ''' <param name="name"></param>
         ''' <returns></returns>
         ''' <remarks>处理所有的VB标识符之中的非法字符都可以在这个函数之中完成</remarks>
-        Public Function TrimKeyword(name As String) As String
+        Public Function FixInvalids(name As String) As String
             ' mysql之中允许在名称中使用可以印刷的ASCII符号，但是vb并不允许，在这里替换掉
             For Each c As Char In ASCII.Symbols
                 name = name.Replace(c, "_")
@@ -192,7 +195,8 @@ Namespace VisualBasic
             Next
 
             Call VbCodeGenerator.AppendLine()
-            Call VbCodeGenerator.AppendLine("Imports " & AttributesNs)
+            Call VbCodeGenerator.AppendLine("Imports " & LinqMappingNs)
+            Call VbCodeGenerator.AppendLine("Imports " & LibMySQLReflectionNs)
             Call VbCodeGenerator.AppendLine()
 
             If haveNamespace Then
@@ -219,7 +223,8 @@ Namespace VisualBasic
             Return VbCodeGenerator.ToString
         End Function
 
-        Private ReadOnly Property AttributesNs As String = GetType(Reflection.DbAttributes.MySqlDbType).FullName.Replace(".MySqlDbType", "")
+        Private ReadOnly Property LibMySQLReflectionNs As String = GetType(MySqlDbType).FullName.Replace(".MySqlDbType", "")
+        Private ReadOnly Property LinqMappingNs As String = GetType(ColumnAttribute).FullName.Replace(".ColumnAttribute", "")
         Private ReadOnly Property InheritsAbstract As String = GetType(SQLTable).FullName
 
         ''' <summary>
@@ -260,7 +265,7 @@ Namespace VisualBasic
             Call codeGenerator.AppendLine("''' <remarks></remarks>")
 
             Call codeGenerator.AppendLine($"<Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.TableName(""{Table.TableName}""{DBName})>")
-            Call codeGenerator.AppendLine($"Public Class {TrimKeyword(Table.TableName)}: Inherits {InheritsAbstract}")
+            Call codeGenerator.AppendLine($"Public Class {FixInvalids(Table.TableName)}: Inherits {InheritsAbstract}")
             Call codeGenerator.AppendLine("#Region ""Public Property Mapping To Database Fields""")
             For Each Field As Reflection.Schema.Field In Table.Fields
 
@@ -274,7 +279,7 @@ Namespace VisualBasic
                 End If
 
                 Call codeGenerator.Append(__createAttribute(Field, IsPrimaryKey:=Table.PrimaryFields.Contains(Field.FieldName))) 'Apply the custom attribute on the property 
-                Call codeGenerator.Append("Public Property " & TrimKeyword(Field.FieldName))                                     'Generate the property name 
+                Call codeGenerator.Append("Public Property " & FixInvalids(Field.FieldName))                                     'Generate the property name 
                 Call codeGenerator.Append(__toDataType(Field.DataType))                                                          'Generate the property data type
                 Call codeGenerator.AppendLine()
             Next
@@ -364,7 +369,7 @@ Namespace VisualBasic
                 ' 在代码之中应该是propertyName而不是数据库之中的fieldName
                 ' 因为schema对象是直接从SQL之中解析出来的，所以反射属性为空
                 ' 在这里使用TrimKeyword(Field.FieldName)来生成代码之中的属性的名称
-                values = values.Replace("{" & field.i & "}", "{" & TrimKeyword((+field).FieldName) & "}")
+                values = values.Replace("{" & field.i & "}", "{" & FixInvalids((+field).FieldName) & "}")
             Next
 
             Call sb.AppendLine($"    Public Overrides Function {NameOf(SQLTable.GetDumpInsertValue)}() As String")
@@ -382,7 +387,7 @@ Namespace VisualBasic
         ''' <returns></returns>
         <Extension>
         Private Function PropertyName(field As Field) As String
-            Return TrimKeyword(field.FieldName)
+            Return FixInvalids(field.FieldName)
         End Function
 
         Private Function __replaceInsertCommon(Schema As Reflection.Schema.Table,
@@ -497,16 +502,20 @@ NO_KEY:
                 Field.DataType.MySQLType = Reflection.DbAttributes.MySqlDbType.DateTime Then
                 If dtype_conflicts Then
                     Dim ref As String = GetType(Reflection.DbAttributes.DataType).FullName
-                    Return $"{ref}.ToMySqlDateTimeString({TrimKeyword(Field.FieldName)})"
+                    Return $"{ref}.ToMySqlDateTimeString({FixInvalids(Field.FieldName)})"
                 Else
-                    Return $"DataType.ToMySqlDateTimeString({TrimKeyword(Field.FieldName)})"
+                    Return $"DataType.ToMySqlDateTimeString({FixInvalids(Field.FieldName)})"
                 End If
             Else
-                Return TrimKeyword(Field.FieldName)
+                Return FixInvalids(Field.FieldName)
             End If
         End Function
 
         ReadOnly DataTypeFullNamesapce As String = GetType(Reflection.DbAttributes.MySqlDbType).Name
+        ''' <summary>
+        ''' 这个是为了兼容sciBASIC之中的csv序列化而设置的属性
+        ''' </summary>
+        ReadOnly columnMappingType As Type = GetType(ColumnAttribute)
 
         Private Function __createAttribute(Field As Reflection.Schema.Field, IsPrimaryKey As Boolean) As String
             Dim Code As String = $"    <DatabaseField(""{Field.FieldName}"")"
@@ -522,6 +531,7 @@ NO_KEY:
             End If
 
             Code &= $", DataType({DataTypeFullNamesapce}.{Field.DataType.MySQLType.ToString}{If(String.IsNullOrEmpty(Field.DataType.ParameterValue), "", ", """ & Field.DataType.ParameterValue & """")})"
+            Code &= $", Column(Name:=""{Field.FieldName}"")"
             Code &= "> "
             Return Code
         End Function
