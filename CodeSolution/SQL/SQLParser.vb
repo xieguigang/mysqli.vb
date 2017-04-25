@@ -246,7 +246,7 @@ _SET_PRIMARYKEY:
         ' The database fields reflection result {Name, Attribute}
         Dim TableSchema As New Table(FieldLQuery) With {
             .TableName = TableName,
-            .PrimaryFields = PrimaryKeys.ToList,   ' Assuming at least only one primary key in a table
+            .PrimaryFields = PrimaryKeys.AsList,   ' Assuming at least only one primary key in a table
             .Index = PrimaryKey,
             .Comment = Comment,
             .SQL = CreateTableSQL
