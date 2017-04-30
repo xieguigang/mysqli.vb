@@ -60,7 +60,7 @@ Public Module SchemaMarkdown
             Dim row$ = columns _
                 .Select(Function(s) s.Replace("|", "\|")) _
                 .JoinBy("|")
-            Call md.AppendLine(row)
+            Call md.AppendLine("|" & row & "|")
         Next
 
         Call md.AppendLine()
