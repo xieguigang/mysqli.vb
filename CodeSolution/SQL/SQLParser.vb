@@ -84,10 +84,10 @@ Public Module SQLParser
     ''' <summary>
     ''' Loading the table schema from a specific SQL doucment.
     ''' </summary>
-    ''' <param name="Path"></param>
+    ''' <param name="path"></param>
     ''' <returns></returns>
-    Public Function LoadSQLDoc(Path As String) As Reflection.Schema.Table()
-        Using file As New StreamReader(New FileStream(Path, FileMode.Open))
+    Public Function LoadSQLDoc(path$) As Table()
+        Using file As New StreamReader(New FileStream(path, FileMode.Open))
             Return file.LoadSQLDoc
         End Using
     End Function
