@@ -1,22 +1,24 @@
 # VisualBasic.DBI
-Database interface wrapper for VisualBasic
+MySQL/SQLite database interface/mapping for VisualBasic
 
 This project includes:
 
-+ a mysql data mapping tools and a cli tools for convert the sql table into the VisualBasic class source code.
++ a mysql data mapping tools and a cli tools for convert the sql table into the VisualBasic/PHP class object source code.
 + a sqlite data mapping tools
 
 ##### Runtime
 
-Require of VisualBasic server CLI runtime
+Require of ``sciBASIC`` runtime:
 
-> PM> Install-Package sciBASIC
+> PM> Install-Package sciBASIC -Pre
 
-Or reference to source code project:
+Or clone and reference to source code project:
 
 > https://github.com/xieguigang/sciBASIC
 
 ### ORM
+
+Data to source code mapping solution for VisualBasic/PHP language, makes the database operation more easily, escaping from the manual SQL generator.
 
 ![](./Mimetypes-text-x-sql-icon.png)
 
