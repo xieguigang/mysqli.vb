@@ -47,7 +47,7 @@ Namespace VisualBasic
     ''' </summary>
     ''' <remarks></remarks>
     Public Module CodeGenerator
-        
+
         ''' <summary>
         ''' Works with the conflicts of the VisualBasic keyword and strips for 
         ''' the invalid characters in the mysql table field name.
@@ -73,11 +73,11 @@ Namespace VisualBasic
         ''' <param name="[Namesapce]"></param>
         ''' <returns></returns>
         Public Function GenerateClass(SQL As String, [Namesapce] As String) As NamedValue(Of String)
-            Dim Table As Reflection.Schema.Table = SQLParser.ParseTable(SQL)
-            Dim vb As String = CodeGenerator.GenerateCode({Table}, Namesapce)
+            Dim table As Table = SQLParser.ParseTable(SQL)
+            Dim vb$ = {table}.GenerateCode(Namesapce)
 
             Return New NamedValue(Of String) With {
-                .Name = Table.TableName,
+                .Name = table.TableName,
                 .Value = vb
             }
         End Function
@@ -143,35 +143,36 @@ Namespace VisualBasic
         ''' <summary>
         ''' Convert each table schema into a visualbasic class object definition.
         ''' </summary>
-        ''' <param name="SqlDoc"></param>
+        ''' <param name="listSQL"></param>
         ''' <returns></returns>
-        Public Function GenerateCode(SqlDoc As IEnumerable(Of Reflection.Schema.Table), Optional [Namespace] As String = "") As String
-            Return __generateCode(SqlDoc, "", "", Nothing, [Namespace])
+        <Extension> Public Function GenerateCode(listSQL As IEnumerable(Of Table), Optional namespace$ = "") As String
+            Return __generateCode(listSQL, "", "", Nothing, [namespace])
         End Function
 
         Const SCHEMA_SECTIONS As String = "-- Table structure for table `.+?`"
 
         ''' <summary>
-        ''' Generate the source code file from the table schema dumping
+        ''' Generate the source code file from the table schema dumping.
+        ''' (使用这个函数生成的程序源代码所有的``Class``类都是被放置在一个源文件之中的)
         ''' </summary>
         ''' <param name="SqlDoc"></param>
         ''' <param name="head"></param>
         ''' <param name="FileName"></param>
         ''' <param name="TableSql"></param>
         ''' <returns></returns>
-        Private Function __generateCode(SqlDoc As IEnumerable(Of Reflection.Schema.Table),
-                                        head As String,
-                                        FileName As String,
+        Private Function __generateCode(SqlDoc As IEnumerable(Of Table),
+                                        head$,
+                                        fileName$,
                                         TableSql As Dictionary(Of String, String),
-                                        [Namespace] As String) As String
+                                        namespace$) As String
 
             Dim VbCodeGenerator As New StringBuilder(1024)
-            Dim haveNamespace As Boolean = Not String.IsNullOrEmpty([Namespace])
+            Dim haveNamespace As Boolean = Not String.IsNullOrEmpty([namespace])
 
             Call VbCodeGenerator.AppendLine($"REM  {GetType(CodeGenerator).FullName}")
             Call VbCodeGenerator.AppendLine($"REM  Microsoft VisualBasic MYSQL")
             Call VbCodeGenerator.AppendLine()
-            Call VbCodeGenerator.AppendLine($"' SqlDump= {FileName}")
+            Call VbCodeGenerator.AppendLine($"' SqlDump= {fileName}")
             Call VbCodeGenerator.AppendLine()
             Call VbCodeGenerator.AppendLine()
 
@@ -190,7 +191,7 @@ Namespace VisualBasic
             Call VbCodeGenerator.AppendLine()
 
             If haveNamespace Then
-                Call VbCodeGenerator.AppendLine($"Namespace {[Namespace]}")
+                Call VbCodeGenerator.AppendLine($"Namespace {[namespace]}")
             End If
 
             For Each Line As String In From Table As Reflection.Schema.Table
@@ -213,23 +214,26 @@ Namespace VisualBasic
             Return VbCodeGenerator.ToString
         End Function
 
-        Private ReadOnly Property LibMySQLReflectionNs As String = GetType(MySqlDbType).FullName.Replace(".MySqlDbType", "")
-        Private ReadOnly Property LinqMappingNs As String = GetType(ColumnAttribute).FullName.Replace(".ColumnAttribute", "")
-        Private ReadOnly Property InheritsAbstract As String = GetType(SQLTable).FullName
+        Private ReadOnly LibMySQLReflectionNs As String = GetType(MySqlDbType).FullName.Replace(".MySqlDbType", "")
+        Private ReadOnly LinqMappingNs As String = GetType(ColumnAttribute).FullName.Replace(".ColumnAttribute", "")
+        Private ReadOnly InheritsAbstract As String = GetType(SQLTable).FullName
 
         ''' <summary>
         ''' Generate the class object definition to mapping a table in the mysql database.
         ''' </summary>
-        ''' <param name="Table"></param>
+        ''' <param name="table"></param>
         ''' <param name="DefSql"></param>
+        ''' <param name="stripAI">
+        ''' 如果这个参数为真，那么对于AI自增的字段而言，将不会被生成在``INSERT INTO``或者``REPLACE INTO``语句之中
+        ''' </param>
         ''' <returns></returns>
         ''' <remarks><see cref="SQLComments"/></remarks>
-        <Extension> Public Function GenerateTableClass(Table As Table, DefSql$, Optional trimAutoIncrement As Boolean = True) As String
-            Dim tokens As String() = Strings.Split(DefSql.Replace(vbLf, ""), vbCr)
-            Dim codeGenerator As New StringBuilder("''' <summary>" & vbCrLf)
-            Dim DBName As String = Table.Database
+        <Extension> Public Function GenerateTableClass(table As Table, DefSql$, Optional stripAI As Boolean = True) As String
+            Dim tokens$() = DefSql.lTokens
+            Dim vb As New StringBuilder("''' <summary>" & vbCrLf)
+            Dim DBName As String = table.Database
             Dim refConflict As Boolean = Not (From field As String
-                                              In Table.FieldNames
+                                              In table.FieldNames
                                               Where String.Equals(field, "datatype", StringComparison.OrdinalIgnoreCase)
                                               Select field) _
                                                 .FirstOrDefault _
@@ -238,45 +242,45 @@ Namespace VisualBasic
             If Not String.IsNullOrEmpty(DBName) Then
                 DBName = $", Database:=""{DBName}"""
             End If
-            If Not String.IsNullOrEmpty(Table.SQL) Then
-                DBName &= $", {NameOf(TableName.SchemaSQL)}:=""{vbCrLf}{Table.SQL}"""
+            If Not String.IsNullOrEmpty(table.SQL) Then
+                DBName &= $", {NameOf(TableName.SchemaSQL)}:=""{vbCrLf}{table.SQL}"""
             End If
 
-            Call codeGenerator.AppendLine("''' ```SQL")
-            If Not String.IsNullOrEmpty(Table.Comment) Then
-                Call codeGenerator.AppendLine("''' " & Table.Comment)
+            Call vb.AppendLine("''' ```SQL")
+            If Not String.IsNullOrEmpty(table.Comment) Then
+                Call vb.AppendLine("''' " & table.Comment)
             End If
 
             For Each line As String In tokens
-                Call codeGenerator.AppendLine("''' " & line)
+                Call vb.AppendLine("''' " & line)
             Next
-            Call codeGenerator.AppendLine("''' ```")
-            Call codeGenerator.AppendLine("''' </summary>")
-            Call codeGenerator.AppendLine("''' <remarks></remarks>")
+            Call vb.AppendLine("''' ```")
+            Call vb.AppendLine("''' </summary>")
+            Call vb.AppendLine("''' <remarks></remarks>")
 
-            Call codeGenerator.AppendLine($"<Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.TableName(""{Table.TableName}""{DBName})>")
-            Call codeGenerator.AppendLine($"Public Class {FixInvalids(Table.TableName)}: Inherits {InheritsAbstract}")
-            Call codeGenerator.AppendLine("#Region ""Public Property Mapping To Database Fields""")
+            Call vb.AppendLine($"<Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.TableName(""{table.TableName}""{DBName})>")
+            Call vb.AppendLine($"Public Class {FixInvalids(table.TableName)}: Inherits {InheritsAbstract}")
+            Call vb.AppendLine("#Region ""Public Property Mapping To Database Fields""")
 
             ' 生成Class之中的属性
-            For Each Field As Field In Table.Fields
+            For Each Field As Field In table.Fields
 
                 If Not String.IsNullOrEmpty(Field.Comment) Then
-                    Call codeGenerator.AppendLine("''' <summary>")
-                    Call codeGenerator.AppendLine("''' " & Field.Comment)
-                    Call codeGenerator.AppendLine("''' </summary>")
-                    Call codeGenerator.AppendLine("''' <value></value>")
-                    Call codeGenerator.AppendLine("''' <returns></returns>")
-                    Call codeGenerator.AppendLine("''' <remarks></remarks>")
+                    Call vb.AppendLine("''' <summary>")
+                    Call vb.AppendLine("''' " & Field.Comment)
+                    Call vb.AppendLine("''' </summary>")
+                    Call vb.AppendLine("''' <value></value>")
+                    Call vb.AppendLine("''' <returns></returns>")
+                    Call vb.AppendLine("''' <remarks></remarks>")
                 End If
 
-                Call codeGenerator.Append(__createAttribute(Field, IsPrimaryKey:=Table.PrimaryFields.Contains(Field.FieldName))) 'Apply the custom attribute on the property 
-                Call codeGenerator.Append("Public Property " & FixInvalids(Field.FieldName))                                     'Generate the property name 
-                Call codeGenerator.Append(__toDataType(Field.DataType))                                                          'Generate the property data type
-                Call codeGenerator.AppendLine()
+                Call vb.Append(__createAttribute(Field, IsPrimaryKey:=table.PrimaryFields.Contains(Field.FieldName))) 'Apply the custom attribute on the property 
+                Call vb.Append("Public Property " & FixInvalids(Field.FieldName))                                     'Generate the property name 
+                Call vb.Append(__toDataType(Field.DataType))                                                          'Generate the property data type
+                Call vb.AppendLine()
             Next
 
-            Call codeGenerator.AppendLine("#End Region")
+            Call vb.AppendLine("#End Region")
 
             Dim SQLlist As New Dictionary(Of String, Value(Of String)) From {
                 {"INSERT", New Value(Of String)},
@@ -286,43 +290,43 @@ Namespace VisualBasic
             }
 
             ' 生成SQL接口
-            Call codeGenerator.AppendLine("#Region ""Public SQL Interface""")
-            Call codeGenerator.AppendLine("#Region ""Interface SQL""")
-            Call codeGenerator.AppendLine(___INSERT_SQL(Table, trimAutoIncrement, SQLlist("INSERT")))
-            Call codeGenerator.AppendLine(___REPLACE_SQL(Table, trimAutoIncrement, SQLlist("REPLACE")))
-            Call codeGenerator.AppendLine(___DELETE_SQL(Table, SQLlist("DELETE")))
-            Call codeGenerator.AppendLine(___UPDATE_SQL(Table, SQLlist("UPDATE")))
-            Call codeGenerator.AppendLine("#End Region")
-            Call codeGenerator.Append(SQLlist("DELETE").SQLComments)
-            Call codeGenerator.AppendLine("    Public Overrides Function GetDeleteSQL() As String")
-            Call codeGenerator.AppendLine(___DELETE_SQL_Invoke(Table, refConflict))
-            Call codeGenerator.AppendLine("    End Function")
-            Call codeGenerator.Append(SQLlist("INSERT").SQLComments)
-            Call codeGenerator.AppendLine("    Public Overrides Function GetInsertSQL() As String")
-            Call codeGenerator.AppendLine(___INSERT_SQL_Invoke(Table, trimAutoIncrement, refConflict))
-            Call codeGenerator.AppendLine("    End Function")
-            Call codeGenerator.AppendLine()
-            Call codeGenerator.AppendLine("''' <summary>")
-            Call codeGenerator.AppendLine($"''' <see cref=""{NameOf(SQLTable.GetInsertSQL)}""/>")
-            Call codeGenerator.AppendLine("''' </summary>")
-            Call codeGenerator.AppendLine(__INSERT_VALUES(Table, trimAutoIncrement))
-            Call codeGenerator.AppendLine()
-            Call codeGenerator.Append(SQLlist("REPLACE").SQLComments)
-            Call codeGenerator.AppendLine("    Public Overrides Function GetReplaceSQL() As String")
-            Call codeGenerator.AppendLine(___REPLACE_SQL_Invoke(Table, trimAutoIncrement, refConflict))
-            Call codeGenerator.AppendLine("    End Function")
-            Call codeGenerator.Append(SQLlist("UPDATE").SQLComments)
-            Call codeGenerator.AppendLine("    Public Overrides Function GetUpdateSQL() As String")
-            Call codeGenerator.AppendLine(___UPDATE_SQL_Invoke(Table, refConflict))
-            Call codeGenerator.AppendLine("    End Function")
-            Call codeGenerator.AppendLine("#End Region")
+            Call vb.AppendLine("#Region ""Public SQL Interface""")
+            Call vb.AppendLine("#Region ""Interface SQL""")
+            Call vb.AppendLine(___INSERT_SQL(table, stripAI, SQLlist("INSERT")))
+            Call vb.AppendLine(___REPLACE_SQL(table, stripAI, SQLlist("REPLACE")))
+            Call vb.AppendLine(___DELETE_SQL(table, SQLlist("DELETE")))
+            Call vb.AppendLine(___UPDATE_SQL(table, SQLlist("UPDATE")))
+            Call vb.AppendLine("#End Region")
+            Call vb.Append(SQLlist("DELETE").SQLComments)
+            Call vb.AppendLine("    Public Overrides Function GetDeleteSQL() As String")
+            Call vb.AppendLine(___DELETE_SQL_Invoke(table, refConflict))
+            Call vb.AppendLine("    End Function")
+            Call vb.Append(SQLlist("INSERT").SQLComments)
+            Call vb.AppendLine("    Public Overrides Function GetInsertSQL() As String")
+            Call vb.AppendLine(___INSERT_SQL_Invoke(table, stripAI, refConflict))
+            Call vb.AppendLine("    End Function")
+            Call vb.AppendLine()
+            Call vb.AppendLine("''' <summary>")
+            Call vb.AppendLine($"''' <see cref=""{NameOf(SQLTable.GetInsertSQL)}""/>")
+            Call vb.AppendLine("''' </summary>")
+            Call vb.AppendLine(__INSERT_VALUES(table, stripAI))
+            Call vb.AppendLine()
+            Call vb.Append(SQLlist("REPLACE").SQLComments)
+            Call vb.AppendLine("    Public Overrides Function GetReplaceSQL() As String")
+            Call vb.AppendLine(___REPLACE_SQL_Invoke(table, stripAI, refConflict))
+            Call vb.AppendLine("    End Function")
+            Call vb.Append(SQLlist("UPDATE").SQLComments)
+            Call vb.AppendLine("    Public Overrides Function GetUpdateSQL() As String")
+            Call vb.AppendLine(___UPDATE_SQL_Invoke(table, refConflict))
+            Call vb.AppendLine("    End Function")
+            Call vb.AppendLine("#End Region")
 
 #Region "Clone of the table data"
-            Call codeGenerator.AppendLine(FixInvalids(Table.TableName).__clone)
+            Call vb.AppendLine(FixInvalids(table.TableName).__clone)
 #End Region
-            Call codeGenerator.AppendLine("End Class")
+            Call vb.AppendLine("End Class")
 
-            Return codeGenerator.ToString
+            Return vb.ToString
         End Function
 
         ''' <summary>
@@ -576,9 +580,9 @@ NO_KEY:
             Return __generateCode(
                 Schema,
                 head:=CreateTables.First,
-                FileName:=FileIO.FileSystem.GetFileInfo(path).Name,
+                fileName:=FileIO.FileSystem.GetFileInfo(path).Name,
                 TableSql:=SchemaSQL,
-                [Namespace]:=[Namespace])
+                [namespace]:=[Namespace])
         End Function
 
         ''' <summary>
@@ -655,7 +659,7 @@ NO_KEY:
                                  TableSql.ContainsKey(Table.TableName),
                                  TableSql(Table.TableName),
                                  "")
-                             Let vbClass As String = Table.GenerateTableClass(SqlDef, trimAutoIncrement:=Not AI)
+                             Let vbClass As String = Table.GenerateTableClass(SqlDef, stripAI:=Not AI)
                              Select classDef = vbClass,
                                  Table).ToArray
             Dim LQuery = (From table
