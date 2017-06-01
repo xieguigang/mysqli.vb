@@ -77,7 +77,9 @@ Namespace Reflection.SQL
         ''' 
         ''' </summary>
         ''' <param name="Schema"></param>
-        ''' <param name="trimAutoIncrement">假若有列是被标记为自动增长的，则不需要在INSERT_SQL之中在添加他的值了</param>
+        ''' <param name="trimAutoIncrement">
+        ''' 假若这个参数值为真的话，则表示假若有列是被标记为自动增长的，则不需要在INSERT_SQL之中在添加他的值了
+        ''' </param>
         ''' <returns></returns>
         ''' 
         <Extension>
@@ -92,11 +94,17 @@ Namespace Reflection.SQL
             Call sb.AppendFormat("INSERT INTO `{0}` (", Schema.TableName)   ' Create table name header
             Call sb.Append(String.Join(", ", fields))                       ' Fields generate
             Call sb.Append(") VALUES ")                                     ' Values formater generate
-            Call sb.Append(GenerateInsertValues(Schema, trimAutoIncrement) & ";")
+            Call sb.Append(fields.GenerateInsertValues() & ";")
 
             Return sb.ToString
         End Function
 
+        ''' <summary>
+        ''' 返回字段的名称列表
+        ''' </summary>
+        ''' <param name="schema"></param>
+        ''' <param name="trimAutoIncrement"></param>
+        ''' <returns></returns>
         <Extension>
         Private Function __fields(schema As Table, trimAutoIncrement As Boolean) As Field()
             Dim fields As Field() = schema.Fields
@@ -110,11 +118,18 @@ Namespace Reflection.SQL
             Return fields
         End Function
 
-        Public Function GenerateInsertValues(Schema As Table, Optional trimAutoIncrement As Boolean = False) As String
-            Dim fields As Field() = Schema.__fields(trimAutoIncrement)
+        <Extension> Public Function GenerateInsertValues(schema As Table, Optional stripAI As Boolean = True) As String
+            Return schema _
+                .__fields(stripAI) _
+                .Select(Function(f) $"`{f.FieldName}`") _
+                .ToArray _
+                .GenerateInsertValues
+        End Function
+
+        <Extension> Public Function GenerateInsertValues(fields$()) As String
             Dim values$() = LinqAPI.Exec(Of String) <=
                 From i As Integer
-                In Schema.Fields.Sequence
+                In fields.Sequence
                 Select "'{0}'".Replace("0"c, i)
 
             Return "(" & String.Join(", ", values) & ")" ' End of the statement

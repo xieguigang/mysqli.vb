@@ -330,7 +330,7 @@ Namespace VisualBasic
         End Function
 
         ''' <summary>
-        ''' 
+        ''' Code for invoke self ``MemberwiseClone``
         ''' </summary>
         ''' <param name="type$">Class name</param>
         ''' <returns></returns>
@@ -404,14 +404,22 @@ Namespace VisualBasic
             Return FixInvalids(field.FieldName)
         End Function
 
-        Private Function __replaceInsertCommon(Schema As Reflection.Schema.Table,
-                                               TrimAutoIncrement As Boolean,
+        ''' <summary>
+        ''' 生成``INSERT INTO``和``REPLACE INTO``部分所共同的语句
+        ''' </summary>
+        ''' <param name="Schema"></param>
+        ''' <param name="AI_strip"></param>
+        ''' <param name="isReplace"></param>
+        ''' <param name="SQL"></param>
+        ''' <returns></returns>
+        Private Function __replaceInsertCommon(Schema As Table,
+                                               AI_strip As Boolean,
                                                isReplace As Boolean,
                                                ByRef SQL As Value(Of String)) As String
 
             Dim Name As String = If(isReplace, "REPLACE", "INSERT")
             Dim SqlBuilder As New StringBuilder($"    Private Shared ReadOnly {Name}_SQL As String = <SQL>%s</SQL>")
-            SQL.value = Reflection.SQL.SqlGenerateMethods.GenerateInsertSql(Schema, TrimAutoIncrement)
+            SQL.value = Reflection.SQL.SqlGenerateMethods.GenerateInsertSql(Schema, AI_strip)
 
             If isReplace Then
                 SQL = SQL.value.Replace("INSERT INTO", "REPLACE INTO")
@@ -422,7 +430,7 @@ Namespace VisualBasic
             Return SqlBuilder.ToString
         End Function
 
-        Private Function __replaceInsertInvokeCommon(Schema As Reflection.Schema.Table,
+        Private Function __replaceInsertInvokeCommon(Schema As Table,
                                                      TrimAutoIncrement As Boolean,
                                                      Replace As Boolean,
                                                      refConflict As Boolean) As String
@@ -440,7 +448,7 @@ Namespace VisualBasic
             Return SqlBuilder.ToString
         End Function
 
-        Private Function ___INSERT_SQL(Schema As Reflection.Schema.Table, TrimAutoIncrement As Boolean, ByRef SQL As Value(Of String)) As String
+        Private Function ___INSERT_SQL(Schema As Table, TrimAutoIncrement As Boolean, ByRef SQL As Value(Of String)) As String
             Return __replaceInsertCommon(Schema, TrimAutoIncrement, False, SQL)
         End Function
 
