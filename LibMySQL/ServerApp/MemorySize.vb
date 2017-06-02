@@ -1,28 +1,28 @@
 ﻿#Region "Microsoft.VisualBasic::8542177925a2b7aaae891852ede7bdd5, ..\visualbasic.DBI\LibMySQL\ServerApp\MemorySize.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    '       xie (genetics@smrucc.org)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
@@ -33,7 +33,9 @@ Imports Microsoft.VisualBasic.Text
 Namespace ServerApp
 
     ''' <summary>
-    ''' 分析某一个表实体对象的内存占用大小
+    ''' Try measure the specifci SQL table object its memory size. 
+    ''' Probably using for the automaticaly cache memory cleanup algorightm.
+    ''' (分析某一个表实体对象的内存占用大小)
     ''' </summary>
     ''' <typeparam name="T"></typeparam>
     Public Class MemorySize(Of T As SQLTable)
@@ -44,6 +46,20 @@ Namespace ServerApp
         ''' </summary>
         ''' <returns></returns>
         Public ReadOnly Property Schema As PropertyInfo()
+
+        ''' <summary>
+        ''' ```vbnet
+        ''' Dim sizeOf As New MemorySize(Of T)
+        ''' Dim size&amp; = sizeOf(obj)
+        ''' ```
+        ''' </summary>
+        ''' <param name="o"></param>
+        ''' <returns></returns>
+        Default Public ReadOnly Property Measuring(o As T) As Long
+            Get
+                Return MeasureSize(o)
+            End Get
+        End Property
 
         Sub New()
             Schema = Type _
@@ -70,6 +86,11 @@ Namespace ServerApp
             sizeOf(GetType(Short)) = Marshal.SizeOf(CShort(1))
         End Sub
 
+        ''' <summary>
+        ''' 因为对于<see cref="SQLTable"/>而言，字段都是简单的初始类型，所以进行内存大小的计算会非常简单
+        ''' </summary>
+        ''' <param name="o"></param>
+        ''' <returns></returns>
         Public Function MeasureSize(o As T) As Long
             Dim obj As Object = o
             Dim size&

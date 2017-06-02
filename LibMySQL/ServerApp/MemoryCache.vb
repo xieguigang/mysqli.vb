@@ -1,28 +1,28 @@
 ﻿#Region "Microsoft.VisualBasic::5fc291253ee48492ce4f1ce4f0f561a0, ..\visualbasic.DBI\LibMySQL\ServerApp\MemoryCache.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    '       xie (genetics@smrucc.org)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
@@ -33,8 +33,11 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Namespace ServerApp
 
     ''' <summary>
-    ''' 这个缓存对象对于不经常更新数据，即只执行SELECT查询操作的数据表非常有效
-    ''' 至少对于生物信息学的数据库而言，由于更新数据很缓慢，大部分时候都只是执行SELECT查询操作，所以非常好用
+    ''' For the biological database, due to the reason of very few UPDATE/INSERT query but with 
+    ''' more active SELECT query. So that a memory cache is important for the improvements 
+    ''' on the database query performance.
+    ''' (这个缓存对象对于不经常更新数据，即只执行SELECT查询操作的数据表非常有效
+    ''' 至少对于生物信息学的数据库而言，由于更新数据很缓慢，大部分时候都只是执行SELECT查询操作，所以非常好用)
     ''' </summary>
     ''' <typeparam name="T"></typeparam>
     Public Class MemoryCache(Of T As SQLTable)
@@ -51,6 +54,11 @@ Namespace ServerApp
         ''' ``propertyName -> FieldName``
         ''' </summary>
         ReadOnly __fields As Dictionary(Of String, String)
+
+        ''' <summary>
+        ''' 用于计算内存的使用量，进行自动缓存清除的算法
+        ''' </summary>
+        ReadOnly sizeOf As New MemorySize(Of T)
 
         ''' <summary>
         ''' 
