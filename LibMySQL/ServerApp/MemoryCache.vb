@@ -59,6 +59,8 @@ Namespace ServerApp
         ''' 用于计算内存的使用量，进行自动缓存清除的算法
         ''' </summary>
         ReadOnly sizeOf As New MemorySize(Of T)
+        ReadOnly hits As New Dictionary(Of String, ULong)
+
 
         ''' <summary>
         ''' 
