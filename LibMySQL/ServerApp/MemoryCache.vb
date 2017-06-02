@@ -28,7 +28,9 @@
 
 Imports System.Reflection
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
+Imports Microsoft.VisualBasic.Linq
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
+Imports p = Microsoft.VisualBasic.Parallel.ParallelExtension
 
 Namespace ServerApp
 
@@ -42,7 +44,8 @@ Namespace ServerApp
     ''' <typeparam name="T"></typeparam>
     Public Class MemoryCache(Of T As SQLTable)
 
-        ReadOnly mysql As New MySQL
+#Region "Internal Cache"
+        ReadOnly mysqli As New MySQL
         ReadOnly __cache As Dictionary(Of String, T())
 
         ''' <summary>
@@ -54,13 +57,37 @@ Namespace ServerApp
         ''' ``propertyName -> FieldName``
         ''' </summary>
         ReadOnly __fields As Dictionary(Of String, String)
+#End Region
+
+#Region "Auto Memory Cleanup"
 
         ''' <summary>
         ''' 用于计算内存的使用量，进行自动缓存清除的算法
         ''' </summary>
         ReadOnly sizeOf As New MemorySize(Of T)
+
+        ''' <summary>
+        ''' 会对查询进行统计，定时进行排序，这个哈希表的键名和<see cref="__cache"/>哈希表的键名是一样的
+        ''' </summary>
         ReadOnly hits As New Dictionary(Of String, ULong)
 
+        ''' <summary>
+        ''' 估算出来的当前这个缓存对象的内存占用量
+        ''' </summary>
+        Dim currentSize&
+        ''' <summary>
+        ''' 当这个缓存对象的内存占用超过这个阈值之后就会开始进行自动内存清理
+        ''' 将<see cref="hits"/>哈希表之中的较少hits的对象删除
+        ''' </summary>
+        ''' <returns></returns>
+        Public Property MemorySizeThreshold As Long
+
+        Dim current_n%
+        ''' <summary>
+        ''' 默认是执行了2048次查询之后进行一次缓存内存计算，判断是否需要进行内存清理
+        ''' </summary>
+        Public Property MeasureCounts As Integer = 2048
+#End Region
 
         ''' <summary>
         ''' 
@@ -68,7 +95,7 @@ Namespace ServerApp
         ''' <param name="cnn"></param>
         ''' <param name="index$">属性名列表，请尽量使用``NameOf``操作符来获取</param>
         Sub New(cnn As ConnectionUri, ParamArray index$())
-            If (mysql <= cnn) = -1.0R Then
+            If (mysqli <= cnn) = -1.0R Then
                 Throw New Exception("No avalaible mysql connection!")
             End If
 
@@ -76,6 +103,71 @@ Namespace ServerApp
                 .GetProperties(PublicProperty) _
                 .Where(Function([property]) index.IndexOf([property].Name) > -1) _
                 .ToArray
+        End Sub
+
+        ''' <summary>
+        ''' 进行hit次数的统计以及累加查询次数
+        ''' </summary>
+        ''' <param name="key$"></param>
+        Private Sub push(key$)
+            SyncLock hits
+                If hits.ContainsKey(key) Then
+                    hits(key) += 1
+                Else
+                    hits.Add(key, 1)
+                End If
+
+                current_n += 1
+
+                If current_n = MeasureCounts Then
+                    current_n = 0
+                    p.RunTask(AddressOf cleanup).Start()
+                End If
+            End SyncLock
+        End Sub
+
+        ''' <summary>
+        ''' Auto cleanup cache memory
+        ''' </summary>
+        Private Sub cleanup()
+            Static running As Boolean = False
+
+            If running Then
+                Return
+            Else
+                running = True
+            End If
+
+            ' 先计算出缓存的内存占用大小
+            currentSize = __cache _
+                .Values _
+                .IteratesALL _
+                .Select(AddressOf sizeOf.MeasureSize) _
+                .Sum
+
+            If currentSize >= MemorySizeThreshold Then
+
+                ' 按照次数升序排序取1/3
+                SyncLock hits
+                    With hits _
+                            .OrderBy(Function(l) l.Value) _
+                            .Take(hits.Count / 3) _
+                            .ToArray
+
+                        .DoEach(Sub(key) Call __cache.Remove(key.Key))
+                        ' 必须要将hits之中的键也移除，否则后面会出现很多的key存在
+                        ' 于hits之中但是cache表中不存在的尴尬情况
+                        .DoEach(Sub(key) Call hits.Remove(key.Key))
+                    End With
+                End SyncLock
+
+                ' 重新计算内存占用大小
+                currentSize = __cache _
+                    .Values _
+                    .IteratesALL _
+                    .Select(AddressOf sizeOf.MeasureSize) _
+                    .Sum
+            End If
         End Sub
 
         ''' <summary>
@@ -102,6 +194,8 @@ Namespace ServerApp
         Public Function Query(args As NamedValue(Of String)(), Optional forceUpdate As Boolean = False) As T()
             Dim key$ = __indexKey(args)
 
+            Call push(key)
+
             If Not forceUpdate AndAlso __cache.ContainsKey(key) Then
                 Return Clone(__cache(key))
             Else
@@ -118,10 +212,12 @@ Namespace ServerApp
         ''' <param name="SQL$"></param>
         ''' <returns></returns>
         Public Function Query(SQL$, Optional forceUpdate As Boolean = False) As T()
+            Call push(SQL)
+
             If Not forceUpdate AndAlso __cache.ContainsKey(SQL) Then
                 Return Clone(__cache(SQL))
             Else
-                Dim data As T() = mysql.Query(Of T)(SQL)
+                Dim data As T() = mysqli.Query(Of T)(SQL)
                 __cache(SQL) = Clone(data)
                 Return data
             End If
@@ -156,6 +252,8 @@ Namespace ServerApp
                     forceUpdate)
             End If
 
+            Call push(key)
+
             If o Is Nothing Then
                 Return Nothing
             Else
@@ -164,10 +262,12 @@ Namespace ServerApp
         End Function
 
         Public Function ExecuteScalar(SQL$, Optional forceUpdate As Boolean = False) As T
+            Call push(SQL)
+
             If Not forceUpdate AndAlso __cache.ContainsKey(SQL) Then
                 Return Clone(__cache(SQL)).FirstOrDefault
             Else
-                Dim data As T = mysql.ExecuteScalar(Of T)(SQL)
+                Dim data As T = mysqli.ExecuteScalar(Of T)(SQL)
                 If data Is Nothing Then
                     __cache(SQL) = {}
                 Else
