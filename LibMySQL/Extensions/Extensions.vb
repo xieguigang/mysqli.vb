@@ -157,7 +157,7 @@ Public Module Extensions
         End If
     End Function
 
-    Public ReadOnly Property Numerics As List(Of MySqlDbType) = New List(Of MySqlDbType) From {
+    Public ReadOnly Property Numerics As New List(Of MySqlDbType) From {
  _
         MySqlDbType.BigInt, MySqlDbType.Bit, MySqlDbType.Byte,
         MySqlDbType.Decimal, MySqlDbType.Double,

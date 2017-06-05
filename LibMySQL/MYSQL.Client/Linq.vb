@@ -53,13 +53,13 @@ Public Class Linq(Of TTable As SQLTable) : Inherits Table(Of TTable)
         __reflector = New Reflection.DbReflector(MySQL.UriMySQL)
     End Sub
 
-    Public Overloads Shared Operator <=(DBI As Linq(Of TTable), SQL As String) As Generic.IEnumerable(Of TTable)
+    Public Overloads Shared Operator <=(DBI As Linq(Of TTable), SQL As String) As IEnumerable(Of TTable)
         Dim err As String = ""
         Dim query As Generic.IEnumerable(Of TTable) = DBI.__reflector.AsQuery(Of TTable)(SQL, getError:=err)
         Return query
     End Operator
 
-    Public Overloads Shared Operator >=(DBI As Linq(Of TTable), SQL As String) As Generic.IEnumerable(Of TTable)
+    Public Overloads Shared Operator >=(DBI As Linq(Of TTable), SQL As String) As IEnumerable(Of TTable)
         Return DBI <= SQL
     End Operator
 End Class
