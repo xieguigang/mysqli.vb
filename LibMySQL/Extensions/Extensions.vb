@@ -185,12 +185,11 @@ Public Module Extensions
     ' {"\", "\\"}
 
     ''' <summary>
-    ''' 处理字符串之中的特殊字符的转义
+    ''' 处理字符串之中的特殊字符的转义。(这是一个安全的函数，如果输入的字符串为空，则这个函数会输出空字符串)
     ''' </summary>
     ''' <param name="value"></param>
     ''' <returns></returns>
-    <Extension>
-    Public Function MySqlEscaping(value As String) As String
+    <Extension> Public Function MySqlEscaping(value$) As String
         If value.StringEmpty Then
             Return ""
         Else
@@ -204,7 +203,7 @@ Public Module Extensions
         End If
     End Function
 
-    Const OptionsTempChange$ = "-- MySQL dump 1.00  Distrib 5.7.12, for Microsoft VisualBasic ORM (x86_64)
+    Const OptionsTempChange$ = "-- MySQL dump 1.50  Distrib 5.7.12, for Microsoft VisualBasic.NET ORM code solution (x86_64)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
