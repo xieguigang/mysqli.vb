@@ -346,7 +346,7 @@ Public Module Extensions
             Dim out As New List(Of row)
 
             For Each x As T In list
-                Dim copy As row = o.Copy.As(Of row)
+                Dim copy As row = DirectCast(o.Copy, row)
                 Call setValue(copy, x)
                 Call out.Add(copy)
             Next
