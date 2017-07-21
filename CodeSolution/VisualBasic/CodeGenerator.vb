@@ -188,6 +188,7 @@ Namespace VisualBasic
             Call VbCodeGenerator.AppendLine()
             Call VbCodeGenerator.AppendLine("Imports " & LinqMappingNs)
             Call VbCodeGenerator.AppendLine("Imports " & LibMySQLReflectionNs)
+            Call VbCodeGenerator.AppendLine("Imports System.Xml.Serialization")
             Call VbCodeGenerator.AppendLine()
 
             If haveNamespace Then
@@ -274,7 +275,7 @@ Namespace VisualBasic
                     Call vb.AppendLine("''' <remarks></remarks>")
                 End If
 
-                Call vb.Append(__createAttribute(Field, IsPrimaryKey:=table.PrimaryFields.Contains(Field.FieldName))) 'Apply the custom attribute on the property 
+                Call vb.Append(Field.__createAttribute(IsPrimaryKey:=table.PrimaryFields.Contains(Field.FieldName))) 'Apply the custom attribute on the property 
                 Call vb.Append("Public Property " & FixInvalids(Field.FieldName))                                     'Generate the property name 
                 Call vb.Append(__toDataType(Field.DataType))                                                          'Generate the property data type
                 Call vb.AppendLine()
@@ -539,7 +540,13 @@ NO_KEY:
         ''' </summary>
         ReadOnly columnMappingType As Type = GetType(ColumnAttribute)
 
-        Private Function __createAttribute(Field As Reflection.Schema.Field, IsPrimaryKey As Boolean) As String
+        ''' <summary>
+        ''' Apply the custom attribute on the property 
+        ''' </summary>
+        ''' <param name="Field"></param>
+        ''' <param name="IsPrimaryKey"></param>
+        ''' <returns></returns>
+        <Extension> Private Function __createAttribute(Field As Field, IsPrimaryKey As Boolean) As String
             Dim Code As String = $"    <DatabaseField(""{Field.FieldName}"")"
 
             If IsPrimaryKey Then
@@ -554,6 +561,11 @@ NO_KEY:
 
             Code &= $", DataType({DataTypeFullNamesapce}.{Field.DataType.MySQLType.ToString}{If(String.IsNullOrEmpty(Field.DataType.ParameterValue), "", ", """ & Field.DataType.ParameterValue & """")})"
             Code &= $", Column(Name:=""{Field.FieldName}"")"
+
+            If IsPrimaryKey Then
+                Code &= ", XmlAttribute"
+            End If
+
             Code &= "> "
             Return Code
         End Function
@@ -688,7 +700,7 @@ NO_KEY:
         End Function
 
         Private Function GenerateSingleDocument(haveNamespace As Boolean, [Namespace] As String, ClassDef As String) As String
-            Dim VbCodeGenerator As StringBuilder = New StringBuilder(1024)
+            Dim VbCodeGenerator As New StringBuilder(1024)
 
             Call VbCodeGenerator.AppendLine($"REM  {GetType(CodeGenerator).FullName}")
             Call VbCodeGenerator.AppendLine($"REM  MYSQL Schema Mapper")
@@ -700,6 +712,7 @@ NO_KEY:
             Call VbCodeGenerator.AppendLine()
             Call VbCodeGenerator.AppendLine("Imports " & LinqMappingNs)
             Call VbCodeGenerator.AppendLine("Imports " & LibMySQLReflectionNs)
+            Call VbCodeGenerator.AppendLine("Imports System.Xml.Serialization")
             Call VbCodeGenerator.AppendLine()
 
             If haveNamespace Then

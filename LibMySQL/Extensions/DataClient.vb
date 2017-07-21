@@ -27,6 +27,7 @@
 #End Region
 
 Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel.SchemaMaps
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 
 Public Module DataClient
@@ -46,6 +47,41 @@ Public Module DataClient
         Dim table As TableName = GetType(T).GetAttribute(Of TableName)
         Dim SQL$ = $"SELECT * FROM `{table.Database}`.`{table.Name}`;"
         Return mysql.Query(Of T)(SQL)
+    End Function
+
+    <Extension>
+    Public Function OccupancyLoad(schema As BindProperty(Of DatabaseField)(),
+                                  o As SQLTable,
+                                  Optional ZeroAsNull As Boolean = False) As Double
+        Dim i As Integer
+
+        For Each field As BindProperty(Of DatabaseField) In schema
+            Dim value = field.GetValue(o)
+
+            If field.Type Is GetType(String) Then
+                i += If(Not DirectCast(value, String).StringEmpty, 1, 0)
+            ElseIf field.Type Is GetType(Boolean) Then
+                i += If(DirectCast(value, Boolean), 1, 0)
+            ElseIf field.Type Is GetType(Char) Then
+                i += If(AscW(DirectCast(value, Char)) = 0, 0, 1)
+            ElseIf field.Type Is GetType(Date) Then
+                i += If(DirectCast(value, Date) = New Date, 0, 1)
+            Else
+                Dim n = CDbl(value)
+
+                If n <> 0 Then
+                    i += 1
+                Else
+                    If ZeroAsNull Then
+                        ' 空值，不增加
+                    Else
+                        i += 1
+                    End If
+                End If
+            End If
+        Next
+
+        Return i / schema.Length
     End Function
 End Module
 
