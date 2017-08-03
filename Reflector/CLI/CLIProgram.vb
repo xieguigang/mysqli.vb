@@ -26,6 +26,7 @@
 
 #End Region
 
+Imports System.ComponentModel
 Imports System.IO
 Imports System.Text
 Imports Microsoft.VisualBasic.CommandLine
@@ -36,8 +37,8 @@ Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Oracle.LinuxCompatibility.MySQL.CodeSolution
 
-<PackageNamespace("MySQL.Reflector",
-                  Description:="Tools for convert the mysql schema dump sql script into VisualBasic classes source code.")>
+<Package("MySQL.Reflector")>
+<Description("Tools for convert the mysql schema dump sql script into VisualBasic classes source code.")>
 Module CLIProgram
 
     Const InputsNotFound As String = "The required input parameter ""/sql"" is not specified!"
