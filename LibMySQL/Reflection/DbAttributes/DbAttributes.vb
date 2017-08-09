@@ -153,10 +153,10 @@ Namespace Reflection.DbAttributes
             End Get
         End Property
 
-        Sub New(DataType As MySqlDbType, Optional argvs As String = "")
-            Me._Type = DataType
+        Sub New(type As MySqlDbType, Optional argvs$ = "")
+            Me._Type = type
             Me._argvs = argvs
-            Me._typeCastingHandle = _typeCasting(DataType)
+            Me._typeCastingHandle = _typeCasting(type)
         End Sub
 
         ''' <summary>
@@ -197,6 +197,7 @@ Namespace Reflection.DbAttributes
                 {MySqlDbType.String, Function(value As Object) If(IsDBNull(value), "", CStr(value))},
                 {MySqlDbType.VarChar, Function(value As Object) If(IsDBNull(value), "", CStr(value))},
                 {MySqlDbType.Byte, Function(value As Object) value},
+                {MySqlDbType.Bit, Function(value As Object) value},
                 {MySqlDbType.LongBlob, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Byte()))},
                 {MySqlDbType.Blob, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Byte()))},
                 {MySqlDbType.MediumBlob, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Byte()))},
