@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::c71558344a070825503cf5fc48b19c99, ..\visualbasic.DBI\LibMySQL\Reflection\DbAttributes\DbDataTypes.vb"
+﻿#Region "Microsoft.VisualBasic::c71558344a070825503cf5fc48b19c99, ..\mysqli\LibMySQL\Reflection\DbAttributes\DbDataTypes.vb"
 
     ' Author:
     ' 

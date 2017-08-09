@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::39d5e8e4a6d5f8c7c39fb3aa1b752079, ..\visualbasic.DBI\LibMySQL\MYSQL.Client\RecordStatus.vb"
+﻿#Region "Microsoft.VisualBasic::39d5e8e4a6d5f8c7c39fb3aa1b752079, ..\mysqli\LibMySQL\MYSQL.Client\RecordStatus.vb"
 
     ' Author:
     ' 

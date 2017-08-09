@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::2f6d9dd8608e2bcae4d22b4d13cbd4a2, ..\visualbasic.DBI\LibMySQL\Reflection\SQL_LDM\Update.vb"
+﻿#Region "Microsoft.VisualBasic::2f6d9dd8608e2bcae4d22b4d13cbd4a2, ..\mysqli\LibMySQL\Reflection\SQL_LDM\Update.vb"
 
     ' Author:
     ' 

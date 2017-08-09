@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::4585e07efeb212542d4d8f4fcaa66027, ..\visualbasic.DBI\mysql-nt\TinyServer.vb"
+﻿#Region "Microsoft.VisualBasic::4585e07efeb212542d4d8f4fcaa66027, ..\mysqli\mysql-nt\TinyServer.vb"
 
     ' Author:
     ' 
