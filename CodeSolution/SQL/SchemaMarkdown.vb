@@ -30,6 +30,8 @@ Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.C
+Imports Microsoft.VisualBasic.MIME.Markup.MarkDown
+Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Public Module SchemaMarkdown
@@ -84,7 +86,9 @@ Public Module SchemaMarkdown
                 field.FieldName,
                 field.DataType.ToString,
                 field.__attrs,
-                CLangStringFormatProvider.ReplaceMetaChars(field.Comment)
+                field.Comment _
+                    .Replace("\n", "<br />") _
+                    .Replace("\t", ASCII.TAB)
             }
             Dim row$ = columns _
                 .Select(Function(s) s.Replace("|", "\|")) _
@@ -104,7 +108,7 @@ Public Module SchemaMarkdown
     End Function
 
     <Extension>
-    Public Function Documentation(schema As IEnumerable(Of Table)) As String
+    Public Function Documentation(schema As IEnumerable(Of Table), Optional autoTOC As Boolean = False) As String
         Dim md As New StringBuilder
 
         Call md.AppendLine("# MySQL development docs")
@@ -118,7 +122,8 @@ Public Module SchemaMarkdown
             Call md.AppendLine(t.MakeMarkdown)
         Next
 
-        Return md.ToString
+        Dim markdown$ = TOC.AddToc(md.ToString)
+        Return markdown
     End Function
 End Module
 
