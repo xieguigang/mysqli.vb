@@ -1,34 +1,35 @@
 ﻿#Region "Microsoft.VisualBasic::a2b3cfecccdc41a0b31714b0a1bec96b, ..\mysqli\CodeSolution\SQL\SchemaMarkdown.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    '       xie (genetics@smrucc.org)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
 Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Language.C
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Public Module SchemaMarkdown
@@ -73,7 +74,7 @@ Public Module SchemaMarkdown
         Dim md As New StringBuilder
 
         Call md.AppendLine("## " & table.TableName)
-        Call md.AppendLine(table.Comment)
+        Call md.AppendLine(CLangStringFormatProvider.ReplaceMetaChars(table.Comment))
         Call md.AppendLine()
         Call md.AppendLine("|field|type|attributes|description|")
         Call md.AppendLine("|-----|----|----------|-----------|")
@@ -83,7 +84,7 @@ Public Module SchemaMarkdown
                 field.FieldName,
                 field.DataType.ToString,
                 field.__attrs,
-                field.Comment
+                CLangStringFormatProvider.ReplaceMetaChars(field.Comment)
             }
             Dim row$ = columns _
                 .Select(Function(s) s.Replace("|", "\|")) _
