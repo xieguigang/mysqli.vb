@@ -55,7 +55,7 @@ Namespace Reflection.DbAttributes
         ''' <remarks></remarks>
         Public Property Name As String
 
-        Sub New(Optional Name As String = "")
+        Sub New(Optional Name$ = "")
             Me.Name = Name
         End Sub
 
@@ -75,6 +75,9 @@ Namespace Reflection.DbAttributes
         End Operator
     End Class
 
+    ''' <summary>
+    ''' The name of the mysql table, this attribute can only applied on the Class/structure definition.
+    ''' </summary>
     <AttributeUsage(AttributeTargets.Class Or AttributeTargets.Struct, AllowMultiple:=False, Inherited:=True)>
     Public Class TableName : Inherits DbAttribute
 
@@ -88,13 +91,14 @@ Namespace Reflection.DbAttributes
         ''' </summary>
         ''' <returns></returns>
         <XmlAttribute> Public Property Database As String
-        <XmlText> Public Property SchemaSQL As String
+        <XmlText>
+        Public Property SchemaSQL As String
 
         ''' <summary>
         ''' 使用表名来初始化这个元数据属性
         ''' </summary>
         ''' <param name="Name"></param>
-        Public Sub New(Name As String)
+        Public Sub New(Name$)
             Me.Name = Name
         End Sub
 
@@ -164,7 +168,7 @@ Namespace Reflection.DbAttributes
         ''' </summary>
         ''' <returns></returns>
         Public Overrides Function ToString() As String
-            Return _Type.ToString & IIf(String.IsNullOrEmpty(_argvs), String.Empty, String.Format(" ({0})", _argvs))
+            Return _Type.ToString & If(String.IsNullOrEmpty(_argvs), String.Empty, String.Format(" ({0})", _argvs))
         End Function
 
         Public Shared Narrowing Operator CType(dataType As DataType) As MySqlDbType
@@ -188,25 +192,24 @@ Namespace Reflection.DbAttributes
 
         Public Delegate Function __typeCasting(value As Object) As Object
 
-        Protected Shared ReadOnly _typeCasting As Dictionary(Of MySqlDbType, Func(Of Object, Object)) =
-            New Dictionary(Of MySqlDbType, Func(Of Object, Object)) From {
+        Protected Shared ReadOnly _typeCasting As New Dictionary(Of MySqlDbType, Func(Of Object, Object)) From {
  _
-                {MySqlDbType.UInt32, AddressOf UInt32_2_UInteger},
-                {MySqlDbType.Int32, Function(value As Object) If(IsDBNull(value), Nothing, value)},
-                {MySqlDbType.Text, Function(value As Object) If(IsDBNull(value), "", CStr(value))},
-                {MySqlDbType.String, Function(value As Object) If(IsDBNull(value), "", CStr(value))},
-                {MySqlDbType.VarChar, Function(value As Object) If(IsDBNull(value), "", CStr(value))},
-                {MySqlDbType.Byte, Function(value As Object) value},
-                {MySqlDbType.Bit, Function(value As Object) value},
-                {MySqlDbType.LongBlob, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Byte()))},
-                {MySqlDbType.Blob, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Byte()))},
-                {MySqlDbType.MediumBlob, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Byte()))},
-                {MySqlDbType.TinyBlob, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Byte()))},
-                {MySqlDbType.Double, Function(value As Object) If(IsDBNull(value), Nothing, value)},
-                {MySqlDbType.LongText, Function(value As Object) If(IsDBNull(value), "", value)},
-                {MySqlDbType.Int64, Function(value As Object) If(IsDBNull(value), Nothing, CLng(value))},
-                {MySqlDbType.Decimal, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Decimal))},
-                {MySqlDbType.DateTime, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Date))}
+            {MySqlDbType.UInt32, AddressOf UInt32_2_UInteger},
+            {MySqlDbType.Int32, Function(value As Object) If(IsDBNull(value), Nothing, value)},
+            {MySqlDbType.Text, Function(value As Object) If(IsDBNull(value), "", CStr(value))},
+            {MySqlDbType.String, Function(value As Object) If(IsDBNull(value), "", CStr(value))},
+            {MySqlDbType.VarChar, Function(value As Object) If(IsDBNull(value), "", CStr(value))},
+            {MySqlDbType.Byte, Function(value As Object) value},
+            {MySqlDbType.Bit, Function(value As Object) value},
+            {MySqlDbType.LongBlob, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Byte()))},
+            {MySqlDbType.Blob, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Byte()))},
+            {MySqlDbType.MediumBlob, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Byte()))},
+            {MySqlDbType.TinyBlob, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Byte()))},
+            {MySqlDbType.Double, Function(value As Object) If(IsDBNull(value), Nothing, value)},
+            {MySqlDbType.LongText, Function(value As Object) If(IsDBNull(value), "", value)},
+            {MySqlDbType.Int64, Function(value As Object) If(IsDBNull(value), Nothing, CLng(value))},
+            {MySqlDbType.Decimal, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Decimal))},
+            {MySqlDbType.DateTime, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Date))}
         }
 
         Public Function TypeCasting(value As Object) As Object

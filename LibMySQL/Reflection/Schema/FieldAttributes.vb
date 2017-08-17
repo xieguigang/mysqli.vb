@@ -33,6 +33,9 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 
 Namespace Reflection.Schema
 
+    ''' <summary>
+    ''' Mysql database field
+    ''' </summary>
     Public Class Field : Implements INamedValue
 
         Public Property FieldName As String Implements INamedValue.Key
