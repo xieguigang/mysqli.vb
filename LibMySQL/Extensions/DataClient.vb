@@ -49,38 +49,80 @@ Public Module DataClient
         Return mysql.Query(Of T)(SQL)
     End Function
 
+    ''' <summary>
+    ''' 这个函数统计出<see cref="SQLTable"/>所代表的二维表格之中，具有值得属性的数量占所有的属性的百分比
+    ''' </summary>
+    ''' <param name="schema"></param>
+    ''' <param name="o"></param>
+    ''' <param name="ZeroAsNull"></param>
+    ''' <returns></returns>
+    <Extension> Public Function OccupancyLoad(schema As BindProperty(Of DatabaseField)(),
+                                              o As SQLTable,
+                                              Optional ZeroAsNull As Boolean = False) As Double
+        Dim n% = schema _
+            .Where(Function(field)
+                       Return o.HasValue(field, ZeroAsNull)
+                   End Function) _
+            .Count
+        Return n / schema.Length
+    End Function
+
     <Extension>
-    Public Function OccupancyLoad(schema As BindProperty(Of DatabaseField)(),
-                                  o As SQLTable,
-                                  Optional ZeroAsNull As Boolean = False) As Double
-        Dim i As Integer
+    Public Function HasValue(entity As SQLTable, field As BindProperty(Of DatabaseField), Optional ZeroAsNULL As Boolean = False) As Boolean
+        Static emptyDate As Date = New Date
 
-        For Each field As BindProperty(Of DatabaseField) In schema
-            Dim value = field.GetValue(o)
+        With field
+            Dim value As Object = .GetValue(entity)
 
-            If field.Type Is GetType(String) Then
-                i += If(Not DirectCast(value, String).StringEmpty, 1, 0)
-            ElseIf field.Type Is GetType(Boolean) Then
-                i += If(DirectCast(value, Boolean), 1, 0)
-            ElseIf field.Type Is GetType(Char) Then
-                i += If(AscW(DirectCast(value, Char)) = 0, 0, 1)
-            ElseIf field.Type Is GetType(Date) Then
-                i += If(DirectCast(value, Date) = New Date, 0, 1)
+            If .Type Is GetType(String) Then
+                Return Not DirectCast(value, String).StringEmpty
+            ElseIf .Type Is GetType(Boolean) Then
+                Return DirectCast(value, Boolean)
+            ElseIf .Type Is GetType(Char) Then
+                Return Not AscW(DirectCast(value, Char)) = 0
+            ElseIf .Type Is GetType(Date) Then
+                Return Not DirectCast(value, Date) = emptyDate
             Else
                 Dim n = CDbl(value)
 
                 If n <> 0 Then
-                    i += 1
+                    Return True
                 Else
-                    If ZeroAsNull Then
+                    If ZeroAsNULL Then
                         ' 空值，不增加
+                        Return False
                     Else
-                        i += 1
+                        Return True
                     End If
                 End If
             End If
+        End With
+    End Function
+
+    ''' <summary>
+    ''' 将<paramref name="group"/>之中不为空的属性值填充进入
+    ''' <paramref name="obj"/>之中为空值的属性上
+    ''' </summary>
+    ''' <typeparam name="T"></typeparam>
+    ''' <param name="obj"></param>
+    ''' <param name="group"></param>
+    ''' <returns></returns>
+    <Extension> Public Function GroupMerge(Of T As SQLTable)(obj As T, schema As BindProperty(Of DatabaseField)(), group As T()) As T
+        For Each field As BindProperty(Of DatabaseField) In schema
+            If obj.HasValue(field, True) Then
+                ' 目标已经在当前的这个属性上面存在值了，则跳过
+                Continue For
+            End If
+
+            For Each x In group
+                If x.HasValue(field, True) Then
+                    ' 存在值，则进行设置
+                    field.SetValue(obj, field.GetValue(x))
+                    Exit For
+                End If
+            Next
         Next
 
-        Return i / schema.Length
+        Return obj
     End Function
 End Module
