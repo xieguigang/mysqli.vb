@@ -1,31 +1,32 @@
 ﻿#Region "Microsoft.VisualBasic::5dfd663c85f6f4dc2131f3b3afa7d1bc, ..\mysqli\Reflector\CLI\docs.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    '       xie (genetics@smrucc.org)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
+Imports System.ComponentModel
 Imports System.Text
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
@@ -34,13 +35,15 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Partial Module CLIProgram
 
-    <ExportAPI("/MySQL.Markdown",
-               Usage:="/MySQL.Markdown /sql <database.sql> [/out <out.md>]")>
+    <ExportAPI("/MySQL.Markdown")>
+    <Usage("/MySQL.Markdown /sql <database.sql> [/toc /out <out.md>]")>
+    <Description("Generates the SDK document of your mysql database.")>
     Public Function MySQLMarkdown(args As CommandLine) As Integer
         Dim sql$ = args <= "/sql"
         Dim out$ = args.GetValue("/out", sql.TrimSuffix & "-dev-docs.md")
         Dim schema As Table() = SQLParser.LoadSQLDoc(path:=sql)
         Dim markdown$ = schema.Documentation
+
         Return markdown _
             .SaveTo(out, Encoding.UTF8) _
             .CLICode

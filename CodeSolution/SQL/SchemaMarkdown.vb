@@ -107,6 +107,12 @@ Public Module SchemaMarkdown
         Return md.ToString
     End Function
 
+    ''' <summary>
+    ''' 从表的定义之中生成开发文档
+    ''' </summary>
+    ''' <param name="schema"></param>
+    ''' <param name="autoTOC"></param>
+    ''' <returns></returns>
     <Extension>
     Public Function Documentation(schema As IEnumerable(Of Table), Optional autoTOC As Boolean = False) As String
         Dim md As New StringBuilder
@@ -122,8 +128,12 @@ Public Module SchemaMarkdown
             Call md.AppendLine(t.MakeMarkdown)
         Next
 
-        Dim markdown$ = TOC.AddToc(md.ToString)
-        Return markdown
+        If autoTOC Then
+            Dim markdown$ = TOC.AddToc(md)
+            Return markdown
+        Else
+            Return md.ToString
+        End If
     End Function
 End Module
 
