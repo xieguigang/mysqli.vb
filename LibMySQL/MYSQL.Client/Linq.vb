@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::250346551b8b27be904005ec8ff33931, ..\visualbasic.DBI\LibMySQL\MYSQL.Client\Linq.vb"
+﻿#Region "Microsoft.VisualBasic::fcbc272932eaafcfffccac09bd61b2a8, ..\mysqli\LibMySQL\MYSQL.Client\Linq.vb"
 
     ' Author:
     ' 

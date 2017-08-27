@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::286b1637b0d94dd00ef347aa9f84732c, ..\visualbasic.DBI\CodeSolution\SQL\SQLParser.vb"
+﻿#Region "Microsoft.VisualBasic::a1d7c424dae5d08e5820f0a022de6601, ..\mysqli\CodeSolution\SQL\SQLParser.vb"
 
     ' Author:
     ' 
@@ -306,51 +306,55 @@ _SET_PRIMARYKEY:
     ''' <summary>
     ''' Mapping the MySQL database type and visual basic data type 
     ''' </summary>
-    ''' <param name="TypeDef"></param>
+    ''' <param name="type_define"></param>
     ''' <returns></returns>
-    Private Function __createDataType(TypeDef As String) As Reflection.DbAttributes.DataType
-        Dim Type As Reflection.DbAttributes.MySqlDbType
-        Dim Parameter As String = ""
+    Private Function __createDataType(type_define$) As Reflection.DbAttributes.DataType
+        Dim type As Reflection.DbAttributes.MySqlDbType
+        Dim parameter As String = ""
 
-        If Regex.Match(TypeDef, "int\(\d+\)", RegexOptions.IgnoreCase).Success Then
-            Type = Reflection.DbAttributes.MySqlDbType.Int64
-            Parameter = __getNumberValue(TypeDef)
+        If Regex.Match(type_define, "int\(\d+\)", RegexOptions.IgnoreCase).Success Then
+            type = Reflection.DbAttributes.MySqlDbType.Int64
+            parameter = __getNumberValue(type_define)
 
-        ElseIf Regex.Match(TypeDef, "varchar\(\d+\)", RegexOptions.IgnoreCase).Success OrElse Regex.Match(TypeDef, "char\(\d+\)", RegexOptions.IgnoreCase).Success Then
-            Type = Reflection.DbAttributes.MySqlDbType.VarChar
-            Parameter = __getNumberValue(TypeDef)
+        ElseIf Regex.Match(type_define, "varchar\(\d+\)", RegexOptions.IgnoreCase).Success OrElse Regex.Match(type_define, "char\(\d+\)", RegexOptions.IgnoreCase).Success Then
+            type = Reflection.DbAttributes.MySqlDbType.VarChar
+            parameter = __getNumberValue(type_define)
 
-        ElseIf Regex.Match(TypeDef, "double", RegexOptions.IgnoreCase).Success OrElse InStr(TypeDef, "float") > 0 Then
-            Type = Reflection.DbAttributes.MySqlDbType.Double
+        ElseIf Regex.Match(type_define, "double", RegexOptions.IgnoreCase).Success OrElse InStr(type_define, "float") > 0 Then
+            type = Reflection.DbAttributes.MySqlDbType.Double
 
-        ElseIf Regex.Match(TypeDef, "datetime", RegexOptions.IgnoreCase).Success OrElse
-            Regex.Match(TypeDef, "date", RegexOptions.IgnoreCase).Success OrElse
-            Regex.Match(TypeDef, "timestamp", RegexOptions.IgnoreCase).Success Then
+        ElseIf Regex.Match(type_define, "datetime", RegexOptions.IgnoreCase).Success OrElse
+            Regex.Match(type_define, "date", RegexOptions.IgnoreCase).Success OrElse
+            Regex.Match(type_define, "timestamp", RegexOptions.IgnoreCase).Success Then
 
-            Type = Reflection.DbAttributes.MySqlDbType.DateTime
+            type = Reflection.DbAttributes.MySqlDbType.DateTime
 
-        ElseIf Regex.Match(TypeDef, "text", RegexOptions.IgnoreCase).Success Then
-            Type = Reflection.DbAttributes.MySqlDbType.Text
+        ElseIf Regex.Match(type_define, "text", RegexOptions.IgnoreCase).Success Then
+            type = Reflection.DbAttributes.MySqlDbType.Text
 
-        ElseIf InStr(TypeDef, "enum(", CompareMethod.Text) > 0 Then   ' enum类型转换为String类型？？？？
-            Type = Reflection.DbAttributes.MySqlDbType.String
+        ElseIf InStr(type_define, "enum(", CompareMethod.Text) > 0 Then   ' enum类型转换为String类型？？？？
+            type = Reflection.DbAttributes.MySqlDbType.String
 
-        ElseIf InStr(TypeDef, "Blob", CompareMethod.Text) > 0 OrElse
-            Regex.Match(TypeDef, "varbinary\(\d+\)", RegexOptions.IgnoreCase).Success OrElse
-            Regex.Match(TypeDef, "binary\(\d+\)", RegexOptions.IgnoreCase).Success Then
-            Type = Reflection.DbAttributes.MySqlDbType.Blob
+        ElseIf InStr(type_define, "Blob", CompareMethod.Text) > 0 OrElse
+            Regex.Match(type_define, "varbinary\(\d+\)", RegexOptions.IgnoreCase).Success OrElse
+            Regex.Match(type_define, "binary\(\d+\)", RegexOptions.IgnoreCase).Success Then
+            type = Reflection.DbAttributes.MySqlDbType.Blob
 
-        ElseIf Regex.Match(TypeDef, "decimal\(", RegexOptions.IgnoreCase).Success Then
-            Type = Reflection.DbAttributes.MySqlDbType.Decimal
+        ElseIf Regex.Match(type_define, "decimal\(", RegexOptions.IgnoreCase).Success Then
+            type = Reflection.DbAttributes.MySqlDbType.Decimal
+
+        ElseIf Regex.Match(type_define, "bit\(", RegexICSng).Success Then
+            type = Reflection.DbAttributes.MySqlDbType.Bit
+            parameter = __getNumberValue(type_define)
 
         Else
 
             'More complex type is not support yet, but you can easily extending the mapping code at here
-            Throw New NotImplementedException($"Type define is not support yet for    {NameOf(TypeDef)}   >>> ""{TypeDef}""")
+            Throw New NotImplementedException($"Type define is not support yet for    {NameOf(type_define)}   >>> ""{type_define}""")
 
         End If
 
-        Return New Reflection.DbAttributes.DataType(Type, Parameter)
+        Return New Reflection.DbAttributes.DataType(type, parameter)
     End Function
 
     Private Function __getNumberValue(TypeDef As String) As String

@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::40e47231106b034746cc5d0379248cdc, ..\visualbasic.DBI\LibMySQL\GlobalSuppressions.vb"
+﻿#Region "Microsoft.VisualBasic::40e47231106b034746cc5d0379248cdc, ..\mysqli\LibMySQL\GlobalSuppressions.vb"
 
     ' Author:
     ' 

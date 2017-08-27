@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::f5515d0b3298822a0da5930a984abab0, ..\visualbasic.DBI\LibMySQL\Workbench\Dump\RestoreWorker.vb"
+﻿#Region "Microsoft.VisualBasic::f5515d0b3298822a0da5930a984abab0, ..\mysqli\LibMySQL\Workbench\Dump\RestoreWorker.vb"
 
     ' Author:
     ' 

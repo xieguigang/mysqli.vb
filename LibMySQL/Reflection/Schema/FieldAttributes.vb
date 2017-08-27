@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::56c8deeb5823d16cbf70a01fd28bb317, ..\visualbasic.DBI\LibMySQL\Reflection\Schema\FieldAttributes.vb"
+﻿#Region "Microsoft.VisualBasic::56c8deeb5823d16cbf70a01fd28bb317, ..\mysqli\LibMySQL\Reflection\Schema\FieldAttributes.vb"
 
     ' Author:
     ' 
@@ -33,6 +33,9 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 
 Namespace Reflection.Schema
 
+    ''' <summary>
+    ''' Mysql database field
+    ''' </summary>
     Public Class Field : Implements INamedValue
 
         Public Property FieldName As String Implements INamedValue.Key

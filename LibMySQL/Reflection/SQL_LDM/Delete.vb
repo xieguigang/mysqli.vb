@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::ed16a903b6fde2a72bb4e066c9db6931, ..\visualbasic.DBI\LibMySQL\Reflection\SQL_LDM\Delete.vb"
+﻿#Region "Microsoft.VisualBasic::ed16a903b6fde2a72bb4e066c9db6931, ..\mysqli\LibMySQL\Reflection\SQL_LDM\Delete.vb"
 
     ' Author:
     ' 

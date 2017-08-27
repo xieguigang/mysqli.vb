@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::84fd93e2a852e501b49fcf0458b87f81, ..\visualbasic.DBI\mysql-nt\RunDll.vb"
+﻿#Region "Microsoft.VisualBasic::84fd93e2a852e501b49fcf0458b87f81, ..\mysqli\mysql-nt\RunDll.vb"
 
     ' Author:
     ' 
