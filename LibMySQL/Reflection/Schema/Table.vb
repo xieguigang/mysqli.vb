@@ -42,7 +42,7 @@ Namespace Reflection.Schema
         Protected _databaseFields As Dictionary(Of String, Field)
 
         ''' <summary>
-        ''' 
+        ''' The mysql table name
         ''' </summary>
         ''' <value></value>
         ''' <returns></returns>
