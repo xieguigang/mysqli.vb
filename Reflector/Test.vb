@@ -1,12 +1,14 @@
 ﻿Imports Oracle.LinuxCompatibility.MySQL
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 
 Module Test
 
+    <TableName("Test")>
     Public Class T : Inherits SQLTable
 
-        Public Property A As String
-        Public Property B As Double
-        Public Property C As Date
+        <DatabaseField("A")> Public Property A As String
+        <DatabaseField("B")> Public Property B As Double
+        <DatabaseField("C")> Public Property C As Date
 
         Public Overrides Function GetReplaceSQL() As String
             Throw New NotImplementedException()
@@ -36,7 +38,6 @@ Module Test
         Dim B As FieldArgument = NameOf(T.B)
         Dim C As FieldArgument = NameOf(T.C)
 
-        Dim all = table.SelectAll
         Dim SQL = table _
             .Where(
                 A <= "555",
@@ -48,6 +49,8 @@ Module Test
             .Or(
                 A <= "999") _
             .GetSQL(scalar:=True)
+
+        Dim all = table.SelectAll
 
         println(SQL)
 
