@@ -16,7 +16,15 @@ Public Module DataDumps
     ''' <param name="tables"></param>
     <Extension>
     Public Sub DumpMySQL(output As StreamWriter, ParamArray tables As SQLTable()())
+        Call output.DumpSession(
+            Sub(buffer)
 
+                For Each table As SQLTable() In tables
+                    With table
+                        Call .DumpTransaction(buffer, .First.GetType,)
+                    End With
+                Next
+            End Sub)
     End Sub
 
     Const OptionsTempChange$ = "-- MySQL dump 1.50  Distrib 5.7.12, for Microsoft VisualBasic.NET ORM code solution (x86_64)
@@ -85,8 +93,6 @@ Public Module DataDumps
         Dim schemaTable As New Table(type)
         Dim tableName$ = schemaTable.TableName
 
-        Call out.WriteLine(OptionsTempChange)
-
         Call out.WriteLine("--")
         Call out.WriteLine($"-- Dumping data for table `{tableName}`")
         Call out.WriteLine("--")
@@ -116,7 +122,13 @@ Public Module DataDumps
 
         Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` ENABLE KEYS */;")
         Call out.WriteLine("UNLOCK TABLES;")
-        Call out.WriteLine(OptionsRestore, Now.ToString)
+    End Sub
+
+    <Extension>
+    Private Sub DumpSession(buffer As TextWriter, dumping As Action(Of TextWriter))
+        Call buffer.WriteLine(OptionsTempChange)
+        Call dumping(buffer)
+        Call buffer.WriteLine(OptionsRestore, Now.ToString)
     End Sub
 
     ''' <summary>
@@ -138,15 +150,45 @@ Public Module DataDumps
                                                       Optional type$ = "insert",
                                                       Optional distinct As Boolean = True) As String
         With New StringBuilder
-            Call source.DumpTransaction(
-                New StringWriter(.ref),
-                GetType(T), custom,
-                action:=type,
-                distinct:=distinct)
+            Call New StringWriter(.ref).DumpSession(
+                Sub(buffer)
+                    Call source.DumpTransaction(
+                        buffer,
+                        GetType(T), custom,
+                        action:=type,
+                        distinct:=distinct)
+                End Sub)
 
             Return .ToString
         End With
     End Function
+
+    ''' <summary>
+    ''' Write a very large SQL table data collection into a SQL file.
+    ''' </summary>
+    ''' <typeparam name="T"></typeparam>
+    ''' <param name="source"></param>
+    ''' <param name="path$"></param>
+    ''' <param name="custom"></param>
+    ''' <param name="type$"></param>
+    ''' <param name="distinct"></param>
+    <Extension>
+    Public Sub DumpLargeTransaction(Of T As SQLTable)(source As IEnumerable(Of T),
+                                                      path$,
+                                                      Optional custom As Func(Of SQLTable, String) = Nothing,
+                                                      Optional type$ = "insert",
+                                                      Optional distinct As Boolean = True)
+        Using output As StreamWriter = path.OpenWriter
+            Call output.DumpSession(
+                Sub(buffer)
+                    Call source.DumpTransaction(
+                        buffer,
+                        GetType(T), custom,
+                        action:=type,
+                        distinct:=distinct)
+                End Sub)
+        End Using
+    End Sub
 
     ''' <summary>
     ''' This function is only works for the table that without any foreign key constraint.
