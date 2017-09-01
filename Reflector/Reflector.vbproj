@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8A02381A-18E7-44CD-9A5A-F67310864C3D}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <StartupObject>Reflector.Test</StartupObject>
+    <StartupObject>Reflector.Program</StartupObject>
     <RootNamespace>Reflector</RootNamespace>
     <AssemblyName>Reflector</AssemblyName>
     <FileAlignment>512</FileAlignment>
