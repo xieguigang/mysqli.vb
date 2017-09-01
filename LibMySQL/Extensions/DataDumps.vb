@@ -1,6 +1,7 @@
 ﻿Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Text
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
@@ -8,6 +9,11 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 
 Public Module DataDumps
 
+    ''' <summary>
+    ''' This function works for the tables that have foreign key constraint between each others.
+    ''' </summary>
+    ''' <param name="output"></param>
+    ''' <param name="tables"></param>
     <Extension>
     Public Sub DumpMySQL(output As StreamWriter, ParamArray tables As SQLTable()())
 
@@ -41,6 +47,78 @@ Public Module DataDumps
 
 -- Dump completed on {0}"
 
+    Const ActionNotAllows$ = "Only allowes ""insert/update/delete/replace"" actions."
+
+    ''' <summary>
+    ''' 生成用于将数据集合批量导入数据库的INSERT SQL事务
+    ''' </summary>
+    ''' <param name="source"></param>
+    ''' <param name="type">
+    ''' Only allowed action ``insert/update/delete/replace``, if the user custom SQL generator 
+    ''' <paramref name="custom"/> is nothing, then this parameter works.
+    ''' </param>
+    ''' <param name="custom">
+    ''' User custom SQL generator. If this parameter is not nothing, then <paramref name="type"/> will disabled.
+    ''' </param>
+    <Extension> Public Sub DumpTransaction(source As IEnumerable(Of SQLTable),
+                                           out As TextWriter,
+                                           type As Type,
+                                           Optional custom As Func(Of SQLTable, String) = Nothing,
+                                           Optional action$ = "insert",
+                                           Optional distinct As Boolean = True)
+
+        Dim SQL As Func(Of SQLTable, String)
+
+        If custom Is Nothing Then
+            Select Case LCase(action)
+                Case "insert" : SQL = Function(o) o.GetInsertSQL
+                Case "update" : SQL = Function(o) o.GetUpdateSQL
+                Case "delete" : SQL = Function(o) o.GetDeleteSQL
+                Case "replace" : SQL = Function(o) o.GetReplaceSQL
+                Case Else
+                    Throw New ArgumentException(ActionNotAllows, paramName:=NameOf(type))
+            End Select
+        Else
+            SQL = custom
+        End If
+
+        Dim schemaTable As New Table(type)
+        Dim tableName$ = schemaTable.TableName
+
+        Call out.WriteLine(OptionsTempChange)
+
+        Call out.WriteLine("--")
+        Call out.WriteLine($"-- Dumping data for table `{tableName}`")
+        Call out.WriteLine("--")
+        Call out.WriteLine()
+
+        Call out.WriteLine($"LOCK TABLES `{tableName}` WRITE;")
+        Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` DISABLE KEYS */;")
+
+        If action.TextEquals("insert") Then
+            Dim insertBlocks$() = source _
+                .Where(Function(r) Not r Is Nothing) _
+                .Select(Function(r) r.GetDumpInsertValue) _
+                .ToArray
+            Dim INSERT$ = schemaTable.GenerateInsertSql
+            Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
+
+            If distinct Then
+                insertBlocks = insertBlocks.Distinct.ToArray
+            End If
+
+            For Each block In insertBlocks.Split(200)
+                Call out.WriteLine(schema & block.JoinBy(", ") & ";")
+            Next
+        Else
+            Call out.WriteLine(source.Select(SQL).JoinBy(ASCII.LF))
+        End If
+
+        Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` ENABLE KEYS */;")
+        Call out.WriteLine("UNLOCK TABLES;")
+        Call out.WriteLine(OptionsRestore, Now.ToString)
+    End Sub
+
     ''' <summary>
     ''' 生成用于将数据集合批量导入数据库的INSERT SQL事务
     ''' </summary>
@@ -56,65 +134,25 @@ Public Module DataDumps
     ''' <returns></returns>
     <Extension>
     Public Function DumpTransaction(Of T As SQLTable)(source As IEnumerable(Of T),
-                                                      Optional custom As Func(Of T, String) = Nothing,
+                                                      Optional custom As Func(Of SQLTable, String) = Nothing,
                                                       Optional type$ = "insert",
                                                       Optional distinct As Boolean = True) As String
-        Dim SQL As Func(Of T, String)
+        With New StringBuilder
+            Call source.DumpTransaction(
+                New StringWriter(.ref),
+                GetType(T), custom,
+                action:=type,
+                distinct:=distinct)
 
-        If custom Is Nothing Then
-            Select Case LCase(type)
-                Case "insert" : SQL = Function(o) o.GetInsertSQL
-                Case "update" : SQL = Function(o) o.GetUpdateSQL
-                Case "delete" : SQL = Function(o) o.GetDeleteSQL
-                Case "replace" : SQL = Function(o) o.GetReplaceSQL
-                Case Else
-                    Throw New ArgumentException("Only allowes ""insert/update/delete/replace"" actions.", paramName:=NameOf(type))
-            End Select
-        Else
-            SQL = custom
-        End If
-
-        Dim schemaTable As New Table(GetType(T))
-        Dim tableName$ = schemaTable.TableName
-        Dim sb As New StringBuilder()
-
-        Call sb.AppendLine(OptionsTempChange)
-
-        Call sb.AppendLine("--")
-        Call sb.AppendLine($"-- Dumping data for table `{tableName}`")
-        Call sb.AppendLine("--")
-        Call sb.AppendLine()
-
-        Call sb.AppendLine($"LOCK TABLES `{tableName}` WRITE;")
-        Call sb.AppendLine($"/*!40000 ALTER TABLE `{tableName}` DISABLE KEYS */;")
-
-        If type.TextEquals("insert") Then
-            Dim insertBlocks$() = source _
-                .Where(Function(r) Not r Is Nothing) _
-                .Select(Function(r) r.GetDumpInsertValue) _
-                .ToArray
-            Dim INSERT$ = schemaTable.GenerateInsertSql
-            Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
-
-            If distinct Then
-                insertBlocks = insertBlocks.Distinct.ToArray
-            End If
-
-            For Each block In insertBlocks.Split(200)
-                Call sb.AppendLine(schema & block.JoinBy(", ") & ";")
-            Next
-        Else
-            Call sb.AppendLine(source.Select(SQL).JoinBy(ASCII.LF))
-        End If
-
-        Call sb.AppendLine($"/*!40000 ALTER TABLE `{tableName}` ENABLE KEYS */;")
-        Call sb.AppendLine("UNLOCK TABLES;")
-        Call sb.AppendFormat(OptionsRestore, Now.ToString)
-
-        Return sb.ToString
+            Return .ToString
+        End With
     End Function
 
     ''' <summary>
+    ''' This function is only works for the table that without any foreign key constraint.
+    ''' 
+    ''' (这个函数只适合于没有外键约束的数据表)
+    ''' 
     ''' 从<see cref="SQLTable"/>之中生成SQL语句之后保存到指定的文件句柄之上，
     ''' + 假若所输入的文件句柄是带有``.sql``后缀的话，会直接保存为该文件，
     ''' + 反之会被当作为文件夹，当前的集合对象会保存为与类型相同名称的sql文件
