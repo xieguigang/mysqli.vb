@@ -16,12 +16,15 @@ Public Module DataDumps
     ''' <param name="tables"></param>
     <Extension>
     Public Sub DumpMySQL(output As StreamWriter, ParamArray tables As SQLTable()())
+        Dim type As Type
+
         Call output.DumpSession(
             Sub(buffer)
 
                 For Each table As SQLTable() In tables
                     With table
-                        Call .DumpTransaction(buffer, .First.GetType,)
+                        type = .First.GetType
+                        Call .DumpTransaction(buffer, type, distinct:=True)
                     End With
                 Next
             End Sub)
