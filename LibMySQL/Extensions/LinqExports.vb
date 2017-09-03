@@ -16,7 +16,7 @@ Public Module LinqExports
     ''' <param name="source">名字必须为表名称</param>
     ''' <param name="EXPORT$"></param>
     <Extension>
-    Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of MySQLTable)), EXPORT$, Optional bufferSize% = 2000)
+    Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of MySQLTable)), EXPORT$, Optional bufferSize% = 500)
         Dim writer As New Dictionary(Of String, StreamWriter)
         Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
 
