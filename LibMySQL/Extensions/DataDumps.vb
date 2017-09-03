@@ -14,13 +14,13 @@ Public Module DataDumps
     ''' <param name="output"></param>
     ''' <param name="tables"></param>
     <Extension>
-    Public Sub DumpMySQL(output As StreamWriter, ParamArray tables As SQLTable()())
+    Public Sub DumpMySQL(output As StreamWriter, ParamArray tables As MySQLTable()())
         Dim type As Type
 
         Call output.DumpSession(
             Sub(buffer)
 
-                For Each table As SQLTable() In tables
+                For Each table As MySQLTable() In tables
                     With table
                         type = .First.GetType
                         Call .DumpTransaction(buffer, type, distinct:=True)
@@ -70,14 +70,14 @@ Public Module DataDumps
     ''' <param name="custom">
     ''' User custom SQL generator. If this parameter is not nothing, then <paramref name="type"/> will disabled.
     ''' </param>
-    <Extension> Public Sub DumpTransaction(source As IEnumerable(Of SQLTable),
+    <Extension> Public Sub DumpTransaction(source As IEnumerable(Of MySQLTable),
                                            out As TextWriter,
                                            type As Type,
-                                           Optional custom As Func(Of SQLTable, String) = Nothing,
+                                           Optional custom As Func(Of MySQLTable, String) = Nothing,
                                            Optional action$ = "insert",
                                            Optional distinct As Boolean = True)
 
-        Dim SQL As Func(Of SQLTable, String)
+        Dim SQL As Func(Of MySQLTable, String)
 
         If custom Is Nothing Then
             Select Case LCase(action)
@@ -149,8 +149,8 @@ Public Module DataDumps
     ''' </param>
     ''' <returns></returns>
     <Extension>
-    Public Function DumpTransaction(Of T As SQLTable)(source As IEnumerable(Of T),
-                                                      Optional custom As Func(Of SQLTable, String) = Nothing,
+    Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
+                                                      Optional custom As Func(Of MySQLTable, String) = Nothing,
                                                       Optional type$ = "insert",
                                                       Optional distinct As Boolean = True) As String
         With New StringBuilder
@@ -178,9 +178,9 @@ Public Module DataDumps
     ''' <param name="type$"></param>
     ''' <param name="distinct"></param>
     <Extension>
-    Public Sub DumpLargeTransaction(Of T As SQLTable)(source As IEnumerable(Of T),
+    Public Sub DumpLargeTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
                                                       path$,
-                                                      Optional custom As Func(Of SQLTable, String) = Nothing,
+                                                      Optional custom As Func(Of MySQLTable, String) = Nothing,
                                                       Optional type$ = "insert",
                                                       Optional distinct As Boolean = True)
         Using output As StreamWriter = path.OpenWriter
@@ -200,7 +200,7 @@ Public Module DataDumps
     ''' 
     ''' (这个函数只适合于没有外键约束的数据表)
     ''' 
-    ''' 从<see cref="SQLTable"/>之中生成SQL语句之后保存到指定的文件句柄之上，
+    ''' 从<see cref="MySQLTable"/>之中生成SQL语句之后保存到指定的文件句柄之上，
     ''' + 假若所输入的文件句柄是带有``.sql``后缀的话，会直接保存为该文件，
     ''' + 反之会被当作为文件夹，当前的集合对象会保存为与类型相同名称的sql文件
     ''' </summary>
@@ -211,10 +211,10 @@ Public Module DataDumps
     ''' 假若不是以sql为后缀的话，会被当做文件夹来处理
     ''' </param>
     ''' <param name="encoding"></param>
-    ''' <param name="distinct">是否对<see cref="SQLTable.GetDumpInsertValue()"/>进行去重处理？默认是</param>
+    ''' <param name="distinct">是否对<see cref="MySQLTable.GetDumpInsertValue()"/>进行去重处理？默认是</param>
     ''' <returns></returns>
     <Extension>
-    Public Function DumpTransaction(Of T As SQLTable)(source As IEnumerable(Of T),
+    Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
                                                       path$,
                                                       Optional encoding As Encodings = Encodings.Default,
                                                       Optional type$ = "insert",

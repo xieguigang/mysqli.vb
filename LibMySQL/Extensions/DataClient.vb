@@ -43,21 +43,21 @@ Public Module DataClient
     ''' <typeparam name="T"></typeparam>
     ''' <param name="mysql"></param>
     ''' <returns></returns>
-    <Extension> Public Function SelectALL(Of T As SQLTable)(mysql As MySQL) As T()
+    <Extension> Public Function SelectALL(Of T As MySQLTable)(mysql As MySQL) As T()
         Dim table As TableName = GetType(T).GetAttribute(Of TableName)
         Dim SQL$ = $"SELECT * FROM `{table.Database}`.`{table.Name}`;"
         Return mysql.Query(Of T)(SQL)
     End Function
 
     ''' <summary>
-    ''' 这个函数统计出<see cref="SQLTable"/>所代表的二维表格之中，具有值得属性的数量占所有的属性的百分比
+    ''' 这个函数统计出<see cref="MySQLTable"/>所代表的二维表格之中，具有值得属性的数量占所有的属性的百分比
     ''' </summary>
     ''' <param name="schema"></param>
     ''' <param name="o"></param>
     ''' <param name="ZeroAsNull"></param>
     ''' <returns></returns>
     <Extension> Public Function OccupancyLoad(schema As BindProperty(Of DatabaseField)(),
-                                              o As SQLTable,
+                                              o As MySQLTable,
                                               Optional ZeroAsNull As Boolean = False) As Double
         Dim n% = schema _
             .Where(Function(field)
@@ -68,7 +68,7 @@ Public Module DataClient
     End Function
 
     <Extension>
-    Public Function HasValue(entity As SQLTable, field As BindProperty(Of DatabaseField), Optional ZeroAsNULL As Boolean = False) As Boolean
+    Public Function HasValue(entity As MySQLTable, field As BindProperty(Of DatabaseField), Optional ZeroAsNULL As Boolean = False) As Boolean
         Static emptyDate As Date = New Date
 
         With field
@@ -107,7 +107,7 @@ Public Module DataClient
     ''' <param name="obj"></param>
     ''' <param name="group"></param>
     ''' <returns></returns>
-    <Extension> Public Function GroupMerge(Of T As SQLTable)(obj As T, schema As BindProperty(Of DatabaseField)(), group As T()) As T
+    <Extension> Public Function GroupMerge(Of T As MySQLTable)(obj As T, schema As BindProperty(Of DatabaseField)(), group As T()) As T
         For Each field As BindProperty(Of DatabaseField) In schema
             If obj.HasValue(field, True) Then
                 ' 目标已经在当前的这个属性上面存在值了，则跳过

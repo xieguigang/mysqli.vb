@@ -16,13 +16,13 @@ Public Module LinqExports
     ''' <param name="source">名字必须为表名称</param>
     ''' <param name="EXPORT$"></param>
     <Extension>
-    Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of SQLTable)), EXPORT$, Optional bufferSize% = 2000)
+    Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of MySQLTable)), EXPORT$, Optional bufferSize% = 2000)
         Dim writer As New Dictionary(Of String, StreamWriter)
-        Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of SQLTable)))
+        Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
 
-        For Each x As NamedValue(Of SQLTable) In source
+        For Each x As NamedValue(Of MySQLTable) In source
             If Not writer.ContainsKey(x.Name) Then
-                buffer(x.Name) = (New Table(x.ValueType), New List(Of SQLTable))
+                buffer(x.Name) = (New Table(x.ValueType), New List(Of MySQLTable))
 
                 With $"{EXPORT}/{x.Name}.sql".OpenWriter
                     Call .WriteLine(OptionsTempChange)
@@ -60,7 +60,7 @@ Public Module LinqExports
     End Sub
 
     <Extension>
-    Public Sub DumpBlock(block As IEnumerable(Of SQLTable), schemaTable As Table, out As StreamWriter, Optional distinct As Boolean = True)
+    Public Sub DumpBlock(block As IEnumerable(Of MySQLTable), schemaTable As Table, out As StreamWriter, Optional distinct As Boolean = True)
         Dim INSERT$ = schemaTable.GenerateInsertSql
         Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
         Dim insertBlocks$() = block _

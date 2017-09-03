@@ -42,7 +42,7 @@ Public Module Extensions
     ''' </summary>
     ''' <typeparam name="T"></typeparam>
     ''' <returns></returns>
-    Public Function GetCreateTableMetaSQL(Of T As SQLTable)() As String
+    Public Function GetCreateTableMetaSQL(Of T As MySQLTable)() As String
         Dim attrs As TableName = GetType(T).GetCustomAttribute(Of TableName)
 
         If attrs Is Nothing Then
@@ -59,7 +59,7 @@ Public Module Extensions
     ''' <param name="mysql"></param>
     ''' <returns></returns>
     <Extension>
-    Public Function ClearTable(Of T As SQLTable)(mysql As MySQL) As String
+    Public Function ClearTable(Of T As MySQLTable)(mysql As MySQL) As String
         Dim SQL As New Value(Of String)
 
         If mysql.Ping = -1.0R Then
@@ -81,11 +81,11 @@ Public Module Extensions
     ''' </summary>
     ''' <typeparam name="T"></typeparam>
     ''' <returns></returns>
-    Public Function DropTableSQL(Of T As SQLTable)() As String
+    Public Function DropTableSQL(Of T As MySQLTable)() As String
         Return $"DROP TABLE IF EXISTS `{Table.GetTableName(GetType(T))}`;"
     End Function
 
-    <Extension> Public Function AsDBI(Of Table As SQLTable)(uri As String) As Linq(Of Table)
+    <Extension> Public Function AsDBI(Of Table As MySQLTable)(uri As String) As Linq(Of Table)
         Dim DBI As ConnectionUri = ConnectionUri.TryParsing(uri)
         Dim Linq As New Linq(Of Table)(DBI)
         Return Linq
@@ -201,7 +201,7 @@ Public Module Extensions
     End Function
 
     <Extension>
-    Public Function CopySets(Of row As SQLTable, T)(o As row, list As IEnumerable(Of T), setValue As Action(Of row, T)) As row()
+    Public Function CopySets(Of row As MySQLTable, T)(o As row, list As IEnumerable(Of T), setValue As Action(Of row, T)) As row()
         Dim array As T() = list.SafeQuery.ToArray
 
         If array.Length = 0 Then

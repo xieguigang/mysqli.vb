@@ -38,7 +38,7 @@ Namespace ServerApp
     ''' (分析某一个表实体对象的内存占用大小)
     ''' </summary>
     ''' <typeparam name="T"></typeparam>
-    Public Class MemorySize(Of T As SQLTable)
+    Public Class MemorySize(Of T As MySQLTable)
 
         Public ReadOnly Property Type As Type = GetType(T)
         ''' <summary>
@@ -87,7 +87,7 @@ Namespace ServerApp
         End Sub
 
         ''' <summary>
-        ''' 因为对于<see cref="SQLTable"/>而言，字段都是简单的初始类型，所以进行内存大小的计算会非常简单
+        ''' 因为对于<see cref="MySQLTable"/>而言，字段都是简单的初始类型，所以进行内存大小的计算会非常简单
         ''' </summary>
         ''' <param name="o"></param>
         ''' <returns></returns>

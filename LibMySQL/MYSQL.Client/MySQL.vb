@@ -346,12 +346,12 @@ Public Class MySQL : Implements IDisposable
     End Function
 
 #Region ""
-    Public Function ExecUpdate(SQL As Oracle.LinuxCompatibility.MySQL.SQLTable, Optional throwExp As Boolean = False) As Boolean
+    Public Function ExecUpdate(SQL As Oracle.LinuxCompatibility.MySQL.MySQLTable, Optional throwExp As Boolean = False) As Boolean
         Dim s_SQL As String = SQL.GetUpdateSQL
         Return Execute(s_SQL, throwExp) > 0
     End Function
 
-    Public Function ExecInsert(SQL As Oracle.LinuxCompatibility.MySQL.SQLTable, Optional throwExp As Boolean = False) As Boolean
+    Public Function ExecInsert(SQL As Oracle.LinuxCompatibility.MySQL.MySQLTable, Optional throwExp As Boolean = False) As Boolean
         Dim s_SQL As String = SQL.GetInsertSQL
 #If DEBUG Then
         Call s_SQL.__DEBUG_ECHO
@@ -360,17 +360,17 @@ Public Class MySQL : Implements IDisposable
         Return success
     End Function
 
-    Public Function ExecDelete(SQL As Oracle.LinuxCompatibility.MySQL.SQLTable, Optional throwExp As Boolean = False) As Boolean
+    Public Function ExecDelete(SQL As Oracle.LinuxCompatibility.MySQL.MySQLTable, Optional throwExp As Boolean = False) As Boolean
         Dim s_SQL As String = SQL.GetDeleteSQL
         Return Execute(s_SQL, throwExp) > 0
     End Function
 
-    Public Function ExecReplace(SQL As SQLTable, Optional throwExp As Boolean = False) As Boolean
+    Public Function ExecReplace(SQL As MySQLTable, Optional throwExp As Boolean = False) As Boolean
         Return Execute(SQL.GetReplaceSQL, throwExp) > 0
     End Function
 #End Region
 
-    Public Function CommitInserts(Transaction As IEnumerable(Of SQLTable), Optional ByRef ex As Exception = Nothing) As Boolean
+    Public Function CommitInserts(Transaction As IEnumerable(Of MySQLTable), Optional ByRef ex As Exception = Nothing) As Boolean
         Dim SQL As String = Transaction.ToArray(Function(x) x.GetInsertSQL).JoinBy(vbLf)
         Return CommitTransaction(SQL, ex)
     End Function
