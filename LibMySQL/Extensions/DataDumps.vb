@@ -11,6 +11,7 @@ Public Module DataDumps
 
     ''' <summary>
     ''' This function works for the tables that have foreign key constraint between each others.
+    ''' (这个函数只适用于比较小规模的数据库的导出)
     ''' </summary>
     ''' <param name="output"></param>
     ''' <param name="tables"></param>
@@ -109,15 +110,14 @@ Public Module DataDumps
                 .Where(Function(r) Not r Is Nothing) _
                 .Select(Function(r) r.GetDumpInsertValue) _
                 .ToArray
-            Dim INSERT$ = schemaTable.GenerateInsertSql
-            Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
+
 
             If distinct Then
                 insertBlocks = insertBlocks.Distinct.ToArray
             End If
 
             For Each block In insertBlocks.Split(200)
-                Call out.WriteLine(schema & block.JoinBy(", ") & ";")
+                Call out.WriteLine()
             Next
         Else
             Call out.WriteLine(source.Select(SQL).JoinBy(ASCII.LF))
@@ -168,6 +168,7 @@ Public Module DataDumps
 
     ''' <summary>
     ''' Write a very large SQL table data collection into a SQL file.
+    ''' (适合导出一个非常大的mysql数据表)
     ''' </summary>
     ''' <typeparam name="T"></typeparam>
     ''' <param name="source"></param>
