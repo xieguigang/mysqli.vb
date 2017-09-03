@@ -106,21 +106,14 @@ Public Module DataDumps
         Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` DISABLE KEYS */;")
 
         If action.TextEquals("insert") Then
-            Dim insertBlocks$() = source _
-                .Where(Function(r) Not r Is Nothing) _
-                .Select(Function(r) r.GetDumpInsertValue) _
-                .ToArray
-
-
-            If distinct Then
-                insertBlocks = insertBlocks.Distinct.ToArray
-            End If
-
-            For Each block In insertBlocks.Split(200)
-                Call out.WriteLine()
+            For Each block In source.Split(200)
+                Call block.DumpBlock(schemaTable, out, distinct)
             Next
         Else
-            Call out.WriteLine(source.Select(SQL).JoinBy(ASCII.LF))
+            Call source _
+                .Select(SQL) _
+                .JoinBy(ASCII.LF) _
+                .FlushTo(out)
         End If
 
         Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` ENABLE KEYS */;")

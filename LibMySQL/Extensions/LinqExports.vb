@@ -50,13 +50,19 @@ Public Module LinqExports
     End Sub
 
     <Extension>
-    Public Sub DumpBlock(block As IEnumerable(Of SQLTable), schemaTable As Table, out As StreamWriter)
+    Public Sub DumpBlock(block As IEnumerable(Of SQLTable), schemaTable As Table, out As StreamWriter, Optional distinct As Boolean = True)
         Dim INSERT$ = schemaTable.GenerateInsertSql
         Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
         Dim insertBlocks$() = block _
             .Where(Function(r) Not r Is Nothing) _
             .Select(Function(r) r.GetDumpInsertValue) _
             .ToArray
+
+        If distinct Then
+            insertBlocks = insertBlocks _
+                .Distinct _
+                .ToArray
+        End If
 
         ' Generates the SQL dumps data
         Dim SQL$ = schema & insertBlocks.JoinBy(", ") & ";"
