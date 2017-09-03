@@ -27,6 +27,7 @@ Public Module LinqExports
                 With $"{EXPORT}/{x.Name}.sql".OpenWriter
                     Call .WriteLine(OptionsTempChange)
                     Call .LockTable(x.Name)
+                    Call .WriteLine()
                     Call writer.Add(x.Name, .ref)
                 End With
             End If
@@ -47,6 +48,7 @@ Public Module LinqExports
             End With
 
             With writer(buf.name)
+                Call .WriteLine()
                 Call .UnlockTable(buf.name)
                 Call .WriteLine(OptionsRestore, Now.ToString)
             End With
