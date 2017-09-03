@@ -1,9 +1,9 @@
 ﻿Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
+Imports Microsoft.VisualBasic.Language
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
-Imports Microsoft.VisualBasic.Language
 
 ''' <summary>
 ''' 使用Linq方法进行非常大的数据库的导出操作
@@ -13,7 +13,7 @@ Public Module LinqExports
     ''' <summary>
     ''' 将数据结果导出到一个文件夹之中，文件名为表名称
     ''' </summary>
-    ''' <param name="source"></param>
+    ''' <param name="source">名字必须为表名称</param>
     ''' <param name="EXPORT$"></param>
     <Extension>
     Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of SQLTable)), EXPORT$, Optional bufferSize% = 2000)
@@ -22,8 +22,13 @@ Public Module LinqExports
 
         For Each x As NamedValue(Of SQLTable) In source
             If Not writer.ContainsKey(x.Name) Then
-                writer(x.Name) = $"{EXPORT}/{x.Name}.sql".OpenWriter
                 buffer(x.Name) = (New Table(x.ValueType), New List(Of SQLTable))
+
+                With $"{EXPORT}/{x.Name}.sql".OpenWriter
+                    Call .WriteLine(OptionsTempChange)
+                    Call .LockTable(x.Name)
+                    Call writer.Add(x.Name, .ref)
+                End With
             End If
 
             With buffer(x.Name)
@@ -39,6 +44,11 @@ Public Module LinqExports
         For Each buf In buffer.EnumerateTuples
             With buf.obj
                 Call .bufferData.DumpBlock(.schema, writer(buf.name))
+            End With
+
+            With writer(buf.name)
+                Call .UnlockTable(buf.name)
+                Call .WriteLine(OptionsRestore, Now.ToString)
             End With
         Next
 

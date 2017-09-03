@@ -2,10 +2,8 @@
 Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports Microsoft.VisualBasic.Language
-Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
-Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 
 Public Module DataDumps
 
@@ -31,7 +29,7 @@ Public Module DataDumps
             End Sub)
     End Sub
 
-    Const OptionsTempChange$ = "-- MySQL dump 1.50  Distrib 5.7.12, for Microsoft VisualBasic.NET ORM code solution (x86_64)
+    Public Const OptionsTempChange$ = "-- MySQL dump 1.50  Distrib 5.7.12, for Microsoft VisualBasic.NET ORM code solution (x86_64)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -45,7 +43,7 @@ Public Module DataDumps
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 "
-    Const OptionsRestore$ = "
+    Public Const OptionsRestore$ = "
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -97,13 +95,7 @@ Public Module DataDumps
         Dim schemaTable As New Table(type)
         Dim tableName$ = schemaTable.TableName
 
-        Call out.WriteLine("--")
-        Call out.WriteLine($"-- Dumping data for table `{tableName}`")
-        Call out.WriteLine("--")
-        Call out.WriteLine()
-
-        Call out.WriteLine($"LOCK TABLES `{tableName}` WRITE;")
-        Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` DISABLE KEYS */;")
+        Call out.LockTable(tableName)
 
         If action.TextEquals("insert") Then
             For Each block In source.Split(200)
@@ -116,6 +108,22 @@ Public Module DataDumps
                 .FlushTo(out)
         End If
 
+        Call out.UnlockTable(tableName)
+    End Sub
+
+    <Extension>
+    Friend Sub LockTable(out As TextWriter, tableName$)
+        Call out.WriteLine("--")
+        Call out.WriteLine($"-- Dumping data for table `{tableName}`")
+        Call out.WriteLine("--")
+        Call out.WriteLine()
+
+        Call out.WriteLine($"LOCK TABLES `{tableName}` WRITE;")
+        Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` DISABLE KEYS */;")
+    End Sub
+
+    <Extension>
+    Public Sub UnlockTable(out As TextWriter, tableName$)
         Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` ENABLE KEYS */;")
         Call out.WriteLine("UNLOCK TABLES;")
     End Sub
