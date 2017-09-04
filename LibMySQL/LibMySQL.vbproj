@@ -271,12 +271,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\DataClient.vb" />
+    <Compile Include="Extensions\DataDumps.vb" />
+    <Compile Include="Extensions\LinqExports.vb" />
     <Compile Include="MYSQL.Client\Linq.vb" />
     <Compile Include="MYSQL.Client\Table.vb" />
     <Compile Include="Reflection\SQL_LDM\SqlGenerateMethods.vb" />
     <Compile Include="ServerApp\MemoryCache.vb" />
     <Compile Include="ServerApp\MemorySize.vb" />
-    <Compile Include="SQLTable.vb" />
+    <Compile Include="MySQLTable.vb" />
     <Compile Include="GlobalSuppressions.vb" />
     <Compile Include="MYSQL.Client\RecordStatus.vb" />
     <Compile Include="Reflection\DbAttributes\DbDataTypes.vb" />

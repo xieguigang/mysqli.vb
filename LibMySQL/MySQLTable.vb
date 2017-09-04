@@ -34,7 +34,7 @@ Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 ''' </summary>
 ''' 
 <XmlType("MySQLi-SQL", [Namespace]:="https://www.mysql.com/")>
-Public MustInherit Class SQLTable : Inherits SchemaMaps.SQLTable
+Public MustInherit Class MySQLTable : Inherits SchemaMaps.SQLTable
 
     ''' <summary>
     ''' Generates the mysql specific ``REPLACE INTO`` SQL statement. 
