@@ -4,7 +4,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Module Test
 
     <TableName("Test")>
-    Public Class T : Inherits SQLTable
+    Public Class T : Inherits MySQLTable
 
         <DatabaseField("A")> Public Property A As String
         <DatabaseField("B")> Public Property B As Double
