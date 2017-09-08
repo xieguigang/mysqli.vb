@@ -217,7 +217,7 @@ Namespace VisualBasic
 
         Private ReadOnly LibMySQLReflectionNs As String = GetType(MySqlDbType).FullName.Replace(".MySqlDbType", "")
         Private ReadOnly LinqMappingNs As String = GetType(ColumnAttribute).FullName.Replace(".ColumnAttribute", "")
-        Private ReadOnly InheritsAbstract As String = GetType(SQLTable).FullName
+        Private ReadOnly InheritsAbstract As String = GetType(MySQLTable).FullName
 
         ''' <summary>
         ''' Generate the class object definition to mapping a table in the mysql database.
@@ -308,7 +308,7 @@ Namespace VisualBasic
             Call vb.AppendLine("    End Function")
             Call vb.AppendLine()
             Call vb.AppendLine("''' <summary>")
-            Call vb.AppendLine($"''' <see cref=""{NameOf(SQLTable.GetInsertSQL)}""/>")
+            Call vb.AppendLine($"''' <see cref=""{NameOf(MySQLTable.GetInsertSQL)}""/>")
             Call vb.AppendLine("''' </summary>")
             Call vb.AppendLine(__INSERT_VALUES(table, stripAI))
             Call vb.AppendLine()
@@ -387,7 +387,7 @@ Namespace VisualBasic
                 values = values.Replace("{" & field.i & "}", "{" & FixInvalids((+field).FieldName) & "}")
             Next
 
-            Call sb.AppendLine($"    Public Overrides Function {NameOf(SQLTable.GetDumpInsertValue)}() As String")
+            Call sb.AppendLine($"    Public Overrides Function {NameOf(MySQLTable.GetDumpInsertValue)}() As String")
             Call sb.AppendLine($"        Return $""{values}""")
             Call sb.AppendLine($"    End Function")
 
@@ -693,7 +693,7 @@ NO_KEY:
 
         Private Function __schemaDb(DbName As String, ns As String) As String
             Dim classDef As String =
-                $"Public MustInherits Class {DbName}: Inherits {GetType(SQLTable).FullName}" & vbCrLf &
+                $"Public MustInherits Class {DbName}: Inherits {GetType(MySQLTable).FullName}" & vbCrLf &
                 $"" & vbCrLf &
                 $"End Class"
             Return GenerateSingleDocument(Not String.IsNullOrEmpty(ns), ns, classDef)
