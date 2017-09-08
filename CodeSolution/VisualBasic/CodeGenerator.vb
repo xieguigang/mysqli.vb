@@ -187,8 +187,8 @@ Namespace VisualBasic
 
             Call VbCodeGenerator.AppendLine()
             Call VbCodeGenerator.AppendLine("Imports " & LinqMappingNs)
-            Call VbCodeGenerator.AppendLine("Imports " & LibMySQLReflectionNs)
             Call VbCodeGenerator.AppendLine("Imports System.Xml.Serialization")
+            Call VbCodeGenerator.AppendLine("Imports " & LibMySQLReflectionNs)
             Call VbCodeGenerator.AppendLine()
 
             If haveNamespace Then
@@ -685,49 +685,53 @@ NO_KEY:
             Dim LQuery = (From table
                           In classList
                           Select table.Table,
-                              doc = GenerateSingleDocument(haveNamespace, [Namespace], table.classDef)).ToArray
+                              doc = table.classDef.GenerateSingleDocument(haveNamespace, [Namespace])).ToArray
             Return LQuery.ToDictionary(
                 Function(x) x.Table.TableName,
                 Function(x) x.doc)
         End Function
 
         Private Function __schemaDb(DbName As String, ns As String) As String
-            Dim classDef As String =
-                $"Public MustInherits Class {DbName}: Inherits {GetType(MySQLTable).FullName}" & vbCrLf &
-                $"" & vbCrLf &
+            Dim classDef$ = {
+                $"Public MustInherits Class {DbName}: Inherits {InheritsAbstract}",
+                $"",
                 $"End Class"
-            Return GenerateSingleDocument(Not String.IsNullOrEmpty(ns), ns, classDef)
+            }.JoinBy(ASCII.LF)
+
+            Return classDef.GenerateSingleDocument(Not String.IsNullOrEmpty(ns), ns)
         End Function
 
-        Private Function GenerateSingleDocument(haveNamespace As Boolean, [Namespace] As String, ClassDef As String) As String
-            Dim VbCodeGenerator As New StringBuilder(1024)
+        <Extension>
+        Private Function GenerateSingleDocument(ClassDef$, haveNamespace As Boolean, namespace$) As String
+            Dim VB As New StringBuilder(1024)
 
-            Call VbCodeGenerator.AppendLine($"REM  {GetType(CodeGenerator).FullName}")
-            Call VbCodeGenerator.AppendLine($"REM  MYSQL Schema Mapper")
-            Call VbCodeGenerator.AppendLine($"REM      for Microsoft VisualBasic.NET {GetType(CodeGenerator).ModuleVersion}")
-            Call VbCodeGenerator.AppendLine()
-            Call VbCodeGenerator.AppendLine($"REM  Dump @{Now.ToString}")
-            Call VbCodeGenerator.AppendLine()
+            Call VB.AppendLine($"REM  {GetType(CodeGenerator).FullName}")
+            Call VB.AppendLine($"REM  MYSQL Schema Mapper")
+            Call VB.AppendLine($"REM      for Microsoft VisualBasic.NET {GetType(CodeGenerator).ModuleVersion}")
+            Call VB.AppendLine()
+            Call VB.AppendLine($"REM  Dump @{Now.ToString}")
+            Call VB.AppendLine()
 
-            Call VbCodeGenerator.AppendLine()
-            Call VbCodeGenerator.AppendLine("Imports " & LinqMappingNs)
-            Call VbCodeGenerator.AppendLine("Imports " & LibMySQLReflectionNs)
-            Call VbCodeGenerator.AppendLine("Imports System.Xml.Serialization")
-            Call VbCodeGenerator.AppendLine()
+            Call VB.AppendLine()
+            Call VB.AppendLine("Imports " & LinqMappingNs)
+            Call VB.AppendLine("Imports System.Xml.Serialization")
+            Call VB.AppendLine("Imports " & LibMySQLReflectionNs)
 
-            If haveNamespace Then
-                Call VbCodeGenerator.AppendLine($"Namespace {[Namespace]}")
-            End If
-
-            Call VbCodeGenerator.AppendLine()
-            Call VbCodeGenerator.AppendLine(ClassDef)
-            Call VbCodeGenerator.AppendLine()
+            Call VB.AppendLine()
 
             If haveNamespace Then
-                Call VbCodeGenerator.AppendLine("End Namespace")
+                Call VB.AppendLine($"Namespace {[namespace]}")
             End If
 
-            Return VbCodeGenerator.ToString
+            Call VB.AppendLine()
+            Call VB.AppendLine(ClassDef)
+            Call VB.AppendLine()
+
+            If haveNamespace Then
+                Call VB.AppendLine("End Namespace")
+            End If
+
+            Return VB.ToString
         End Function
     End Module
 End Namespace

@@ -1,7 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
+<<<<<<< HEAD
 VisualStudioVersion = 15.0.26823.1
+=======
+VisualStudioVersion = 15.0.26730.8
+>>>>>>> dd2f234a295ce035f88eb2bdd94049621ccd20b5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "LibMySQL", "LibMySQL\LibMySQL.vbproj", "{2C34A044-1BDE-44E8-A86E-E9971C87DA21}"
 EndProject
@@ -263,6 +267,10 @@ Global
 		{2DD4BE80-DDC3-4767-94A7-10F1C3395716} = {402F6543-128D-4CBE-8DA7-83B0B8D47019}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+<<<<<<< HEAD
 		SolutionGuid = {7CDA6FAB-122E-4F7A-B0CE-34CDA772C39D}
+=======
+		SolutionGuid = {E0DDCC96-9CB0-4A0E-A019-55F9E25033FC}
+>>>>>>> dd2f234a295ce035f88eb2bdd94049621ccd20b5
 	EndGlobalSection
 EndGlobal
