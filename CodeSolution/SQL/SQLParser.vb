@@ -92,15 +92,7 @@ Public Module SQLParser
         End Using
     End Function
 
-    <Extension>
-    Private Function __splitInternal(sql$) As String()
-        Dim out$() = Regex.Matches(sql, SQL_CREATE_TABLE, RegexOptions.Singleline).ToArray
-        Return out
-    End Function
-
-    <Extension>
-    Public Function LoadSQLDoc(stream As StreamReader, Optional ByRef raw As String = Nothing) As Reflection.Schema.Table()
-        Dim doc As String = stream.ReadToEnd.Replace("<", "&lt;")
+    Public Function LoadSQLDocFromStream(doc$) As Table()
         Dim DB As String = __getDBName(doc)
         Dim Tables = (From tbl As String
                       In doc.__splitInternal
@@ -112,23 +104,33 @@ Public Module SQLParser
                           TableName,
                           Fields = FieldsTokens,
                           Original = tbl).ToArray
-        Dim setValue = New SetValue(Of Reflection.Schema.Table)() _
-            .GetSet(NameOf(Reflection.Schema.Table.Database))
-        Dim SqlSchema =
-            LinqAPI.Exec(Of Reflection.Schema.Table) <=
-                From Table
-                In Tables
-                Let tbl As Reflection.Schema.Table =
-                    __createSchema(
-                    Table.Fields,
-                    Table.TableName,
-                    Table.PrimaryKey,
-                    Table.Original)
-                Select setValue(tbl, DB)
-
-        raw = doc
+        Dim setValue = New SetValue(Of Table)().GetSet(NameOf(Table.Database))
+        Dim SqlSchema = LinqAPI.Exec(Of Table) _
+ _
+            () <= From Table
+                  In Tables
+                  Let tbl As Table = __createSchema(
+                      Table.Fields,
+                      Table.TableName,
+                      Table.PrimaryKey,
+                      Table.Original)
+                  Select setValue(tbl, DB)
 
         Return SqlSchema
+    End Function
+
+    <Extension>
+    Private Function __splitInternal(sql$) As String()
+        Dim out$() = Regex.Matches(sql, SQL_CREATE_TABLE, RegexOptions.Singleline).ToArray
+        Return out
+    End Function
+
+    <Extension>
+    Public Function LoadSQLDoc(stream As StreamReader, Optional ByRef raw As String = Nothing) As Table()
+        With stream.ReadToEnd.Replace("<", "&lt;")
+            raw = .ref
+            Return LoadSQLDocFromStream(.ref)
+        End With
     End Function
 
     ''' <summary>

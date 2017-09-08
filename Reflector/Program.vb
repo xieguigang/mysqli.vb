@@ -31,5 +31,9 @@ Module Program
     Public Function Main() As Integer
         Return GetType(CLIProgram).RunCLI(args:=App.CommandLine)
     End Function
+
+    Public Const DocsTool$ = "MySQL documentation tool"
+    Public Const ORM_CLI$ = "MySQL ORM code solution tool"
+
 End Module
 

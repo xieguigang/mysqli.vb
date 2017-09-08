@@ -27,6 +27,7 @@
 #End Region
 
 Imports System.ComponentModel
+Imports System.IO
 Imports System.Text
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
@@ -36,16 +37,27 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Partial Module CLIProgram
 
     <ExportAPI("/MySQL.Markdown")>
-    <Usage("/MySQL.Markdown /sql <database.sql> [/toc /out <out.md>]")>
+    <Usage("/MySQL.Markdown /sql <database.sql/std_in> [/toc /out <out.md/std_out>]")>
     <Description("Generates the SDK document of your mysql database.")>
+    <Group(Program.DocsTool)>
+    <Argument("/sql", False, CLITypes.File, PipelineTypes.std_in,
+              Description:="The sql content source from a sql file or sql ``std_out`` output")>
+    <Argument("/out", True, CLITypes.File, PipelineTypes.std_out,
+              Description:="The markdown document output to a specific file or output onto the ``std_out`` device.")>
+    <Argument("/toc", True, CLITypes.Boolean, Description:="Add topics of content?")>
     Public Function MySQLMarkdown(args As CommandLine) As Integer
-        Dim sql$ = args <= "/sql"
-        Dim out$ = args.GetValue("/out", sql.TrimSuffix & "-dev-docs.md")
-        Dim schema As Table() = SQLParser.LoadSQLDoc(path:=sql)
-        Dim markdown$ = schema.Documentation
+        With args.OpenStreamOutput("/out")
+            If Not .BaseStream Is GetType(FileStream) Then
+                VBDebugger.ForceSTDError = True
+            End If
 
-        Return markdown _
-            .SaveTo(out, Encoding.UTF8) _
-            .CLICode
+            Dim sql$ = args.OpenStreamInput("/sql").ReadToEnd
+            Dim schema As Table() = SQLParser.LoadSQLDocFromStream(sql)
+            Dim markdown$ = schema.Documentation
+
+            Call .WriteLine(markdown)
+        End With
+
+        Return 0
     End Function
 End Module

@@ -1,28 +1,28 @@
 ﻿#Region "Microsoft.VisualBasic::4f7c3945f368e29515ad83c6b0bd0932, ..\mysqli\Reflector\CLI\CLIProgram.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    '       xie (genetics@smrucc.org)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
@@ -30,38 +30,40 @@ Imports System.ComponentModel
 Imports System.IO
 Imports System.Text
 Imports Microsoft.VisualBasic.CommandLine
+Imports Microsoft.VisualBasic.CommandLine.InteropService.SharedORM
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Scripting.MetaData
-Imports Oracle.LinuxCompatibility.MySQL.CodeSolution
+Imports MySQL2vb = Oracle.LinuxCompatibility.MySQL.CodeSolution.VisualBasic.CodeGenerator
 
+<CLI>
 <Package("MySQL.Reflector")>
 <Description("Tools for convert the mysql schema dump sql script into VisualBasic classes source code.")>
 Module CLIProgram
 
     Const InputsNotFound As String = "The required input parameter ""/sql"" is not specified!"
 
-    <ExportAPI("--reflects",
-               Info:="Automatically generates visualbasic source code from the MySQL database schema dump.",
-               Usage:="--reflects /sql <sql_path/std_in> [-o <output_path> /namespace <namespace> --language <php/visualbasic, default=visualbasic> /split /auto_increment.disable]",
-               Example:="--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
-    <Argument("/sql", False,
-                   AcceptTypes:={GetType(String)},
-                   Description:="The file path of the MySQL database schema dump file."),
-     Argument("-o", True,
-                   AcceptTypes:={GetType(String)},
-                   Description:="The output file path of the generated visual basic source code file from the SQL dump file ""/sql"""),
+    <ExportAPI("--reflects", Example:="--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
+    <Description("Automatically generates visualbasic source code from the MySQL database schema dump.")>
+    <Usage("--reflects /sql <sql_path/std_in> [-o <output_path> /namespace <namespace> --language <php/visualbasic, default=visualbasic> /split /auto_increment.disable]")>
+    <Argument("/sql", False, CLITypes.File, PipelineTypes.std_in,
+              AcceptTypes:={GetType(String)},
+              Description:="The file path of the MySQL database schema dump file."),
+     Argument("-o", True, CLITypes.File,
+              AcceptTypes:={GetType(String)},
+              Description:="The output file path of the generated visual basic source code file from the SQL dump file ""/sql"""),
      Argument("/namespace", True,
-                   AcceptTypes:={GetType(String)},
-                   Description:="The namespace value will be insert into the generated source code if this parameter is not null.")>
+              AcceptTypes:={GetType(String)},
+              Description:="The namespace value will be insert into the generated source code if this parameter is not null.")>
     <Argument("/split", True,
-                   AcceptTypes:={GetType(Boolean)},
-                   Description:="Split the source code into sevral files and named by table name?")>
+              AcceptTypes:={GetType(Boolean)},
+              Description:="Split the source code into sevral files and named by table name?")>
     <Argument("/auto_increment.disable", True,
               AcceptTypes:={GetType(Boolean)},
               Description:="Enable output the auto increment field in the mysql table instead of auto increment in the process of mysql inserts.")>
+    <Group(Program.ORM_CLI)>
     Public Function ReflectsConvert(args As CommandLine) As Integer
         Dim split As Boolean = args.GetBoolean("/split")
         Dim SQL As String = args("/sql"), out As String = args("-o")
@@ -107,7 +109,7 @@ Module CLIProgram
     ''' <returns></returns>
     Private Function __EXPORT%(SQL$, file As StreamReader, ns$, out$, output As StreamWriter, split As Boolean, AI As Boolean)
         If split Then ' 分开文档的输出形式，则不能够使用stream了
-            Dim codes As Dictionary(Of String, String) = VisualBasic.GenerateCodeSplit(file, ns, SQL, AI)
+            Dim codes As Dictionary(Of String, String) = MySQL2vb.GenerateCodeSplit(file, ns, SQL, AI)
 
             If String.IsNullOrEmpty(out) Then
                 out = FileIO.FileSystem.GetParentPath(SQL)
@@ -126,10 +128,10 @@ Module CLIProgram
                     out = $"{out}/{SQL.BaseName}.vb"
                 End If
 
-                Dim doc As String = VisualBasic.CodeGenerator.GenerateCode(file, ns, SQL)  ' Convert the SQL file into a visualbasic source code
+                Dim doc$ = MySQL2vb.GenerateCode(file, ns, SQL)  ' Convert the SQL file into a visualbasic source code
                 Return doc.SaveTo(out, Encoding.Unicode).CLICode               ' Save the vb source code into a text file
             Else
-                Call output.Write(VisualBasic.CodeGenerator.GenerateCode(file, ns, SQL))
+                Call output.Write(MySQL2vb.GenerateCode(file, ns, SQL))
                 Call output.Flush()
             End If
         End If
@@ -142,9 +144,10 @@ Module CLIProgram
     ''' </summary>
     ''' <param name="args"></param>
     ''' <returns></returns>
-    <ExportAPI("--export.dump",
-               Info:="Scans for the table schema sql files in a directory and converts these sql file as visualbasic source code.",
-               Usage:="--export.dump [-o <out_dir> /namespace <namespace> --dir <source_dir>]")>
+    <ExportAPI("--export.dump")>
+    <Description("Scans for the table schema sql files in a directory and converts these sql file as visualbasic source code.")>
+    <Usage("--export.dump [-o <out_dir> /namespace <namespace> --dir <source_dir>]")>
+    <Group(Program.ORM_CLI)>
     Public Function ExportDumpDir(args As CommandLine) As Integer
         Dim DIR As String = args("--dir")
         Dim ns As String = args("/namespace")
@@ -161,7 +164,7 @@ Module CLIProgram
 
         Dim SQLs As IEnumerable(Of String) = ls - l - wildcards("*.sql") <= DIR
         Dim LQuery = SQLs.ToArray(
-            Function(sql) VisualBasic.CodeGenerator.GenerateClass(sql.ReadAllText, ns))
+            Function(sql) MySQL2vb.GenerateClass(sql.ReadAllText, ns))
 
         For Each cls As NamedValue(Of String) In LQuery
             Dim vb As String = $"{outDIR}/{cls.Name}.vb"
