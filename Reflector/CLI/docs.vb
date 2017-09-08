@@ -28,7 +28,6 @@
 
 Imports System.ComponentModel
 Imports System.IO
-Imports System.Text
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Oracle.LinuxCompatibility.MySQL.CodeSolution
