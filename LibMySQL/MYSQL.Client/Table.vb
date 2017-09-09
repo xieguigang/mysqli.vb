@@ -30,24 +30,39 @@ Imports System.Runtime.CompilerServices
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 ''' <summary>
-''' 数据查询工具
+''' The mysql table model.(数据查询工具)
 ''' </summary>
 ''' <typeparam name="TTable"></typeparam>
 Public Class Table(Of TTable As MySQLTable)
 
+    ''' <summary>
+    ''' The mysqli interface
+    ''' </summary>
+    ''' <returns></returns>
     Public ReadOnly Property MySQL As MySQL
     Public ReadOnly Property Schema As Table
 
+    ''' <summary>
+    ''' Create a new table model from mysqli uri model
+    ''' </summary>
+    ''' <param name="uri"></param>
     Sub New(uri As ConnectionUri)
-        MySQL = New MySQL
-        Call MySQL.Connect(uri)
+        Call Me.New(New MySQL(uri))
+    End Sub
+
+    ''' <summary>
+    ''' Create a new table model from mysqli interface
+    ''' </summary>
+    ''' <param name="engine"></param>
+    Sub New(engine As MySQL)
+        Me.MySQL = engine
         Schema = New Table(GetType(TTable))
     End Sub
 
-    Sub New(Engine As MySQL)
-        Me.MySQL = Engine
-    End Sub
-
+    ''' <summary>
+    ''' Show this table name
+    ''' </summary>
+    ''' <returns></returns>
     Public Overrides Function ToString() As String
         Return Schema.TableName
     End Function
@@ -148,6 +163,14 @@ Public Module QueryHelper
         Return New WhereArgument(Of T) With {
             .table = table,
             .condition = $"( {test.JoinBy(" AND ")} )"
+        }
+    End Function
+
+    <Extension>
+    Public Function Where(Of T As MySQLTable)(table As Table(Of T), condition$) As WhereArgument(Of T)
+        Return New WhereArgument(Of T) With {
+            .table = table,
+            .condition = condition
         }
     End Function
 
