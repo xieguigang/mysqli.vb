@@ -19,13 +19,15 @@ Public Module LinqExports
     Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of MySQLTable)), EXPORT$, Optional bufferSize% = 500)
         Dim writer As New Dictionary(Of String, StreamWriter)
         Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
+        Dim DBName$
 
         For Each x As NamedValue(Of MySQLTable) In source
             If Not writer.ContainsKey(x.Name) Then
                 buffer(x.Name) = (New Table(x.ValueType), New List(Of MySQLTable))
+                DBName = buffer(x.Name).schema.Database
 
-                With $"{EXPORT}/{x.Name}.sql".OpenWriter
-                    Call .WriteLine(OptionsTempChange)
+                With $"{EXPORT}/{DBName}_{x.Name}.sql".OpenWriter
+                    Call .WriteLine(OptionsTempChange.Replace("%s", DBName))
                     Call .LockTable(x.Name)
                     Call .WriteLine()
                     Call writer.Add(x.Name, .ref)

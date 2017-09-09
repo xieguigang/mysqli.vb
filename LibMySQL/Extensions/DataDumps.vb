@@ -29,7 +29,12 @@ Public Module DataDumps
             End Sub)
     End Sub
 
-    Public Const OptionsTempChange$ = "-- MySQL dump 1.50  Distrib 5.7.12, for Microsoft VisualBasic.NET ORM code solution (x86_64)
+    Public Const OptionsTempChange$ =
+        "-- MySQL dump 1.50  Distrib 5.7.12, for Microsoft VisualBasic.NET ORM code solution (x86_64)
+--
+-- Database: %s
+--
+-- -----------------------------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
