@@ -66,6 +66,25 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
     Const UpdateWarning$ = "MySQLi Manager will update your connection with these information: "
 
     Public Sub RunConfig()
+        Dim update As Action(Of ConnectionUri) =
+            Sub(mysqli As ConnectionUri)
+                Dim key = Rnd().ToString("F5")
+                Dim encrypt As New SHA256(key, 12345678)
+                Dim encrypted = mysqli.GenerateUri(AddressOf encrypt.EncryptData)
+
+                encrypted = encrypted & "|" & key
+                encrypted.SaveTo(App.LocalData & "/mysqli.dat", Encoding.ASCII)
+            End Sub
+
+        Call update.RunConfig
+    End Sub
+
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="update">更新到配置文件</param>
+    <Extension>
+    Public Sub RunConfig(update As Action(Of ConnectionUri))
         Dim readString = Function(s$, ByRef result$)
                              result = s
                              Return Not s.StringEmpty
@@ -91,12 +110,7 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
         If confirm = MsgBoxResult.No Then
             Call "User cancel update config...".__INFO_ECHO
         Else
-            ' 更新到配置文件
-            Dim key = Rnd().ToString("F5")
-            Dim encrypt As New SHA256(key, 12345678)
-            Dim encrypted = mysqli.GenerateUri(AddressOf encrypt.EncryptData)
-            encrypted = encrypted & "|" & key
-            Call encrypted.SaveTo(App.LocalData & "/mysqli.dat", Encoding.ASCII)
+            Call update(mysqli)
         End If
     End Sub
 
