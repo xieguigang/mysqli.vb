@@ -166,6 +166,13 @@ Public Module QueryHelper
         }
     End Function
 
+    ''' <summary>
+    ''' ``WHERE ...``
+    ''' </summary>
+    ''' <typeparam name="T"></typeparam>
+    ''' <param name="table">The mysql table</param>
+    ''' <param name="condition$">The where condition.</param>
+    ''' <returns></returns>
     <Extension>
     Public Function Where(Of T As MySQLTable)(table As Table(Of T), condition$) As WhereArgument(Of T)
         Return New WhereArgument(Of T) With {
