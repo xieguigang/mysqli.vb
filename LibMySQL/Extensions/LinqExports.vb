@@ -81,6 +81,11 @@ Public Module LinqExports
         ' Generates the SQL dumps data
         Dim SQL$ = schema & insertBlocks.JoinBy(", ") & ";"
 
-        Call out.WriteLine(SQL)
+        ' 在下面调用.IsNullOrEmpty进行判断来避免出现
+        ' INSERT INTO `tissue_locations` (`hash_code`, `uniprot_id`, `name`, `tissue_id`, `tissue_name`) VALUES ;
+        ' 这种尴尬的错误
+        If Not insertBlocks.IsNullOrEmpty Then
+            Call out.WriteLine(SQL)
+        End If
     End Sub
 End Module
