@@ -2,6 +2,7 @@
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 
@@ -15,11 +16,17 @@ Public Module LinqExports
     ''' </summary>
     ''' <param name="source">名字必须为表名称</param>
     ''' <param name="EXPORT$"></param>
+    ''' <param name="singleTransaction">
+    ''' Merge the sql files that exported into a large single sql transaction file? Default is not.
+    ''' </param>
     <Extension>
-    Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of MySQLTable)), EXPORT$, Optional bufferSize% = 500)
+    Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of MySQLTable)), EXPORT$, Optional bufferSize% = 500, Optional singleTransaction As Boolean = False)
         Dim writer As New Dictionary(Of String, StreamWriter)
         Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
-        Dim DBName$
+        Dim DBName$ = ""
+        Dim saveSQL$ = EXPORT
+
+        EXPORT = App.GetAppSysTempFile(sessionID:=App.PID)
 
         For Each x As NamedValue(Of MySQLTable) In source
             If Not writer.ContainsKey(x.Name) Then
@@ -27,7 +34,10 @@ Public Module LinqExports
                 DBName = buffer(x.Name).schema.Database
 
                 With $"{EXPORT}/{DBName}_{x.Name}.sql".OpenWriter
-                    Call .WriteLine(OptionsTempChange.Replace("%s", DBName))
+                    If Not singleTransaction Then
+                        Call .WriteLine(OptionsTempChange.Replace("%s", DBName))
+                    End If
+
                     Call .LockTable(x.Name)
                     Call .WriteLine()
                     Call writer.Add(x.Name, .ref)
@@ -52,7 +62,10 @@ Public Module LinqExports
             With writer(buf.name)
                 Call .WriteLine()
                 Call .UnlockTable(buf.name)
-                Call .WriteLine(OptionsRestore, Now.ToString)
+
+                If Not singleTransaction Then
+                    Call .WriteLine(OptionsRestore, Now.ToString)
+                End If
             End With
         Next
 
@@ -61,6 +74,28 @@ Public Module LinqExports
             Call handle.Close()
             Call handle.Dispose()
         Next
+
+        If singleTransaction Then
+
+            ' merge the sql files that exported into a large single sql transaction file.
+            Using SQL As StreamWriter = saveSQL.OpenWriter
+                With SQL
+                    Call .WriteLine(OptionsTempChange.Replace("%s", DBName))
+
+                    For Each path As String In ls - l - r - "*.sql" <= EXPORT
+                        Using reader As StreamReader = path.OpenReader
+
+                            Do While Not reader.EndOfStream
+                                Call .WriteLine(reader.ReadLine)
+                            Loop
+
+                        End Using
+                    Next
+
+                    Call .WriteLine(OptionsRestore, Now.ToString)
+                End With
+            End Using
+        End If
     End Sub
 
     <Extension>
