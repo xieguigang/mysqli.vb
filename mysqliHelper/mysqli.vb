@@ -7,7 +7,7 @@ Imports Oracle.LinuxCompatibility.MySQL
 Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
 
 ''' <summary>
-''' 一些比较常用的mysql连接拓展
+''' Mysqli connection config helper.(一些比较常用的mysql连接拓展)
 ''' </summary>
 <RunDllEntryPoint(NameOf(mysqli))> Public Module mysqli
 
@@ -33,6 +33,10 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
         End If
     End Sub
 
+    ''' <summary>
+    ''' Init connection from default config file.
+    ''' </summary>
+    ''' <param name="mysql"></param>
     <Extension> Public Sub init(ByRef mysql As mysqliEnd)
         If mysql <= mysqli.LoadConfig = -1.0R Then
 #If Not DEBUG Then
@@ -59,6 +63,8 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
         End Try
     End Sub
 
+    Const UpdateWarning$ = "MySQLi Manager will update your connection with these information: "
+
     Public Sub RunConfig()
         Dim readString = Function(s$, ByRef result$)
                              result = s
@@ -80,7 +86,7 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
             .Port = port,
             .User = user
         }
-        Dim confirm = STDIO.MsgBox("MySQLi Manager will update your connection with these information: " & mysqli.GetDisplayUri)
+        Dim confirm = STDIO.MsgBox(UpdateWarning & mysqli.GetDisplayUri)
 
         If confirm = MsgBoxResult.No Then
             Call "User cancel update config...".__INFO_ECHO
@@ -94,6 +100,10 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
         End If
     End Sub
 
+    ''' <summary>
+    ''' Load mysqli connection info from default config file.
+    ''' </summary>
+    ''' <returns></returns>
     Public Function LoadConfig() As ConnectionUri
         Dim encrypted$ = (App.LocalData & "/mysqli.dat").ReadAllText
         Dim key = encrypted.Split("|"c).Last
