@@ -20,7 +20,7 @@ Public Module LinqExports
     ''' Merge the sql files that exported into a large single sql transaction file? Default is not.
     ''' </param>
     <Extension>
-    Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of MySQLTable)), EXPORT$, Optional bufferSize% = 500, Optional singleTransaction As Boolean = False)
+    Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of MySQLTable)), EXPORT$, Optional bufferSize% = 500, Optional singleTransaction As Boolean = False, Optional echo As Boolean = True)
         Dim writer As New Dictionary(Of String, StreamWriter)
         Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
         Dim DBName$ = ""
@@ -36,6 +36,10 @@ Public Module LinqExports
                 With $"{EXPORT}/{DBName}_{x.Name}.sql".OpenWriter
                     If Not singleTransaction Then
                         Call .WriteLine(OptionsTempChange.Replace("%s", DBName))
+
+                        If echo Then
+                            Call ("  --> " & DirectCast(.BaseStream, FileStream).Name).__INFO_ECHO
+                        End If
                     End If
 
                     Call .LockTable(x.Name)
@@ -48,6 +52,10 @@ Public Module LinqExports
                 If .bufferData = bufferSize Then
                     Call .bufferData.DumpBlock(.schema, writer(x.Name))
                     Call .bufferData.Clear()
+
+                    If echo Then
+                        Call $"write_buffer({x.Name})".__DEBUG_ECHO
+                    End If
                 Else
                     Call .bufferData.Add(x.Value)
                 End If
@@ -77,6 +85,10 @@ Public Module LinqExports
 
         If singleTransaction Then
 
+            If echo Then
+                Call $"Output single transaction SQL file to: {saveSQL}".__INFO_ECHO
+            End If
+
             ' merge the sql files that exported into a large single sql transaction file.
             Using SQL As StreamWriter = saveSQL.OpenWriter
                 With SQL
@@ -95,6 +107,10 @@ Public Module LinqExports
                     Call .WriteLine(OptionsRestore, Now.ToString)
                 End With
             End Using
+
+            If echo Then
+                Call "job done!".__INFO_ECHO
+            End If
         End If
     End Sub
 
