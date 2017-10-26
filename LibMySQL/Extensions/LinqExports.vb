@@ -115,7 +115,7 @@ Public Module LinqExports
     End Sub
 
     <Extension>
-    Public Sub DumpBlock(block As IEnumerable(Of MySQLTable), schemaTable As Table, out As StreamWriter, Optional distinct As Boolean = True)
+    Public Sub DumpBlock(block As IEnumerable(Of MySQLTable), schemaTable As Table, out As TextWriter, Optional distinct As Boolean = True)
         Dim INSERT$ = schemaTable.GenerateInsertSql
         Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
         Dim insertBlocks$() = block _
