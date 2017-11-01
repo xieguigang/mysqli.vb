@@ -163,8 +163,11 @@ Module CLIProgram
         Call FileIO.FileSystem.CreateDirectory(outDIR)
 
         Dim SQLs As IEnumerable(Of String) = ls - l - wildcards("*.sql") <= DIR
-        Dim LQuery = SQLs.ToArray(
-            Function(sql) MySQL2vb.GenerateClass(sql.ReadAllText, ns))
+        Dim LQuery = SQLs _
+            .Select(Function(sql)
+                        Return MySQL2vb.GenerateClass(sql.ReadAllText, ns)
+                    End Function) _
+            .ToArray
 
         For Each cls As NamedValue(Of String) In LQuery
             Dim vb As String = $"{outDIR}/{cls.Name}.vb"
