@@ -58,7 +58,7 @@ Namespace Workbench.Dump
 
             Call MySQL.Execute($"CREATE SCHEMA `{dbName}` ;")
 
-            '   Dim Tables = SQLs.ToArray(Of KeyValuePair)(Function(sql) CodeGenerator.GenerateClass(sql, ""))
+            '   Dim Tables = SQLs.Select(Of KeyValuePair)(Function(sql) CodeGenerator.GenerateClass(sql, ""))
 
             Throw New NotImplementedException
         End Function
