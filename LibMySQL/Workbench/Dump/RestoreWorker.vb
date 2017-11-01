@@ -49,7 +49,7 @@ Namespace Workbench.Dump
             Dim SQLs As String() = FileIO.FileSystem.GetFiles(
                 dumpDir,
                 FileIO.SearchOption.SearchTopLevelOnly,
-                "*.sql").ToArray(Function(file) FileIO.FileSystem.ReadAllText(file))
+                "*.sql").Select(Function(file) FileIO.FileSystem.ReadAllText(file)).ToArray
 
             If String.IsNullOrEmpty(dbName) Then
                 dbName = FileIO.FileSystem.GetDirectoryInfo(dumpDir).Name

@@ -146,7 +146,7 @@ Namespace Reflection
             Dim fields As New List(Of SeqValue(Of PropertyInfo))
             Dim schema = (From r As DataRow
                           In Reader.GetSchemaTable
-                          Select r).ToArray(Function(x) x.Item("ColumnName").ToString)  ' 获取当前表之中可用的列名称列表
+                          Select r).Select(Function(x) x.Item("ColumnName").ToString).ToArray   ' 获取当前表之中可用的列名称列表
 
             For Each [property] As PropertyInfo In ItemTypeProperty    'Using the reflection to get the fields in the table schema only once.
                 DbFieldAttr = [property].GetAttribute(Of DatabaseField)()

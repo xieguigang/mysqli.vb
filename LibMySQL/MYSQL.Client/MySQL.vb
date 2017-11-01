@@ -371,7 +371,7 @@ Public Class MySQL : Implements IDisposable
 #End Region
 
     Public Function CommitInserts(Transaction As IEnumerable(Of MySQLTable), Optional ByRef ex As Exception = Nothing) As Boolean
-        Dim SQL As String = Transaction.ToArray(Function(x) x.GetInsertSQL).JoinBy(vbLf)
+        Dim SQL As String = Transaction.Select(Function(x) x.GetInsertSQL).JoinBy(vbLf)
         Return CommitTransaction(SQL, ex)
     End Function
 

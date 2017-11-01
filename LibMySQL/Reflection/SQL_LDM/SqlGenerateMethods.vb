@@ -52,7 +52,7 @@ Namespace Reflection.SQL
                 Return $"`{index.First}` = '%s'".Replace("%s", "{%d}").Replace("%d", offset)
             End If
 
-            Dim array As String() = index.ToArray(Function(name, idx) $"`{name}`='{"{"}{idx + offset}{"}"}'")
+            Dim array As String() = index.Select(Function(name, idx) $"`{name}`='{"{"}{idx + offset}{"}"}'").ToArray
             Return String.Join(" and ", array)
         End Function
 

@@ -476,7 +476,7 @@ Namespace VisualBasic
             Dim SqlBuilder As StringBuilder = New StringBuilder("        ")
             Call SqlBuilder.Append("Return String.Format(UPDATE_SQL, ")
             Call SqlBuilder.Append(String.Join(", ", (From Field In Schema.Fields Select __getExprInvoke(Field, refConflict)).ToArray))
-            Call SqlBuilder.Append(", " & String.Join(", ", PrimaryKeys.ToArray(Function(field) __getExprInvoke(field, refConflict))) & ")")
+            Call SqlBuilder.Append(", " & String.Join(", ", PrimaryKeys.Select(Function(field) __getExprInvoke(field, refConflict)).ToArray) & ")")
 
             Return SqlBuilder.ToString
         End Function
@@ -498,7 +498,7 @@ Namespace VisualBasic
             Try
                 Dim SqlBuilder As String
                 Dim PrimaryKeys As Reflection.Schema.Field() = Schema.GetPrimaryKeyFields
-                Dim refInvoke As String = String.Join(", ", PrimaryKeys.ToArray(Function(field) __getExprInvoke(field, refConflict)))
+                Dim refInvoke As String = String.Join(", ", PrimaryKeys.Select(Function(field) __getExprInvoke(field, refConflict)).ToArray)
 
                 If PrimaryKeys.IsNullOrEmpty Then
                     GoTo NO_KEY
@@ -641,7 +641,7 @@ NO_KEY:
                                   Function(x) x.tbl)
             Catch ex As Exception
                 Dim g = SchemaSQLLQuery.ToArray.CheckDuplicated(Of String)(Function(x) x.tableName)
-                Dim dupliTables As String = String.Join(", ", g.ToArray(Function(tb) tb.Tag))
+                Dim dupliTables As String = String.Join(", ", g.Select(Function(tb) tb.Tag).ToArray)
                 Throw New Exception("Duplicated tables:  " & dupliTables, ex)
             End Try
 
