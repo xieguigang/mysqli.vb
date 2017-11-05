@@ -64,6 +64,7 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
     End Sub
 
     Const UpdateWarning$ = "MySQLi Manager will update your connection with these information: "
+    Const dataFile$ = "mysqli.dat"
 
     Public Sub RunConfig()
         Dim update As Action(Of ConnectionUri) =
@@ -73,7 +74,7 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
                 Dim encrypted = mysqli.GenerateUri(AddressOf encrypt.EncryptData)
 
                 encrypted = encrypted & "|" & key
-                encrypted.SaveTo(App.LocalData & "/mysqli.dat", Encoding.ASCII)
+                encrypted.SaveTo($"{App.LocalData}/{dataFile}", Encoding.ASCII)
             End Sub
 
         Call update.RunConfig
@@ -119,11 +120,18 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
     ''' </summary>
     ''' <returns></returns>
     Public Function LoadConfig() As ConnectionUri
-        Dim encrypted$ = (App.LocalData & "/mysqli.dat").ReadAllText
+        Dim encrypted$ = ($"{App.LocalData}/{dataFile}").ReadAllText
         Dim key = encrypted.Split("|"c).Last
         encrypted = encrypted.Replace("|" & key, "")
         Dim descrypt As New SHA256(key, 12345678)
         Dim uri As ConnectionUri = ConnectionUri.CreateObject(encrypted, AddressOf descrypt.DecryptString)
         Return uri
+    End Function
+
+    Public Function CopyToModule(exe$) As Boolean
+        Dim configuration$ = $"{App.LocalData}/{dataFile}".ReadAllText
+        Dim target$ = App.GetAppLocalData(exe)
+
+        Return configuration.SaveTo(target, Encoding.ASCII)
     End Function
 End Module
