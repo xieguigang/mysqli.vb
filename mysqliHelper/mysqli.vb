@@ -4,7 +4,7 @@ Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.SecurityString
 Imports Microsoft.VisualBasic.Terminal
 Imports Oracle.LinuxCompatibility.MySQL
-Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
+Imports mysqliEndPoint = Oracle.LinuxCompatibility.MySQL.MySQL
 
 ''' <summary>
 ''' Mysqli connection config helper.(一些比较常用的mysql连接拓展)
@@ -12,11 +12,11 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
 <RunDllEntryPoint(NameOf(mysqli))> Public Module mysqli
 
     ''' <summary>
-    ''' Initializes MySQLi and returns a resource for use with <see cref="mysqliEnd"/>
+    ''' Initializes MySQLi and returns a resource for use with <see cref="mysqliEndPoint"/>
     ''' (从命令行所设置的环境变量之中初始化mysql的数据库连接的通用拓展)
     ''' </summary>
     ''' <param name="mysql"></param>
-    <Extension> Public Sub init_cli(ByRef mysql As mysqliEnd)
+    <Extension> Public Sub init_cli(ByRef mysql As mysqliEndPoint)
         If mysql <= New ConnectionUri With {
             .Database = App.GetVariable("database"),
             .IPAddress = App.GetVariable("host"),
@@ -37,7 +37,7 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
     ''' Init connection from default config file.
     ''' </summary>
     ''' <param name="mysql"></param>
-    <Extension> Public Sub init(ByRef mysql As mysqliEnd)
+    <Extension> Public Sub init(ByRef mysql As mysqliEndPoint)
         If mysql <= mysqli.LoadConfig = -1.0R Then
 #If Not DEBUG Then
             Throw New Exception("No MySQL database connection!")
@@ -56,7 +56,7 @@ Imports mysqliEnd = Oracle.LinuxCompatibility.MySQL.MySQL
     ''' </summary>
     Public Sub TestMySQLi()
         Try
-            Call New mysqliEnd().init
+            Call New mysqliEndPoint().init
             Call "Mysqli connection config test success!".__INFO_ECHO
         Catch ex As Exception
             Call "Mysqli connection config test failure!".PrintException
