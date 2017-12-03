@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::5d4483b28bd36ff2ac9b0eb890454c73, ..\mysqli\LibMySQL\Extensions\Extensions.vb"
+﻿#Region "Microsoft.VisualBasic::6c3cdb2de5cab87895c5456fedd48ab2, ..\mysqli\LibMySQL\Extensions\Extensions.vb"
 
     ' Author:
     ' 

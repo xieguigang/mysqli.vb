@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::a1d7c424dae5d08e5820f0a022de6601, ..\mysqli\CodeSolution\SQL\SQLParser.vb"
+﻿#Region "Microsoft.VisualBasic::3c5d32d9b60ff35eaee8c460cfa4e82e, ..\mysqli\CodeSolution\SQL\SQLParser.vb"
 
     ' Author:
     ' 

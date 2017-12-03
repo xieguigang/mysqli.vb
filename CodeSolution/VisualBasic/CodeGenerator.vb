@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::e180713af5b4bdc43ec1d968d7002858, ..\mysqli\CodeSolution\VisualBasic\CodeGenerator.vb"
+﻿#Region "Microsoft.VisualBasic::fd0be879f8af3c8e0e9ac18ba64c9f1a, ..\mysqli\CodeSolution\VisualBasic\CodeGenerator.vb"
 
     ' Author:
     ' 

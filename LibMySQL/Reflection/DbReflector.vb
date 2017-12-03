@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::0395fc230fcc27d9da5c03e7ad018efb, ..\mysqli\LibMySQL\Reflection\DbReflector.vb"
+﻿#Region "Microsoft.VisualBasic::f3d9e9673e8a9f3ea06991a41808a843, ..\mysqli\LibMySQL\Reflection\DbReflector.vb"
 
     ' Author:
     ' 

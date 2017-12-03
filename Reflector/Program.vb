@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::1018671f919b08e30681bd1ebd68722a, ..\mysqli\Reflector\Program.vb"
+﻿#Region "Microsoft.VisualBasic::900fdd514a4eb1e0bf9a8230bb979b9b, ..\mysqli\Reflector\Program.vb"
 
     ' Author:
     ' 
@@ -36,4 +36,3 @@ Module Program
     Public Const ORM_CLI$ = "MySQL ORM code solution tool"
 
 End Module
-

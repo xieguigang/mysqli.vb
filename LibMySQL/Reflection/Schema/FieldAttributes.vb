@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::56c8deeb5823d16cbf70a01fd28bb317, ..\mysqli\LibMySQL\Reflection\Schema\FieldAttributes.vb"
+﻿#Region "Microsoft.VisualBasic::3a0c6ad368495f8f6f866c84e91cae1c, ..\mysqli\LibMySQL\Reflection\Schema\FieldAttributes.vb"
 
     ' Author:
     ' 
