@@ -98,7 +98,9 @@ Namespace Reflection.SQL
             End If
 
             ' End of the create table SQL statement
-            SQL.Append(");")
+            SQL.AppendLine(")")
+            SQL.AppendLine($"COMMENT = '{schema.Comment.MySqlEscaping}'")
+            SQL.AppendLine(";")
 
             Return SQL.ToString
         End Function
