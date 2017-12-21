@@ -278,10 +278,9 @@ Public Module DataDumps
             .Select(Function(s) s.Trim(ASCII.Quot)) _
             .ToArray
         Dim fields As Dictionary(Of String, Field) = header _
-            .Skip(1) _
             .ToDictionary(Function(name) name,
                           Function(name) simpleField(name))
-        Dim schema As New Table With {
+        Dim schema As New Table(fields) With {
             .TableName = path.BaseName,
             .Comment = $"Auto-generated table schema from csv file: {path}",
             .PrimaryFields = New List(Of String) From {header.First},

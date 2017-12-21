@@ -61,33 +61,44 @@ Namespace Reflection.SQL
         ''' </summary>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Shared Function FromSchema(schema As Schema.Table) As String
+        Public Shared Function FromSchema(schema As Table) As String
             Dim SQL As New StringBuilder(1024)
-            Dim sBuilder2 As StringBuilder = New StringBuilder(128)
+            Dim token$
 
-            SQL.AppendFormat(CREATE_TABLE & vbCrLf, schema.TableName)
+            token = schema _
+                .Fields _
+                .Select(Function(field)
+                            Return "  " & field.ToString & ","
+                        End Function) _
+                .JoinBy(vbCrLf)
 
-            Dim Fields = schema.Fields
-            For i As Integer = 0 To Fields.Length - 1
-                SQL.AppendLine("  " & Fields(i).ToString & " ,")
-            Next
+            SQL.AppendFormat(CREATE_TABLE, schema.TableName)
+            SQL.AppendLine()
+            SQL.AppendLine(token)
 
-            Dim PrimaryField = schema.PrimaryFields
-            For Each PK As String In PrimaryField
-                sBuilder2.AppendFormat("`{0}`, ", PK)
-            Next
-            sBuilder2.Remove(sBuilder2.Length - 2, 2)
-            SQL.AppendFormat(PRIMARY_KEY & vbCrLf, sBuilder2.ToString)
+            Dim primaryField = schema _
+                .PrimaryFields _
+                .Select(Function(pk) $"`{pk}`") _
+                .JoinBy(", ")
 
-            Dim UniqueFields = schema.UniqueFields
-            If UniqueFields.Count > 0 Then
-                SQL.Append(" ,")
+            SQL.AppendFormat(PRIMARY_KEY, primaryField)
+            SQL.AppendLine()
+
+            Dim uniqueFields = schema.UniqueFields
+
+            If uniqueFields.Count > 0 Then
+                SQL.Append(", ")
+                token = uniqueFields _
+                    .Select(Function(unique)
+                                Return UNIQUE_INDEX.Replace("%s", unique)
+                            End Function) _
+                    .JoinBy(", ")
+
+                SQL.AppendLine(token)
             End If
-            For Each UniqueField As String In UniqueFields
-                SQL.AppendLine(UNIQUE_INDEX.Replace("%s", UniqueField) & " ,")
-            Next
-            SQL.Remove(SQL.Length - 3, 3)
-            SQL.Append(");") 'End of the sql statement
+
+            ' End of the create table SQL statement
+            SQL.Append(");")
 
             Return SQL.ToString
         End Function
