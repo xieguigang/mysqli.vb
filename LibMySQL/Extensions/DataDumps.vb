@@ -1,28 +1,28 @@
 ﻿#Region "Microsoft.VisualBasic::bd6f8a04eb9599de3d66bd7a3968e874, ..\mysqli\LibMySQL\Extensions\DataDumps.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    '       xie (genetics@smrucc.org)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
@@ -31,7 +31,9 @@ Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Text
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 
 Public Module DataDumps
 
@@ -183,9 +185,9 @@ Public Module DataDumps
     ''' <returns></returns>
     <Extension>
     Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
-                                                      Optional custom As Func(Of MySQLTable, String) = Nothing,
-                                                      Optional type$ = "insert",
-                                                      Optional distinct As Boolean = True) As String
+                                                        Optional custom As Func(Of MySQLTable, String) = Nothing,
+                                                        Optional type$ = "insert",
+                                                        Optional distinct As Boolean = True) As String
         With New StringBuilder
             Call New StringWriter(.ref).DumpSession(
                 Sub(buffer)
@@ -212,10 +214,10 @@ Public Module DataDumps
     ''' <param name="distinct"></param>
     <Extension>
     Public Sub DumpLargeTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
-                                                      path$,
-                                                      Optional custom As Func(Of MySQLTable, String) = Nothing,
-                                                      Optional type$ = "insert",
-                                                      Optional distinct As Boolean = True)
+                                                        path$,
+                                                        Optional custom As Func(Of MySQLTable, String) = Nothing,
+                                                        Optional type$ = "insert",
+                                                        Optional distinct As Boolean = True)
         Using output As StreamWriter = path.OpenWriter
             Call output.DumpSession(
                 Sub(buffer)
@@ -248,10 +250,10 @@ Public Module DataDumps
     ''' <returns></returns>
     <Extension>
     Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
-                                                      path$,
-                                                      Optional encoding As Encodings = Encodings.Default,
-                                                      Optional type$ = "insert",
-                                                      Optional distinct As Boolean = True) As Boolean
+                                                        path$,
+                                                        Optional encoding As Encodings = Encodings.Default,
+                                                        Optional type$ = "insert",
+                                                        Optional distinct As Boolean = True) As Boolean
         Dim sql$ = source.DumpTransaction(
             type:=type,
             distinct:=distinct)
@@ -262,6 +264,40 @@ Public Module DataDumps
         End If
 
         Return sql.SaveTo(path, encoding.CodePage)
+    End Function
+
+    ''' <summary>
+    ''' 将csv导入数据库之中的帮助工具，利用这个工具解析csv文件的头部标题行，生成``Create Table``脚本
+    ''' </summary>
+    ''' <param name="path"></param>
+    ''' <returns></returns>
+    Public Function CsvImportsHelper(path As String) As String
+        Dim header$() = path _
+            .ReadFirstLine _
+            .Split(","c) _
+            .Select(Function(s) s.Trim(ASCII.Quot)) _
+            .ToArray
+        Dim fields As Dictionary(Of String, Field) = header _
+            .Skip(1) _
+            .ToDictionary(Function(name) name,
+                          Function(name) simpleField(name))
+        Dim schema As New Table With {
+            .TableName = path.BaseName,
+            .Comment = $"Auto-generated table schema from csv file: {path}",
+            .PrimaryFields = New List(Of String) From {header.First},
+            .Database = path.ParentDirName
+        }
+        Dim SQL$ = CreateTableSQL.FromSchema(schema)
+        Return SQL
+    End Function
+
+    <MethodImpl(MethodImplOptions.AggressiveInlining)>
+    <Extension>
+    Private Function simpleField(name As String) As Field
+        Return New Field() With {
+            .FieldName = name,
+            .DataType = New DataType(MySqlDbType.Text)
+        }
     End Function
 End Module
 

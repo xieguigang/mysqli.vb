@@ -414,7 +414,7 @@
     <Compile Include="Extensions\LinqExports.vb" />
     <Compile Include="MYSQL.Client\Linq.vb" />
     <Compile Include="MYSQL.Client\Table.vb" />
-    <Compile Include="Reflection\SQL_LDM\SqlGenerateMethods.vb" />
+    <Compile Include="Reflection\DataModels\SqlGenerateMethods.vb" />
     <Compile Include="ServerApp\MemoryCache.vb" />
     <Compile Include="ServerApp\MemorySize.vb" />
     <Compile Include="MySQLTable.vb" />
@@ -444,11 +444,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Reflection\SQL_LDM\SQL.vb" />
-    <Compile Include="Reflection\SQL_LDM\Update.vb" />
-    <Compile Include="Reflection\SQL_LDM\Insert.vb" />
-    <Compile Include="Reflection\SQL_LDM\Delete.vb" />
-    <Compile Include="Reflection\SQL_LDM\CreateTable.vb" />
+    <Compile Include="Reflection\DataModels\SQL.vb" />
+    <Compile Include="Reflection\DataModels\Update.vb" />
+    <Compile Include="Reflection\DataModels\Insert.vb" />
+    <Compile Include="Reflection\DataModels\Delete.vb" />
+    <Compile Include="Reflection\DataModels\CreateTable.vb" />
     <Compile Include="Workbench\Dump\RestoreWorker.vb" />
     <Compile Include="Workbench\ServerInstances.vb" />
     <Compile Include="Workbench\Connections.vb" />
@@ -490,7 +490,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\sciBASIC#\Microsoft.VisualBasic.Core\47-dotnet_Microsoft.VisualBasic.vbproj">
       <Project>{fecce1fd-e1d4-49e3-a668-60bb5e7aed99}</Project>
-      <Name>47_Microsoft.VisualBasic</Name>
+      <Name>47-dotnet_Microsoft.VisualBasic</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
