@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::affbb421702466072ab56457a91582c5, ..\mysqli\Reflector\Test.vb"
+﻿#Region "Microsoft.VisualBasic::8e2b03ba6b46e360c1e467a98e14c42a, ..\mysqli\Reflector\Test.vb"
 
     ' Author:
     ' 
@@ -6,7 +6,7 @@
     '       xieguigang (xie.guigang@live.com)
     '       xie (genetics@smrucc.org)
     ' 
-    ' Copyright (c) 2016 GPL3 Licensed
+    ' Copyright (c) 2018 GPL3 Licensed
     ' 
     ' 
     ' GNU GENERAL PUBLIC LICENSE (GPL3)
@@ -85,4 +85,3 @@ Module Test
         Pause()
     End Sub
 End Module
-

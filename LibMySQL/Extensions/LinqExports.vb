@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::2ae2e3b813a623de5b67fb1a052b64bd, ..\mysqli\LibMySQL\Extensions\LinqExports.vb"
+﻿#Region "Microsoft.VisualBasic::a551cc0a948bbe64a403155b266358c5, ..\mysqli\LibMySQL\Extensions\LinqExports.vb"
 
     ' Author:
     ' 
@@ -6,7 +6,7 @@
     '       xieguigang (xie.guigang@live.com)
     '       xie (genetics@smrucc.org)
     ' 
-    ' Copyright (c) 2016 GPL3 Licensed
+    ' Copyright (c) 2018 GPL3 Licensed
     ' 
     ' 
     ' GNU GENERAL PUBLIC LICENSE (GPL3)
@@ -168,4 +168,3 @@ Public Module LinqExports
         End If
     End Sub
 End Module
-

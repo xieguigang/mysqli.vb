@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::2f6d9dd8608e2bcae4d22b4d13cbd4a2, ..\mysqli\LibMySQL\Reflection\SQL_LDM\Update.vb"
+﻿#Region "Microsoft.VisualBasic::d8c927733c3329fc2fa9136bd96a2d54, ..\mysqli\LibMySQL\Reflection\DataModels\Update.vb"
 
     ' Author:
     ' 
@@ -6,7 +6,7 @@
     '       xieguigang (xie.guigang@live.com)
     '       xie (genetics@smrucc.org)
     ' 
-    ' Copyright (c) 2016 GPL3 Licensed
+    ' Copyright (c) 2018 GPL3 Licensed
     ' 
     ' 
     ' GNU GENERAL PUBLIC LICENSE (GPL3)

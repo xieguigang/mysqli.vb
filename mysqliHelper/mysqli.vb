@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::20224a8f2909cf20d77feb813021903f, ..\mysqli\mysqliHelper\mysqli.vb"
+﻿#Region "Microsoft.VisualBasic::8538cd87564480ade54af651f86b17d2, ..\mysqli\mysqliHelper\mysqli.vb"
 
     ' Author:
     ' 
@@ -6,7 +6,7 @@
     '       xieguigang (xie.guigang@live.com)
     '       xie (genetics@smrucc.org)
     ' 
-    ' Copyright (c) 2016 GPL3 Licensed
+    ' Copyright (c) 2018 GPL3 Licensed
     ' 
     ' 
     ' GNU GENERAL PUBLIC LICENSE (GPL3)
@@ -163,4 +163,3 @@ Imports mysqliEndPoint = Oracle.LinuxCompatibility.MySQL.MySQL
         Return configuration.SaveTo(target, Encoding.ASCII)
     End Function
 End Module
-
