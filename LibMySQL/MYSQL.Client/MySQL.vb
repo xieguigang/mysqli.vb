@@ -128,7 +128,7 @@ Public Class MySQL : Implements IDisposable
     ''' result set returned by the query. Additional columns or rows are ignored.
     ''' (请注意，这个函数会自动判断添加``LIMIT 1``限定在SQL语句末尾)
     ''' </summary>
-    ''' <returns></returns>
+    ''' <returns>如果数据表之中没有符合条件的结果数据，那么这个函数将会返回空值</returns>
     ''' <param name="SQL">
     ''' 这个函数会自动进行判断添加``LIMIT 1``限定，所以不需要刻意担心
     ''' </param>
