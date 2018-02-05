@@ -346,17 +346,17 @@ Public Class MySQL : Implements IDisposable
     End Function
 
 #Region ""
-    Public Function ExecUpdate(SQL As Oracle.LinuxCompatibility.MySQL.MySQLTable, Optional throwExp As Boolean = False) As Boolean
+    Public Function ExecUpdate(SQL As MySQLTable, Optional throwExp As Boolean = False) As Boolean
         Dim s_SQL As String = SQL.GetUpdateSQL
         Return Execute(s_SQL, throwExp) > 0
     End Function
 
-    Public Function ExecInsert(SQL As Oracle.LinuxCompatibility.MySQL.MySQLTable, Optional throwExp As Boolean = False) As Boolean
-        Dim s_SQL As String = SQL.GetInsertSQL
+    Public Function ExecInsert(SQL As MySQLTable, Optional throwExp As Boolean = False) As Boolean
+        Dim expression$ = SQL.GetInsertSQL
 #If DEBUG Then
-        Call s_SQL.__DEBUG_ECHO
+        Call expression.__DEBUG_ECHO
 #End If
-        Dim success As Boolean = Execute(s_SQL, throwExp) > 0
+        Dim success As Boolean = Execute(expression, throwExp) > 0
         Return success
     End Function
 
