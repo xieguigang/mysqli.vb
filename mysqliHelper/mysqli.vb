@@ -32,8 +32,8 @@ Imports System.Text
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.SecurityString
 Imports Microsoft.VisualBasic.Terminal
-Imports Oracle.LinuxCompatibility.MySQL
-Imports mysqliEndPoint = Oracle.LinuxCompatibility.MySQL.MySQL
+Imports Oracle.LinuxCompatibility.MySQL.Uri
+Imports mysqliEndPoint = Oracle.LinuxCompatibility.MySQL.MySqli
 
 ''' <summary>
 ''' Mysqli connection config helper.(一些比较常用的mysql连接拓展)
