@@ -68,7 +68,7 @@ Namespace Reflection
         ''' </summary>
         ''' <remarks></remarks>
         Dim Transaction As StringBuilder = New StringBuilder(2048)
-        Dim WithEvents MySQL As MySQL
+        Dim WithEvents MySQL As MySqli
 
         ''' <summary>
         ''' The structure definition information which was parsed from the custom attribut on a class object.

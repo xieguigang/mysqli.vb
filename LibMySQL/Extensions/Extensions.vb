@@ -59,7 +59,7 @@ Public Module Extensions
     ''' <param name="mysql"></param>
     ''' <returns></returns>
     <Extension>
-    Public Function ClearTable(Of T As MySQLTable)(mysql As MySQL) As String
+    Public Function ClearTable(Of T As MySQLTable)(mysql As MySqli) As String
         Dim SQL As New Value(Of String)
 
         If mysql.Ping = -1.0R Then

@@ -43,14 +43,14 @@ Public Module DataClient
     ''' <typeparam name="T"></typeparam>
     ''' <param name="mysql"></param>
     ''' <returns></returns>
-    <Extension> Public Function SelectALL(Of T As MySQLTable)(mysql As MySQL) As T()
+    <Extension> Public Function SelectALL(Of T As MySQLTable)(mysql As MySqli) As T()
         Dim table As TableName = GetType(T).GetAttribute(Of TableName)
         Dim SQL$ = $"SELECT * FROM `{table.Database}`.`{table.Name}`;"
         Return mysql.Query(Of T)(SQL)
     End Function
 
     <Extension>
-    Public Function Truncate(Of T As MySQLTable)(mysqli As MySQL) As Boolean
+    Public Function Truncate(Of T As MySQLTable)(mysqli As MySqli) As Boolean
         Dim table As TableName = GetType(T).GetAttribute(Of TableName)
         Dim SQL$
 

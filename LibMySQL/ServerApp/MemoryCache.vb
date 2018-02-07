@@ -45,7 +45,7 @@ Namespace ServerApp
     Public Class MemoryCache(Of T As MySQLTable)
 
 #Region "Internal Cache"
-        ReadOnly mysqli As New MySQL
+        ReadOnly mysqli As New MySqli
         ReadOnly __cache As Dictionary(Of String, T())
 
         ''' <summary>

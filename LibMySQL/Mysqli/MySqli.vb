@@ -39,7 +39,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 ''' (与MySql数据库服务器之间的通信操作的封装模块)
 ''' </summary>
 ''' <remarks></remarks>
-Public Class MySQL : Implements IDisposable
+Public Class MySqli : Implements IDisposable
 
     ''' <summary>
     ''' A error occurred during the execution of a sql command or transaction.
@@ -100,9 +100,9 @@ Public Class MySQL : Implements IDisposable
         Call Connect(uri)
     End Sub
 
-    Public Function ConnectDatabase(DbName As String) As MySQL
+    Public Function ConnectDatabase(DbName As String) As MySqli
         Dim uri As New ConnectionUri(UriMySQL, DbName)
-        Return New MySQL(uri)
+        Return New MySqli(uri)
     End Function
 
     Private Function CreateSchema(Name As String) As Boolean
@@ -487,9 +487,9 @@ Public Class MySQL : Implements IDisposable
     ''' <param name="strUri">The mysql connection string</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Widening Operator CType(strUri As String) As MySQL
+    Public Shared Widening Operator CType(strUri As String) As MySqli
         Dim uri As ConnectionUri = strUri
-        Dim DBIClient As New MySQL With {
+        Dim DBIClient As New MySqli With {
             ._UriMySQL = uri,
             ._reflector = New DbReflector(uri.GetConnectionString)
         }
@@ -502,8 +502,8 @@ Public Class MySQL : Implements IDisposable
     ''' <param name="uri_obj">The connection helper object</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Widening Operator CType(uri_obj As ConnectionUri) As MySQL
-        Return New MySQL With {
+    Public Shared Widening Operator CType(uri_obj As ConnectionUri) As MySqli
+        Return New MySqli With {
             ._UriMySQL = uri_obj,
             ._reflector = New DbReflector(uri_obj.GetConnectionString)
         }
@@ -515,11 +515,11 @@ Public Class MySQL : Implements IDisposable
     ''' <param name="mysql"></param>
     ''' <param name="cnn"></param>
     ''' <returns></returns>
-    Public Shared Operator <=(mysql As MySQL, cnn As ConnectionUri) As Double
+    Public Shared Operator <=(mysql As MySqli, cnn As ConnectionUri) As Double
         Return mysql.Connect(cnn)
     End Operator
 
-    Public Shared Operator >=(mysql As MySQL, cnn As ConnectionUri) As Double
+    Public Shared Operator >=(mysql As MySqli, cnn As ConnectionUri) As Double
         Throw New NotSupportedException
     End Operator
 

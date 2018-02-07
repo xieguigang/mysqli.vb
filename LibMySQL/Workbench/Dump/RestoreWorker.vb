@@ -33,10 +33,10 @@ Namespace Workbench.Dump
 
     Public Class RestoreWorker
 
-        Public ReadOnly Property MySQL As MySQL
+        Public ReadOnly Property MySQL As MySqli
 
         Sub New(uri As Oracle.LinuxCompatibility.MySQL.ConnectionUri)
-            MySQL = New MySQL
+            MySQL = New MySqli
             Call MySQL.Connect(uri)
         End Sub
 

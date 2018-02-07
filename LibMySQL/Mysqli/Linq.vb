@@ -39,7 +39,7 @@ Public Class Linq(Of TTable As MySQLTable) : Inherits Table(Of TTable)
         Call __init()
     End Sub
 
-    Sub New(Engine As MySQL)
+    Sub New(Engine As MySqli)
         Call MyBase.New(Engine)
         Call __init()
     End Sub

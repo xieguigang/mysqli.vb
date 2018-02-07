@@ -39,7 +39,7 @@ Public Class Table(Of TTable As MySQLTable)
     ''' The mysqli interface
     ''' </summary>
     ''' <returns></returns>
-    Public ReadOnly Property MySQL As MySQL
+    Public ReadOnly Property MySQL As MySqli
     Public ReadOnly Property Schema As Table
 
     ''' <summary>
@@ -47,14 +47,14 @@ Public Class Table(Of TTable As MySQLTable)
     ''' </summary>
     ''' <param name="uri"></param>
     Sub New(uri As ConnectionUri)
-        Call Me.New(New MySQL(uri))
+        Call Me.New(New MySqli(uri))
     End Sub
 
     ''' <summary>
     ''' Create a new table model from mysqli interface
     ''' </summary>
     ''' <param name="engine"></param>
-    Sub New(engine As MySQL)
+    Sub New(engine As MySqli)
         Me.MySQL = engine
         Schema = New Table(GetType(TTable))
     End Sub
@@ -69,11 +69,11 @@ Public Class Table(Of TTable As MySQLTable)
 
 #Region "Operator"
 
-    Public Shared Narrowing Operator CType(table As Table(Of TTable)) As MySQL
+    Public Shared Narrowing Operator CType(table As Table(Of TTable)) As MySqli
         Return table.MySQL
     End Operator
 
-    Public Shared Widening Operator CType(Engine As MySQL) As Table(Of TTable)
+    Public Shared Widening Operator CType(Engine As MySqli) As Table(Of TTable)
         Return New Table(Of TTable)(Engine)
     End Operator
 

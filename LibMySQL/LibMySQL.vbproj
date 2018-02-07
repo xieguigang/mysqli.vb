@@ -430,7 +430,7 @@
     <Compile Include="Reflection\DbAttributes\DbAttributes.vb" />
     <Compile Include="Mysqli\Uri\ConnectionUri.vb" />
     <Compile Include="Extensions\Extensions.vb" />
-    <Compile Include="Mysqli\MySQL.vb" />
+    <Compile Include="Mysqli\MySqli.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

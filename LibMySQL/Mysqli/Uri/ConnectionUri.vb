@@ -170,8 +170,8 @@ Public Class ConnectionUri
     ''' <remarks></remarks>
     ''' 
     <MethodImpl(MethodImplOptions.AggressiveInlining)>
-    Public Shared Function CreateObject(url As String) As MySQL
-        Return CType(CType(url, ConnectionUri), MySQL)
+    Public Shared Function CreateObject(url As String) As MySqli
+        Return CType(CType(url, ConnectionUri), MySqli)
     End Function
 
     <MethodImpl(MethodImplOptions.AggressiveInlining)>
