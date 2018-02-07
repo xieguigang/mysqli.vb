@@ -104,12 +104,20 @@ Public Module UriBuilder
                 tokens += $"Database={ .Database}"
             End If
             If Not .IPAddress.StringEmpty Then
-
+                tokens += $"Data Source={ .IPAddress}"
+            End If
+            If Not .Password.StringEmpty Then
+                tokens += $"Password={ .Password}"
+            End If
+            If Not .User.StringEmpty Then
+                tokens += $"User Id={ .User}"
+            End If
+            If .Port <> 3306 Then
+                tokens += $"Port={ .Port}"
             End If
         End With
 
-
-        Dim cnn$ = $"{uri.__basicllyConfig()};charset=utf8"
+        Dim cnn$ = $"{tokens.JoinBy("; ")}; charset=utf8;"
 
         If uri.TimeOut >= 0 Then
             ' 假若在这里timeout大于零的话，会在链接字符串中设置超时选项
@@ -118,21 +126,5 @@ Public Module UriBuilder
         End If
 
         Return cnn
-    End Function
-
-    ''' <summary>
-    ''' 基本的Mysql链接字符串配置
-    ''' </summary>
-    ''' <returns></returns>
-    ''' 
-    <Extension>
-    Private Function __basicllyConfig(uri As ConnectionUri) As String
-
-
-        If String.IsNullOrEmpty(Database) Then
-            Return $"Data Source={IPAddress}; User Id={User}; Password={Password}; Port={Port}"
-        Else
-            Return String.Format(MYSQL_CONNECTION, Database, IPAddress, User, Password, Port)
-        End If
     End Function
 End Module

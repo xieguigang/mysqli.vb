@@ -174,6 +174,11 @@ Public Class ConnectionUri
         Return CType(CType(url, ConnectionUri), MySQL)
     End Function
 
+    <MethodImpl(MethodImplOptions.AggressiveInlining)>
+    Public Shared Function CreateObject(url As String, passwordDecryption As Func(Of String, String)) As ConnectionUri
+        Return UriEncryption.CreateObject(url, passwordDecryption)
+    End Function
+
     ''' <summary>
     ''' Conver the ConnectionHelper object to a mysql connection string using 
     ''' the specific parameter which assigned by the user.
@@ -217,7 +222,7 @@ Public Class ConnectionUri
     End Function
 
     <MethodImpl(MethodImplOptions.AggressiveInlining)>
-    Public Shared Widening Operator CType(strElement As XElement) As ConnectionUri
-        Return CType(strElement.Value, ConnectionUri)
+    Public Shared Widening Operator CType(X As XElement) As ConnectionUri
+        Return CType(X.Value, ConnectionUri)
     End Operator
 End Class
