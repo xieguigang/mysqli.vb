@@ -1,31 +1,32 @@
 ﻿#Region "Microsoft.VisualBasic::88ec13f8c6d767a681738801344ca2f8, ..\mysqli\LibMySQL\MYSQL.Client\MySQL.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    '       xie (genetics@smrucc.org)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
+Imports System.Runtime.CompilerServices
 Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Serialization.JSON
@@ -51,7 +52,7 @@ Public Class MySQL : Implements IDisposable
     ''' <remarks></remarks>
     Public Event ThrowException(Ex As Exception, SQL As String)
 
-    Dim _reflector As Reflection.DbReflector
+    Dim _reflector As DbReflector
 
     ''' <summary>
     ''' A Formatted connection string using for the connection established to the database server. 
@@ -128,7 +129,7 @@ Public Class MySQL : Implements IDisposable
     ''' result set returned by the query. Additional columns or rows are ignored.
     ''' (请注意，这个函数会自动判断添加``LIMIT 1``限定在SQL语句末尾)
     ''' </summary>
-    ''' <returns></returns>
+    ''' <returns>如果数据表之中没有符合条件的结果数据，那么这个函数将会返回空值</returns>
     ''' <param name="SQL">
     ''' 这个函数会自动进行判断添加``LIMIT 1``限定，所以不需要刻意担心
     ''' </param>
@@ -346,21 +347,21 @@ Public Class MySQL : Implements IDisposable
     End Function
 
 #Region ""
-    Public Function ExecUpdate(SQL As Oracle.LinuxCompatibility.MySQL.MySQLTable, Optional throwExp As Boolean = False) As Boolean
+    Public Function ExecUpdate(SQL As MySQLTable, Optional throwExp As Boolean = False) As Boolean
         Dim s_SQL As String = SQL.GetUpdateSQL
         Return Execute(s_SQL, throwExp) > 0
     End Function
 
-    Public Function ExecInsert(SQL As Oracle.LinuxCompatibility.MySQL.MySQLTable, Optional throwExp As Boolean = False) As Boolean
-        Dim s_SQL As String = SQL.GetInsertSQL
+    Public Function ExecInsert(SQL As MySQLTable, Optional throwExp As Boolean = False) As Boolean
+        Dim expression$ = SQL.GetInsertSQL
 #If DEBUG Then
-        Call s_SQL.__DEBUG_ECHO
+        Call expression.__DEBUG_ECHO
 #End If
-        Dim success As Boolean = Execute(s_SQL, throwExp) > 0
+        Dim success As Boolean = Execute(expression, throwExp) > 0
         Return success
     End Function
 
-    Public Function ExecDelete(SQL As Oracle.LinuxCompatibility.MySQL.MySQLTable, Optional throwExp As Boolean = False) As Boolean
+    Public Function ExecDelete(SQL As MySQLTable, Optional throwExp As Boolean = False) As Boolean
         Dim s_SQL As String = SQL.GetDeleteSQL
         Return Execute(s_SQL, throwExp) > 0
     End Function
@@ -370,8 +371,8 @@ Public Class MySQL : Implements IDisposable
     End Function
 #End Region
 
-    Public Function CommitInserts(Transaction As IEnumerable(Of MySQLTable), Optional ByRef ex As Exception = Nothing) As Boolean
-        Dim SQL As String = Transaction.Select(Function(x) x.GetInsertSQL).JoinBy(vbLf)
+    Public Function CommitInserts(transaction As IEnumerable(Of MySQLTable), Optional ByRef ex As Exception = Nothing) As Boolean
+        Dim SQL As String = transaction.Select(Function(x) x.GetInsertSQL).JoinBy(vbLf)
         Return CommitTransaction(SQL, ex)
     End Function
 
@@ -398,7 +399,6 @@ Public Class MySQL : Implements IDisposable
 
             ' Must assign both transaction object and connection
             ' to Command object for a pending local transaction
-
             MyCommand.Connection = MyConnection
             MyCommand.Transaction = MyTrans
 
@@ -473,8 +473,9 @@ Public Class MySQL : Implements IDisposable
     End Function
 
     Public ReadOnly Property Version As String
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Get
-            Using MySQL As MySqlConnection = New MySqlConnection(_UriMySQL)
+            Using MySQL As New MySqlConnection(_UriMySQL)
                 Return MySQL.ServerVersion
             End Using
         End Get
@@ -488,9 +489,9 @@ Public Class MySQL : Implements IDisposable
     ''' <remarks></remarks>
     Public Shared Widening Operator CType(strUri As String) As MySQL
         Dim uri As ConnectionUri = strUri
-        Dim DBIClient As MySQL = New MySQL With {
+        Dim DBIClient As New MySQL With {
             ._UriMySQL = uri,
-            ._reflector = New Reflection.DbReflector(uri.GetConnectionString)
+            ._reflector = New DbReflector(uri.GetConnectionString)
         }
         Return DBIClient
     End Operator
@@ -504,7 +505,7 @@ Public Class MySQL : Implements IDisposable
     Public Shared Widening Operator CType(uri_obj As ConnectionUri) As MySQL
         Return New MySQL With {
             ._UriMySQL = uri_obj,
-            ._reflector = New Reflection.DbReflector(uri_obj.GetConnectionString)
+            ._reflector = New DbReflector(uri_obj.GetConnectionString)
         }
     End Operator
 

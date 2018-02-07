@@ -27,8 +27,6 @@
 #End Region
 
 Imports System.Reflection
-Imports System.Text.RegularExpressions
-Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports MySql.Data.MySqlClient

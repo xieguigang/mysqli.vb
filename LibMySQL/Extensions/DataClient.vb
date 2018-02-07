@@ -49,6 +49,20 @@ Public Module DataClient
         Return mysql.Query(Of T)(SQL)
     End Function
 
+    <Extension>
+    Public Function Truncate(Of T As MySQLTable)(mysqli As MySQL) As Boolean
+        Dim table As TableName = GetType(T).GetAttribute(Of TableName)
+        Dim SQL$
+
+        If table.Database.StringEmpty Then
+            SQL = $"TRUNCATE `{table.Name}`;"
+        Else
+            SQL = $"TRUNCATE `{table.Database}`.`{table.Name}`;"
+        End If
+
+        Return mysqli.Execute(SQL) > 0
+    End Function
+
     ''' <summary>
     ''' 这个函数统计出<see cref="MySQLTable"/>所代表的二维表格之中，具有值得属性的数量占所有的属性的百分比
     ''' </summary>

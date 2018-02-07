@@ -1,32 +1,33 @@
 ﻿#Region "Microsoft.VisualBasic::8538cd87564480ade54af651f86b17d2, ..\mysqli\mysqliHelper\mysqli.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    '       xie (genetics@smrucc.org)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
 Imports System.Runtime.CompilerServices
+Imports System.Runtime.InteropServices
 Imports System.Text
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.SecurityString
@@ -62,10 +63,14 @@ Imports mysqliEndPoint = Oracle.LinuxCompatibility.MySQL.MySQL
     End Sub
 
     ''' <summary>
-    ''' Init connection from default config file.
+    ''' Init connection from default config file.(这个函数不要求<paramref name="mysql"/>已经是初始化了的，不会抛出空错误)
     ''' </summary>
     ''' <param name="mysql"></param>
-    <Extension> Public Sub init(ByRef mysql As mysqliEndPoint)
+    <Extension> Public Sub init(<Out> ByRef mysql As mysqliEndPoint)
+        If mysql Is Nothing Then
+            mysql = New mysqliEndPoint
+        End If
+
         If mysql <= mysqli.LoadConfig = -1.0R Then
 #If Not DEBUG Then
             Throw New Exception("No MySQL database connection!")
