@@ -207,7 +207,7 @@ Public Class ConnectionUri
     End Function
 
     Public Overrides Function ToString() As String
-        Dim cnn As String = __basicllyConfig()
+        Dim cnn$ = __basicllyConfig() & ";charset=utf8"
 
         If TimeOut >= 0 Then  ' 假若在这里timeout大于零的话，会在链接字符串中设置超时选项
             ' 等于零是无限等待
