@@ -33,6 +33,7 @@ Imports Microsoft.VisualBasic.Serialization.JSON
 Imports MySql.Data.MySqlClient
 Imports Oracle.LinuxCompatibility.MySQL.Reflection
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
+Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 ''' <summary>
 ''' MySql database server connection module.
