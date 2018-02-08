@@ -114,15 +114,18 @@ Namespace Reflection.DbAttributes
         ''' <summary>
         ''' Get the table name property.(获取表名称)
         ''' </summary>
-        ''' <param name="obj"></param>
+        ''' <param name="attr"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Shared Narrowing Operator CType(obj As TableName) As String
-            Return obj.Name
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Shared Narrowing Operator CType(attr As TableName) As String
+            Return attr.Name
         End Operator
 
         Public Shared Function GetTableName(Of T As Class)() As TableName
-            Dim attrs As Object() = GetType(T).GetCustomAttributes(GetType(TableName), inherit:=True)
+            Dim attrs() = GetType(T).GetCustomAttributes(GetType(TableName), inherit:=True)
+
             If attrs.IsNullOrEmpty Then
                 Return Nothing
             Else

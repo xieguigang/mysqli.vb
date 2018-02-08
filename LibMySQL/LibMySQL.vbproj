@@ -423,7 +423,7 @@
     <Compile Include="MySQLTable.vb" />
     <Compile Include="GlobalSuppressions.vb" />
     <Compile Include="Mysqli\RecordStatus.vb" />
-    <Compile Include="Reflection\DbAttributes\DbDataTypes.vb" />
+    <Compile Include="Reflection\DbAttributes\MySqlDbType.vb" />
     <Compile Include="Reflection\Schema\Table.vb" />
     <Compile Include="Reflection\Schema\FieldAttributes.vb" />
     <Compile Include="Reflection\DataTable.vb" />
