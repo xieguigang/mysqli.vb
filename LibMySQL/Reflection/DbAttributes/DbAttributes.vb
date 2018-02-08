@@ -213,7 +213,8 @@ Namespace Reflection.DbAttributes
             {MySqlDbType.Int64, Function(value As Object) If(IsDBNull(value), Nothing, CLng(value))},
             {MySqlDbType.Decimal, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Decimal))},
             {MySqlDbType.DateTime, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Date))},
-            {MySqlDbType.Date, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Date))}
+            {MySqlDbType.Date, Function(value As Object) If(IsDBNull(value), Nothing, CType(value, Date))},
+            {MySqlDbType.Boolean, Function(value As Object) If(IsDBNull(value) OrElse value = 0, False, True)}
         }
 
         Public Function TypeCasting(value As Object) As Object
