@@ -7,9 +7,17 @@ Imports r = System.Text.RegularExpressions.Regex
 
 Namespace Uri
 
+    ''' <summary>
+    ''' 解析url格式的链接字符串
+    ''' </summary>
     Public Module UriBuilder
 
 #Region "Parser"
+
+        ''' <summary>
+        ''' IP地址或者localhost
+        ''' </summary>
+        Public Const SERVERSITE As String = ".+[:]\d+"
 
         ''' <summary>
         ''' 解析url格式的链接字符串

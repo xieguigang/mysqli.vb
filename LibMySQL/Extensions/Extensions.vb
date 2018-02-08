@@ -29,11 +29,10 @@
 Imports System.Data.Common
 Imports System.Reflection
 Imports System.Runtime.CompilerServices
-Imports System.Text
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
-Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
+Imports Oracle.LinuxCompatibility.MySQL.Scripting
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 Public Module Extensions
@@ -77,25 +76,11 @@ Public Module Extensions
         Return Nothing
     End Function
 
-    ''' <summary>
-    ''' ``DROP TABLE IF EXISTS `{<see cref="Table.GetTableName"/>(GetType(<typeparamref name="T"/>))}`;``
-    ''' </summary>
-    ''' <typeparam name="T"></typeparam>
-    ''' <returns></returns>
-    Public Function DropTableSQL(Of T As MySQLTable)() As String
-        Return $"DROP TABLE IF EXISTS `{Table.GetTableName(GetType(T))}`;"
-    End Function
-
     <Extension> Public Function AsDBI(Of Table As {New, MySQLTable})(uri As String) As Linq(Of Table)
         Dim DBI As ConnectionUri = ConnectionUri.TryParsing(uri)
         Dim Linq As New Linq(Of Table)(DBI)
         Return Linq
     End Function
-
-    ''' <summary>
-    ''' IP地址或者localhost
-    ''' </summary>
-    Public Const SERVERSITE As String = ".+[:]\d+"
 
     ''' <summary>
     ''' Get the specific type of custom attribute from a property.
@@ -106,10 +91,10 @@ Public Module Extensions
     ''' <returns></returns>
     ''' <remarks></remarks>
     <Extension> Public Function GetAttribute(Of T As Attribute)([Property] As PropertyInfo) As T
-        Dim Attributes As Object() = [Property].GetCustomAttributes(GetType(T), True)
+        Dim attrs As Object() = [Property].GetCustomAttributes(GetType(T), True)
 
-        If Not Attributes Is Nothing AndAlso Attributes.Length = 1 Then
-            Dim CustomAttr As T = CType(Attributes(0), T)
+        If Not attrs Is Nothing AndAlso attrs.Length = 1 Then
+            Dim CustomAttr As T = CType(attrs(0), T)
 
             If Not CustomAttr Is Nothing Then
                 Return CustomAttr
@@ -167,39 +152,6 @@ Public Module Extensions
         MySqlDbType.UByte, MySqlDbType.UInt16, MySqlDbType.UInt24, MySqlDbType.UInt32, MySqlDbType.UInt64,
         MySqlDbType.Year
     }
-
-    ReadOnly __esacps As New Dictionary(Of String, String) From {
-        {Text.ASCII.NUL, "\0"},
-        {"'", "\'"},
-        {"""", "\"""},
-        {Text.ASCII.BS, "\b"},
-        {Text.ASCII.LF, "\n"},
-        {Text.ASCII.CR, "\r"},
-        {Text.ASCII.TAB, "\t"},
-        {Text.ASCII.SUB, "\Z"},
-        {"%", "\%"}', {"_", "\_"}
-    }
-
-    ' {"\", "\\"}
-
-    ''' <summary>
-    ''' 处理字符串之中的特殊字符的转义。(这是一个安全的函数，如果输入的字符串为空，则这个函数会输出空字符串)
-    ''' </summary>
-    ''' <param name="value"></param>
-    ''' <returns></returns>
-    <Extension> Public Function MySqlEscaping(value$) As String
-        If value.StringEmpty Then
-            Return ""
-        Else
-            Dim sb As New StringBuilder(value)
-
-            Call sb.Replace("\", "\\")
-            For Each x In __esacps
-                Call sb.Replace(x.Key, x.Value)
-            Next
-            Return sb.ToString
-        End If
-    End Function
 
     <Extension>
     Public Function CopySets(Of row As MySQLTable, T)(o As row, list As IEnumerable(Of T), setValue As Action(Of row, T)) As row()
