@@ -1,28 +1,28 @@
 ﻿#Region "Microsoft.VisualBasic::fd0be879f8af3c8e0e9ac18ba64c9f1a, ..\mysqli\CodeSolution\VisualBasic\CodeGenerator.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    '       xie (genetics@smrucc.org)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
@@ -35,6 +35,7 @@ Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Linq.Extensions
+Imports Microsoft.VisualBasic.Scripting.Expressions
 Imports Microsoft.VisualBasic.Scripting.SymbolBuilder
 Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
@@ -89,52 +90,44 @@ Namespace VisualBasic
         ''' </summary>
         ''' <param name="TypeDef"></param>
         ''' <returns></returns>
-        Private Function __toDataType(TypeDef As Reflection.DbAttributes.DataType) As String
+        Private Function __toDataType(TypeDef As DataType) As String
             Select Case TypeDef.MySQLType
 
                 Case MySqlDbType.Boolean
                     Return " As Boolean"
 
-                Case Reflection.DbAttributes.MySqlDbType.BigInt,
-                 Reflection.DbAttributes.MySqlDbType.Int16,
-                 Reflection.DbAttributes.MySqlDbType.Int24,
-                 Reflection.DbAttributes.MySqlDbType.Int32,
-                 Reflection.DbAttributes.MySqlDbType.MediumInt
+                Case MySqlDbType.BigInt, MySqlDbType.Int16, MySqlDbType.Int24, MySqlDbType.Int32, MySqlDbType.MediumInt
                     Return " As Integer"
-                Case Reflection.DbAttributes.MySqlDbType.Bit,
-                 Reflection.DbAttributes.MySqlDbType.Byte
+
+                Case MySqlDbType.Bit, MySqlDbType.Byte
                     Return " As Byte"
-                Case Reflection.DbAttributes.MySqlDbType.Date,
-                 Reflection.DbAttributes.MySqlDbType.DateTime
+
+                Case MySqlDbType.Date, MySqlDbType.DateTime
                     Return " As Date"
-                Case Reflection.DbAttributes.MySqlDbType.Decimal
+
+                Case MySqlDbType.Decimal
                     Return " As Decimal"
-                Case Reflection.DbAttributes.MySqlDbType.Double,
-                 Reflection.DbAttributes.MySqlDbType.Float
+
+                Case MySqlDbType.Double, MySqlDbType.Float
                     Return " As Double"
-                Case Reflection.DbAttributes.MySqlDbType.Int64
+
+                Case MySqlDbType.Int64
                     Return " As Long"
-                Case Reflection.DbAttributes.MySqlDbType.UByte
+
+                Case MySqlDbType.UByte
                     Return " As UByte"
-                Case Reflection.DbAttributes.MySqlDbType.UInt16,
-                 Reflection.DbAttributes.MySqlDbType.UInt24,
-                 Reflection.DbAttributes.MySqlDbType.UInt32
+
+                Case MySqlDbType.UInt16, MySqlDbType.UInt24, MySqlDbType.UInt32
                     Return " As UInteger"
-                Case Reflection.DbAttributes.MySqlDbType.UInt64
+
+                Case MySqlDbType.UInt64
                     Return " As ULong"
-                Case Reflection.DbAttributes.MySqlDbType.LongText,
-                 Reflection.DbAttributes.MySqlDbType.MediumText,
-                 Reflection.DbAttributes.MySqlDbType.String,
-                 Reflection.DbAttributes.MySqlDbType.Text,
-                 Reflection.DbAttributes.MySqlDbType.TinyText,
-                 Reflection.DbAttributes.MySqlDbType.VarChar,
-                 Reflection.DbAttributes.MySqlDbType.VarString
+
+                Case MySqlDbType.LongText, MySqlDbType.MediumText, MySqlDbType.String, MySqlDbType.Text,
+                 MySqlDbType.TinyText, MySqlDbType.VarChar, MySqlDbType.VarString
                     Return " As String"
 
-                Case Reflection.DbAttributes.MySqlDbType.Blob,
-                 Reflection.DbAttributes.MySqlDbType.LongBlob,
-                 Reflection.DbAttributes.MySqlDbType.MediumBlob,
-                 Reflection.DbAttributes.MySqlDbType.TinyBlob
+                Case MySqlDbType.Blob, MySqlDbType.LongBlob, MySqlDbType.MediumBlob, MySqlDbType.TinyBlob
                     Return " As Byte()"
 
                 Case Else
@@ -148,6 +141,8 @@ Namespace VisualBasic
         ''' </summary>
         ''' <param name="listSQL"></param>
         ''' <returns></returns>
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <Extension> Public Function GenerateCode(listSQL As IEnumerable(Of Table), Optional namespace$ = "") As String
             Return __generateCode(listSQL, "", "", Nothing, [namespace])
         End Function
@@ -169,53 +164,52 @@ Namespace VisualBasic
                                         TableSql As Dictionary(Of String, String),
                                         namespace$) As String
 
-            Dim VbCodeGenerator As New StringBuilder(1024)
+            Dim vb As New StringBuilder(1024)
             Dim haveNamespace As Boolean = Not String.IsNullOrEmpty([namespace])
 
-            Call VbCodeGenerator.AppendLine($"REM  {GetType(CodeGenerator).FullName}")
-            Call VbCodeGenerator.AppendLine($"REM  Microsoft VisualBasic MYSQL")
-            Call VbCodeGenerator.AppendLine()
-            Call VbCodeGenerator.AppendLine($"' SqlDump= {fileName}")
-            Call VbCodeGenerator.AppendLine()
-            Call VbCodeGenerator.AppendLine()
+            Call vb.AppendLine($"REM  {GetType(CodeGenerator).FullName}")
+            Call vb.AppendLine($"REM  Microsoft VisualBasic MYSQL")
+            Call vb.AppendLine()
+            Call vb.AppendLine($"' SqlDump= {fileName}")
+            Call vb.AppendLine()
+            Call vb.AppendLine()
 
             If TableSql Is Nothing Then
                 TableSql = New Dictionary(Of String, String)
             End If
 
-            Dim Tokens As String() = Strings.Split(head.Replace(vbLf, ""), vbCr)
-            For Each Line As String In Tokens
-                Call VbCodeGenerator.AppendLine("' " & Line)
+            Dim tokens$() = Strings.Split(head.Replace(vbLf, ""), vbCr)
+            Dim getSql = TableSql.GetValue
+
+            For Each line As String In tokens
+                Call vb.AppendLine("' " & line)
             Next
 
-            Call VbCodeGenerator.AppendLine()
-            Call VbCodeGenerator.AppendLine("Imports " & LinqMappingNs)
-            Call VbCodeGenerator.AppendLine("Imports System.Xml.Serialization")
-            Call VbCodeGenerator.AppendLine("Imports " & LibMySQLReflectionNs)
-            Call VbCodeGenerator.AppendLine()
+            Call vb.AppendLine()
+            Call vb.AppendLine("Imports " & LinqMappingNs)
+            Call vb.AppendLine("Imports System.Xml.Serialization")
+            Call vb.AppendLine("Imports " & LibMySQLReflectionNs)
+            Call vb.AppendLine()
 
             If haveNamespace Then
-                Call VbCodeGenerator.AppendLine($"Namespace {[namespace]}")
+                Call vb.AppendLine($"Namespace {[namespace]}")
             End If
 
-            For Each Line As String In From Table As Reflection.Schema.Table
+            For Each Line As String In From Table As Table
                                        In SqlDoc
-                                       Let SqlDef As String =
-                                           If(TableSql.ContainsKey(Table.TableName),
-                                           TableSql(Table.TableName),
-                                           "")
+                                       Let SqlDef As String = getSql(Table.TableName)
                                        Select GenerateTableClass(Table, SqlDef)
 
-                Call VbCodeGenerator.AppendLine()
-                Call VbCodeGenerator.AppendLine(Line)
-                Call VbCodeGenerator.AppendLine()
+                Call vb.AppendLine()
+                Call vb.AppendLine(Line)
+                Call vb.AppendLine()
             Next
 
             If haveNamespace Then
-                Call VbCodeGenerator.AppendLine("End Namespace")
+                Call vb.AppendLine("End Namespace")
             End If
 
-            Return VbCodeGenerator.ToString
+            Return vb.ToString
         End Function
 
         Private ReadOnly LibMySQLReflectionNs As String = GetType(MySqlDbType).FullName.Replace(".MySqlDbType", "")
@@ -423,10 +417,10 @@ Namespace VisualBasic
 
             Dim Name As String = If(isReplace, "REPLACE", "INSERT")
             Dim SqlBuilder As New StringBuilder($"    Private Shared ReadOnly {Name}_SQL As String = <SQL>%s</SQL>")
-            SQL.value = Reflection.SQL.SqlGenerateMethods.GenerateInsertSql(Schema, AI_strip)
+            SQL.Value = Reflection.SQL.SqlGenerateMethods.GenerateInsertSql(Schema, AI_strip)
 
             If isReplace Then
-                SQL = SQL.value.Replace("INSERT INTO", "REPLACE INTO")
+                SQL = SQL.Value.Replace("INSERT INTO", "REPLACE INTO")
             End If
 
             Call SqlBuilder.Replace("%s", SQL.ToString)
@@ -463,8 +457,8 @@ Namespace VisualBasic
 
         Private Function ___UPDATE_SQL(Schema As Reflection.Schema.Table, ByRef SQL As Value(Of String)) As String
             Dim SqlBuilder As New StringBuilder("    Private Shared ReadOnly UPDATE_SQL As String = <SQL>%s</SQL>")
-            SQL.value = Reflection.SQL.SqlGenerateMethods.GenerateUpdateSql(Schema)
-            Call SqlBuilder.Replace("%s", SQL.value)
+            SQL.Value = Reflection.SQL.SqlGenerateMethods.GenerateUpdateSql(Schema)
+            Call SqlBuilder.Replace("%s", SQL.Value)
 
             Return SqlBuilder.ToString
         End Function
@@ -486,8 +480,8 @@ Namespace VisualBasic
 
         Private Function ___DELETE_SQL(Schema As Reflection.Schema.Table, ByRef SQL As Value(Of String)) As String
             Dim SqlBuilder As StringBuilder = New StringBuilder("    Private Shared ReadOnly DELETE_SQL As String = <SQL>%s</SQL>")
-            SQL.value = Reflection.SQL.SqlGenerateMethods.GenerateDeleteSql(Schema)
-            Call SqlBuilder.Replace("%s", SQL.value)
+            SQL.Value = Reflection.SQL.SqlGenerateMethods.GenerateDeleteSql(Schema)
+            Call SqlBuilder.Replace("%s", SQL.Value)
 
             Return SqlBuilder.ToString
         End Function
