@@ -86,7 +86,7 @@ Public Module Extensions
         Return $"DROP TABLE IF EXISTS `{Table.GetTableName(GetType(T))}`;"
     End Function
 
-    <Extension> Public Function AsDBI(Of Table As MySQLTable)(uri As String) As Linq(Of Table)
+    <Extension> Public Function AsDBI(Of Table As {New, MySQLTable})(uri As String) As Linq(Of Table)
         Dim DBI As ConnectionUri = ConnectionUri.TryParsing(uri)
         Dim Linq As New Linq(Of Table)(DBI)
         Return Linq

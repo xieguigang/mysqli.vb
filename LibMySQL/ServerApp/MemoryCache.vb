@@ -43,7 +43,7 @@ Namespace ServerApp
     ''' 至少对于生物信息学的数据库而言，由于更新数据很缓慢，大部分时候都只是执行SELECT查询操作，所以非常好用)
     ''' </summary>
     ''' <typeparam name="T"></typeparam>
-    Public Class MemoryCache(Of T As MySQLTable)
+    Public Class MemoryCache(Of T As {New, MySQLTable})
 
 #Region "Internal Cache"
         ReadOnly mysqli As New MySqli

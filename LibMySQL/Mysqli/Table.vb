@@ -27,6 +27,7 @@
 #End Region
 
 Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.Scripting
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
@@ -34,7 +35,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Uri
 ''' The mysql table model.(数据查询工具)
 ''' </summary>
 ''' <typeparam name="TTable"></typeparam>
-Public Class Table(Of TTable As MySQLTable)
+Public Class Table(Of TTable As {New, MySQLTable})
 
     ''' <summary>
     ''' The mysqli interface
@@ -134,19 +135,19 @@ End Class
 Public Module QueryHelper
 
     <Extension>
-    Public Function SelectAll(Of T As MySQLTable)(table As Table(Of T)) As T()
+    Public Function SelectAll(Of T As {New, MySQLTable})(table As Table(Of T)) As T()
         Return table <= $"SELECT * FROM `{table.Schema.TableName}`;"
     End Function
 
     <Extension>
-    Public Function SelectALL(Of T As MySQLTable)(arg As WhereArgument(Of T)) As T()
+    Public Function SelectALL(Of T As {New, MySQLTable})(arg As WhereArgument(Of T)) As T()
         Dim table = arg.table.Schema
         Dim SQL$ = arg.GetSQL(scalar:=False)
         Return arg.table <= SQL
     End Function
 
     <Extension>
-    Public Function Find(Of T As MySQLTable)(arg As WhereArgument(Of T)) As T
+    Public Function Find(Of T As {New, MySQLTable})(arg As WhereArgument(Of T)) As T
         Dim table = arg.table.Schema
         Dim SQL$ = arg.GetSQL(scalar:=True)
         Return arg.table < SQL
@@ -160,7 +161,7 @@ Public Module QueryHelper
     ''' <param name="test$"></param>
     ''' <returns></returns>
     <Extension>
-    Public Function Where(Of T As MySQLTable)(table As Table(Of T), ParamArray test$()) As WhereArgument(Of T)
+    Public Function Where(Of T As {New, MySQLTable})(table As Table(Of T), ParamArray test$()) As WhereArgument(Of T)
         Return New WhereArgument(Of T) With {
             .table = table,
             .condition = $"( {test.JoinBy(" AND ")} )"
@@ -175,7 +176,7 @@ Public Module QueryHelper
     ''' <param name="condition$">The where condition.</param>
     ''' <returns></returns>
     <Extension>
-    Public Function Where(Of T As MySQLTable)(table As Table(Of T), condition$) As WhereArgument(Of T)
+    Public Function Where(Of T As {New, MySQLTable})(table As Table(Of T), condition$) As WhereArgument(Of T)
         Return New WhereArgument(Of T) With {
             .table = table,
             .condition = condition
@@ -183,7 +184,7 @@ Public Module QueryHelper
     End Function
 
     <Extension>
-    Public Function [And](Of T As MySQLTable)(where As WhereArgument(Of T), ParamArray test$()) As WhereArgument(Of T)
+    Public Function [And](Of T As {New, MySQLTable})(where As WhereArgument(Of T), ParamArray test$()) As WhereArgument(Of T)
         Return New WhereArgument(Of T) With {
             .table = where.table,
             .condition = where.contact(test, "AND")
@@ -191,12 +192,12 @@ Public Module QueryHelper
     End Function
 
     <Extension>
-    Private Function contact(Of T As MySQLTable)(where As WhereArgument(Of T), test$(), op$) As String
+    Private Function contact(Of T As {New, MySQLTable})(where As WhereArgument(Of T), test$(), op$) As String
         Return $"( {where.condition & $" {op} " & $"( {test.JoinBy(" AND ")} )"} )"
     End Function
 
     <Extension>
-    Public Function [Or](Of T As MySQLTable)(where As WhereArgument(Of T), ParamArray test$()) As WhereArgument(Of T)
+    Public Function [Or](Of T As {New, MySQLTable})(where As WhereArgument(Of T), ParamArray test$()) As WhereArgument(Of T)
         Return New WhereArgument(Of T) With {
             .table = where.table,
             .condition = where.contact(test, "OR")
@@ -217,7 +218,7 @@ Public Structure FieldArgument
     End Function
 
     Public Shared Operator <=(field As FieldArgument, value As Object) As String
-        Return $"`{field.Name}` = '{Scripting.ToString(value)}'"
+        Return $"`{field.Name}` = '{InputHandler.ToString(value)}'"
     End Operator
 
     Public Shared Operator >=(field As FieldArgument, value As Object) As String
@@ -229,7 +230,7 @@ Public Structure FieldArgument
     End Operator
 End Structure
 
-Public Structure WhereArgument(Of T As MySQLTable)
+Public Structure WhereArgument(Of T As {New, MySQLTable})
 
     Dim table As Table(Of T)
     Dim condition$

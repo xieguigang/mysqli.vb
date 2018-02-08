@@ -32,7 +32,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Uri
 ''' Linq to MySQL
 ''' </summary>
 ''' <typeparam name="TTable"></typeparam>
-Public Class Linq(Of TTable As MySQLTable) : Inherits Table(Of TTable)
+Public Class Linq(Of TTable As {New, MySQLTable}) : Inherits Table(Of TTable)
 
     Dim __reflector As Reflection.DbReflector
 
@@ -57,7 +57,7 @@ Public Class Linq(Of TTable As MySQLTable) : Inherits Table(Of TTable)
 
     Public Overloads Shared Operator <=(DBI As Linq(Of TTable), SQL As String) As IEnumerable(Of TTable)
         Dim err As String = ""
-        Dim query As Generic.IEnumerable(Of TTable) = DBI.__reflector.AsQuery(Of TTable)(SQL, getError:=err)
+        Dim query As IEnumerable(Of TTable) = DBI.__reflector.AsQuery(Of TTable)(SQL, getError:=err)
         Return query
     End Operator
 
