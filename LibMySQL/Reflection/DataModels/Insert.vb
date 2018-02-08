@@ -58,16 +58,20 @@ Namespace Reflection.SQL
         ''' <remarks></remarks>
         Public Function Generate(value As Schema) As String
             Dim valuesbuffer As List(Of String) = New List(Of String)
+            Dim str$
 
-            For Each Field In MyBase._schemaInfo.Fields
-                Dim s_value As String = Field.PropertyInfo.GetValue(value, Nothing).ToString
-                Call valuesbuffer.Add(s_value)
+            For Each field In MyBase._schemaInfo.Fields
+                str = field _
+                    .PropertyInfo _
+                    .GetValue(value, Nothing) _
+                    .ToString
+                Call valuesbuffer.Add(str)
             Next
 
             Return String.Format(InsertSQL, valuesbuffer.ToArray)
         End Function
 
-        Public Shared Widening Operator CType(schema As Reflection.Schema.Table) As Insert(Of Schema)
+        Public Shared Widening Operator CType(schema As Table) As Insert(Of Schema)
             Return New Insert(Of Schema) With {
                 ._schemaInfo = schema,
                 .InsertSQL = GenerateInsertSql(schema)

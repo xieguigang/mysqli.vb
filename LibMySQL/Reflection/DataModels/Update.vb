@@ -54,12 +54,21 @@ Namespace Reflection.SQL
 
         Public Function Generate(Record As Schema) As String
             Dim Values As New List(Of String)
+            Dim value As String
+            Dim indexValue = MyBase _
+                ._schemaInfo _
+                .IndexProperty _
+                .GetValue(Record, Nothing) _
+                .ToString
 
-            For Each Field In MyBase._schemaInfo.Fields
-                Dim value As String = Field.PropertyInfo.GetValue(Record, Nothing).ToString
+            For Each field In MyBase._schemaInfo.Fields
+                value = field.PropertyInfo.GetValue(Record, Nothing).ToString
                 Values.Add(value)
             Next
-            Values.Add(MyBase._schemaInfo.IndexProperty.GetValue(Record, Nothing).ToString)
+
+            ' 最后这个值是和前面的值有顺序之分的
+            ' 必须要在最后进行添加
+            Values.Add(indexValue)
 
             Return String.Format(UpdateSQL, Values.ToArray)
         End Function

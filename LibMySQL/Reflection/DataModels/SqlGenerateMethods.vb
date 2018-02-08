@@ -47,12 +47,14 @@ Namespace Reflection.SQL
             Return String.Format(DELETE_SQL, Schema.TableName, __getWHERE(Schema.PrimaryFields))
         End Function
 
-        Private Function __getWHERE(index As IEnumerable(Of String), Optional offset As Integer = 0) As String
+        Private Function __getWHERE(index As IEnumerable(Of String), Optional offset% = 0) As String
             If index.Count = 1 Then
                 Return $"`{index.First}` = '%s'".Replace("%s", "{%d}").Replace("%d", offset)
             End If
 
-            Dim array As String() = index.Select(Function(name, idx) $"`{name}`='{"{"}{idx + offset}{"}"}'").ToArray
+            Dim array$() = index _
+                .Select(Function(name, idx) $"`{name}`='{"{"}{idx + offset}{"}"}'") _
+                .ToArray
             Return String.Join(" and ", array)
         End Function
 
@@ -85,11 +87,12 @@ Namespace Reflection.SQL
         <Extension>
         Public Function GenerateInsertSql(Schema As Table, Optional trimAutoIncrement As Boolean = False) As String
             Dim sb As New StringBuilder(512)
-            Dim fields$() = LinqAPI.Exec(Of String) <=
+            Dim fields$() = LinqAPI.Exec(Of String) _
  _
-                From field As Field
-                In Schema.__fields(trimAutoIncrement)  ' 因为需要与后面的值一一对应，所以在这里不进行排序不适用并行化
-                Select "`" & field.FieldName & "`"
+                () <= From field As Field
+                      In Schema.__fields(trimAutoIncrement)  ' 因为需要与后面的值一一对应，所以在这里不进行排序不适用并行化
+                      Let name = field.FieldName
+                      Select $"`{name}`"
 
             Call sb.AppendFormat("INSERT INTO `{0}` (", Schema.TableName)   ' Create table name header
             Call sb.Append(String.Join(", ", fields))                       ' Fields generate
@@ -118,6 +121,7 @@ Namespace Reflection.SQL
             Return fields
         End Function
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <Extension> Public Function GenerateInsertValues(schema As Table, Optional stripAI As Boolean = True) As String
             Return schema _
                 .__fields(stripAI) _
@@ -127,10 +131,11 @@ Namespace Reflection.SQL
         End Function
 
         <Extension> Public Function GenerateInsertValues(fields$()) As String
-            Dim values$() = LinqAPI.Exec(Of String) <=
-                From i As Integer
-                In fields.Sequence
-                Select "'{0}'".Replace("0"c, i)
+            Dim values$() = LinqAPI.Exec(Of String) _
+ _
+                () <= From i As Integer
+                      In fields.Sequence
+                      Select "'{0}'".Replace("0"c, i)
 
             Return "(" & String.Join(", ", values) & ")" ' End of the statement
         End Function
