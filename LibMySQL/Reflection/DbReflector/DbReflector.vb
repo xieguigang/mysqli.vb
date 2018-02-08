@@ -31,6 +31,7 @@ Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports MySql.Data.MySqlClient
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.Helper
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 Namespace Reflection
@@ -42,43 +43,33 @@ Namespace Reflection
         ''' <summary>
         ''' 假若目标数据表不存在数据记录，则会返回空值
         ''' </summary>
-        ''' <typeparam name="ItemType"></typeparam>
+        ''' <typeparam name="T"></typeparam>
         ''' <param name="Reader"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Shared Function ReadFirst(Of ItemType As Class)(Reader As DataTableReader) As ItemType
-
-            If Not Reader.HasRows Then
+        Public Shared Function ReadFirst(Of T As {New, Class})(reader As DataTableReader) As T
+            If Not reader.HasRows Then
                 Return Nothing
             Else
-                Call Reader.Read()
+                Call reader.Read()
             End If
 
-            Dim Type As Type = GetType(ItemType)
-            Dim DbFieldAttr As DatabaseField
-            Dim ItemTypeProperty As PropertyInfo() = Type.GetProperties
-            Dim [Property] As PropertyInfo
-            Dim FillObject As Object = Activator.CreateInstance(Type) 'Create a instance of specific type: our record schema. 
+            ' Create a instance of specific type: our record schema. 
+            Dim out As Object = Activator.CreateInstance(GetType(T))
 
-            For i As Integer = 0 To ItemTypeProperty.Length - 1  'Using the reflection to get the fields in the table schema only once.
-                [Property] = ItemTypeProperty(i)
-                DbFieldAttr = [Property].GetAttribute(Of DatabaseField)()
+            For Each [property] In SchemaCache(Of T).Cache
+                Dim ordinal% = reader.GetOrdinal([property].Name)
 
-                If DbFieldAttr Is Nothing Then Continue For
-                If Len(DbFieldAttr.Name) = 0 Then
-                    DbFieldAttr.Name = [Property].Name
-                End If
+                If ordinal >= 0 Then
+                    Dim value = reader.GetValue(ordinal)
 
-                Dim Ordinal As Integer = Reader.GetOrdinal(DbFieldAttr.Name)
-                If Ordinal >= 0 Then
-                    Dim ObjValue = Reader.GetValue(Ordinal)
-                    If Not IsDBNull(ObjValue) Then
-                        Call [Property].SetValue(FillObject, ObjValue, Nothing)
+                    If Not IsDBNull(value) Then
+                        Call [property].Value.SetValue(out, value)
                     End If
                 End If
             Next
 
-            Return DirectCast(FillObject, ItemType)
+            Return DirectCast(out, T)
         End Function
 
         Private Class __readFirst(Of T)
