@@ -33,6 +33,7 @@ Imports Microsoft.VisualBasic.Serialization.JSON
 Imports MySql.Data.MySqlClient
 Imports Oracle.LinuxCompatibility.MySQL.Reflection
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
+Imports Oracle.LinuxCompatibility.MySQL.Scripting
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 ''' <summary>
@@ -134,33 +135,11 @@ Public Class MySqli : Implements IDisposable
     ''' <param name="SQL">
     ''' 这个函数会自动进行判断添加``LIMIT 1``限定，所以不需要刻意担心
     ''' </param>
-    Public Function ExecuteScalar(Of T As Class)(SQL As String) As T
-        Dim result As DataSet = Fetch(__limit1(SQL.Trim))
+    Public Function ExecuteScalar(Of T As {New, Class})(SQL As String) As T
+        Dim result As DataSet = Fetch(SQL.Trim.EnsureLimit1)
         Dim reader As DataTableReader = result.CreateDataReader
         Dim value As T = DbReflector.ReadFirst(Of T)(reader)
         Return value
-    End Function
-
-    Const LIMIT1$ = "\sLIMIT\s+1\s*;?"
-
-    ''' <summary>
-    ''' 
-    ''' </summary>
-    ''' <param name="SQL">已经被Trim过了的</param>
-    ''' <returns></returns>
-    Private Shared Function __limit1(SQL As String) As String
-        Dim limitFlag$ = Regex.Match(SQL, LIMIT1, RegexICSng).Value
-
-        If String.IsNullOrEmpty(limitFlag) OrElse InStrRev(SQL, limitFlag) < SQL.Length - limitFlag.Length Then
-            If SQL.Last = ";"c Then
-                SQL = Mid(SQL, 1, SQL.Length - 1)
-            End If
-            SQL = SQL & " LIMIT 1;"  ' 需要进行添加
-        Else
-            ' 已经存在了，则不需要额外的处理
-        End If
-
-        Return SQL
     End Function
 
     ''' <summary>
@@ -201,7 +180,7 @@ Public Class MySqli : Implements IDisposable
     ''' <typeparam name="T"></typeparam>
     ''' <param name="[where]">只需要给出条件WHERE表达式即可，函数会自动生成SQL查询语句</param>
     ''' <returns></returns>
-    Public Function ExecuteScalarAuto(Of T As Class)([where] As String) As T
+    Public Function ExecuteScalarAuto(Of T As {New, Class})([where] As String) As T
         Dim Tbl As TableName = TableName.GetTableName(Of T)
         Dim SQL As String = $"SELECT * FROM `{Tbl.Database}`.`{Tbl.Name}` WHERE {where} LIMIT 1;"
         Return ExecuteScalar(Of T)(SQL)
@@ -241,7 +220,7 @@ Public Class MySqli : Implements IDisposable
     ''' 则这个函数会返回一个负数)
     ''' </returns>
     ''' <remarks></remarks>
-    Public Function Execute(SQL As String, Optional throwExp As Boolean = False) As Integer
+    Public Function Execute(SQL$, Optional throwExp As Boolean = False) As Integer
         Using MySQL As New MySqlConnection(_UriMySQL)
             Dim MySqlCommand As New MySqlCommand(SQL) With {
                 .Connection = MySQL

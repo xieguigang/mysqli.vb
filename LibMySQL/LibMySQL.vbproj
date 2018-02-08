@@ -421,6 +421,7 @@
     <Compile Include="Reflection\DbAttributes\TableName.vb" />
     <Compile Include="Reflection\DbAttributes\DataType.vb" />
     <Compile Include="Reflection\DbReflector\ExecuteScalar.vb" />
+    <Compile Include="Scripting\Extensions.vb" />
     <Compile Include="ServerApp\MemoryCache.vb" />
     <Compile Include="ServerApp\MemorySize.vb" />
     <Compile Include="MySQLTable.vb" />
