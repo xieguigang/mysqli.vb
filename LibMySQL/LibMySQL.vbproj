@@ -417,6 +417,7 @@
     <Compile Include="Mysqli\Uri\UriBuilder.vb" />
     <Compile Include="Mysqli\Table.vb" />
     <Compile Include="Reflection\DataModels\SqlGenerateMethods.vb" />
+    <Compile Include="Reflection\DbAttributes\TableName.vb" />
     <Compile Include="Reflection\DbAttributes\DataType.vb" />
     <Compile Include="ServerApp\MemoryCache.vb" />
     <Compile Include="ServerApp\MemorySize.vb" />
