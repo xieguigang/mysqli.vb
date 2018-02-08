@@ -44,6 +44,10 @@ Namespace Reflection.DbAttributes
         ''' </summary>
         ''' <remarks></remarks>
         BigInt
+        ''' <summary>
+        ''' ``TINYINT(1)``
+        ''' </summary>
+        [Boolean]
         [Byte]
         [Date]
         [DateTime]
@@ -71,6 +75,9 @@ Namespace Reflection.DbAttributes
         Timestamp
         TinyBlob
         TinyText
+        ''' <summary>
+        ''' + ``TINYINT(1)`` 在VB.NET之中是<see cref="Boolean"/>
+        ''' </summary>
         TinyInt
         UByte
         UInt16

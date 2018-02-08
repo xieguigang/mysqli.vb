@@ -314,7 +314,16 @@ _SET_PRIMARYKEY:
         Dim type As Reflection.DbAttributes.MySqlDbType
         Dim parameter As String = ""
 
-        If Regex.Match(type_define, "int\(\d+\)", RegexOptions.IgnoreCase).Success Then
+        If Regex.Match(type_define, "tinyint\(\d+\)", RegexOptions.IgnoreCase).Success Then
+            parameter = __getNumberValue(type_define)
+            If parameter = "1" Then
+                ' boolean 
+                type = Reflection.DbAttributes.MySqlDbType.Boolean
+            Else
+                type = Reflection.DbAttributes.MySqlDbType.Int32
+            End If
+
+        ElseIf Regex.Match(type_define, "int\(\d+\)", RegexOptions.IgnoreCase).Success Then
             type = Reflection.DbAttributes.MySqlDbType.Int64
             parameter = __getNumberValue(type_define)
 
@@ -359,9 +368,9 @@ _SET_PRIMARYKEY:
         Return New Reflection.DbAttributes.DataType(type, parameter)
     End Function
 
-    Private Function __getNumberValue(TypeDef As String) As String
-        Dim Parameter As String = Regex.Match(TypeDef, "\(.+?\)").Value
-        Parameter = Mid(Parameter, 2, Len(Parameter) - 2)
-        Return Parameter
+    Private Function __getNumberValue(typeDef As String) As String
+        Dim parameter As String = Regex.Match(typeDef, "\(.+?\)").Value
+        parameter = Mid(parameter, 2, Len(parameter) - 2)
+        Return parameter
     End Function
 End Module

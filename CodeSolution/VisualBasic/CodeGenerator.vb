@@ -92,6 +92,9 @@ Namespace VisualBasic
         Private Function __toDataType(TypeDef As Reflection.DbAttributes.DataType) As String
             Select Case TypeDef.MySQLType
 
+                Case MySqlDbType.Boolean
+                    Return " As Boolean"
+
                 Case Reflection.DbAttributes.MySqlDbType.BigInt,
                  Reflection.DbAttributes.MySqlDbType.Int16,
                  Reflection.DbAttributes.MySqlDbType.Int24,

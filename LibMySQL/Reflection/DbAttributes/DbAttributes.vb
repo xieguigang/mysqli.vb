@@ -1,31 +1,32 @@
 ﻿#Region "Microsoft.VisualBasic::665b7a7a8de0d0d2b08315d71c746a15, ..\mysqli\LibMySQL\Reflection\DbAttributes\DbAttributes.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    '       xie (genetics@smrucc.org)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
+Imports System.Runtime.CompilerServices
 Imports System.Xml.Serialization
 
 Namespace Reflection.DbAttributes
@@ -141,24 +142,26 @@ Namespace Reflection.DbAttributes
     <AttributeUsage(AttributeTargets.Property, AllowMultiple:=False, Inherited:=True)>
     Public Class DataType : Inherits DbAttribute
 
-        Dim _Type As MySqlDbType
+        Dim _type As MySqlDbType
         Dim _argvs As String
         Dim _typeCastingHandle As Func(Of Object, Object)
 
         Public ReadOnly Property MySQLType As MySqlDbType
+            <MethodImpl(MethodImplOptions.AggressiveInlining)>
             Get
-                Return _Type
+                Return _type
             End Get
         End Property
 
         Public ReadOnly Property ParameterValue As String
+            <MethodImpl(MethodImplOptions.AggressiveInlining)>
             Get
                 Return _argvs
             End Get
         End Property
 
         Sub New(type As MySqlDbType, Optional argvs$ = "")
-            Me._Type = type
+            Me._type = type
             Me._argvs = argvs
             Me._typeCastingHandle = _typeCasting(type)
         End Sub
@@ -168,11 +171,11 @@ Namespace Reflection.DbAttributes
         ''' </summary>
         ''' <returns></returns>
         Public Overrides Function ToString() As String
-            Return _Type.ToString & If(String.IsNullOrEmpty(_argvs), String.Empty, String.Format(" ({0})", _argvs))
+            Return _type.ToString & If(String.IsNullOrEmpty(_argvs), String.Empty, String.Format(" ({0})", _argvs))
         End Function
 
         Public Shared Narrowing Operator CType(dataType As DataType) As MySqlDbType
-            Return dataType._Type
+            Return dataType._type
         End Operator
 
         Public Shared Widening Operator CType(Type As MySqlDbType) As DataType
