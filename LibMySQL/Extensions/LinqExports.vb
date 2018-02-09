@@ -72,7 +72,7 @@ Public Module LinqExports
 
                     Call .LockTable(x.Name)
                     Call .WriteLine()
-                    Call writer.Add(x.Name, .ref)
+                    Call writer.Add(x.Name, .ByRef)
                 End With
             End If
 

@@ -128,8 +128,8 @@ Public Module SQLParser
     <Extension>
     Public Function LoadSQLDoc(stream As StreamReader, Optional ByRef raw As String = Nothing) As Table()
         With stream.ReadToEnd.Replace("<", "&lt;")
-            raw = .ref
-            Return LoadSQLDocFromStream(.ref)
+            raw = .ByRef
+            Return LoadSQLDocFromStream(.ByRef)
         End With
     End Function
 
