@@ -1,15 +1,16 @@
-﻿#Region "Microsoft.VisualBasic::3c5d32d9b60ff35eaee8c460cfa4e82e, ..\mysqli\CodeSolution\SQL\SQLParser.vb"
+﻿#Region "Microsoft.VisualBasic::48960782e360995cf3c6f912bfa3c6b7, CodeSolution\SQL\SQLParser.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
     '       xie (genetics@smrucc.org)
+    '       xieguigang (xie.guigang@live.com)
     ' 
     ' Copyright (c) 2018 GPL3 Licensed
     ' 
     ' 
     ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
     ' 
     ' This program is free software: you can redistribute it and/or modify
     ' it under the terms of the GNU General Public License as published by
@@ -23,6 +24,20 @@
     ' 
     ' You should have received a copy of the GNU General Public License
     ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+
+
+    ' /********************************************************************************/
+
+    ' Summaries:
+
+    ' Module SQLParser
+    ' 
+    '     Function: __createDataType, (+2 Overloads) __createField, __createSchema, __createSchemaInner, __getDBName
+    '               __getNumberValue, __parseTable, __splitInternal, __sqlParser, (+2 Overloads) LoadSQLDoc
+    '               LoadSQLDocFromStream, ParseTable
+    ' 
+    ' /********************************************************************************/
 
 #End Region
 
