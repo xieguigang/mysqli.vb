@@ -1,15 +1,16 @@
-﻿#Region "Microsoft.VisualBasic::a551cc0a948bbe64a403155b266358c5, ..\mysqli\LibMySQL\Extensions\LinqExports.vb"
+﻿#Region "Microsoft.VisualBasic::090d851a12726dbcf1652a2fe1791358, LibMySQL\Extensions\LinqExports.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
     '       xie (genetics@smrucc.org)
+    '       xieguigang (xie.guigang@live.com)
     ' 
     ' Copyright (c) 2018 GPL3 Licensed
     ' 
     ' 
     ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
     ' 
     ' This program is free software: you can redistribute it and/or modify
     ' it under the terms of the GNU General Public License as published by
@@ -23,6 +24,18 @@
     ' 
     ' You should have received a copy of the GNU General Public License
     ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+
+
+    ' /********************************************************************************/
+
+    ' Summaries:
+
+    ' Module LinqExports
+    ' 
+    '     Sub: DumpBlock, ProjectDumping
+    ' 
+    ' /********************************************************************************/
 
 #End Region
 

@@ -1,28 +1,51 @@
-﻿#Region "Microsoft.VisualBasic::88ec13f8c6d767a681738801344ca2f8, ..\mysqli\LibMySQL\MYSQL.Client\MySQL.vb"
+﻿#Region "Microsoft.VisualBasic::9bba0142bfde046d5b8404395c9d311a, LibMySQL\Mysqli\MySqli.vb"
 
-' Author:
-' 
-'       asuka (amethyst.asuka@gcmodeller.org)
-'       xieguigang (xie.guigang@live.com)
-'       xie (genetics@smrucc.org)
-' 
-' Copyright (c) 2018 GPL3 Licensed
-' 
-' 
-' GNU GENERAL PUBLIC LICENSE (GPL3)
-' 
-' This program is free software: you can redistribute it and/or modify
-' it under the terms of the GNU General Public License as published by
-' the Free Software Foundation, either version 3 of the License, or
-' (at your option) any later version.
-' 
-' This program is distributed in the hope that it will be useful,
-' but WITHOUT ANY WARRANTY; without even the implied warranty of
-' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-' GNU General Public License for more details.
-' 
-' You should have received a copy of the GNU General Public License
-' along with this program. If not, see <http://www.gnu.org/licenses/>.
+    ' Author:
+    ' 
+    '       asuka (amethyst.asuka@gcmodeller.org)
+    '       xie (genetics@smrucc.org)
+    '       xieguigang (xie.guigang@live.com)
+    ' 
+    ' Copyright (c) 2018 GPL3 Licensed
+    ' 
+    ' 
+    ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
+    ' 
+    ' This program is free software: you can redistribute it and/or modify
+    ' it under the terms of the GNU General Public License as published by
+    ' the Free Software Foundation, either version 3 of the License, or
+    ' (at your option) any later version.
+    ' 
+    ' This program is distributed in the hope that it will be useful,
+    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ' GNU General Public License for more details.
+    ' 
+    ' You should have received a copy of the GNU General Public License
+    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+
+
+    ' /********************************************************************************/
+
+    ' Summaries:
+
+    ' Class MySqli
+    ' 
+    '     Properties: UriMySQL, Version
+    ' 
+    '     Function: __executeAggregate, __throwExceptionHelper, CommitInserts, CommitTransaction, (+2 Overloads) Connect
+    '               ConnectDatabase, CreateQuery, CreateSchema, ExecDelete, ExecInsert
+    '               ExecReplace, ExecUpdate, Execute, ExecuteAggregate, ExecuteDataset
+    '               ExecuteScalar, ExecuteScalarAuto, Fetch, ForEach, Ping
+    '               Query, ToString
+    ' 
+    '     Sub: (+2 Overloads) Dispose, (+3 Overloads) New
+    ' 
+    '     Operators: <=, >=
+    ' 
+    ' /********************************************************************************/
 
 #End Region
 

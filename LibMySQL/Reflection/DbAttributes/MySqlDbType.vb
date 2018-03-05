@@ -1,28 +1,54 @@
-﻿#Region "Microsoft.VisualBasic::c71558344a070825503cf5fc48b19c99, ..\mysqli\LibMySQL\Reflection\DbAttributes\DbDataTypes.vb"
+﻿#Region "Microsoft.VisualBasic::559c996e83f9d6f04a1c364b9d62f320, LibMySQL\Reflection\DbAttributes\MySqlDbType.vb"
 
-' Author:
-' 
-'       asuka (amethyst.asuka@gcmodeller.org)
-'       xieguigang (xie.guigang@live.com)
-'       xie (genetics@smrucc.org)
-' 
-' Copyright (c) 2018 GPL3 Licensed
-' 
-' 
-' GNU GENERAL PUBLIC LICENSE (GPL3)
-' 
-' This program is free software: you can redistribute it and/or modify
-' it under the terms of the GNU General Public License as published by
-' the Free Software Foundation, either version 3 of the License, or
-' (at your option) any later version.
-' 
-' This program is distributed in the hope that it will be useful,
-' but WITHOUT ANY WARRANTY; without even the implied warranty of
-' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-' GNU General Public License for more details.
-' 
-' You should have received a copy of the GNU General Public License
-' along with this program. If not, see <http://www.gnu.org/licenses/>.
+    ' Author:
+    ' 
+    '       asuka (amethyst.asuka@gcmodeller.org)
+    '       xie (genetics@smrucc.org)
+    '       xieguigang (xie.guigang@live.com)
+    ' 
+    ' Copyright (c) 2018 GPL3 Licensed
+    ' 
+    ' 
+    ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
+    ' 
+    ' This program is free software: you can redistribute it and/or modify
+    ' it under the terms of the GNU General Public License as published by
+    ' the Free Software Foundation, either version 3 of the License, or
+    ' (at your option) any later version.
+    ' 
+    ' This program is distributed in the hope that it will be useful,
+    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ' GNU General Public License for more details.
+    ' 
+    ' You should have received a copy of the GNU General Public License
+    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+
+
+    ' /********************************************************************************/
+
+    ' Summaries:
+
+    '     Enum MySqlDbType
+    ' 
+    '         [Boolean], [Byte], [Date], [DateTime], [Decimal]
+    '         [Double], [Enum], [Set], [String], BigInt
+    '         Bit, Blob, Float, Geometry, Guid
+    '         Int16, Int24, Int32, Int64, LongBlob
+    '         LongText, MediumBlob, MediumInt, MediumText, NewDate
+    '         NewDecimal, Text, Time, Timestamp, TinyBlob
+    '         TinyInt, TinyText, UByte, UInt16, UInt24
+    '         UInt32, UInt64, VarBinary, VarChar, VarString
+    '         Year
+    ' 
+    '  
+    ' 
+    ' 
+    ' 
+    ' 
+    ' /********************************************************************************/
 
 #End Region
 
