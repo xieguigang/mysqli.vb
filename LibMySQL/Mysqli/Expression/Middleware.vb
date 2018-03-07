@@ -1,45 +1,48 @@
 ﻿
 Imports Microsoft.VisualBasic.Scripting
 
-Public Structure FieldArgument
+Namespace Expressions
 
-    ReadOnly Name$
+    Public Structure FieldArgument
 
-    Sub New(name$)
-        Me.Name = name
-    End Sub
+        ReadOnly Name$
 
-    Public Overrides Function ToString() As String
-        Return Name
-    End Function
+        Sub New(name$)
+            Me.Name = name
+        End Sub
 
-    Public Shared Operator <=(field As FieldArgument, value As Object) As String
-        Return $"`{field.Name}` = '{InputHandler.ToString(value)}'"
-    End Operator
+        Public Overrides Function ToString() As String
+            Return Name
+        End Function
 
-    Public Shared Operator >=(field As FieldArgument, value As Object) As String
-        Throw New NotImplementedException
-    End Operator
+        Public Shared Operator <=(field As FieldArgument, value As Object) As String
+            Return $"`{field.Name}` = '{InputHandler.ToString(value)}'"
+        End Operator
 
-    Public Shared Widening Operator CType(name$) As FieldArgument
-        Return New FieldArgument(name)
-    End Operator
-End Structure
+        Public Shared Operator >=(field As FieldArgument, value As Object) As String
+            Throw New NotImplementedException
+        End Operator
 
-Public Structure WhereArgument(Of T As {New, MySQLTable})
+        Public Shared Widening Operator CType(name$) As FieldArgument
+            Return New FieldArgument(name)
+        End Operator
+    End Structure
 
-    Dim table As Table(Of T)
-    Dim condition$
+    Public Structure WhereArgument(Of T As {New, MySQLTable})
 
-    Public Function GetSQL(Optional scalar As Boolean = False) As String
-        If scalar Then
-            Return $"SELECT * FROM `{table.Schema.TableName}` WHERE {condition} LIMIT 1;"
-        Else
-            Return $"SELECT * FROM `{table.Schema.TableName}` WHERE {condition};"
-        End If
-    End Function
+        Dim table As Table(Of T)
+        Dim condition$
 
-    Public Overrides Function ToString() As String
-        Return condition
-    End Function
-End Structure
+        Public Function GetSQL(Optional scalar As Boolean = False) As String
+            If scalar Then
+                Return $"SELECT * FROM `{table.Schema.TableName}` WHERE {condition} LIMIT 1;"
+            Else
+                Return $"SELECT * FROM `{table.Schema.TableName}` WHERE {condition};"
+            End If
+        End Function
+
+        Public Overrides Function ToString() As String
+            Return condition
+        End Function
+    End Structure
+End Namespace

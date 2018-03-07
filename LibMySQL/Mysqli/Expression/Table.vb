@@ -63,105 +63,106 @@
 
 #End Region
 
-Imports Microsoft.VisualBasic.Scripting
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
-''' <summary>
-''' The mysql table model.(数据查询工具)
-''' </summary>
-''' <typeparam name="TTable"></typeparam>
-Public Class Table(Of TTable As {New, MySQLTable})
+Namespace Expressions
 
     ''' <summary>
-    ''' The mysqli interface
+    ''' The mysql table model.(数据查询工具)
     ''' </summary>
-    ''' <returns></returns>
-    Public ReadOnly Property MySQL As MySqli
-    Public ReadOnly Property Schema As Table
+    ''' <typeparam name="TTable"></typeparam>
+    Public Class Table(Of TTable As {New, MySQLTable})
 
-    ''' <summary>
-    ''' Create a new table model from mysqli uri model
-    ''' </summary>
-    ''' <param name="uri"></param>
-    Sub New(uri As ConnectionUri)
-        Call Me.New(New MySqli(uri))
-    End Sub
+        ''' <summary>
+        ''' The mysqli interface
+        ''' </summary>
+        ''' <returns></returns>
+        Public ReadOnly Property MySQL As MySqli
+        Public ReadOnly Property Schema As Table
 
-    ''' <summary>
-    ''' Create a new table model from mysqli interface
-    ''' </summary>
-    ''' <param name="engine"></param>
-    Sub New(engine As MySqli)
-        Me.MySQL = engine
-        Schema = New Table(GetType(TTable))
-    End Sub
+        ''' <summary>
+        ''' Create a new table model from mysqli uri model
+        ''' </summary>
+        ''' <param name="uri"></param>
+        Sub New(uri As ConnectionUri)
+            Call Me.New(New MySqli(uri))
+        End Sub
 
-    ''' <summary>
-    ''' Show this table name
-    ''' </summary>
-    ''' <returns></returns>
-    Public Overrides Function ToString() As String
-        Return Schema.TableName
-    End Function
+        ''' <summary>
+        ''' Create a new table model from mysqli interface
+        ''' </summary>
+        ''' <param name="engine"></param>
+        Sub New(engine As MySqli)
+            Me.MySQL = engine
+            Schema = New Table(GetType(TTable))
+        End Sub
+
+        ''' <summary>
+        ''' Show this table name
+        ''' </summary>
+        ''' <returns></returns>
+        Public Overrides Function ToString() As String
+            Return Schema.TableName
+        End Function
 
 #Region "Operator"
 
-    Public Shared Narrowing Operator CType(table As Table(Of TTable)) As MySqli
-        Return table.MySQL
-    End Operator
+        Public Shared Narrowing Operator CType(table As Table(Of TTable)) As MySqli
+            Return table.MySQL
+        End Operator
 
-    Public Shared Widening Operator CType(Engine As MySqli) As Table(Of TTable)
-        Return New Table(Of TTable)(Engine)
-    End Operator
+        Public Shared Widening Operator CType(Engine As MySqli) As Table(Of TTable)
+            Return New Table(Of TTable)(Engine)
+        End Operator
 
-    Public Shared Operator <=(table As Table(Of TTable), SQL As String) As TTable()
-        If String.Equals(SQL.Trim.Split.First, "SELECT", StringComparison.OrdinalIgnoreCase) Then
-            Return table.MySQL.Query(Of TTable)(SQL)
-        Else
-            If table.MySQL.Execute(SQL) > 0 Then
-                Return New TTable() {}
+        Public Shared Operator <=(table As Table(Of TTable), SQL As String) As TTable()
+            If String.Equals(SQL.Trim.Split.First, "SELECT", StringComparison.OrdinalIgnoreCase) Then
+                Return table.MySQL.Query(Of TTable)(SQL)
             Else
-                Return Nothing
+                If table.MySQL.Execute(SQL) > 0 Then
+                    Return New TTable() {}
+                Else
+                    Return Nothing
+                End If
             End If
-        End If
-    End Operator
+        End Operator
 
-    Public Shared Operator >=(table As Table(Of TTable), SQL As String) As TTable()
-        Return table <= SQL
-    End Operator
+        Public Shared Operator >=(table As Table(Of TTable), SQL As String) As TTable()
+            Return table <= SQL
+        End Operator
 
-    ''' <summary>
-    ''' 添加新的记录
-    ''' </summary>
-    ''' <param name="table"></param>
-    ''' <param name="insertRow"></param>
-    ''' <returns></returns>
-    Public Shared Operator +(table As Table(Of TTable), insertRow As TTable) As Boolean
-        Return table.MySQL.ExecInsert(insertRow)
-    End Operator
+        ''' <summary>
+        ''' 添加新的记录
+        ''' </summary>
+        ''' <param name="table"></param>
+        ''' <param name="insertRow"></param>
+        ''' <returns></returns>
+        Public Shared Operator +(table As Table(Of TTable), insertRow As TTable) As Boolean
+            Return table.MySQL.ExecInsert(insertRow)
+        End Operator
 
-    Public Shared Operator -(table As Table(Of TTable), deleteRow As TTable) As Boolean
-        Return table.MySQL.ExecDelete(deleteRow)
-    End Operator
+        Public Shared Operator -(table As Table(Of TTable), deleteRow As TTable) As Boolean
+            Return table.MySQL.ExecDelete(deleteRow)
+        End Operator
 
-    Public Shared Operator ^(table As Table(Of TTable), updateRow As TTable) As Boolean
-        Return table.MySQL.ExecUpdate(updateRow)
-    End Operator
+        Public Shared Operator ^(table As Table(Of TTable), updateRow As TTable) As Boolean
+            Return table.MySQL.ExecUpdate(updateRow)
+        End Operator
 
-    ''' <summary>
-    ''' 查询单条记录
-    ''' </summary>
-    ''' <param name="table"></param>
-    ''' <param name="SQL"></param>
-    ''' <returns></returns>
-    Public Shared Operator <(table As Table(Of TTable), SQL As String) As TTable
-        Return table.MySQL.ExecuteScalar(Of TTable)(SQL)
-    End Operator
+        ''' <summary>
+        ''' 查询单条记录
+        ''' </summary>
+        ''' <param name="table"></param>
+        ''' <param name="SQL"></param>
+        ''' <returns></returns>
+        Public Shared Operator <(table As Table(Of TTable), SQL As String) As TTable
+            Return table.MySQL.ExecuteScalar(Of TTable)(SQL)
+        End Operator
 
-    Public Shared Operator >(table As Table(Of TTable), WHERE As String) As TTable
-        Return table.MySQL.ExecuteScalarAuto(Of TTable)(WHERE)
-    End Operator
+        Public Shared Operator >(table As Table(Of TTable), WHERE As String) As TTable
+            Return table.MySQL.ExecuteScalarAuto(Of TTable)(WHERE)
+        End Operator
 #End Region
-
-End Class
+    End Class
+End Namespace
