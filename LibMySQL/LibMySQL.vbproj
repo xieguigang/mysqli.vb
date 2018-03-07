@@ -412,10 +412,12 @@
     <Compile Include="Extensions\DataClient.vb" />
     <Compile Include="Extensions\DataDumps.vb" />
     <Compile Include="Extensions\LinqExports.vb" />
+    <Compile Include="Mysqli\Expression\Middleware.vb" />
+    <Compile Include="Mysqli\Expression\QueryHelper.vb" />
     <Compile Include="Mysqli\Linq.vb" />
     <Compile Include="Mysqli\Uri\UriEncryption.vb" />
     <Compile Include="Mysqli\Uri\UriBuilder.vb" />
-    <Compile Include="Mysqli\Table.vb" />
+    <Compile Include="Mysqli\Expression\Table.vb" />
     <Compile Include="Reflection\DataModels\NamespaceDoc.vb" />
     <Compile Include="Reflection\DataModels\SqlGenerateMethods.vb" />
     <Compile Include="Reflection\DbAttributes\TableName.vb" />
