@@ -68,6 +68,7 @@ Partial Module CLIProgram
             Dim markdown$ = schema.Documentation
 
             Call .WriteLine(markdown)
+            Call .Flush()
         End With
 
         Return 0

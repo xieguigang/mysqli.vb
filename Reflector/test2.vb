@@ -47,7 +47,7 @@
 Imports Oracle.LinuxCompatibility.MySQL
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 
-Module Test
+Module test2
 
     <TableName("Test")>
     Public Class T : Inherits MySQLTable

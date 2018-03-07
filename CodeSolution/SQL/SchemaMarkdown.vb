@@ -130,20 +130,27 @@ Public Module SchemaMarkdown
     Public Function Documentation(schema As IEnumerable(Of Table), Optional autoTOC As Boolean = False) As String
         Dim md As New StringBuilder
 
-        Call md.AppendLine("# MySQL development docs")
-
-        Call md.AppendLine("Mysql database field attributes notes:")
-        Call md.AppendLine()
-        Call md.AppendLine("> AI: Auto Increment; B: Binary; NN: Not Null; PK: Primary Key; UQ: Unique; UN: Unsigned; ZF: Zero Fill")
-        Call md.AppendLine()
+        Call md.AppendLine("# MySQL development docs") _
+               .AppendLine() _
+               .AppendLine("Mysql database field attributes notes:") _
+               .AppendLine() _
+               .AppendLine("> **AI**: Auto Increment;") _
+               .AppendLine("> **B**:  Binary;") _
+               .AppendLine("> **G**:  Generated") _
+               .AppendLine("> **NN**: Not Null;") _
+               .AppendLine("> **PK**: Primary Key;") _
+               .AppendLine("> **UQ**: Unique;") _
+               .AppendLine("> **UN**: Unsigned;") _
+               .AppendLine("> **ZF**: Zero Fill") _
+               .AppendLine() _
+               .AppendLine()
 
         For Each t As Table In schema
             Call md.AppendLine(t.MakeMarkdown)
         Next
 
         If autoTOC Then
-            Dim markdown$ = TOC.AddToc(md)
-            Return markdown
+            Return TOC.AddToc(md)
         Else
             Return md.ToString
         End If
