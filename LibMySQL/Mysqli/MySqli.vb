@@ -96,13 +96,13 @@ Public Class MySqli : Implements IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function Connect(MySQLConnection As ConnectionUri, Optional OnCreateSchema As Boolean = False) As Double
-        Dim TempName As String = MySQLConnection.Database
+        Dim tempName$ = MySQLConnection.Database
 
         If OnCreateSchema Then
             MySQLConnection.Database = ""
             _UriMySQL = MySQLConnection
             Call CreateSchema(Name:=MySQLConnection.Database)
-            MySQLConnection.Database = TempName
+            MySQLConnection.Database = tempName
         End If
 
         Return Connect(ConnectionString:=MySQLConnection.GetConnectionString)
@@ -374,7 +374,9 @@ Public Class MySqli : Implements IDisposable
 #End Region
 
     Public Function CommitInserts(transaction As IEnumerable(Of MySQLTable), Optional ByRef ex As Exception = Nothing) As Boolean
-        Dim SQL As String = transaction.Select(Function(x) x.GetInsertSQL).JoinBy(vbLf)
+        Dim SQL$ = transaction _
+            .Select(Function(x) x.GetInsertSQL) _
+            .JoinBy(vbLf)
         Return CommitTransaction(SQL, ex)
     End Function
 
@@ -424,16 +426,16 @@ Public Class MySqli : Implements IDisposable
         End Using
     End Function
 
-    Private Function __throwExceptionHelper(Ex As Exception, SQL As String, throwExp As Boolean) As Exception
+    Private Function __throwExceptionHelper(ex As Exception, SQL$, throwExp As Boolean) As Exception
         Dim url As New ConnectionUri(UriMySQL)
         url.Password = "********"
-        Ex = New Exception(url.GetJson, Ex)
-        Ex = New Exception(SQL, Ex)
+        ex = New Exception(url.GetJson, ex)
+        ex = New Exception(SQL, ex)
 
         If throwExp Then
-            Throw Ex
+            Throw ex
         Else
-            Return Ex
+            Return ex
         End If
     End Function
 
@@ -501,13 +503,13 @@ Public Class MySqli : Implements IDisposable
     ''' <summary>
     ''' Open a  mysql  connection using a connection helper object
     ''' </summary>
-    ''' <param name="uri_obj">The connection helper object</param>
+    ''' <param name="uri">The connection helper object</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Widening Operator CType(uri_obj As ConnectionUri) As MySqli
+    Public Shared Widening Operator CType(uri As ConnectionUri) As MySqli
         Return New MySqli With {
-            ._UriMySQL = uri_obj,
-            ._reflector = New DbReflector(uri_obj.GetConnectionString)
+            ._UriMySQL = uri,
+            ._reflector = New DbReflector(uri.GetConnectionString)
         }
     End Operator
 
