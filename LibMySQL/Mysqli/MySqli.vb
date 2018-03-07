@@ -192,8 +192,8 @@ Public Class MySqli : Implements IDisposable
 
         Call Reader.Read()
 
-        Dim ObjValue As Object = Reader.GetValue(Scan0)
-        Dim value As T = CType(ObjValue, T)
+        Dim objValue As Object = Reader.GetValue(Scan0)
+        Dim value As T = DirectCast(objValue, T)
 
         Return value
     End Function
@@ -351,25 +351,23 @@ Public Class MySqli : Implements IDisposable
     End Function
 
 #Region ""
+
+    <MethodImpl(MethodImplOptions.AggressiveInlining)>
     Public Function ExecUpdate(SQL As MySQLTable, Optional throwExp As Boolean = False) As Boolean
-        Dim s_SQL As String = SQL.GetUpdateSQL
-        Return Execute(s_SQL, throwExp) > 0
+        Return Execute(SQL.GetUpdateSQL, throwExp) > 0
     End Function
 
+    <MethodImpl(MethodImplOptions.AggressiveInlining)>
     Public Function ExecInsert(SQL As MySQLTable, Optional throwExp As Boolean = False) As Boolean
-        Dim expression$ = SQL.GetInsertSQL
-#If DEBUG Then
-        Call expression.__DEBUG_ECHO
-#End If
-        Dim success As Boolean = Execute(expression, throwExp) > 0
-        Return success
+        Return Execute(SQL.GetInsertSQL, throwExp) > 0
     End Function
 
+    <MethodImpl(MethodImplOptions.AggressiveInlining)>
     Public Function ExecDelete(SQL As MySQLTable, Optional throwExp As Boolean = False) As Boolean
-        Dim s_SQL As String = SQL.GetDeleteSQL
-        Return Execute(s_SQL, throwExp) > 0
+        Return Execute(SQL.GetDeleteSQL, throwExp) > 0
     End Function
 
+    <MethodImpl(MethodImplOptions.AggressiveInlining)>
     Public Function ExecReplace(SQL As MySQLTable, Optional throwExp As Boolean = False) As Boolean
         Return Execute(SQL.GetReplaceSQL, throwExp) > 0
     End Function
@@ -495,11 +493,11 @@ Public Class MySqli : Implements IDisposable
     ''' <remarks></remarks>
     Public Shared Widening Operator CType(strUri As String) As MySqli
         Dim uri As ConnectionUri = strUri
-        Dim DBIClient As New MySqli With {
+        Dim mysqli As New MySqli With {
             ._UriMySQL = uri,
             ._reflector = New DbReflector(uri.GetConnectionString)
         }
-        Return DBIClient
+        Return mysqli
     End Operator
 
     ''' <summary>

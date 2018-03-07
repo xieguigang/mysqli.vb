@@ -252,7 +252,7 @@ Namespace Reflection
         Public Function Query(SQL As String) As List(Of Schema)
             Dim MySql As MySqlConnection = New MySqlConnection(Me.MySQL.UriMySQL.GetConnectionString) '[ConnectionString] is a compiled mysql connection string from our class constructor.
             Dim MySqlCommand As MySqlCommand = New MySqlCommand(SQL, MySql)
-            Dim Reader As Global.MySql.Data.MySqlClient.MySqlDataReader = Nothing
+            Dim Reader As MySqlDataReader = Nothing
             Dim NewTable As New List(Of Schema)
 
             Try
