@@ -1,70 +1,71 @@
 ﻿#Region "Microsoft.VisualBasic::5dc63be46c12de6e25f5467e1628673d, LibMySQL\Reflection\DbReflector\DbReflector.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    '     Class DbReflector
-    ' 
-    '         Function: (+2 Overloads) __getObject, __queryInitSchema, ReadFirst
-    '         Class __readFirst
-    ' 
-    '             Properties: value
-    ' 
-    '             Function: __getFirst
-    ' 
-    '         Delegate Function
-    ' 
-    '             Constructor: (+3 Overloads) Sub New
-    ' 
-    '             Function: __linqToMySQL, __queryEngine, __queryInvoke, __queryParallelInvoke, AsQuery
-    '                       ParallelQuery, Query, ToString
-    ' 
-    '             Sub: (+2 Overloads) ForEach
-    '         Class Linq_2MySQL
-    ' 
-    '             Constructor: (+2 Overloads) Sub New
-    ' 
-    '             Function: ___invoke, __queryEngine
-    ' 
-    '             Sub: __forEach
-    ' 
-    ' 
-    ' 
-    ' 
-    ' 
-    ' /********************************************************************************/
+'     Class DbReflector
+' 
+'         Function: (+2 Overloads) __getObject, __queryInitSchema, ReadFirst
+'         Class __readFirst
+' 
+'             Properties: value
+' 
+'             Function: __getFirst
+' 
+'         Delegate Function
+' 
+'             Constructor: (+3 Overloads) Sub New
+' 
+'             Function: __linqToMySQL, __queryEngine, __queryInvoke, __queryParallelInvoke, AsQuery
+'                       ParallelQuery, Query, ToString
+' 
+'             Sub: (+2 Overloads) ForEach
+'         Class Linq_2MySQL
+' 
+'             Constructor: (+2 Overloads) Sub New
+' 
+'             Function: ___invoke, __queryEngine
+' 
+'             Sub: __forEach
+' 
+' 
+' 
+' 
+' 
+' /********************************************************************************/
 
 #End Region
 
 Imports System.Reflection
+Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports MySql.Data.MySqlClient
@@ -101,7 +102,7 @@ Namespace Reflection
                 If ordinal >= 0 Then
                     Dim value = reader.GetValue(ordinal)
 
-                    If Not IsDBNull(value) Then
+                    If Not IsDBNull(value) AndAlso Not value Is Nothing Then
                         Call [property].Value.SetValue(out, value)
                     End If
                 End If
@@ -144,28 +145,29 @@ Namespace Reflection
             Return DirectCast(FillObject, T)
         End Function
 
-        Private Shared Function __getObject(Of T)(reader As MySqlDataReader,
-                                                  type As Type,
-                                                  FieldList As SeqValue(Of PropertyInfo)()) As T
-            Dim FillObject As Object = Activator.CreateInstance(type) 'Create a instance of specific type: our record schema. 
-            Dim FieldPointer As Integer
+        Private Shared Function __getObject(Of T)(reader As MySqlDataReader, type As Type, fields As SeqValue(Of PropertyInfo)()) As T
+            ' Create a instance of specific type: our record schema. 
+            Dim fillObject As Object = Activator.CreateInstance(type)
+            Dim i%
 
             Try
-                For FieldPointer = 0 To FieldList.Length - 1  'Scan all of the fields in the field list and get the field value.
-                    Dim prop As SeqValue(Of PropertyInfo) = FieldList(FieldPointer)
-                    Dim Ordinal As Integer = prop.i
-                    Dim ObjValue As Object = reader.GetValue(Ordinal)
-                    If Not IsDBNull(ObjValue) Then
-                        Call (+prop).SetValue(FillObject, ObjValue, Nothing)
+                ' Scan all of the fields in the field list and get the field value.
+                For i = 0 To fields.Length - 1
+                    Dim prop As SeqValue(Of PropertyInfo) = fields(i)
+                    Dim ordinal As Integer = prop.i
+                    Dim value As Object = reader.GetValue(ordinal)
+
+                    If Not IsDBNull(value) Then
+                        Call (+prop).SetValue(fillObject, value, Nothing)
                     End If
                 Next
             Catch ex As Exception
-                Dim ErrorField = FieldList(FieldPointer)
-                ex = New Exception($"[{ErrorField.i}] => {ErrorField.value.ToString}", ex)
+                Dim errorField = fields(i)
+                ex = New Exception($"[{errorField.i}] => {errorField.value.ToString}", ex)
                 Throw ex
             End Try
 
-            Return DirectCast(FillObject, T)
+            Return DirectCast(fillObject, T)
         End Function
 
         Private Shared Function __queryInitSchema(Reader As MySqlDataReader, type As Type) As SeqValue(Of PropertyInfo)()
@@ -232,22 +234,20 @@ Namespace Reflection
         ''' <typeparam name="T"></typeparam>
         ''' <param name="SQL"></param>
         ''' <returns></returns>
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Function AsQuery(Of T)(SQL As String, ByRef getError As String) As IEnumerable(Of T)
-            Dim query As IEnumerable(Of T) =
-                __queryEngine(Of T)(SQL, AddressOf __linqToMySQL(Of T), getError)
-            Return query
+            Return __queryEngine(Of T)(SQL, AddressOf __linqToMySQL(Of T), getError)
         End Function
 
-        Private Shared Function __queryInvoke(Of T)(Reader As MySqlDataReader,
-                                             type As Type,
-                                             FieldList As SeqValue(Of PropertyInfo)()) As T()
-            Dim Table As New List(Of T)
+        Private Shared Function __queryInvoke(Of T)(reader As MySqlDataReader, type As Type, fields As SeqValue(Of PropertyInfo)()) As T()
+            Dim table As New List(Of T)
 
-            Do While Reader.Read
-                Call Table.Add(__getObject(Of T)(Reader, type, FieldList))
+            Do While reader.Read
+                Call table.Add(__getObject(Of T)(reader, type, fields))
             Loop
 
-            Return Table.ToArray
+            Return table.ToArray
         End Function
 
         ''' <summary>

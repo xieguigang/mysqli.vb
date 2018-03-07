@@ -315,12 +315,12 @@ Public Class MySqli : Implements IDisposable
     ''' <returns></returns>
     Public Function Query(Of T As Class)(SQL As String, Optional Parallel As Boolean = False, Optional throwExp As Boolean = True) As T()
         Dim Err As String = ""
-        Dim Table As T() =
-            If(Parallel,
+        Dim table As T() = If(Parallel,
             _reflector.ParallelQuery(Of T)(SQL, GetErr:=Err),
-            _reflector.Query(Of T)(SQL, GetErr:=Err))
+            _reflector.Query(Of T)(SQL, GetErr:=Err)
+        )
 
-        If Table Is Nothing Then
+        If table Is Nothing Then
             If throwExp Then
                 Dim ex As New Exception(SQL)
                 ex = New Exception(Err, ex)
@@ -329,7 +329,7 @@ Public Class MySqli : Implements IDisposable
                 Return Nothing
             End If
         Else
-            Return Table.ToArray
+            Return table.ToArray
         End If
     End Function
 
