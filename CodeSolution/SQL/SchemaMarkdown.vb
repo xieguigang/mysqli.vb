@@ -50,7 +50,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Public Module SchemaMarkdown
 
     <Extension>
-    Private Function __attrs(field As Field) As String
+    Private Function __attrs(field As Field, table As Table) As String
         Dim a As New List(Of String)
 
         With field
@@ -64,7 +64,7 @@ Public Module SchemaMarkdown
             If .NotNull Then
                 a += "NN"
             End If
-            If .PrimaryKey Then
+            If .PrimaryKey OrElse table.PrimaryFields.IndexOf(.FieldName) > -1 Then
                 a += "PK"
             End If
             If .Unique Then
@@ -88,17 +88,18 @@ Public Module SchemaMarkdown
     Public Function MakeMarkdown(table As Table) As String
         Dim md As New StringBuilder
 
-        Call md.AppendLine("## " & table.TableName)
-        Call md.AppendLine(CLangStringFormatProvider.ReplaceMetaChars(table.Comment))
-        Call md.AppendLine()
-        Call md.AppendLine("|field|type|attributes|description|")
-        Call md.AppendLine("|-----|----|----------|-----------|")
+        Call md.AppendLine("## " & table.TableName) _
+               .AppendLine() _
+               .AppendLine(CLangStringFormatProvider.ReplaceMetaChars(table.Comment)) _
+               .AppendLine() _
+               .AppendLine("|field|type|attributes|description|") _
+               .AppendLine("|-----|----|----------|-----------|")
 
         For Each field As Field In table.Fields
             Dim columns = {
                 field.FieldName,
                 field.DataType.ToString,
-                field.__attrs,
+                field.__attrs(table),
                 field.Comment _
                     .Replace("\n", "<br />") _
                     .Replace("\t", ASCII.TAB)
@@ -114,7 +115,6 @@ Public Module SchemaMarkdown
         Call md.AppendLine(table.SQL)
         Call md.AppendLine("```")
 
-        Call md.AppendLine()
         Call md.AppendLine()
 
         Return md.ToString
