@@ -120,6 +120,11 @@ Public Module SchemaMarkdown
         Return md.ToString
     End Function
 
+    <Extension>
+    Public Function MakeHTML(table As Table) As String
+        Return New MarkdownHTML().Transform(table.MakeMarkdown)
+    End Function
+
     ''' <summary>
     ''' 从表的定义之中生成开发文档
     ''' </summary>
