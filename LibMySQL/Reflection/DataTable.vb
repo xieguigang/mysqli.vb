@@ -35,10 +35,12 @@
     ' 
     '         Properties: ErrorMessage, ListData
     ' 
+    '         Constructor: (+1 Overloads) Sub New
+    ' 
     '         Function: Commit, Create, GetHandle, Query
     ' 
     '         Sub: Delete, (+2 Overloads) Dispose, Fetch, Insert, MySQL_ThrowException
-    '              New, Update
+    '              Update
     ' 
     ' 
     ' /********************************************************************************/

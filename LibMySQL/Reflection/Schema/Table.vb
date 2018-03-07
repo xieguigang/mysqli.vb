@@ -37,9 +37,11 @@
     '                     Index, IndexProperty, PrimaryFields, SchemaType, SQL
     '                     TableName, UniqueFields
     ' 
+    '         Constructor: (+3 Overloads) Sub New
+    ' 
     '         Function: __getField, GetDatabaseName, GetPrimaryKeyFields, GetTableName, ToString
     ' 
-    '         Sub: __getSchema, __indexing, (+3 Overloads) New
+    '         Sub: __getSchema, __indexing
     ' 
     ' 
     ' /********************************************************************************/

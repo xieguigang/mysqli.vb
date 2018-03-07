@@ -35,9 +35,11 @@
     ' 
     '         Properties: MeasureCounts, MemorySizeThreshold
     ' 
+    '         Constructor: (+1 Overloads) Sub New
+    ' 
     '         Function: (+2 Overloads) __indexKey, __where, Clone, (+2 Overloads) ExecuteScalar, (+2 Overloads) Query
     ' 
-    '         Sub: cleanup, New, push
+    '         Sub: cleanup, push
     ' 
     ' 
     ' /********************************************************************************/

@@ -34,10 +34,11 @@
     '     Module CodeGenerator
     ' 
     '         Function: ___DELETE_SQL, ___DELETE_SQL_Invoke, ___INSERT_SQL, ___INSERT_SQL_Invoke, ___REPLACE_SQL
-    '                   ___REPLACE_SQL_Invoke, ___UPDATE_SQL, ___UPDATE_SQL_Invoke, __clone, __generateCode
-    '                   __generateCodeSplit, __getExprInvoke, __INSERT_VALUES, __notImplementForIndex, __replaceInsertCommon
-    '                   __replaceInsertInvokeCommon, __schemaDb, __toDataType, FixInvalids, GenerateClass
-    '                   (+2 Overloads) GenerateCode, (+2 Overloads) GenerateCodeSplit, GenerateSingleDocument, PropertyName, SQLComments
+    '                   ___REPLACE_SQL_Invoke, ___UPDATE_SQL, ___UPDATE_SQL_Invoke, __clone, __createAttribute
+    '                   __generateCode, __generateCodeSplit, __getExprInvoke, __INSERT_VALUES, __notImplementForIndex
+    '                   __replaceInsertCommon, __replaceInsertInvokeCommon, __schemaDb, __toDataType, FixInvalids
+    '                   GenerateClass, (+3 Overloads) GenerateCode, (+2 Overloads) GenerateCodeSplit, GenerateSingleDocument, GenerateTableClass
+    '                   PropertyName, SQLComments
     ' 
     ' 
     ' /********************************************************************************/

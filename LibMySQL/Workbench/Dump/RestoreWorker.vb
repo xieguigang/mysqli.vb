@@ -35,9 +35,8 @@
     ' 
     '         Properties: MySQL
     ' 
+    '         Constructor: (+1 Overloads) Sub New
     '         Function: ImportsData
-    ' 
-    '         Sub: New
     ' 
     ' 
     ' /********************************************************************************/

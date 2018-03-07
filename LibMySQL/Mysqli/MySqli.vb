@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::9bba0142bfde046d5b8404395c9d311a, LibMySQL\Mysqli\MySqli.vb"
+﻿#Region "Microsoft.VisualBasic::ac29d570678d8a92b5de350959487a82, LibMySQL\Mysqli\MySqli.vb"
 
     ' Author:
     ' 
@@ -35,13 +35,15 @@
     ' 
     '     Properties: UriMySQL, Version
     ' 
+    '     Constructor: (+3 Overloads) Sub New
+    ' 
     '     Function: __executeAggregate, __throwExceptionHelper, CommitInserts, CommitTransaction, (+2 Overloads) Connect
     '               ConnectDatabase, CreateQuery, CreateSchema, ExecDelete, ExecInsert
     '               ExecReplace, ExecUpdate, Execute, ExecuteAggregate, ExecuteDataset
     '               ExecuteScalar, ExecuteScalarAuto, Fetch, ForEach, Ping
     '               Query, ToString
     ' 
-    '     Sub: (+2 Overloads) Dispose, (+3 Overloads) New
+    '     Sub: (+2 Overloads) Dispose
     ' 
     '     Operators: <=, >=
     ' 

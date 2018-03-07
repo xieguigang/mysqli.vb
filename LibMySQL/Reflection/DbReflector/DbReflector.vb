@@ -42,15 +42,19 @@
     ' 
     '         Delegate Function
     ' 
+    '             Constructor: (+3 Overloads) Sub New
+    ' 
     '             Function: __linqToMySQL, __queryEngine, __queryInvoke, __queryParallelInvoke, AsQuery
     '                       ParallelQuery, Query, ToString
     ' 
-    '             Sub: (+2 Overloads) ForEach, (+3 Overloads) New
+    '             Sub: (+2 Overloads) ForEach
     '         Class Linq_2MySQL
+    ' 
+    '             Constructor: (+2 Overloads) Sub New
     ' 
     '             Function: ___invoke, __queryEngine
     ' 
-    '             Sub: __forEach, (+2 Overloads) New
+    '             Sub: __forEach
     ' 
     ' 
     ' 

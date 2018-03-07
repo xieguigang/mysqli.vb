@@ -33,11 +33,10 @@
 
     '     Class TableName
     ' 
-    '         Properties: SchemaSQL
+    '         Properties: Database, Name, SchemaSQL
     ' 
+    '         Constructor: (+1 Overloads) Sub New
     '         Function: GetTableName, ToString
-    ' 
-    '         Sub: New
     ' 
     ' 
     ' /********************************************************************************/

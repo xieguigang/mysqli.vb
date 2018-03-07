@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::c186b84688486a489e65ee752893dc19, LibMySQL\Scripting\Extensions.vb"
+﻿#Region "Microsoft.VisualBasic::45fcf5a43aed5eb61fe3a9d3e1db15ea, LibMySQL\Scripting\Extensions.vb"
 
     ' Author:
     ' 
@@ -33,7 +33,7 @@
 
     '     Module Extensions
     ' 
-    '         Function: DropTableSQL, replaceInternal
+    '         Function: DropTableSQL, EnsureLimit1, MySqlEscaping, replaceInternal
     ' 
     ' 
     ' /********************************************************************************/
@@ -124,4 +124,3 @@ Namespace Scripting
         End Function
     End Module
 End Namespace
-

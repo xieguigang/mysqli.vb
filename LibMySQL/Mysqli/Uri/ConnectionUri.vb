@@ -33,9 +33,11 @@
 
     '     Class ConnectionUri
     ' 
-    '         Function: (+2 Overloads) CreateObject, GetConnectionString, GetDisplayUri, ToString, TryParsing
+    '         Properties: Database, IPAddress, Password, Port, TimeOut
+    '                     User
     ' 
-    '         Sub: (+2 Overloads) New
+    '         Constructor: (+2 Overloads) Sub New
+    '         Function: (+2 Overloads) CreateObject, GetConnectionString, GetDisplayUri, ToString, TryParsing
     ' 
     ' 
     ' /********************************************************************************/

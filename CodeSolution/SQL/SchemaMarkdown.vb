@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::87c85cdc964c9a405db880a2bb4256c0, CodeSolution\SQL\SchemaMarkdown.vb"
+﻿#Region "Microsoft.VisualBasic::64226beb34f422c977c54d11adbeb891, CodeSolution\SQL\SchemaMarkdown.vb"
 
     ' Author:
     ' 
@@ -33,7 +33,7 @@
 
     ' Module SchemaMarkdown
     ' 
-    '     Function: __attrs, Documentation, MakeMarkdown
+    '     Function: __attrs, Documentation, MakeHTML, MakeMarkdown
     ' 
     ' /********************************************************************************/
 

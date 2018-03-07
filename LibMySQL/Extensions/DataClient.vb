@@ -33,7 +33,7 @@
 
     ' Module DataClient
     ' 
-    '     Function: HasValue, Truncate
+    '     Function: GroupMerge, HasValue, OccupancyLoad, SelectALL, Truncate
     ' 
     ' /********************************************************************************/
 

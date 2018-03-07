@@ -33,7 +33,8 @@
 
     '     Module SqlGenerateMethods
     ' 
-    '         Function: __fields, __getWHERE, GenerateDeleteSql, GenerateInsertSql, GenerateUpdateSql
+    '         Function: __fields, __getWHERE, GenerateDeleteSql, GenerateInsertSql, (+2 Overloads) GenerateInsertValues
+    '                   GenerateUpdateSql
     ' 
     ' 
     ' /********************************************************************************/

@@ -35,7 +35,8 @@
     ' 
     '     Properties: MySqlDbTypes, Numerics
     ' 
-    '     Function: ClearTable, CopySets, GetCreateTableMetaSQL, OrdinalSchema
+    '     Function: AsDBI, ClearTable, CopySets, GetAttribute, GetCreateTableMetaSQL
+    '               GetDbDataType, OrdinalSchema
     ' 
     ' /********************************************************************************/
 

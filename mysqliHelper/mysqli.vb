@@ -31,11 +31,11 @@
 
     ' Summaries:
 
-    '  
+    ' Module mysqli
     ' 
     '     Function: CopyToModule, LoadConfig
     ' 
-    '     Sub: (+2 Overloads) RunConfig, TestMySQLi
+    '     Sub: init, init_cli, (+2 Overloads) RunConfig, TestMySQLi
     ' 
     ' /********************************************************************************/
 

@@ -35,7 +35,8 @@
     ' 
     '     Properties: libmySQL, mysql, mysqladmin, mysqld
     ' 
-    '     Sub: New, Start
+    '     Constructor: (+1 Overloads) Sub New
+    '     Sub: Start
     ' 
     ' /********************************************************************************/
 

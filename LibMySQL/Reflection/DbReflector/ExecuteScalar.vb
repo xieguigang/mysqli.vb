@@ -33,9 +33,8 @@
 
     '     Class SchemaCache
     ' 
+    '         Constructor: (+2 Overloads) Sub New
     '         Function: GetOrdinals
-    ' 
-    '         Sub: (+2 Overloads) New
     ' 
     ' 
     ' /********************************************************************************/

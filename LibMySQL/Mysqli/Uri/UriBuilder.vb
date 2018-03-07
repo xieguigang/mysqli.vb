@@ -33,7 +33,7 @@
 
     '     Module UriBuilder
     ' 
-    '         Function: BuildConnectionString, getField, MySQLParser
+    '         Function: BuildConnectionString, getField, MySQLParser, TrimSeperator, UriParser
     ' 
     ' 
     ' /********************************************************************************/

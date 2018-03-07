@@ -33,19 +33,20 @@
 
     '     Class ServerInstances
     ' 
-    ' 
+    '         Properties: grt_format
     ' 
     '     Class value
     ' 
-    ' 
+    '         Properties: _ptr_, contentStructName, contenttype, id, key
+    '                     structchecksum, structname, type
     ' 
     '     Class link
     ' 
-    ' 
+    '         Properties: key, structname, type, value
     ' 
     '     Class DictionaryValue
     ' 
-    ' 
+    '         Properties: key, type, value
     ' 
     ' 
     ' /********************************************************************************/

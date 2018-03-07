@@ -35,9 +35,8 @@
     ' 
     '         Properties: MySQLType, ParameterValue
     ' 
+    '         Constructor: (+1 Overloads) Sub New
     '         Function: ToMySqlDateTimeString, ToString, TypeCasting
-    ' 
-    '         Sub: New
     ' 
     '     Module CTypeDynamicsExtensions
     ' 

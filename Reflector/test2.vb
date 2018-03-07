@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::8e2b03ba6b46e360c1e467a98e14c42a, Reflector\Test.vb"
+﻿#Region "Microsoft.VisualBasic::81edd5a1a9e8e87ed268e877809605c1, Reflector\test2.vb"
 
     ' Author:
     ' 
@@ -31,10 +31,12 @@
 
     ' Summaries:
 
-    ' Module Test
+    ' Module test2
     ' 
     '     Sub: Main
     '     Class T
+    ' 
+    '         Properties: A, B, C
     ' 
     '         Function: GetDeleteSQL, GetDumpInsertValue, GetInsertSQL, GetReplaceSQL, GetUpdateSQL
     ' 

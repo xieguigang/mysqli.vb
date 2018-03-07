@@ -35,7 +35,8 @@
     ' 
     '     Function: CsvImportsHelper, (+2 Overloads) DumpTransaction, simpleField
     ' 
-    '     Sub: DumpLargeTransaction, DumpMySQL, DumpSession, LockTable, UnlockTable
+    '     Sub: DumpLargeTransaction, DumpMySQL, DumpSession, DumpTransaction, LockTable
+    '          UnlockTable
     ' 
     ' /********************************************************************************/
 

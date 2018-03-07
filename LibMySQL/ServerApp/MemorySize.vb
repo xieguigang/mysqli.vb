@@ -35,9 +35,11 @@
     ' 
     '         Properties: Schema, Type
     ' 
+    '         Constructor: (+2 Overloads) Sub New
+    ' 
     '         Function: MeasureSize, ToString
     ' 
-    '         Sub: __sizeOf, (+2 Overloads) New
+    '         Sub: __sizeOf
     ' 
     ' 
     ' /********************************************************************************/
