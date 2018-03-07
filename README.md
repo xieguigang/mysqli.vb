@@ -1,10 +1,11 @@
-# VisualBasic.DBI
-MySQL/SQLite database interface/mapping for VisualBasic
+# MySqli.vb
+MySQL database interface mapping for VisualBasic.NET language.
 
 This project includes:
 
-+ a mysql data mapping tools and a cli tools for convert the sql table into the VisualBasic/PHP class object source code.
-+ a sqlite data mapping tools
++ a mysql data mapping library 
++ a cli tool for convert the sql table into the VisualBasic/PHP class object source code.
++ a cli tool for auto document the mysql structure exports.
 
 ##### Runtime
 
@@ -18,7 +19,7 @@ Or clone and reference to source code project:
 
 ### ORM
 
-Data to source code mapping solution for VisualBasic/PHP language, makes the database operation more easily, escaping from the manual SQL generator.
+Data to source code mapping solution for VisualBasic/PHP language, makes the database operation more easily, free your hand from the manual SQL generator.
 
 ![](./Mimetypes-text-x-sql-icon.png)
 
