@@ -527,6 +527,11 @@ Public Class MySqli : Implements IDisposable
         Throw New NotSupportedException
     End Operator
 
+    Public Shared Operator +(mysqli As MySqli, res As MySQLTable) As MySqli
+        mysqli.ExecInsert(res)
+        Return mysqli
+    End Operator
+
 #Region "IDisposable Support"
     Private disposedValue As Boolean ' To detect redundant calls
 

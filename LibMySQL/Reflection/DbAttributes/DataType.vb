@@ -107,21 +107,6 @@ Namespace Reflection.DbAttributes
             Return New DataType(Type)
         End Operator
 
-        ''' <summary>
-        ''' 可能由于操作系统的语言或者文化的差异，直接使用<see cref="DateTime"></see>的ToString方法所得到的字符串可能会在一些环境配置之下
-        ''' 无法正确的插入MySQL数据库之中，所以需要使用本方法在将对象实例进行转换为SQL语句的时候进行转换为字符串
-        ''' </summary>
-        ''' <param name="value"></param>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        ''' 
-        <MethodImpl(MethodImplOptions.AggressiveInlining)>
-        Public Shared Function ToMySqlDateTimeString(value As DateTime) As String
-            With value
-                Return String.Format("{0}-{1}-{2} {3}:{4}:{5}", .Year, .Month, .Day, .Hour, .Minute, .Second)
-            End With
-        End Function
-
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Function TypeCasting(value As Object) As Object
             Return typeCaster(value)

@@ -59,6 +59,7 @@ Imports Microsoft.VisualBasic.Scripting.SymbolBuilder
 Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
+Imports MySqlScript = Oracle.LinuxCompatibility.MySQL.Scripting.Extensions
 
 Namespace VisualBasic
 
@@ -163,7 +164,7 @@ Namespace VisualBasic
         ''' 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <Extension> Public Function GenerateCode(listSQL As IEnumerable(Of Table), Optional namespace$ = "") As String
-            Return __generateCode(listSQL, "", "", Nothing, [namespace])
+            Return vbCode(listSQL, "", "", Nothing, [namespace])
         End Function
 
         Const SCHEMA_SECTIONS As String = "-- Table structure for table `.+?`"
@@ -172,17 +173,14 @@ Namespace VisualBasic
         ''' Generate the source code file from the table schema dumping.
         ''' (使用这个函数生成的程序源代码所有的``Class``类都是被放置在一个源文件之中的)
         ''' </summary>
-        ''' <param name="SqlDoc"></param>
+        ''' <param name="Sql"></param>
         ''' <param name="head"></param>
         ''' <param name="FileName"></param>
-        ''' <param name="TableSql"></param>
+        ''' <param name="tableSql"></param>
         ''' <returns></returns>
-        Private Function __generateCode(SqlDoc As IEnumerable(Of Table),
-                                        head$,
-                                        fileName$,
-                                        TableSql As Dictionary(Of String, String),
-                                        namespace$) As String
-
+        ''' 
+        <Extension>
+        Private Function vbCode(Sql As IEnumerable(Of Table), head$, fileName$, tableSql As Dictionary(Of String, String), namespace$) As String
             Dim vb As New StringBuilder(1024)
             Dim haveNamespace As Boolean = Not String.IsNullOrEmpty([namespace])
 
@@ -193,12 +191,12 @@ Namespace VisualBasic
             Call vb.AppendLine()
             Call vb.AppendLine()
 
-            If TableSql Is Nothing Then
-                TableSql = New Dictionary(Of String, String)
+            If tableSql Is Nothing Then
+                tableSql = New Dictionary(Of String, String)
             End If
 
             Dim tokens$() = Strings.Split(head.Replace(vbLf, ""), vbCr)
-            Dim getSql = TableSql.GetValue
+            Dim getSql = tableSql.GetValue
 
             For Each line As String In tokens
                 Call vb.AppendLine("' " & line)
@@ -208,19 +206,19 @@ Namespace VisualBasic
             Call vb.AppendLine("Imports " & LinqMappingNs)
             Call vb.AppendLine("Imports System.Xml.Serialization")
             Call vb.AppendLine("Imports " & LibMySQLReflectionNs)
+            Call vb.AppendLine("Imports " & $"MySqlScript = {GetType(MySqlScript).FullName}")
             Call vb.AppendLine()
 
             If haveNamespace Then
                 Call vb.AppendLine($"Namespace {[namespace]}")
             End If
 
-            For Each Line As String In From Table As Table
-                                       In SqlDoc
-                                       Let SqlDef As String = getSql(Table.TableName)
-                                       Select GenerateTableClass(Table, SqlDef)
-
+            For Each line As String In From table As Table
+                                       In Sql
+                                       Let SqlDef As String = getSql(table.TableName)
+                                       Select table.VBClass(SqlDef)
                 Call vb.AppendLine()
-                Call vb.AppendLine(Line)
+                Call vb.AppendLine(line)
                 Call vb.AppendLine()
             Next
 
@@ -245,7 +243,7 @@ Namespace VisualBasic
         ''' </param>
         ''' <returns></returns>
         ''' <remarks><see cref="SQLComments"/></remarks>
-        <Extension> Public Function GenerateTableClass(table As Table, DefSql$, Optional stripAI As Boolean = True) As String
+        <Extension> Public Function VBClass(table As Table, DefSql$, Optional stripAI As Boolean = True) As String
             Dim tokens$() = DefSql.lTokens
             Dim vb As New StringBuilder("''' <summary>" & vbCrLf)
             Dim DBName As String = table.Database
@@ -456,9 +454,9 @@ Namespace VisualBasic
             Dim Name As String = If(Replace, "REPLACE", "INSERT")
             Call SqlBuilder.Append($"Return String.Format({Name}_SQL, ")
             If Not TrimAutoIncrement Then
-                Call SqlBuilder.Append(String.Join(", ", (From Field In Schema.Fields Select __getExprInvoke(Field, refConflict)).ToArray))
+                Call SqlBuilder.Append(String.Join(", ", (From Field In Schema.Fields Select getExprInvoke(Field, refConflict)).ToArray))
             Else
-                Call SqlBuilder.Append(String.Join(", ", (From Field In Schema.Fields Where Not Field.AutoIncrement Select __getExprInvoke(Field, refConflict)).ToArray))
+                Call SqlBuilder.Append(String.Join(", ", (From Field In Schema.Fields Where Not Field.AutoIncrement Select getExprInvoke(Field, refConflict)).ToArray))
             End If
             Call SqlBuilder.Append(")")
 
@@ -491,8 +489,8 @@ Namespace VisualBasic
 
             Dim SqlBuilder As StringBuilder = New StringBuilder("        ")
             Call SqlBuilder.Append("Return String.Format(UPDATE_SQL, ")
-            Call SqlBuilder.Append(String.Join(", ", (From Field In Schema.Fields Select __getExprInvoke(Field, refConflict)).ToArray))
-            Call SqlBuilder.Append(", " & String.Join(", ", PrimaryKeys.Select(Function(field) __getExprInvoke(field, refConflict)).ToArray) & ")")
+            Call SqlBuilder.Append(String.Join(", ", (From Field In Schema.Fields Select getExprInvoke(Field, refConflict)).ToArray))
+            Call SqlBuilder.Append(", " & String.Join(", ", PrimaryKeys.Select(Function(field) getExprInvoke(field, refConflict)).ToArray) & ")")
 
             Return SqlBuilder.ToString
         End Function
@@ -510,13 +508,17 @@ Namespace VisualBasic
             Return "        " & $"Throw New NotImplementedException(""Table key was Not found, unable To generate {method } automatically, please edit this Function manually!"")"
         End Function
 
-        Private Function ___DELETE_SQL_Invoke(Schema As Reflection.Schema.Table, refConflict As Boolean) As String
+        Private Function ___DELETE_SQL_Invoke(schema As Table, refConflict As Boolean) As String
             Try
                 Dim SqlBuilder As String
-                Dim PrimaryKeys As Reflection.Schema.Field() = Schema.GetPrimaryKeyFields
-                Dim refInvoke As String = String.Join(", ", PrimaryKeys.Select(Function(field) __getExprInvoke(field, refConflict)).ToArray)
+                Dim primaryKeys As Field() = schema.GetPrimaryKeyFields
+                Dim refInvoke As String = primaryKeys _
+                    .Select(Function(field)
+                                Return getExprInvoke(field, refConflict)
+                            End Function) _
+                    .JoinBy(", ")
 
-                If PrimaryKeys.IsNullOrEmpty Then
+                If primaryKeys.IsNullOrEmpty Then
                     GoTo NO_KEY
                 End If
 
@@ -534,23 +536,24 @@ NO_KEY:
         ''' <summary>
         ''' 
         ''' </summary>
-        ''' <param name="Field"></param>
+        ''' <param name="field"></param>
         ''' <returns></returns>
-        Private Function __getExprInvoke(Field As Reflection.Schema.Field, dtype_conflicts As Boolean) As String
-            If Field.DataType.MySQLType = Reflection.DbAttributes.MySqlDbType.Date OrElse
-                Field.DataType.MySQLType = Reflection.DbAttributes.MySqlDbType.DateTime Then
+        Private Function getExprInvoke(field As Field, dtype_conflicts As Boolean) As String
+            If field.DataType.MySQLType = MySqlDbType.Date OrElse
+                field.DataType.MySQLType = MySqlDbType.DateTime Then
+
                 If dtype_conflicts Then
-                    Dim ref As String = GetType(Reflection.DbAttributes.DataType).FullName
-                    Return $"{ref}.ToMySqlDateTimeString({FixInvalids(Field.FieldName)})"
+                    Dim ref$ = GetType(MySqlScript).FullName
+                    Return $"{ref}.ToMySqlDateTimeString({FixInvalids(field.FieldName)})"
                 Else
-                    Return $"DataType.ToMySqlDateTimeString({FixInvalids(Field.FieldName)})"
+                    Return $"MySqlScript.ToMySqlDateTimeString({FixInvalids(field.FieldName)})"
                 End If
             Else
-                Return FixInvalids(Field.FieldName)
+                Return FixInvalids(field.FieldName)
             End If
         End Function
 
-        ReadOnly DataTypeFullNamesapce As String = GetType(Reflection.DbAttributes.MySqlDbType).Name
+        ReadOnly DataTypeFullNamesapce As String = GetType(MySqlDbType).Name
         ''' <summary>
         ''' 这个是为了兼容sciBASIC之中的csv序列化而设置的属性
         ''' </summary>
@@ -601,7 +604,7 @@ NO_KEY:
                                      Optional path As String = Nothing) As String
 
             Dim SqlDump As String = ""
-            Dim Schema As Reflection.Schema.Table() = SQLParser.LoadSQLDoc(file, SqlDump)
+            Dim Schema As Table() = SQLParser.LoadSQLDoc(file, SqlDump)
             Dim CreateTables As String() = Regex.Split(SqlDump, SCHEMA_SECTIONS)
             Dim SchemaSQLLQuery = From tbl As String
                                   In CreateTables.Skip(1)           ' The first block of the text splits is the SQL comments from the MySQL data exporter. 
@@ -613,11 +616,10 @@ NO_KEY:
                 .ToDictionary(Function(x) x.tableName,
                               Function(x) x.tbl)
 
-            Return __generateCode(
-                Schema,
+            Return Schema.vbCode(
                 head:=CreateTables.First,
                 fileName:=FileIO.FileSystem.GetFileInfo(path).Name,
-                TableSql:=SchemaSQL,
+                tableSql:=SchemaSQL,
                 [namespace]:=[Namespace])
         End Function
 
@@ -627,7 +629,9 @@ NO_KEY:
         ''' <returns></returns>
         ''' <param name="SqlDump">The SQL dumping file path.(Dump sql文件的文件路径)</param>
         ''' <param name="ns">The namespace of the source code classes</param>
-        Public Function GenerateCodeSplit(SqlDump As String, Optional ns As String = "") As Dictionary(Of String, String)
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function GenerateCodeSplit(SqlDump$, Optional ns$ = "") As Dictionary(Of String, String)
             Return GenerateCodeSplit(New StreamReader(New FileStream(SqlDump, FileMode.Open)), ns, SqlDump)
         End Function
 
@@ -695,7 +699,7 @@ NO_KEY:
                                  TableSql.ContainsKey(Table.TableName),
                                  TableSql(Table.TableName),
                                  "")
-                             Let vbClass As String = Table.GenerateTableClass(SqlDef, stripAI:=Not AI)
+                             Let vbClass As String = Table.VBClass(SqlDef, stripAI:=Not AI)
                              Select classDef = vbClass,
                                  Table).ToArray
             Dim LQuery = (From table
@@ -732,6 +736,7 @@ NO_KEY:
             Call VB.AppendLine("Imports " & LinqMappingNs)
             Call VB.AppendLine("Imports System.Xml.Serialization")
             Call VB.AppendLine("Imports " & LibMySQLReflectionNs)
+            Call VB.AppendLine("Imports " & $"MySqlScript = {GetType(MySqlScript).FullName}")
 
             Call VB.AppendLine()
 
