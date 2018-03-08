@@ -76,6 +76,13 @@ Namespace Expressions
             Return arg.table < SQL
         End Function
 
+        <Extension>
+        Public Function Update(Of T As {New, MySQLTable})(arg As WhereArgument(Of T), ParamArray setFields$()) As Boolean
+            Dim table = arg.table.Schema
+            Dim SQL$ = $"UPDATE `{table.TableName}` SET {setFields.JoinBy(", ")} WHERE {arg.condition};"
+            Return arg.table.MySQL.Execute(SQL) > 0
+        End Function
+
         ''' <summary>
         ''' 默认是AND关系
         ''' </summary>
