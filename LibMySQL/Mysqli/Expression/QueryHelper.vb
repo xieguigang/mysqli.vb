@@ -51,11 +51,23 @@ Namespace Expressions
     ''' </summary>
     Public Module QueryHelper
 
+        ''' <summary>
+        ''' ``SELECT * FROM table;``
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="table"></param>
+        ''' <returns></returns>
         <Extension>
         Public Function SelectAll(Of T As {New, MySQLTable})(table As Table(Of T)) As T()
             Return table <= $"SELECT * FROM `{table.Schema.TableName}`;"
         End Function
 
+        ''' <summary>
+        ''' ``SELECT * FROM table WHERE ...;``
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="arg"></param>
+        ''' <returns></returns>
         <Extension>
         Public Function SelectALL(Of T As {New, MySQLTable})(arg As WhereArgument(Of T)) As T()
             Dim table = arg.table.Schema
