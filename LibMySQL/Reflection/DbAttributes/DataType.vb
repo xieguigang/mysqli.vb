@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::e7ab697936d869960da0764801eb7e31, LibMySQL\Reflection\DbAttributes\DataType.vb"
+﻿#Region "Microsoft.VisualBasic::570b9e4d5f4189fbceadc91589ab9905, LibMySQL\Reflection\DbAttributes\DataType.vb"
 
     ' Author:
     ' 
@@ -36,7 +36,7 @@
     '         Properties: MySQLType, ParameterValue
     ' 
     '         Constructor: (+1 Overloads) Sub New
-    '         Function: ToMySqlDateTimeString, ToString, TypeCasting
+    '         Function: ToString, TypeCasting
     ' 
     '     Module CTypeDynamicsExtensions
     ' 

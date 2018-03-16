@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::aa8f0cd263b035ddf481450156f8d641, LibMySQL\ServerApp\MemorySize.vb"
+﻿#Region "Microsoft.VisualBasic::d0444373063c15b31f24c88dea447b5c, LibMySQL\ServerApp\MemorySize.vb"
 
     ' Author:
     ' 

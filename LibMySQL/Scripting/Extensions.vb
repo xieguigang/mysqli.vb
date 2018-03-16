@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::45fcf5a43aed5eb61fe3a9d3e1db15ea, LibMySQL\Scripting\Extensions.vb"
+﻿#Region "Microsoft.VisualBasic::06cb0a3663aa7a240d0212d136fc4199, LibMySQL\Scripting\Extensions.vb"
 
     ' Author:
     ' 
@@ -33,7 +33,7 @@
 
     '     Module Extensions
     ' 
-    '         Function: DropTableSQL, EnsureLimit1, MySqlEscaping, replaceInternal
+    '         Function: DropTableSQL, EnsureLimit1, MySqlEscaping, replaceInternal, ToMySqlDateTimeString
     ' 
     ' 
     ' /********************************************************************************/

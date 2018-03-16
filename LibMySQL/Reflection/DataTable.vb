@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::9b8f5b7d842936fae89e589ca66427a2, LibMySQL\Reflection\DataTable.vb"
+﻿#Region "Microsoft.VisualBasic::8b8ff0abb940c3d637b94934658e64aa, LibMySQL\Reflection\DataTable.vb"
 
     ' Author:
     ' 

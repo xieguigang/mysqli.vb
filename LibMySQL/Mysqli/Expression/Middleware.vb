@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::c1858bc41149bca1b88d17a0d9011714, LibMySQL\Mysqli\Expression\Middleware.vb"
+﻿#Region "Microsoft.VisualBasic::adddf7d79db3581f1b6b8065a391e6bc, LibMySQL\Mysqli\Expression\Middleware.vb"
 
     ' Author:
     ' 
@@ -45,7 +45,6 @@
     ' /********************************************************************************/
 
 #End Region
-
 
 Imports Microsoft.VisualBasic.Scripting
 

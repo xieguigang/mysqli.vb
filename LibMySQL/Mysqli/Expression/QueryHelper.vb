@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::d3f5036455ce23211b03981e15115398, LibMySQL\Mysqli\Expression\QueryHelper.vb"
+﻿#Region "Microsoft.VisualBasic::10ea643287061e1d6004dce7299c77ee, LibMySQL\Mysqli\Expression\QueryHelper.vb"
 
     ' Author:
     ' 
@@ -34,7 +34,7 @@
     '     Module QueryHelper
     ' 
     '         Function: [And], [Or], contact, Find, SelectAll
-    '                   SelectALL, (+2 Overloads) Where
+    '                   SelectALL, Update, (+2 Overloads) Where
     ' 
     ' 
     ' /********************************************************************************/

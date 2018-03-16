@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::cdca8e18e5f7a120f96c7bf51edad1bd, CodeSolution\VisualBasic\CodeGenerator.vb"
+﻿#Region "Microsoft.VisualBasic::01acce94920468d02d5b130750a48c0c, CodeSolution\VisualBasic\CodeGenerator.vb"
 
     ' Author:
     ' 
@@ -35,10 +35,10 @@
     ' 
     '         Function: ___DELETE_SQL, ___DELETE_SQL_Invoke, ___INSERT_SQL, ___INSERT_SQL_Invoke, ___REPLACE_SQL
     '                   ___REPLACE_SQL_Invoke, ___UPDATE_SQL, ___UPDATE_SQL_Invoke, __clone, __createAttribute
-    '                   __generateCode, __generateCodeSplit, __getExprInvoke, __INSERT_VALUES, __notImplementForIndex
-    '                   __replaceInsertCommon, __replaceInsertInvokeCommon, __schemaDb, __toDataType, FixInvalids
-    '                   GenerateClass, (+3 Overloads) GenerateCode, (+2 Overloads) GenerateCodeSplit, GenerateSingleDocument, GenerateTableClass
-    '                   PropertyName, SQLComments
+    '                   __generateCodeSplit, __INSERT_VALUES, __notImplementForIndex, __replaceInsertCommon, __replaceInsertInvokeCommon
+    '                   __schemaDb, __toDataType, FixInvalids, GenerateClass, (+3 Overloads) GenerateCode
+    '                   (+2 Overloads) GenerateCodeSplit, GenerateSingleDocument, getExprInvoke, PropertyName, SQLComments
+    '                   VBClass, vbCode
     ' 
     ' 
     ' /********************************************************************************/

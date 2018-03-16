@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::ac29d570678d8a92b5de350959487a82, LibMySQL\Mysqli\MySqli.vb"
+﻿#Region "Microsoft.VisualBasic::d5606d7e6be9e72402215f43b0503dbd, LibMySQL\Mysqli\MySqli.vb"
 
     ' Author:
     ' 
@@ -45,7 +45,7 @@
     ' 
     '     Sub: (+2 Overloads) Dispose
     ' 
-    '     Operators: <=, >=
+    '     Operators: +, <=, >=
     ' 
     ' /********************************************************************************/
 
