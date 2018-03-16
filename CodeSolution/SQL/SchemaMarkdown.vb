@@ -1,41 +1,41 @@
 ﻿#Region "Microsoft.VisualBasic::64226beb34f422c977c54d11adbeb891, CodeSolution\SQL\SchemaMarkdown.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    ' Module SchemaMarkdown
-    ' 
-    '     Function: __attrs, Documentation, MakeHTML, MakeMarkdown
-    ' 
-    ' /********************************************************************************/
+' Module SchemaMarkdown
+' 
+'     Function: __attrs, Documentation, MakeHTML, MakeMarkdown
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -43,6 +43,7 @@ Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.C
+Imports Microsoft.VisualBasic.MIME
 Imports Microsoft.VisualBasic.MIME.Markup.MarkDown
 Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
@@ -135,20 +136,22 @@ Public Module SchemaMarkdown
     Public Function Documentation(schema As IEnumerable(Of Table), Optional autoTOC As Boolean = False) As String
         Dim md As New StringBuilder
 
-        Call md.AppendLine("# MySQL development docs") _
+        Call md.AppendLine("# MySQL development docs #") _
                .AppendLine() _
-               .AppendLine("Mysql database field attributes notes:") _
+               .AppendLine("Mysql database field attributes notes in this development document:") _
                .AppendLine() _
-               .AppendLine("> **AI**: Auto Increment;") _
-               .AppendLine("> **B**:  Binary;") _
-               .AppendLine("> **G**:  Generated") _
-               .AppendLine("> **NN**: Not Null;") _
-               .AppendLine("> **PK**: Primary Key;") _
-               .AppendLine("> **UQ**: Unique;") _
-               .AppendLine("> **UN**: Unsigned;") _
-               .AppendLine("> **ZF**: Zero Fill") _
+               .AppendLine("> + **AI**: Auto Increment;") _
+               .AppendLine("> + **B**:  Binary;") _
+               .AppendLine("> + **G**:  Generated") _
+               .AppendLine("> + **NN**: Not Null;") _
+               .AppendLine("> + **PK**: Primary Key;") _
+               .AppendLine("> + **UQ**: Unique;") _
+               .AppendLine("> + **UN**: Unsigned;") _
+               .AppendLine("> + **ZF**: Zero Fill") _
                .AppendLine() _
-               .AppendLine()
+               .AppendLine($"Generate time: {Now.ToString}") _
+               .AppendLine($"By: mysqli.vb reflector tool ([https://github.com/xieguigang/mysqli.vb](https://github.com/xieguigang/mysqli.vb))") _
+               .AppendLine(Markup.HTML.Pagebreak)
 
         For Each t As Table In schema
             Call md.AppendLine(t.MakeMarkdown)
