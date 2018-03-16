@@ -89,6 +89,9 @@ Public Module SchemaMarkdown
     Public Function MakeMarkdown(table As Table) As String
         Dim md As New StringBuilder
 
+        Call md.AppendLine("***") _
+               .AppendLine()
+
         Call md.AppendLine("## " & table.TableName) _
                .AppendLine() _
                .AppendLine(CLangStringFormatProvider.ReplaceMetaChars(table.Comment)) _
@@ -136,9 +139,9 @@ Public Module SchemaMarkdown
     Public Function Documentation(schema As IEnumerable(Of Table), Optional autoTOC As Boolean = False) As String
         Dim md As New StringBuilder
 
-        Call md.AppendLine("# MySQL development docs #") _
+        Call md.AppendLine("# MySql Development Docs #") _
                .AppendLine() _
-               .AppendLine("Mysql database field attributes notes in this development document:") _
+               .AppendLine("MySql database field attributes notes in this development document:") _
                .AppendLine() _
                .AppendLine("> + **AI**: Auto Increment;") _
                .AppendLine("> + **B**:  Binary;") _
@@ -149,12 +152,16 @@ Public Module SchemaMarkdown
                .AppendLine("> + **UN**: Unsigned;") _
                .AppendLine("> + **ZF**: Zero Fill") _
                .AppendLine() _
-               .AppendLine($"Generate time: {Now.ToString}") _
+               .AppendLine($"Generate time: {Now.ToString}<br />") _
                .AppendLine($"By: mysqli.vb reflector tool ([https://github.com/xieguigang/mysqli.vb](https://github.com/xieguigang/mysqli.vb))") _
-               .AppendLine(Markup.HTML.Pagebreak)
+               .AppendLine() _
+               .AppendLine(Markup.HTML.Pagebreak) _
+               .AppendLine()
 
         For Each t As Table In schema
-            Call md.AppendLine(t.MakeMarkdown)
+            Call md.AppendLine(t.MakeMarkdown) _
+                   .AppendLine(Markup.HTML.Pagebreak) _
+                   .AppendLine()
         Next
 
         If autoTOC Then
