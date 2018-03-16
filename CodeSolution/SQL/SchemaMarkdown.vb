@@ -153,7 +153,7 @@ Public Module SchemaMarkdown
                .AppendLine("> + **ZF**: Zero Fill") _
                .AppendLine() _
                .AppendLine($"Generate time: {Now.ToString}<br />") _
-               .AppendLine($"By: mysqli.vb reflector tool ([https://github.com/xieguigang/mysqli.vb](https://github.com/xieguigang/mysqli.vb))") _
+               .AppendLine($"By: ``mysqli.vb`` reflector tool ([https://github.com/xieguigang/mysqli.vb](https://github.com/xieguigang/mysqli.vb))") _
                .AppendLine() _
                .AppendLine(Markup.HTML.Pagebreak) _
                .AppendLine()
