@@ -167,7 +167,7 @@ Public Module SQLParser
     Const DB_NAME As String = "CREATE\s+DATABASE\s+IF\s+NOT\s+EXISTS\s+`.+?`"
 
     Private Function __sqlParser(SQL As String) As KeyValuePair(Of String, String())
-        Dim tokens$() = SQL.lTokens
+        Dim tokens$() = SQL.LineTokens
         Dim p As Integer = tokens.Lookup("PRIMARY KEY")
         Dim PrimaryKey As String
 

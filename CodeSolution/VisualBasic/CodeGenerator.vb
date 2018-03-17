@@ -244,7 +244,7 @@ Namespace VisualBasic
         ''' <returns></returns>
         ''' <remarks><see cref="SQLComments"/></remarks>
         <Extension> Public Function VBClass(table As Table, DefSql$, Optional stripAI As Boolean = True) As String
-            Dim tokens$() = DefSql.lTokens
+            Dim tokens$() = DefSql.LineTokens
             Dim vb As New StringBuilder("''' <summary>" & vbCrLf)
             Dim DBName As String = table.Database
             Dim refConflict As Boolean = Not (From field As String
