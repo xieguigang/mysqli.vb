@@ -47,7 +47,7 @@ Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.CodeSolution
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
-Partial Module CLIProgram
+Partial Module CLI
 
     <ExportAPI("/MySQL.Markdown")>
     <Usage("/MySQL.Markdown /sql <database.sql/std_in> [/toc /out <out.md/std_out>]")>

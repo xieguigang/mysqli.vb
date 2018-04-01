@@ -131,7 +131,7 @@ Public Module SQLParser
                       table.Fields,
                       table.tableName,
                       table.primaryKey,
-                      table.Original)
+                      table.original)
                   Select setValue(tbl, DB)
 
         Return SqlSchema
@@ -212,67 +212,70 @@ _SET_PRIMARYKEY:
         Try
             Return __createSchemaInner(Fields, TableName, PrimaryKey, CreateTableSQL)
         Catch ex As Exception
-            Dim dump As StringBuilder = New StringBuilder
-            Call dump.AppendLine(NameOf(CreateTableSQL))
-            Call dump.AppendLine(New String("="c, 120))
-            Call dump.AppendLine(CreateTableSQL)
-            Call dump.AppendLine(vbCrLf)
-            Call dump.AppendLine($"{NameOf(TableName)}   ===>  {TableName}")
-            Call dump.AppendLine($"{NameOf(PrimaryKey)}  ===>  {PrimaryKey}")
-            Call dump.AppendLine(vbCrLf)
-            Call dump.AppendLine(NameOf(Fields))
-            Call dump.AppendLine(New String("="c, 120))
-            Call dump.AppendLine(String.Join(vbCrLf, Fields))
 
-            Throw New Exception(dump.ToString, ex)
+            With New StringBuilder
+                Call .AppendLine(NameOf(CreateTableSQL))
+                Call .AppendLine(New String("="c, 120))
+                Call .AppendLine(CreateTableSQL)
+                Call .AppendLine(vbCrLf)
+                Call .AppendLine($"{NameOf(TableName)}   ===>  {TableName}")
+                Call .AppendLine($"{NameOf(PrimaryKey)}  ===>  {PrimaryKey}")
+                Call .AppendLine(vbCrLf)
+                Call .AppendLine(NameOf(Fields))
+                Call .AppendLine(New String("="c, 120))
+                Call .AppendLine(String.Join(vbCrLf, Fields))
+
+                Throw New Exception(.ToString, ex)
+            End With
+
         End Try
     End Function
 
     ''' <summary>
     ''' 
     ''' </summary>
-    ''' <param name="Fields"></param>
-    ''' <param name="TableName"></param>
-    ''' <param name="PrimaryKey"></param>
-    ''' <param name="CreateTableSQL">Create table SQL raw.</param>
+    ''' <param name="fields"></param>
+    ''' <param name="tableName"></param>
+    ''' <param name="primaryKey"></param>
+    ''' <param name="createTableSQL">Create table SQL raw.</param>
     ''' <returns></returns>
-    Private Function __createSchemaInner(Fields As String(), TableName As String, PrimaryKey As String, CreateTableSQL As String) As Reflection.Schema.Table
-        TableName = Regex.Match(TableName, "`.+?`").Value
-        TableName = Mid(TableName, 2, Len(TableName) - 2)
-        PrimaryKey = Regex.Match(PrimaryKey, "\(`.+?`\)").Value
+    Private Function __createSchemaInner(fields$(), tableName$, primaryKey$, createTableSQL$) As Table
+        Dim primaryKeys$()
 
-        Dim PrimaryKeys As String()
+        tableName = r.Matches(tableName, "`.+?`").ToArray.Last
+        tableName = Mid(tableName, 2, Len(tableName) - 2)
+        primaryKey = r.Match(primaryKey, "\(`.+?`\)").Value
 
-        If Not String.IsNullOrEmpty(PrimaryKey) Then
-            PrimaryKey = Regex.Replace(PrimaryKey, "\(\d+\)", "")
-            PrimaryKey = Mid(PrimaryKey, 2, Len(PrimaryKey) - 2)
-            PrimaryKey = Mid(PrimaryKey, 2, Len(PrimaryKey) - 2)
-            PrimaryKeys = Strings.Split(PrimaryKey, "`,`")
+        If Not String.IsNullOrEmpty(primaryKey) Then
+            primaryKey = r.Replace(primaryKey, "\(\d+\)", "")
+            primaryKey = Mid(primaryKey, 2, Len(primaryKey) - 2)
+            primaryKey = Mid(primaryKey, 2, Len(primaryKey) - 2)
+            primaryKeys = Strings.Split(primaryKey, "`,`")
         Else
-            PrimaryKeys = New String() {}
+            primaryKeys = New String() {}
         End If
 
-        Dim Comment As String = Regex.Match(CreateTableSQL, "COMMENT='.+';", RegexOptions.Singleline).Value
-        Dim FieldLQuery = (From Field As String
-                           In Fields
-                           Select __createField(Field)).ToDictionary(Function(Field) Field.FieldName)
+        Dim comment As String = r.Match(createTableSQL, "COMMENT='.+';", RegexOptions.Singleline).Value
+        Dim fieldList = fields _
+            .Select(AddressOf __createField) _
+            .ToDictionary(Function(field) field.FieldName)
 
-        If Not String.IsNullOrEmpty(Comment) Then
-            Comment = Mid(Comment, 10)
-            Comment = Mid(Comment, 1, Len(Comment) - 2)
+        If Not String.IsNullOrEmpty(comment) Then
+            comment = Mid(comment, 10)
+            comment = Mid(comment, 1, Len(comment) - 2)
         End If
 
-        CreateTableSQL = ASCII.ReplaceQuot(CreateTableSQL, "\'")
+        createTableSQL = ASCII.ReplaceQuot(createTableSQL, "\'")
 
         ' The database fields reflection result {Name, Attribute}
-        Dim TableSchema As New Table(FieldLQuery) With {
-            .TableName = TableName,
-            .PrimaryFields = PrimaryKeys.AsList,   ' Assuming at least only one primary key in a table
-            .Index = PrimaryKey,
-            .Comment = Comment,
-            .SQL = CreateTableSQL
+        Dim tableSchema As New Table(fieldList) With {
+            .TableName = tableName,
+            .PrimaryFields = primaryKeys.AsList,   ' Assuming at least only one primary key in a table
+            .Index = primaryKey,
+            .Comment = comment,
+            .SQL = createTableSQL
         }
-        Return TableSchema
+        Return tableSchema
     End Function
 
     ''' <summary>
@@ -280,14 +283,15 @@ _SET_PRIMARYKEY:
     ''' </summary>
     Const FIELD_COMMENTS As String = "COMMENT '.+?',"
 
-    Private Function __createField(FieldDef As String, Tokens As String()) As Reflection.Schema.Field
-        Dim FieldName As String = Tokens(0)
-        Dim DataType As String = Tokens(1)
-        Dim Comment As String = Regex.Match(FieldDef, FIELD_COMMENTS).Value
-        Dim i As Integer = InStr(FieldDef, FieldName)
-        FieldDef = Mid(FieldDef, i + Len(FieldName))
-        i = InStr(FieldDef, DataType)
-        FieldDef = Mid(FieldDef, i + Len(DataType)).Replace(",", "").Trim
+    Private Function __createField(fieldDef$, tokens$()) As Field
+        Dim FieldName As String = tokens(0)
+        Dim DataType As String = tokens(1)
+        Dim Comment As String = Regex.Match(fieldDef, FIELD_COMMENTS).Value
+        Dim i As Integer = InStr(fieldDef, FieldName)
+
+        fieldDef = Mid(fieldDef, i + Len(FieldName))
+        i = InStr(fieldDef, DataType)
+        fieldDef = Mid(fieldDef, i + Len(DataType)).Replace(",", "").Trim
         FieldName = Mid(FieldName, 2, Len(FieldName) - 2)
 
         If Not String.IsNullOrEmpty(Comment) Then
@@ -295,33 +299,34 @@ _SET_PRIMARYKEY:
             Comment = Mid(Comment, 1, Len(Comment) - 2)
         End If
 
-        Dim p_CommentKeyWord As Integer = InStr(FieldDef, "COMMENT '", CompareMethod.Text)
-        Dim p As New int
+        Dim pos% = InStr(fieldDef, "COMMENT '", CompareMethod.Text)
+        Dim p As int = 0
 
-        If p_CommentKeyWord = 0 Then  '没有注释，则百分之百就是列属性了
-            p_CommentKeyWord = Integer.MaxValue
+        If pos = 0 Then  '没有注释，则百分之百就是列属性了
+            pos = Integer.MaxValue
         End If
 
-        Dim IsAutoIncrement As Boolean = (p = InStr(FieldDef, "AUTO_INCREMENT", CompareMethod.Text)) > 0 AndAlso p < p_CommentKeyWord
-        Dim IsNotNull As Boolean = (p = InStr(FieldDef, "NOT NULL", CompareMethod.Text)) > 0 AndAlso p < p_CommentKeyWord
+        Dim IsAutoIncrement As Boolean = (p = InStr(fieldDef, "AUTO_INCREMENT", CompareMethod.Text)) > 0 AndAlso p < pos
+        Dim IsNotNull As Boolean = (p = InStr(fieldDef, "NOT NULL", CompareMethod.Text)) > 0 AndAlso p < pos
 
-        Dim FieldSchema As New Reflection.Schema.Field With {
+        Dim field As New Field With {
             .FieldName = FieldName,
             .DataType = __createDataType(DataType.Replace(",", "").Trim),  ' Some data type can be merged into a same type when we mapping a database table
             .Comment = Comment,
             .AutoIncrement = IsAutoIncrement,
             .NotNull = IsNotNull
         }
-        Return FieldSchema
+        Return field
     End Function
 
-    Private Function __createField(FieldDef As String) As Reflection.Schema.Field
-        Dim name$ = Regex.Match(FieldDef, "`.+?`", RegexICSng).Value
-        Dim tokens$() = {name}.Join(FieldDef.Replace(name, "").Trim.Split)
+    Private Function __createField(fieldDef As String) As Reflection.Schema.Field
+        Dim name$ = r.Match(fieldDef, "`.+?`", RegexICSng).Value
+        Dim tokens$() = {name}.Join(fieldDef.Replace(name, "").Trim.Split)
+
         Try
-            Return __createField(FieldDef, tokens)
+            Return __createField(fieldDef, tokens)
         Catch ex As Exception
-            Throw New Exception($"{NameOf(__createField)} ===>  {FieldDef}{vbCrLf & vbCrLf & vbCrLf}", ex)
+            Throw New Exception($"{NameOf(__createField)} ===>  {fieldDef}{vbCrLf & vbCrLf & vbCrLf}", ex)
         End Try
     End Function
 
@@ -343,7 +348,7 @@ _SET_PRIMARYKEY:
                 type = Reflection.DbAttributes.MySqlDbType.Int32
             End If
 
-        ElseIf Regex.Match(type_define, "int\(\d+\)", RegexOptions.IgnoreCase).Success Then
+        ElseIf "int".TextEquals(type_define) OrElse r.Match(type_define, "int\(\d+\)", RegexOptions.IgnoreCase).Success Then
             type = Reflection.DbAttributes.MySqlDbType.Int64
             parameter = __getNumberValue(type_define)
 

@@ -54,7 +54,7 @@ Imports MySQL2vb = Oracle.LinuxCompatibility.MySQL.CodeSolution.VisualBasic.Code
 <CLI>
 <Package("MySQL.Reflector")>
 <Description("Tools for convert the mysql schema dump sql script into VisualBasic classes source code.")>
-Module CLIProgram
+Module CLI
 
     Const InputsNotFound As String = "The required input parameter ""/sql"" is not specified!"
 

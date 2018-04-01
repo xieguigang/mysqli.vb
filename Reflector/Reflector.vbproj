@@ -184,8 +184,8 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CLI\CLIProgram.vb" />
-    <Compile Include="CLI\docs.vb" />
+    <Compile Include="CLI\CLI.vb" />
+    <Compile Include="CLI\Markdown.vb" />
     <Compile Include="test2.vb" />
     <Compile Include="Program.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
