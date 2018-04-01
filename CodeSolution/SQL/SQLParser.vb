@@ -339,8 +339,9 @@ _SET_PRIMARYKEY:
         Dim type As Reflection.DbAttributes.MySqlDbType
         Dim parameter As String = ""
 
-        If Regex.Match(type_define, "tinyint\(\d+\)", RegexOptions.IgnoreCase).Success Then
-            parameter = __getNumberValue(type_define)
+        If r.Match(type_define, "tinyint\(\d+\)", RegexOptions.IgnoreCase).Success Then
+            parameter = __getNumberValue(type_define, 1)
+
             If parameter = "1" Then
                 ' boolean 
                 type = Reflection.DbAttributes.MySqlDbType.Boolean
@@ -350,11 +351,11 @@ _SET_PRIMARYKEY:
 
         ElseIf "int".TextEquals(type_define) OrElse r.Match(type_define, "int\(\d+\)", RegexOptions.IgnoreCase).Success Then
             type = Reflection.DbAttributes.MySqlDbType.Int64
-            parameter = __getNumberValue(type_define)
+            parameter = __getNumberValue(type_define, 11)
 
         ElseIf Regex.Match(type_define, "varchar\(\d+\)", RegexOptions.IgnoreCase).Success OrElse Regex.Match(type_define, "char\(\d+\)", RegexOptions.IgnoreCase).Success Then
             type = Reflection.DbAttributes.MySqlDbType.VarChar
-            parameter = __getNumberValue(type_define)
+            parameter = __getNumberValue(type_define, 45)
 
         ElseIf Regex.Match(type_define, "double", RegexOptions.IgnoreCase).Success OrElse InStr(type_define, "float") > 0 Then
             type = Reflection.DbAttributes.MySqlDbType.Double
@@ -381,7 +382,7 @@ _SET_PRIMARYKEY:
 
         ElseIf Regex.Match(type_define, "bit\(", RegexICSng).Success Then
             type = Reflection.DbAttributes.MySqlDbType.Bit
-            parameter = __getNumberValue(type_define)
+            parameter = __getNumberValue(type_define, 1)
 
         Else
 
@@ -393,9 +394,14 @@ _SET_PRIMARYKEY:
         Return New Reflection.DbAttributes.DataType(type, parameter)
     End Function
 
-    Private Function __getNumberValue(typeDef As String) As String
-        Dim parameter As String = Regex.Match(typeDef, "\(.+?\)").Value
-        parameter = Mid(parameter, 2, Len(parameter) - 2)
-        Return parameter
+    Private Function __getNumberValue(typeDef$, default$) As String
+        Dim parameter$ = r.Match(typeDef, "\(.+?\)").Value
+
+        If parameter.StringEmpty Then
+            Return [default]
+        Else
+            parameter = Mid(parameter, 2, Len(parameter) - 2)
+            Return parameter
+        End If
     End Function
 End Module
