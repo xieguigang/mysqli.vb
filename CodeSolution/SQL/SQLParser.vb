@@ -1,43 +1,43 @@
 ﻿#Region "Microsoft.VisualBasic::48960782e360995cf3c6f912bfa3c6b7, CodeSolution\SQL\SQLParser.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    ' Module SQLParser
-    ' 
-    '     Function: __createDataType, (+2 Overloads) __createField, __createSchema, __createSchemaInner, __getDBName
-    '               __getNumberValue, __parseTable, __splitInternal, __sqlParser, (+2 Overloads) LoadSQLDoc
-    '               LoadSQLDocFromStream, ParseTable
-    ' 
-    ' /********************************************************************************/
+' Module SQLParser
+' 
+'     Function: __createDataType, (+2 Overloads) __createField, __createSchema, __createSchemaInner, __getDBName
+'               __getNumberValue, __parseTable, __splitInternal, __sqlParser, (+2 Overloads) LoadSQLDoc
+'               LoadSQLDocFromStream, ParseTable
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -49,6 +49,7 @@ Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
+Imports r = System.Text.RegularExpressions.Regex
 
 Public Module SQLParser
 
@@ -154,17 +155,18 @@ Public Module SQLParser
     ''' <param name="SQL"></param>
     ''' <returns></returns>
     Private Function __getDBName(SQL As String) As String
-        Dim Name As String = Regex.Match(SQL, DB_NAME, RegexOptions.IgnoreCase).Value
-        If String.IsNullOrEmpty(Name) Then
+        Dim name$ = r.Match(SQL, DB_NAME, RegexOptions.IgnoreCase).Value
+
+        If String.IsNullOrEmpty(name) Then
             Return ""
         Else
-            Name = Regex.Match(Name, "`.+?`").Value
-            Name = Mid(Name, 2, Len(Name) - 2)
-            Return Name
+            name = r.Match(name, "`.+?`").Value
+            name = Mid(name, 2, Len(name) - 2)
+            Return name
         End If
     End Function
 
-    Const DB_NAME As String = "CREATE\s+DATABASE\s+IF\s+NOT\s+EXISTS\s+`.+?`"
+    Const DB_NAME As String = "CREATE\s+((DATABASE)|(SCHEMA))\s+IF\s+NOT\s+EXISTS\s+`.+?`"
 
     Private Function __sqlParser(SQL As String) As KeyValuePair(Of String, String())
         Dim tokens$() = SQL.LineTokens
@@ -172,27 +174,27 @@ Public Module SQLParser
         Dim PrimaryKey As String
 
         If p = -1 Then ' 没有设置主键
-            p = Tokens.Lookup("UNIQUE KEY")
+            p = tokens.Lookup("UNIQUE KEY")
         End If
 
         If p = -1 Then
-            p = Tokens.Lookup("KEY")
+            p = tokens.Lookup("KEY")
         End If
 
         If p = -1 Then
             PrimaryKey = ""
         Else
 _SET_PRIMARYKEY:
-            PrimaryKey = Tokens(p)
-            Tokens = Tokens.Take(p).ToArray
+            PrimaryKey = tokens(p)
+            tokens = tokens.Take(p).ToArray
         End If
 
-        p = Tokens.Lookup(") ENGINE=")
+        p = tokens.Lookup(") ENGINE=")
         If Not p = -1 Then
-            Tokens = Tokens.Take(p).ToArray
+            tokens = tokens.Take(p).ToArray
         End If
 
-        Return New KeyValuePair(Of String, String())(PrimaryKey, Tokens)
+        Return New KeyValuePair(Of String, String())(PrimaryKey, tokens)
     End Function
 
     ''' <summary>
@@ -314,7 +316,7 @@ _SET_PRIMARYKEY:
         Dim name$ = Regex.Match(FieldDef, "`.+?`", RegexICSng).Value
         Dim tokens$() = {name}.Join(FieldDef.Replace(name, "").Trim.Split)
         Try
-            Return __createField(FieldDef, Tokens)
+            Return __createField(FieldDef, tokens)
         Catch ex As Exception
             Throw New Exception($"{NameOf(__createField)} ===>  {FieldDef}{vbCrLf & vbCrLf & vbCrLf}", ex)
         End Try
