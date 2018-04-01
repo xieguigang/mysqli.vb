@@ -45,6 +45,7 @@ Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports System.Text.RegularExpressions
+Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Text
@@ -56,12 +57,11 @@ Public Module SQLParser
     ''' <summary>
     ''' Parsing the create table statement in the SQL document.
     ''' </summary>
-    Const SQL_CREATE_TABLE As String = "CREATE TABLE `.+?` \(.+?(PRIMARY KEY \(`.+?`\))?.+?ENGINE=.+?;"
+    Const SQL_CREATE_TABLE As String = "CREATE TABLE (IF\s+NOT\s+EXISTS\s+)?(`.+?`\.)?`.+?` \(.+?(PRIMARY KEY \(`.+?`\))?.+?ENGINE\s*=.+?;"
 
     Public Function ParseTable(SQL As String) As Reflection.Schema.Table
-        Dim CTMatch As Match = Regex.Match(SQL, SQL_CREATE_TABLE, RegexOptions.Singleline)
-        Dim Tokens As KeyValuePair(Of String, String()) =
-            __sqlParser(CTMatch.Value.Replace(vbLf, vbCr))
+        Dim CTMatch As Match = r.Match(SQL, SQL_CREATE_TABLE, RegexOptions.Singleline)
+        Dim Tokens As NamedValue(Of String()) = __sqlParser(CTMatch.Value.Replace(vbLf, vbCr))
 
         Try
             Return __parseTable(SQL, CTMatch, Tokens)
@@ -72,7 +72,7 @@ Public Module SQLParser
             Call dump.AppendLine(NameOf(CTMatch) & "   ====> ")
             Call dump.AppendLine(CTMatch.Value)
             Call dump.AppendLine(vbCrLf)
-            Call dump.AppendLine($"TableName:={Tokens.Key}")
+            Call dump.AppendLine($"TableName:={Tokens.Name}")
             Call dump.AppendLine(New String("-"c, 120))
             Call dump.AppendLine(vbCrLf)
             Call dump.AppendLine(String.Join(vbCrLf & "  >  ", Tokens.Value))
@@ -81,13 +81,12 @@ Public Module SQLParser
         End Try
     End Function
 
-    Private Function __parseTable(SQL As String, CTMatch As Match, Tokens As KeyValuePair(Of String, String())) As Reflection.Schema.Table
+    Private Function __parseTable(SQL As String, CTMatch As Match, Tokens As NamedValue(Of String())) As Reflection.Schema.Table
         Dim DB As String = __getDBName(SQL)
         Dim TableName As String = Tokens.Value(Scan0)
-        Dim PrimaryKey As String = Tokens.Key
+        Dim PrimaryKey As String = Tokens.Name
         Dim FieldsTokens As String() = Tokens.Value.Skip(1).ToArray
-        Dim Table As Reflection.Schema.Table =
-            SetValue(Of Reflection.Schema.Table).InvokeSet(
+        Dim Table As Table = SetValue(Of Table).InvokeSet(
                 __createSchema(FieldsTokens,
                                TableName,
                                PrimaryKey,
@@ -108,28 +107,31 @@ Public Module SQLParser
         End Using
     End Function
 
-    Public Function LoadSQLDocFromStream(doc$) As Table()
-        Dim DB As String = __getDBName(doc)
-        Dim Tables = (From tbl As String
-                      In doc.__splitInternal
-                      Let tokens As KeyValuePair(Of String, String()) = __sqlParser(SQL:=tbl)
-                      Let TableName As String = tokens.Value(Scan0)
-                      Let PrimaryKey As String = tokens.Key
-                      Let FieldsTokens = tokens.Value.Skip(1).ToArray
-                      Select PrimaryKey,
-                          TableName,
-                          Fields = FieldsTokens,
-                          Original = tbl).ToArray
+    Public Function LoadSQLDocFromStream(sqlDoc As String) As Table()
+        Dim DB As String = __getDBName(sqlDoc)
+        Dim tables = (From table As String
+                      In sqlDoc.__splitInternal
+                      Let tokens As NamedValue(Of String()) = __sqlParser(SQL:=table)
+                      Let tableName As String = tokens.Value(Scan0)
+                      Let primaryKey As String = tokens.Name
+                      Let fieldsTokens = tokens _
+                          .Value _
+                          .Skip(1) _
+                          .ToArray
+                      Select primaryKey,
+                          tableName,
+                          Fields = fieldsTokens,
+                          original = table).ToArray
         Dim setValue = New SetValue(Of Table)().GetSet(NameOf(Table.Database))
         Dim SqlSchema = LinqAPI.Exec(Of Table) _
  _
-            () <= From Table
-                  In Tables
+            () <= From table
+                  In tables
                   Let tbl As Table = __createSchema(
-                      Table.Fields,
-                      Table.TableName,
-                      Table.PrimaryKey,
-                      Table.Original)
+                      table.Fields,
+                      table.tableName,
+                      table.primaryKey,
+                      table.Original)
                   Select setValue(tbl, DB)
 
         Return SqlSchema
@@ -137,7 +139,7 @@ Public Module SQLParser
 
     <Extension>
     Private Function __splitInternal(sql$) As String()
-        Dim out$() = Regex.Matches(sql, SQL_CREATE_TABLE, RegexOptions.Singleline).ToArray
+        Dim out$() = r.Matches(sql, SQL_CREATE_TABLE, RegexOptions.Singleline).ToArray
         Return out
     End Function
 
@@ -168,10 +170,10 @@ Public Module SQLParser
 
     Const DB_NAME As String = "CREATE\s+((DATABASE)|(SCHEMA))\s+IF\s+NOT\s+EXISTS\s+`.+?`"
 
-    Private Function __sqlParser(SQL As String) As KeyValuePair(Of String, String())
+    Private Function __sqlParser(SQL As String) As NamedValue(Of String())
         Dim tokens$() = SQL.LineTokens
-        Dim p As Integer = tokens.Lookup("PRIMARY KEY")
-        Dim PrimaryKey As String
+        Dim p% = tokens.Lookup("PRIMARY KEY")
+        Dim primaryKey As String
 
         If p = -1 Then ' 没有设置主键
             p = tokens.Lookup("UNIQUE KEY")
@@ -182,19 +184,20 @@ Public Module SQLParser
         End If
 
         If p = -1 Then
-            PrimaryKey = ""
+            primaryKey = ""
         Else
 _SET_PRIMARYKEY:
-            PrimaryKey = tokens(p)
+            primaryKey = tokens(p)
             tokens = tokens.Take(p).ToArray
         End If
 
         p = tokens.Lookup(") ENGINE=")
+
         If Not p = -1 Then
             tokens = tokens.Take(p).ToArray
         End If
 
-        Return New KeyValuePair(Of String, String())(PrimaryKey, tokens)
+        Return New NamedValue(Of String())(primaryKey, tokens)
     End Function
 
     ''' <summary>
