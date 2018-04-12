@@ -85,6 +85,7 @@ Public Class MySqli : Implements IDisposable
     ''' </summary>
     ''' <remarks></remarks>
     Public ReadOnly Property UriMySQL As ConnectionUri
+    Public ReadOnly Property LastInsertedId As Long
 
     Public Overrides Function ToString() As String
         Return UriMySQL.GetJson
@@ -249,10 +250,18 @@ Public Class MySqli : Implements IDisposable
             Dim MySqlCommand As New MySqlCommand(SQL) With {
                 .Connection = MySQL
             }
+            Dim isInsert As Boolean = InStr(SQL.Trim, "insert", CompareMethod.Text) > 0
+            Dim i%
 
             Try
                 MySQL.Open()
-                Return MySqlCommand.ExecuteNonQuery
+                i = MySqlCommand.ExecuteNonQuery
+
+                If isInsert Then
+                    _LastInsertedId = MySqlCommand.LastInsertedId
+                End If
+
+                Return i
             Catch ex As Exception
                 If throwExp Then
                     __throwExceptionHelper(ex, SQL, True)

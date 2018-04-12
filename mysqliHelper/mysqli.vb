@@ -49,20 +49,20 @@ Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.Default
 Imports Microsoft.VisualBasic.SecurityString
 Imports Microsoft.VisualBasic.Terminal
+Imports Oracle.LinuxCompatibility.MySQL
 Imports Oracle.LinuxCompatibility.MySQL.Uri
-Imports mysqliEndPoint = Oracle.LinuxCompatibility.MySQL.MySqli
 
 ''' <summary>
 ''' Mysqli connection config helper.(一些比较常用的mysql连接拓展)
 ''' </summary>
-<RunDllEntryPoint(NameOf(mysqli))> Public Module mysqli
+<RunDllEntryPoint(NameOf(MySqli))> Public Module MySqliHelper
 
     ''' <summary>
-    ''' Initializes MySQLi and returns a resource for use with <see cref="mysqliEndPoint"/>
+    ''' Initializes MySQLi and returns a resource for use with <see cref="MySqli"/>
     ''' (从命令行所设置的环境变量之中初始化mysql的数据库连接的通用拓展)
     ''' </summary>
     ''' <param name="mysql"></param>
-    <Extension> Public Sub init_cli(ByRef mysql As mysqliEndPoint)
+    <Extension> Public Sub init_cli(ByRef mysql As MySqli)
         If mysql <= New ConnectionUri With {
             .Database = App.GetVariable("database"),
             .IPAddress = App.GetVariable("host"),
@@ -83,12 +83,12 @@ Imports mysqliEndPoint = Oracle.LinuxCompatibility.MySQL.MySqli
     ''' Init connection from default config file.(这个函数不要求<paramref name="mysql"/>已经是初始化了的，不会抛出空错误)
     ''' </summary>
     ''' <param name="mysql"></param>
-    <Extension> Public Sub init(<Out> ByRef mysql As mysqliEndPoint)
+    <Extension> Public Sub init(<Out> ByRef mysql As MySqli)
         If mysql Is Nothing Then
-            mysql = New mysqliEndPoint
+            mysql = New MySqli
         End If
 
-        If mysql <= mysqli.LoadConfig = -1.0R Then
+        If mysql <= MySqliHelper.LoadConfig = -1.0R Then
 #If Not DEBUG Then
             Throw New Exception("No MySQL database connection!")
 #Else
@@ -106,7 +106,7 @@ Imports mysqliEndPoint = Oracle.LinuxCompatibility.MySQL.MySqli
     ''' </summary>
     Public Sub TestMySQLi()
         Try
-            Call New mysqliEndPoint().init
+            Call New MySqli().init
             Call "Mysqli connection config test success!".__INFO_ECHO
         Catch ex As Exception
             Call "Mysqli connection config test failure!".PrintException
@@ -189,7 +189,7 @@ Imports mysqliEndPoint = Oracle.LinuxCompatibility.MySQL.MySqli
         Return uri
     End Function
 
-    Public Function CopyToModule(exe$, Optional dataFile$ = mysqli.dataFile) As Boolean
+    Public Function CopyToModule(exe$, Optional dataFile$ = MySqliHelper.dataFile) As Boolean
         Dim configuration$ = $"{App.LocalData}/{dataFile}".ReadAllText
         Dim target$ = App.GetAppLocalData(exe)
 
