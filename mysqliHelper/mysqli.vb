@@ -122,7 +122,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Uri
     Public Sub RunConfig()
         Dim update As Action(Of ConnectionUri) =
             Sub(mysqli As ConnectionUri)
-                Dim key = Rnd().ToString("F5")
+                Dim key As String = Guid.NewGuid.ToString
                 Dim encrypt As New SHA256(key, 12345678)
                 Dim encrypted = mysqli.GenerateUri(AddressOf encrypt.EncryptData)
 
