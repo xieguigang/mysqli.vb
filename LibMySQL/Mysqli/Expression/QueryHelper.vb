@@ -1,43 +1,43 @@
 ﻿#Region "Microsoft.VisualBasic::10ea643287061e1d6004dce7299c77ee, LibMySQL\Mysqli\Expression\QueryHelper.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    '     Module QueryHelper
-    ' 
-    '         Function: [And], [Or], contact, Find, SelectAll
-    '                   SelectALL, Update, (+2 Overloads) Where
-    ' 
-    ' 
-    ' /********************************************************************************/
+'     Module QueryHelper
+' 
+'         Function: [And], [Or], contact, Find, SelectAll
+'                   SelectALL, Update, (+2 Overloads) Where
+' 
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -91,7 +91,14 @@ Namespace Expressions
         <Extension>
         Public Function Update(Of T As {New, MySQLTable})(arg As WhereArgument(Of T), ParamArray setFields$()) As Boolean
             Dim table = arg.table.Schema
-            Dim SQL$ = $"UPDATE `{table.TableName}` SET {setFields.JoinBy(", ")} WHERE {arg.condition};"
+            Dim SQL$ = $"UPDATE `{table.TableName}` SET {setFields.JoinBy(", ")} WHERE {arg.condition}"
+
+            If Not arg.limits.IsNullOrEmpty Then
+                SQL = SQL & $" LIMIT {arg.limits.JoinBy(",")}"
+            End If
+
+            SQL = SQL & ";"
+
             Return arg.table.MySQL.Execute(SQL) > 0
         End Function
 
@@ -129,7 +136,8 @@ Namespace Expressions
         Public Function [And](Of T As {New, MySQLTable})(where As WhereArgument(Of T), ParamArray test$()) As WhereArgument(Of T)
             Return New WhereArgument(Of T) With {
                 .table = where.table,
-                .condition = where.contact(test, "AND")
+                .condition = where.contact(test, "AND"),
+                .limits = where.limits
             }
         End Function
 
@@ -142,7 +150,26 @@ Namespace Expressions
         Public Function [Or](Of T As {New, MySQLTable})(where As WhereArgument(Of T), ParamArray test$()) As WhereArgument(Of T)
             Return New WhereArgument(Of T) With {
                 .table = where.table,
-                .condition = where.contact(test, "OR")
+                .condition = where.contact(test, "OR"),
+                .limits = where.limits
+            }
+        End Function
+
+        <Extension>
+        Public Function Limit(Of T As {New, MySQLTable})(where As WhereArgument(Of T), n%) As WhereArgument(Of T)
+            Return New WhereArgument(Of T) With {
+                .table = where.table,
+                .condition = where.condition,
+                .limits = {n}
+            }
+        End Function
+
+        <Extension>
+        Public Function Limit(Of T As {New, MySQLTable})(where As WhereArgument(Of T), m%, n%) As WhereArgument(Of T)
+            Return New WhereArgument(Of T) With {
+                .table = where.table,
+                .condition = where.condition,
+                .limits = {m, n}
             }
         End Function
     End Module
