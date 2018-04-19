@@ -147,6 +147,8 @@ Namespace Uri
         ''' </summary>
         Public Const MYSQL_CONNECTION$ = "Database={0}; Data Source={1}; User Id={2}; Password={3}; Port={4}"
 
+        ReadOnly defaultPort3306 As DefaultValue(Of UInteger) = CType(3306, UInteger).AsDefault(Function(port) CType(port, Integer) <= 0)
+
         <Extension>
         Friend Function BuildConnectionString(uri As ConnectionUri) As String
             Dim tokens As New List(Of String)
@@ -165,7 +167,7 @@ Namespace Uri
                     tokens += $"User Id={ .User}"
                 End If
                 If .Port <> 3306 Then
-                    tokens += $"Port={ .Port}"
+                    tokens += $"Port={ .Port Or defaultPort3306 }"
                 End If
             End With
 

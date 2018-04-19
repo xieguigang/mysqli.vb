@@ -83,18 +83,26 @@ Imports Oracle.LinuxCompatibility.MySQL.Uri
     ''' Init connection from default config file.(这个函数不要求<paramref name="mysql"/>已经是初始化了的，不会抛出空错误)
     ''' </summary>
     ''' <param name="mysql"></param>
-    <Extension> Public Sub init(<Out> ByRef mysql As MySqli)
+    <Extension> Public Sub init(<Out> ByRef mysql As MySqli, Optional throwEx As Boolean = True)
         If mysql Is Nothing Then
             mysql = New MySqli
         End If
 
-        If mysql <= MySqliHelper.LoadConfig = -1.0R Then
+        Try
+            If mysql <= MySqliHelper.LoadConfig = -1.0R Then
 #If Not DEBUG Then
             Throw New Exception("No MySQL database connection!")
 #Else
-            Call "No mysqli database connection!".Warning
+                Call "No mysqli database connection!".Warning
 #End If
-        End If
+            End If
+        Catch ex As Exception
+            If throwEx Then
+                Throw ex
+            Else
+                Call App.LogException(ex)
+            End If
+        End Try
     End Sub
 
     ''' <summary>
