@@ -1,58 +1,59 @@
 ﻿#Region "Microsoft.VisualBasic::d5606d7e6be9e72402215f43b0503dbd, LibMySQL\Mysqli\MySqli.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    ' Class MySqli
-    ' 
-    '     Properties: UriMySQL, Version
-    ' 
-    '     Constructor: (+3 Overloads) Sub New
-    ' 
-    '     Function: __executeAggregate, __throwExceptionHelper, CommitInserts, CommitTransaction, (+2 Overloads) Connect
-    '               ConnectDatabase, CreateQuery, CreateSchema, ExecDelete, ExecInsert
-    '               ExecReplace, ExecUpdate, Execute, ExecuteAggregate, ExecuteDataset
-    '               ExecuteScalar, ExecuteScalarAuto, Fetch, ForEach, Ping
-    '               Query, ToString
-    ' 
-    '     Sub: (+2 Overloads) Dispose
-    ' 
-    '     Operators: +, <=, >=
-    ' 
-    ' /********************************************************************************/
+' Class MySqli
+' 
+'     Properties: UriMySQL, Version
+' 
+'     Constructor: (+3 Overloads) Sub New
+' 
+'     Function: __executeAggregate, __throwExceptionHelper, CommitInserts, CommitTransaction, (+2 Overloads) Connect
+'               ConnectDatabase, CreateQuery, CreateSchema, ExecDelete, ExecInsert
+'               ExecReplace, ExecUpdate, Execute, ExecuteAggregate, ExecuteDataset
+'               ExecuteScalar, ExecuteScalarAuto, Fetch, ForEach, Ping
+'               Query, ToString
+' 
+'     Sub: (+2 Overloads) Dispose
+' 
+'     Operators: +, <=, >=
+' 
+' /********************************************************************************/
 
 #End Region
 
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.Linq.Extensions
+Imports Microsoft.VisualBasic.Scripting
 Imports Microsoft.VisualBasic.Serialization.JSON
 Imports MySql.Data.MySqlClient
 Imports Oracle.LinuxCompatibility.MySQL.Reflection
@@ -193,8 +194,8 @@ Public Class MySqli : Implements IDisposable
 
         Call Reader.Read()
 
-        Dim objValue As Object = Reader.GetValue(Scan0)
-        Dim value As T = DirectCast(objValue, T)
+        Dim objValue$ = InputHandler.ToString(Reader.GetValue(Scan0))
+        Dim value As T = InputHandler.CTypeDynamic(objValue, GetType(T))
 
         Return value
     End Function
