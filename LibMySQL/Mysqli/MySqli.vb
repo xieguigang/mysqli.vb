@@ -194,6 +194,10 @@ Public Class MySqli : Implements IDisposable
 
         Call Reader.Read()
 
+        ' 直接类型转换可能会存在类型不匹配的错误
+        ' 因为在mysql表之中所有的字段值都是基本类型，所以在这里将结果值转换为字符串
+        ' 在通过字符串转换为目标类型值
+        ' 这个间接的转换方法比较安全，不容易崩溃
         Dim objValue$ = InputHandler.ToString(Reader.GetValue(Scan0))
         Dim value As T = InputHandler.CTypeDynamic(objValue, GetType(T))
 
