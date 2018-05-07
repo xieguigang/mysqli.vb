@@ -63,11 +63,19 @@ Module test2
             Throw New NotImplementedException()
         End Function
 
+        Public Overrides Function GetReplaceSQL(AI As Boolean) As String
+            Throw New NotImplementedException()
+        End Function
+
         Public Overrides Function GetDumpInsertValue() As String
             Throw New NotImplementedException()
         End Function
 
         Public Overrides Function GetInsertSQL() As String
+            Throw New NotImplementedException()
+        End Function
+
+        Public Overrides Function GetInsertSQL(AI As Boolean) As String
             Throw New NotImplementedException()
         End Function
 
