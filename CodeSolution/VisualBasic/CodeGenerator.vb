@@ -502,7 +502,7 @@ Namespace VisualBasic
 #End Region
 
         Private Function ___UPDATE_SQL(Schema As Reflection.Schema.Table, ByRef SQL As Value(Of String)) As String
-            Dim SqlBuilder As New StringBuilder("    Private Shared ReadOnly UPDATE_SQL As String = <SQL>%s</SQL>")
+            Dim SqlBuilder As New StringBuilder("    Friend Shared ReadOnly UPDATE_SQL$ = <SQL>%s</SQL>")
             SQL.Value = Reflection.SQL.SqlGenerateMethods.GenerateUpdateSql(Schema)
             Call SqlBuilder.Replace("%s", SQL.Value)
 
@@ -525,7 +525,7 @@ Namespace VisualBasic
         End Function
 
         Private Function ___DELETE_SQL(Schema As Reflection.Schema.Table, ByRef SQL As Value(Of String)) As String
-            Dim SqlBuilder As StringBuilder = New StringBuilder("    Private Shared ReadOnly DELETE_SQL As String = <SQL>%s</SQL>")
+            Dim SqlBuilder As StringBuilder = New StringBuilder("    Friend Shared ReadOnly DELETE_SQL$ = <SQL>%s</SQL>")
             SQL.Value = Reflection.SQL.SqlGenerateMethods.GenerateDeleteSql(Schema)
             Call SqlBuilder.Replace("%s", SQL.Value)
 
