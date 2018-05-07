@@ -444,6 +444,8 @@ Namespace VisualBasic
         ''' </summary>
         ''' <param name="field"></param>
         ''' <returns></returns>
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <Extension>
         Private Function PropertyName(field As Field) As String
             Return FixInvalids(field.FieldName)

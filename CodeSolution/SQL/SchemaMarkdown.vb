@@ -115,6 +115,15 @@ Public Module SchemaMarkdown
         Next
 
         Call md.AppendLine()
+
+        If table.Fields.Length >= 10 Then
+            Call md.AppendLine(Markup.HTML.Pagebreak)
+            Call md.AppendLine()
+        End If
+
+        Call md.AppendLine()
+        Call md.AppendLine("#### SQL Declare")
+        Call md.AppendLine()
         Call md.AppendLine("```SQL")
         Call md.AppendLine(table.SQL)
         Call md.AppendLine("```")
