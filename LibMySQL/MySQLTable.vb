@@ -57,6 +57,10 @@ Public MustInherit Class MySQLTable : Inherits SchemaMaps.SQLTable
     ''' 并且由于需要先判断记录是否存在，执行的速度也比直接的Insert操作要慢一些，大批量数据插入不建议这个操作)
     ''' </summary>
     ''' <returns></returns>
-    Public MustOverride Function GetReplaceSQL() As String
+    Public MustOverride Overloads Function GetReplaceSQL() As String
     Public MustOverride Function GetDumpInsertValue() As String
+
+    Public MustOverride Overloads Function GetReplaceSQL(AI As Boolean) As String
+    Public MustOverride Overloads Function GetInsertSQL(AI As Boolean) As String
+
 End Class
