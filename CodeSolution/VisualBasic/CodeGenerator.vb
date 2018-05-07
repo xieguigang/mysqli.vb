@@ -61,6 +61,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 Imports MySqlScript = Oracle.LinuxCompatibility.MySQL.Scripting.Extensions
+Imports Microsoft.VisualBasic.Text.Xml
 
 Namespace VisualBasic
 
@@ -462,14 +463,16 @@ Namespace VisualBasic
                                                ByRef SQL As Value(Of String)) As String
 
             Dim name$ = If(isReplace, "REPLACE", "INSERT")
-            Dim SqlBuilder As New StringBuilder($"    Friend Shared ReadOnly {name}{If(AI_strip, "", "_AI")}_SQL$ = <SQL>%s</SQL>")
+            Dim SqlBuilder As New StringBuilder($"    Friend Shared ReadOnly {name}{If(AI_strip, "", "_AI")}_SQL$ = ")
+
             SQL.Value = SqlGenerateMethods.GenerateInsertSql(Schema, AI_strip)
 
             If isReplace Then
                 SQL = SQL.Value.Replace("INSERT INTO", "REPLACE INTO")
             End If
 
-            Call SqlBuilder.Replace("%s", SQL.ToString)
+            Call SqlBuilder.AppendLine()
+            Call SqlBuilder.AppendLine("        " & sprintf(<SQL>%s</SQL>, SQL.Value))
 
             Return SqlBuilder.ToString
         End Function
@@ -502,9 +505,10 @@ Namespace VisualBasic
 #End Region
 
         Private Function ___UPDATE_SQL(Schema As Reflection.Schema.Table, ByRef SQL As Value(Of String)) As String
-            Dim SqlBuilder As New StringBuilder("    Friend Shared ReadOnly UPDATE_SQL$ = <SQL>%s</SQL>")
-            SQL.Value = Reflection.SQL.SqlGenerateMethods.GenerateUpdateSql(Schema)
-            Call SqlBuilder.Replace("%s", SQL.Value)
+            Dim SqlBuilder As New StringBuilder("    Friend Shared ReadOnly UPDATE_SQL$ = ")
+            SQL.Value = SqlGenerateMethods.GenerateUpdateSql(Schema)
+            Call SqlBuilder.AppendLine()
+            Call SqlBuilder.AppendLine("        " & sprintf(<SQL>%s</SQL>, SQL.Value))
 
             Return SqlBuilder.ToString
         End Function
@@ -525,9 +529,10 @@ Namespace VisualBasic
         End Function
 
         Private Function ___DELETE_SQL(Schema As Reflection.Schema.Table, ByRef SQL As Value(Of String)) As String
-            Dim SqlBuilder As StringBuilder = New StringBuilder("    Friend Shared ReadOnly DELETE_SQL$ = <SQL>%s</SQL>")
-            SQL.Value = Reflection.SQL.SqlGenerateMethods.GenerateDeleteSql(Schema)
-            Call SqlBuilder.Replace("%s", SQL.Value)
+            Dim SqlBuilder As New StringBuilder("    Friend Shared ReadOnly DELETE_SQL$ =")
+            SQL.Value = SqlGenerateMethods.GenerateDeleteSql(Schema)
+            Call SqlBuilder.AppendLine()
+            Call SqlBuilder.AppendLine("        " & sprintf(<SQL>%s</SQL>, SQL.Value))
 
             Return SqlBuilder.ToString
         End Function
@@ -695,7 +700,7 @@ NO_KEY:
 
             Return __generateCodeSplit(
                 Schema,
-                Head:=CreateTables.First,
+                head:=CreateTables.First,
                 FileName:=If(path.FileExists, FileIO.FileSystem.GetFileInfo(path).Name, ""),
                 TableSql:=SchemaSQL,
                 [Namespace]:=ns)
@@ -705,12 +710,12 @@ NO_KEY:
         ''' Generate the source code file from the table schema dumping
         ''' </summary>
         ''' <param name="SqlDoc"></param>
-        ''' <param name="Head"></param>
+        ''' <param name="head"></param>
         ''' <param name="FileName"></param>
         ''' <param name="TableSql"></param>
         ''' <returns></returns>
         Private Function __generateCodeSplit(SqlDoc As IEnumerable(Of Table),
-                                             Head$, FileName$,
+                                             head$, FileName$,
                                              TableSql As Dictionary(Of String, String),
                                              Namespace$) As Dictionary(Of String, String)
 
