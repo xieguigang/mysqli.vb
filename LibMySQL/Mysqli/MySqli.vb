@@ -399,13 +399,13 @@ Public Class MySqli : Implements IDisposable
     ''' result that this transaction is commit successfully or not. 
     ''' (向数据库服务器提交一个事务之后返回本事务是否被成功提交)
     ''' </summary>
-    ''' <param name="Transaction"></param>
+    ''' <param name="transaction"></param>
     ''' <returns>
     ''' Return the result that this transaction is commit succeedor not.
     ''' (返回本事务是否被成功提交至数据库服务器)
     ''' </returns>
     ''' <remarks></remarks>
-    Public Function CommitTransaction(Transaction As String, Optional ByRef excep As Exception = Nothing) As Boolean
+    Public Function CommitTransaction(transaction$, Optional ByRef excep As Exception = Nothing) As Boolean
         Using MyConnection As New MySqlConnection(_UriMySQL)
             MyConnection.Open()
 
@@ -421,7 +421,7 @@ Public Class MySqli : Implements IDisposable
             MyCommand.Transaction = MyTrans
 
             Try
-                MyCommand.CommandText = Transaction
+                MyCommand.CommandText = transaction
                 MyCommand.ExecuteNonQuery()
                 MyTrans.Commit()
 
@@ -430,7 +430,7 @@ Public Class MySqli : Implements IDisposable
                 Try
                     MyTrans.Rollback()
                 Catch ex As MySqlException
-                    e = New Exception(__throwExceptionHelper(ex, Transaction, False).ToString, e)
+                    e = New Exception(__throwExceptionHelper(ex, transaction, False).ToString, e)
                 End Try
                 excep = e
                 Return False

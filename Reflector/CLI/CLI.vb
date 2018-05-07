@@ -60,7 +60,7 @@ Module CLI
 
     <ExportAPI("--reflects", Example:="--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
     <Description("Automatically generates visualbasic source code from the MySQL database schema dump.")>
-    <Usage("--reflects /sql <sql_path/std_in> [-o <output_path> /namespace <namespace> --language <php/visualbasic, default=visualbasic> /split /auto_increment.disable]")>
+    <Usage("--reflects /sql <sql_path/std_in> [-o <output_path> /namespace <namespace> --language <php/visualbasic, default=visualbasic> /split]")>
     <Argument("/sql", False, CLITypes.File, PipelineTypes.std_in,
               AcceptTypes:={GetType(String)},
               Description:="The file path of the MySQL database schema dump file."),
@@ -82,7 +82,6 @@ Module CLI
         Dim SQL As String = args("/sql"), out As String = args("-o")
         Dim ns As String = args("/namespace")
         Dim language$ = args.GetValue("/language", "visualbasic")
-        Dim AI As Boolean = args.GetBoolean("/auto_increment.disable")
 
         If Not SQL.FileExists Then  ' 当文件不存在的时候可能是std_in，则判断是否存在out并且是split状态
             If split AndAlso String.IsNullOrEmpty(out) Then
@@ -100,7 +99,7 @@ Module CLI
                 SQL, args.OpenStreamInput("/sql"),
                 ns,
                 out, writer,
-                split, AI)
+                split)
         Else
             Dim msg As String = $"The target schema sql dump file ""{SQL}"" is not exists on your file system!"
             Call VBDebugger.PrintException(msg)
@@ -120,9 +119,9 @@ Module CLI
     ''' <param name="output"></param>
     ''' <param name="split"></param>
     ''' <returns></returns>
-    Private Function __EXPORT%(SQL$, file As StreamReader, ns$, out$, output As StreamWriter, split As Boolean, AI As Boolean)
+    Private Function __EXPORT%(SQL$, file As StreamReader, ns$, out$, output As StreamWriter, split As Boolean)
         If split Then ' 分开文档的输出形式，则不能够使用stream了
-            Dim codes As Dictionary(Of String, String) = MySQL2vb.GenerateCodeSplit(file, ns, SQL, AI)
+            Dim codes As Dictionary(Of String, String) = MySQL2vb.GenerateCodeSplit(file, ns, SQL)
 
             If String.IsNullOrEmpty(out) Then
                 out = FileIO.FileSystem.GetParentPath(SQL)

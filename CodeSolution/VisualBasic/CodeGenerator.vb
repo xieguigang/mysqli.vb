@@ -1,47 +1,47 @@
 ﻿#Region "Microsoft.VisualBasic::01acce94920468d02d5b130750a48c0c, CodeSolution\VisualBasic\CodeGenerator.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    '     Module CodeGenerator
-    ' 
-    '         Function: ___DELETE_SQL, ___DELETE_SQL_Invoke, ___INSERT_SQL, ___INSERT_SQL_Invoke, ___REPLACE_SQL
-    '                   ___REPLACE_SQL_Invoke, ___UPDATE_SQL, ___UPDATE_SQL_Invoke, __clone, __createAttribute
-    '                   __generateCodeSplit, __INSERT_VALUES, __notImplementForIndex, __replaceInsertCommon, __replaceInsertInvokeCommon
-    '                   __schemaDb, __toDataType, FixInvalids, GenerateClass, (+3 Overloads) GenerateCode
-    '                   (+2 Overloads) GenerateCodeSplit, GenerateSingleDocument, getExprInvoke, PropertyName, SQLComments
-    '                   VBClass, vbCode
-    ' 
-    ' 
-    ' /********************************************************************************/
+'     Module CodeGenerator
+' 
+'         Function: ___DELETE_SQL, ___DELETE_SQL_Invoke, ___INSERT_SQL, ___INSERT_SQL_Invoke, ___REPLACE_SQL
+'                   ___REPLACE_SQL_Invoke, ___UPDATE_SQL, ___UPDATE_SQL_Invoke, __clone, __createAttribute
+'                   __generateCodeSplit, __INSERT_VALUES, __notImplementForIndex, __replaceInsertCommon, __replaceInsertInvokeCommon
+'                   __schemaDb, __toDataType, FixInvalids, GenerateClass, (+3 Overloads) GenerateCode
+'                   (+2 Overloads) GenerateCodeSplit, GenerateSingleDocument, getExprInvoke, PropertyName, SQLComments
+'                   VBClass, vbCode
+' 
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -59,6 +59,7 @@ Imports Microsoft.VisualBasic.Scripting.SymbolBuilder
 Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 Imports MySqlScript = Oracle.LinuxCompatibility.MySQL.Scripting.Extensions
 
 Namespace VisualBasic
@@ -238,12 +239,9 @@ Namespace VisualBasic
         ''' </summary>
         ''' <param name="table"></param>
         ''' <param name="DefSql"></param>
-        ''' <param name="stripAI">
-        ''' 如果这个参数为真，那么对于AI自增的字段而言，将不会被生成在``INSERT INTO``或者``REPLACE INTO``语句之中
-        ''' </param>
         ''' <returns></returns>
         ''' <remarks><see cref="SQLComments"/></remarks>
-        <Extension> Public Function VBClass(table As Table, DefSql$, Optional stripAI As Boolean = True) As String
+        <Extension> Public Function VBClass(table As Table, DefSql$) As String
             Dim tokens$() = DefSql.LineTokens
             Dim vb As New StringBuilder("''' <summary>" & vbCrLf)
             Dim DBName As String = table.Database
@@ -289,9 +287,12 @@ Namespace VisualBasic
                     Call vb.AppendLine("''' <remarks></remarks>")
                 End If
 
-                Call vb.Append(Field.__createAttribute(IsPrimaryKey:=table.PrimaryFields.Contains(Field.FieldName))) 'Apply the custom attribute on the property 
-                Call vb.Append("Public Property " & FixInvalids(Field.FieldName))                                     'Generate the property name 
-                Call vb.Append(__toDataType(Field.DataType))                                                          'Generate the property data type
+                ' Apply the custom attribute on the property 
+                Call vb.Append(Field.__createAttribute(IsPrimaryKey:=table.PrimaryFields.Contains(Field.FieldName)))
+                ' Generate the property name 
+                Call vb.Append("Public Property " & FixInvalids(Field.FieldName))
+                ' Generate the property data type
+                Call vb.Append(__toDataType(Field.DataType))
                 Call vb.AppendLine()
             Next
 
@@ -307,8 +308,10 @@ Namespace VisualBasic
             ' 生成SQL接口
             Call vb.AppendLine("#Region ""Public SQL Interface""")
             Call vb.AppendLine("#Region ""Interface SQL""")
-            Call vb.AppendLine(___INSERT_SQL(table, stripAI, SQLlist("INSERT")))
-            Call vb.AppendLine(___REPLACE_SQL(table, stripAI, SQLlist("REPLACE")))
+            Call vb.AppendLine(___INSERT_SQL(table, True, SQLlist("INSERT")))
+            Call vb.AppendLine(___INSERT_SQL(table, False, SQLlist("INSERT")))
+            Call vb.AppendLine(___REPLACE_SQL(table, True, SQLlist("REPLACE")))
+            Call vb.AppendLine(___REPLACE_SQL(table, False, SQLlist("REPLACE")))
             Call vb.AppendLine(___DELETE_SQL(table, SQLlist("DELETE")))
             Call vb.AppendLine(___UPDATE_SQL(table, SQLlist("UPDATE")))
             Call vb.AppendLine("#End Region")
@@ -317,18 +320,26 @@ Namespace VisualBasic
             Call vb.AppendLine(___DELETE_SQL_Invoke(table, refConflict))
             Call vb.AppendLine("    End Function")
             Call vb.Append(SQLlist("INSERT").SQLComments)
-            Call vb.AppendLine("    Public Overrides Function GetInsertSQL() As String")
-            Call vb.AppendLine(___INSERT_SQL_Invoke(table, stripAI, refConflict))
+            Call vb.AppendLine("    Public Overrides Function GetInsertSQL(Optional AI As Boolean = True) As String")
+            Call vb.AppendLine("        If AI Then")
+            Call vb.AppendLine(___INSERT_SQL_Invoke(table, False, refConflict))
+            Call vb.AppendLine("        Else")
+            Call vb.AppendLine(___INSERT_SQL_Invoke(table, True, refConflict))
+            Call vb.AppendLine("        End If")
             Call vb.AppendLine("    End Function")
             Call vb.AppendLine()
             Call vb.AppendLine("''' <summary>")
             Call vb.AppendLine($"''' <see cref=""{NameOf(MySQLTable.GetInsertSQL)}""/>")
             Call vb.AppendLine("''' </summary>")
-            Call vb.AppendLine(__INSERT_VALUES(table, stripAI))
+            Call vb.AppendLine(__INSERT_VALUES(table, True))
             Call vb.AppendLine()
             Call vb.Append(SQLlist("REPLACE").SQLComments)
-            Call vb.AppendLine("    Public Overrides Function GetReplaceSQL() As String")
-            Call vb.AppendLine(___REPLACE_SQL_Invoke(table, stripAI, refConflict))
+            Call vb.AppendLine("    Public Overrides Function GetReplaceSQL(Optional AI As Boolean = True) As String")
+            Call vb.AppendLine("        If AI Then")
+            Call vb.AppendLine(___REPLACE_SQL_Invoke(table, False, refConflict))
+            Call vb.AppendLine("        Else")
+            Call vb.AppendLine(___REPLACE_SQL_Invoke(table, True, refConflict))
+            Call vb.AppendLine("        End If")
             Call vb.AppendLine("    End Function")
             Call vb.Append(SQLlist("UPDATE").SQLComments)
             Call vb.AppendLine("    Public Overrides Function GetUpdateSQL() As String")
@@ -349,12 +360,16 @@ Namespace VisualBasic
         ''' </summary>
         ''' <param name="type$">Class name</param>
         ''' <returns></returns>
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <Extension>
         Private Function __clone(type$) As String
-            Return _
-            $"Public Function Clone() As {type}
-                  Return DirectCast(MyClass.MemberwiseClone, {type})
-              End Function"
+            Return $"''' <summary>
+                     ''' Memberwise clone of current table Object.
+                     ''' </summary>
+                     Public Function Clone() As {type}
+                         Return DirectCast(MyClass.MemberwiseClone, {type})
+                     End Function"
         End Function
 
         ''' <summary>
@@ -378,17 +393,17 @@ Namespace VisualBasic
 
 #Region "INSERT_SQL 假若有列是被标记为自动增长的，则不需要在INSERT_SQL之中在添加他的值了"
 
-        Private Function ___REPLACE_SQL(Schema As Reflection.Schema.Table, TrimAutoIncrement As Boolean, ByRef SQL As Value(Of String)) As String
+        Private Function ___REPLACE_SQL(Schema As Table, TrimAutoIncrement As Boolean, ByRef SQL As Value(Of String)) As String
             Return __replaceInsertCommon(Schema, TrimAutoIncrement, True, SQL)
         End Function
 
-        Private Function ___REPLACE_SQL_Invoke(Schema As Reflection.Schema.Table, TrimAutoIncrement As Boolean, refConflict As Boolean) As String
+        Private Function ___REPLACE_SQL_Invoke(Schema As Table, TrimAutoIncrement As Boolean, refConflict As Boolean) As String
             Return __replaceInsertInvokeCommon(Schema, TrimAutoIncrement, True, refConflict)
         End Function
 
-        Private Function __INSERT_VALUES(schema As Reflection.Schema.Table, trimAutoIncrement As Boolean) As String
+        Private Function __INSERT_VALUES(schema As Table, trimAutoIncrement As Boolean) As String
             Dim sb As New StringBuilder
-            Dim values$ = Reflection.SQL.SqlGenerateMethods.GenerateInsertValues(schema, trimAutoIncrement)
+            Dim values$ = SqlGenerateMethods.GenerateInsertValues(schema, trimAutoIncrement)
 
             For Each field As SeqValue(Of Field) In If(
                 trimAutoIncrement,
@@ -423,7 +438,7 @@ Namespace VisualBasic
         ''' 生成``INSERT INTO``和``REPLACE INTO``部分所共同的语句
         ''' </summary>
         ''' <param name="Schema"></param>
-        ''' <param name="AI_strip"></param>
+        ''' <param name="AI_strip">如果这个参数为真，则在生成的SQL语句之中将不会包含自增的字段</param>
         ''' <param name="isReplace"></param>
         ''' <param name="SQL"></param>
         ''' <returns></returns>
@@ -432,9 +447,9 @@ Namespace VisualBasic
                                                isReplace As Boolean,
                                                ByRef SQL As Value(Of String)) As String
 
-            Dim Name As String = If(isReplace, "REPLACE", "INSERT")
-            Dim SqlBuilder As New StringBuilder($"    Private Shared ReadOnly {Name}_SQL As String = <SQL>%s</SQL>")
-            SQL.Value = Reflection.SQL.SqlGenerateMethods.GenerateInsertSql(Schema, AI_strip)
+            Dim name$ = If(isReplace, "REPLACE", "INSERT")
+            Dim SqlBuilder As New StringBuilder($"    Friend Shared ReadOnly {name}{If(AI_strip, "", "_AI")}_SQL$ = <SQL>%s</SQL>")
+            SQL.Value = SqlGenerateMethods.GenerateInsertSql(Schema, AI_strip)
 
             If isReplace Then
                 SQL = SQL.Value.Replace("INSERT INTO", "REPLACE INTO")
@@ -451,7 +466,7 @@ Namespace VisualBasic
                                                      refConflict As Boolean) As String
 
             Dim SqlBuilder As New StringBuilder("        ")
-            Dim Name As String = If(Replace, "REPLACE", "INSERT")
+            Dim Name As String = If(Replace, "REPLACE", "INSERT") & If(TrimAutoIncrement, "", "_AI")
             Call SqlBuilder.Append($"Return String.Format({Name}_SQL, ")
             If Not TrimAutoIncrement Then
                 Call SqlBuilder.Append(String.Join(", ", (From Field In Schema.Fields Select getExprInvoke(Field, refConflict)).ToArray))
@@ -643,8 +658,7 @@ NO_KEY:
         ''' <param name="ns">The namespace of the source code classes</param>
         Public Function GenerateCodeSplit(file As StreamReader,
                                           Optional ns$ = "",
-                                          Optional path$ = Nothing,
-                                          Optional AI As Boolean = False) As Dictionary(Of String, String)
+                                          Optional path$ = Nothing) As Dictionary(Of String, String)
 
             Dim sqlDump As String = Nothing
             Dim Schema As Table() = SQLParser.LoadSQLDoc(file, sqlDump)
@@ -670,7 +684,7 @@ NO_KEY:
                 Head:=CreateTables.First,
                 FileName:=If(path.FileExists, FileIO.FileSystem.GetFileInfo(path).Name, ""),
                 TableSql:=SchemaSQL,
-                [Namespace]:=ns, AI:=AI)
+                [Namespace]:=ns)
         End Function
 
         ''' <summary>
@@ -684,8 +698,7 @@ NO_KEY:
         Private Function __generateCodeSplit(SqlDoc As IEnumerable(Of Table),
                                              Head$, FileName$,
                                              TableSql As Dictionary(Of String, String),
-                                             Namespace$,
-                                             AI As Boolean) As Dictionary(Of String, String)
+                                             Namespace$) As Dictionary(Of String, String)
 
             Dim haveNamespace As Boolean = Not String.IsNullOrEmpty([Namespace])
 
@@ -699,7 +712,7 @@ NO_KEY:
                                  TableSql.ContainsKey(Table.TableName),
                                  TableSql(Table.TableName),
                                  "")
-                             Let vbClass As String = Table.VBClass(SqlDef, stripAI:=Not AI)
+                             Let vbClass As String = Table.VBClass(SqlDef)
                              Select classDef = vbClass,
                                  Table).ToArray
             Dim LQuery = (From table
