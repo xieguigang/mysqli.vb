@@ -78,12 +78,14 @@ Module CLI
               Description:="Enable output the auto increment field in the mysql table instead of auto increment in the process of mysql inserts.")>
     <Group(Program.ORM_CLI)>
     Public Function ReflectsConvert(args As CommandLine) As Integer
-        Dim split As Boolean = args.GetBoolean("/split")
-        Dim SQL As String = args("/sql"), out As String = args("-o")
+        Dim split As Boolean = args("/split")
+        Dim SQL As String = args("/sql")
+        Dim out$ = args("-o")
         Dim ns As String = args("/namespace")
-        Dim language$ = args.GetValue("/language", "visualbasic")
+        Dim language$ = args("/language") Or "visualbasic"
 
-        If Not SQL.FileExists Then  ' 当文件不存在的时候可能是std_in，则判断是否存在out并且是split状态
+        ' 当文件不存在的时候可能是std_in，则判断是否存在out并且是split状态
+        If Not SQL.FileExists Then
             If split AndAlso String.IsNullOrEmpty(out) Then
                 Call VBDebugger.Warning(InputsNotFound)
                 Return -1
@@ -140,8 +142,10 @@ Module CLI
                     out = $"{out}/{SQL.BaseName}.vb"
                 End If
 
-                Dim doc$ = MySQL2vb.GenerateCode(file, ns, SQL)  ' Convert the SQL file into a visualbasic source code
-                Return doc.SaveTo(out, Encoding.Unicode).CLICode               ' Save the vb source code into a text file
+                ' Convert the SQL file into a visualbasic source code
+                Dim doc$ = MySQL2vb.GenerateCode(file, ns, SQL)
+                ' Save the vb source code into a text file
+                Return doc.SaveTo(out, Encoding.Unicode).CLICode
             Else
                 Call output.Write(MySQL2vb.GenerateCode(file, ns, SQL))
                 Call output.Flush()

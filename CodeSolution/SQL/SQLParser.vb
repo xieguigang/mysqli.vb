@@ -57,7 +57,7 @@ Public Module SQLParser
     ''' <summary>
     ''' Parsing the create table statement in the SQL document.
     ''' </summary>
-    Const SQL_CREATE_TABLE As String = "CREATE TABLE (IF\s+NOT\s+EXISTS\s+)?(`.+?`\.)?`.+?` \(.+?(PRIMARY KEY \(`.+?`\))?.+?ENGINE\s*=.+?;"
+    Const SQL_CREATE_TABLE As String = "CREATE TABLE .+?;(\r|\n)"
 
     Public Function ParseTable(SQL As String) As Reflection.Schema.Table
         Dim CTMatch As Match = r.Match(SQL, SQL_CREATE_TABLE, RegexOptions.Singleline)
