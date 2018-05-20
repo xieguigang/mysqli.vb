@@ -179,7 +179,8 @@ Namespace Uri
                 cnn &= $" default command timeout={uri.TimeOut};"
             End If
 
-            Return cnn
+            ' 2018-5-21 https://bugs.mysql.com/bug.php?id=26054
+            Return cnn & " Convert Zero Datetime=True;"
         End Function
     End Module
 End Namespace
