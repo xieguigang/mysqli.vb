@@ -339,7 +339,7 @@ Namespace VisualBasic
             Call vb.AppendLine("''' <summary>")
             Call vb.AppendLine($"''' <see cref=""{NameOf(MySQLTable.GetInsertSQL)}""/>")
             Call vb.AppendLine("''' </summary>")
-            Call vb.AppendLine(__INSERT_VALUES(table, True))
+            Call vb.AppendLine(__INSERT_VALUES(table))
             Call vb.AppendLine()
             Call vb.Append(SQLlist("REPLACE").SQLComments)
             Call vb.AppendLine("    Public Overrides Function GetReplaceSQL() As String")
@@ -416,14 +416,32 @@ Namespace VisualBasic
             Return __replaceInsertInvokeCommon(Schema, TrimAutoIncrement, True, refConflict)
         End Function
 
-        Private Function __INSERT_VALUES(schema As Table, trimAutoIncrement As Boolean) As String
+        Private Function __INSERT_VALUES(schema As Table) As String
             Dim sb As New StringBuilder
-            Dim values$ = SqlGenerateMethods.GenerateInsertValues(schema, trimAutoIncrement)
 
-            For Each field As SeqValue(Of Field) In If(
-                trimAutoIncrement,
-                schema.Fields.Where(Function(f) Not f.AutoIncrement),
-                schema.Fields).SeqIterator
+            Call sb.AppendLine($"    Public Overrides Function {NameOf(MySQLTable.GetDumpInsertValue)}(AI As Boolean) As String")
+            Call sb.AppendLine($"        If AI Then")
+            Call sb.AppendLine($"            Return $""{schema.valueRef(False)}""")
+            Call sb.AppendLine($"        Else")
+            Call sb.AppendLine($"            Return $""{schema.valueRef(True)}""")
+            Call sb.AppendLine($"        End If")
+            Call sb.AppendLine($"    End Function")
+
+            Return sb.ToString
+        End Function
+
+        <Extension>
+        Private Function valueRef(schema As Table, trimAutoIncrement As Boolean) As String
+            Dim values$ = SqlGenerateMethods.GenerateInsertValues(schema, trimAutoIncrement)
+            Dim fields As IEnumerable(Of Field)
+
+            If trimAutoIncrement Then
+                fields = schema.Fields.Where(Function(f) Not f.AutoIncrement)
+            Else
+                fields = schema.Fields
+            End If
+
+            For Each field As SeqValue(Of Field) In fields.SeqIterator
 
                 ' 在代码之中应该是propertyName而不是数据库之中的fieldName
                 ' 因为schema对象是直接从SQL之中解析出来的，所以反射属性为空
@@ -431,11 +449,7 @@ Namespace VisualBasic
                 values = values.Replace("{" & field.i & "}", "{" & FixInvalids((+field).FieldName) & "}")
             Next
 
-            Call sb.AppendLine($"    Public Overrides Function {NameOf(MySQLTable.GetDumpInsertValue)}() As String")
-            Call sb.AppendLine($"        Return $""{values}""")
-            Call sb.AppendLine($"    End Function")
-
-            Return sb.ToString
+            Return values
         End Function
 
         ''' <summary>

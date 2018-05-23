@@ -58,7 +58,7 @@ Public MustInherit Class MySQLTable : Inherits SchemaMaps.SQLTable
     ''' </summary>
     ''' <returns></returns>
     Public MustOverride Overloads Function GetReplaceSQL() As String
-    Public MustOverride Function GetDumpInsertValue() As String
+    Public MustOverride Function GetDumpInsertValue(AI As Boolean) As String
 
     Public MustOverride Overloads Function GetReplaceSQL(AI As Boolean) As String
     Public MustOverride Overloads Function GetInsertSQL(AI As Boolean) As String

@@ -1,41 +1,41 @@
 ﻿#Region "Microsoft.VisualBasic::090d851a12726dbcf1652a2fe1791358, LibMySQL\Extensions\LinqExports.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    ' Module LinqExports
-    ' 
-    '     Sub: DumpBlock, ProjectDumping
-    ' 
-    ' /********************************************************************************/
+' Module LinqExports
+' 
+'     Sub: DumpBlock, ProjectDumping
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -61,7 +61,12 @@ Public Module LinqExports
     ''' Merge the sql files that exported into a large single sql transaction file? Default is not.
     ''' </param>
     <Extension>
-    Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of MySQLTable)), EXPORT$, Optional bufferSize% = 500, Optional singleTransaction As Boolean = False, Optional echo As Boolean = True)
+    Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of MySQLTable)), EXPORT$,
+                              Optional bufferSize% = 500,
+                              Optional singleTransaction As Boolean = False,
+                              Optional echo As Boolean = True,
+                              Optional AI As Boolean = False)
+
         Dim writer As New Dictionary(Of String, StreamWriter)
         Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
         Dim DBName$ = ""
@@ -91,7 +96,7 @@ Public Module LinqExports
 
             With buffer(x.Name)
                 If .bufferData = bufferSize Then
-                    Call .bufferData.DumpBlock(.schema, writer(x.Name))
+                    Call .bufferData.DumpBlock(.schema, writer(x.Name), AI:=AI)
                     Call .bufferData.Clear()
 
                     If echo Then
@@ -105,7 +110,7 @@ Public Module LinqExports
 
         For Each buf In buffer.EnumerateTuples
             With buf.obj
-                Call .bufferData.DumpBlock(.schema, writer(buf.name))
+                Call .bufferData.DumpBlock(.schema, writer(buf.name), AI:=AI)
             End With
 
             With writer(buf.name)
@@ -156,12 +161,15 @@ Public Module LinqExports
     End Sub
 
     <Extension>
-    Public Sub DumpBlock(block As IEnumerable(Of MySQLTable), schemaTable As Table, out As TextWriter, Optional distinct As Boolean = True)
+    Public Sub DumpBlock(block As IEnumerable(Of MySQLTable), schemaTable As Table, out As TextWriter,
+                         Optional distinct As Boolean = True,
+                         Optional AI As Boolean = False)
+
         Dim INSERT$ = schemaTable.GenerateInsertSql
         Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
         Dim insertBlocks$() = block _
             .Where(Function(r) Not r Is Nothing) _
-            .Select(Function(r) r.GetDumpInsertValue) _
+            .Select(Function(r) r.GetDumpInsertValue(AI)) _
             .ToArray
 
         If distinct Then

@@ -69,7 +69,7 @@ Public Module DataDumps
                 For Each table As MySQLTable() In tables
                     With table
                         type = .First.GetType
-                        Call .DumpTransaction(buffer, type, distinct:=True)
+                        Call .DumpTransaction(buffer, type, distinct:=True, AI:=True)
                     End With
                 Next
             End Sub)
@@ -126,7 +126,8 @@ Public Module DataDumps
                                            type As Type,
                                            Optional custom As Func(Of MySQLTable, String) = Nothing,
                                            Optional action$ = "insert",
-                                           Optional distinct As Boolean = True)
+                                           Optional distinct As Boolean = True,
+                                           Optional AI As Boolean = False)
 
         Dim SQL As Func(Of MySQLTable, String)
 
@@ -150,7 +151,7 @@ Public Module DataDumps
 
         If action.TextEquals("insert") Then
             For Each block In source.Split(200)
-                Call block.DumpBlock(schemaTable, out, distinct)
+                Call block.DumpBlock(schemaTable, out, distinct, AI:=AI)
             Next
         Else
             Call source _
@@ -203,7 +204,8 @@ Public Module DataDumps
     Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
                                                         Optional custom As Func(Of MySQLTable, String) = Nothing,
                                                         Optional type$ = "insert",
-                                                        Optional distinct As Boolean = True) As String
+                                                        Optional distinct As Boolean = True,
+                                                        Optional AI As Boolean = False) As String
         With New StringBuilder
             Call New StringWriter(.ByRef).DumpSession(
                 Sub(buffer)
@@ -211,7 +213,8 @@ Public Module DataDumps
                         buffer,
                         GetType(T), custom,
                         action:=type,
-                        distinct:=distinct)
+                        distinct:=distinct,
+                        AI:=AI)
                 End Sub)
 
             Return .ToString
@@ -233,7 +236,8 @@ Public Module DataDumps
                                                         path$,
                                                         Optional custom As Func(Of MySQLTable, String) = Nothing,
                                                         Optional type$ = "insert",
-                                                        Optional distinct As Boolean = True)
+                                                        Optional distinct As Boolean = True,
+                                                        Optional AI As Boolean = False)
         Using output As StreamWriter = path.OpenWriter
             Call output.DumpSession(
                 Sub(buffer)
@@ -241,7 +245,8 @@ Public Module DataDumps
                         buffer,
                         GetType(T), custom,
                         action:=type,
-                        distinct:=distinct)
+                        distinct:=distinct,
+                        AI:=AI)
                 End Sub)
         End Using
     End Sub
@@ -262,17 +267,19 @@ Public Module DataDumps
     ''' 假若不是以sql为后缀的话，会被当做文件夹来处理
     ''' </param>
     ''' <param name="encoding"></param>
-    ''' <param name="distinct">是否对<see cref="MySQLTable.GetDumpInsertValue()"/>进行去重处理？默认是</param>
+    ''' <param name="distinct">是否对<see cref="MySQLTable.GetDumpInsertValue"/>进行去重处理？默认是</param>
     ''' <returns></returns>
     <Extension>
     Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
                                                         path$,
                                                         Optional encoding As Encodings = Encodings.Default,
                                                         Optional type$ = "insert",
-                                                        Optional distinct As Boolean = True) As Boolean
+                                                        Optional distinct As Boolean = True,
+                                                        Optional AI As Boolean = False) As Boolean
         Dim sql$ = source.DumpTransaction(
             type:=type,
-            distinct:=distinct)
+            distinct:=distinct,
+            AI:=AI)
 
         If Not path.ExtensionSuffix.TextEquals("sql") Then
             Dim name$ = GetType(T).Name

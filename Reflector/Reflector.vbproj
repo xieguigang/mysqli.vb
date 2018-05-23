@@ -186,7 +186,6 @@
   <ItemGroup>
     <Compile Include="CLI\CLI.vb" />
     <Compile Include="CLI\Markdown.vb" />
-    <Compile Include="test2.vb" />
     <Compile Include="Program.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">

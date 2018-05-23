@@ -67,7 +67,7 @@ Module test2
             Throw New NotImplementedException()
         End Function
 
-        Public Overrides Function GetDumpInsertValue() As String
+        Public Overrides Function GetDumpInsertValue(AI As Boolean) As String
             Throw New NotImplementedException()
         End Function
 
