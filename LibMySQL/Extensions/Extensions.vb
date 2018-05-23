@@ -119,8 +119,7 @@ Public Module Extensions
         Return Nothing
     End Function
 
-    Public ReadOnly Property MySqlDbTypes As IReadOnlyDictionary(Of Type, MySqlDbType) =
-        New Dictionary(Of Type, MySqlDbType) From {
+    Public ReadOnly Property MySqlDbTypes As New Dictionary(Of Type, MySqlDbType) From {
  _
             {GetType(String), MySqlDbType.Text},
             {GetType(Integer), MySqlDbType.MediumInt},
