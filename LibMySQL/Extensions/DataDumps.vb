@@ -1,44 +1,44 @@
 ﻿#Region "Microsoft.VisualBasic::091ac4659a69e70bdbbfacc976981fa5, LibMySQL\Extensions\DataDumps.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    ' Module DataDumps
-    ' 
-    '     Function: CsvImportsHelper, (+2 Overloads) DumpTransaction, simpleField
-    ' 
-    '     Sub: DumpLargeTransaction, DumpMySQL, DumpSession, DumpTransaction, LockTable
-    '          UnlockTable
-    ' 
-    ' /********************************************************************************/
+' Module DataDumps
+' 
+'     Function: CsvImportsHelper, (+2 Overloads) DumpTransaction, simpleField
+' 
+'     Sub: DumpLargeTransaction, DumpMySQL, DumpSession, DumpTransaction, LockTable
+'          UnlockTable
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -46,6 +46,7 @@ Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Language.Default
 Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
@@ -61,10 +62,9 @@ Public Module DataDumps
     ''' <param name="tables"></param>
     <Extension>
     Public Sub DumpMySQL(output As StreamWriter, ParamArray tables As MySQLTable()())
-        Dim type As Type
-
         Call output.DumpSession(
             Sub(buffer)
+                Dim type As Type
 
                 For Each table As MySQLTable() In tables
                     With table
@@ -72,7 +72,7 @@ Public Module DataDumps
                         Call .DumpTransaction(buffer, type, distinct:=True, AI:=True)
                     End With
                 Next
-            End Sub)
+            End Sub, name:=Unknown)
     End Sub
 
     Public Const OptionsTempChange$ =
@@ -181,8 +181,8 @@ Public Module DataDumps
     End Sub
 
     <Extension>
-    Private Sub DumpSession(buffer As TextWriter, dumping As Action(Of TextWriter))
-        Call buffer.WriteLine(OptionsTempChange)
+    Private Sub DumpSession(buffer As TextWriter, dumping As Action(Of TextWriter), name$)
+        Call buffer.WriteLine(OptionsTempChange.Replace("%s", name))
         Call dumping(buffer)
         Call buffer.WriteLine(OptionsRestore, Now.ToString)
     End Sub
@@ -215,11 +215,14 @@ Public Module DataDumps
                         action:=type,
                         distinct:=distinct,
                         AI:=AI)
-                End Sub)
+                End Sub,
+                name:=TableName.GetTableName(Of T)?.Database Or Unknown)
 
             Return .ToString
         End With
     End Function
+
+    ReadOnly Unknown As DefaultValue(Of String) = NameOf(Unknown)
 
     ''' <summary>
     ''' Write a very large SQL table data collection into a SQL file.
@@ -247,7 +250,8 @@ Public Module DataDumps
                         action:=type,
                         distinct:=distinct,
                         AI:=AI)
-                End Sub)
+                End Sub,
+                name:=TableName.GetTableName(Of T)?.Database Or Unknown)
         End Using
     End Sub
 
