@@ -112,7 +112,26 @@ Namespace Scripting
             {"%", "\%"}', {"_", "\_"}
         }
 
-        ' {"\", "\\"}
+        Const escapingSplash$ = "{$" & NameOf(escapingSplash) & "}"
+
+        <Extension>
+        Public Function MySqlUnescaping(value As String) As String
+            If value.StringEmpty Then
+                Return value
+            Else
+                Dim sb As New StringBuilder(value.Replace("\\", escapingSplash))
+
+                For Each code In escapingCodes
+                    Call sb.Replace(code.Value, code.Key)
+                Next
+
+                If escapingSplash.Length < sb.Length Then
+                    Call sb.Replace(escapingSplash, "\")
+                End If
+
+                Return sb.ToString
+            End If
+        End Function
 
         ''' <summary>
         ''' 处理字符串之中的特殊字符的转义。(这是一个安全的函数，如果输入的字符串为空，则这个函数会输出空字符串)
