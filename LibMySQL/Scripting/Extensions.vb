@@ -114,10 +114,15 @@ Namespace Scripting
 
         Const escapingSplash$ = "{$" & NameOf(escapingSplash) & "}"
 
+        ''' <summary>
+        ''' 空值会返回空字符串
+        ''' </summary>
+        ''' <param name="value"></param>
+        ''' <returns></returns>
         <Extension>
         Public Function MySqlUnescaping(value As String) As String
             If value.StringEmpty Then
-                Return value
+                Return ""
             Else
                 Dim sb As New StringBuilder(value.Replace("\\", escapingSplash))
 
