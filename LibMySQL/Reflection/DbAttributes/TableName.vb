@@ -95,8 +95,13 @@ Namespace Reflection.DbAttributes
             Return attr.Name
         End Operator
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Shared Function GetTableName(Of T As Class)() As TableName
-            Dim attrs() = GetType(T).GetCustomAttributes(GetType(TableName), inherit:=True)
+            Return GetTableName(GetType(T))
+        End Function
+
+        Public Shared Function GetTableName(schema As Type) As TableName
+            Dim attrs() = schema.GetCustomAttributes(GetType(TableName), inherit:=True)
 
             If attrs.IsNullOrEmpty Then
                 Return Nothing

@@ -44,6 +44,7 @@ Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.UnixBash
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 
@@ -61,7 +62,7 @@ Public Module LinqExports
     ''' Merge the sql files that exported into a large single sql transaction file? Default is not.
     ''' </param>
     <Extension>
-    Public Sub ProjectDumping(source As IEnumerable(Of NamedValue(Of MySQLTable)), EXPORT$,
+    Public Sub ProjectDumping(source As IEnumerable(Of MySQLTable), EXPORT$,
                               Optional bufferSize% = 500,
                               Optional singleTransaction As Boolean = False,
                               Optional echo As Boolean = True,
@@ -69,17 +70,27 @@ Public Module LinqExports
 
         Dim writer As New Dictionary(Of String, StreamWriter)
         Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
+        Dim tableNames As New Dictionary(Of Type, String)
         Dim DBName$ = ""
         Dim saveSQL$ = EXPORT
 
         EXPORT = App.GetAppSysTempFile(sessionID:=App.PID)
 
-        For Each x As NamedValue(Of MySQLTable) In source
-            If Not writer.ContainsKey(x.Name) Then
-                buffer(x.Name) = (New Table(x.ValueType), New List(Of MySQLTable))
-                DBName = buffer(x.Name).schema.Database
+        For Each obj As MySQLTable In source
+            Dim type As Type = obj.GetType
+            Dim tblName$
 
-                With $"{EXPORT}/{DBName}_{x.Name}.sql".OpenWriter
+            If Not tableNames.ContainsKey(type) Then
+                tableNames(type) = TableName.GetTableName(type)
+            End If
+
+            tblName = tableNames(type)
+
+            If Not writer.ContainsKey(tblName) Then
+                buffer(tblName) = (New Table(type), New List(Of MySQLTable))
+                DBName = buffer(tblName).schema.Database
+
+                With $"{EXPORT}/{DBName}_{tblName}.sql".OpenWriter
                     If Not singleTransaction Then
                         Call .WriteLine(OptionsTempChange.Replace("%s", DBName))
 
@@ -88,22 +99,22 @@ Public Module LinqExports
                         End If
                     End If
 
-                    Call .LockTable(x.Name)
+                    Call .LockTable(tblName)
                     Call .WriteLine()
-                    Call writer.Add(x.Name, .ByRef)
+                    Call writer.Add(tblName, .ByRef)
                 End With
             End If
 
-            With buffer(x.Name)
+            With buffer(tblName)
                 If .bufferData = bufferSize Then
-                    Call .bufferData.DumpBlock(.schema, writer(x.Name), AI:=AI)
+                    Call .bufferData.DumpBlock(.schema, writer(tblName), AI:=AI)
                     Call .bufferData.Clear()
 
                     If echo Then
-                        Call $"write_buffer({x.Name})".__DEBUG_ECHO
+                        Call $"write_buffer({tblName})".__DEBUG_ECHO
                     End If
                 Else
-                    Call .bufferData.Add(x.Value)
+                    Call .bufferData.Add(obj)
                 End If
             End With
         Next
@@ -135,29 +146,38 @@ Public Module LinqExports
                 Call $"Output single transaction SQL file to: {saveSQL}".__INFO_ECHO
             End If
 
-            ' merge the sql files that exported into a large single sql transaction file.
-            Using SQL As StreamWriter = saveSQL.OpenWriter
-                With SQL
-                    Call .WriteLine(OptionsTempChange.Replace("%s", DBName))
-
-                    For Each path As String In ls - l - r - "*.sql" <= EXPORT
-                        Using reader As StreamReader = path.OpenReader
-
-                            Do While Not reader.EndOfStream
-                                Call .WriteLine(reader.ReadLine)
-                            Loop
-
-                        End Using
-                    Next
-
-                    Call .WriteLine(OptionsRestore, Now.ToString)
-                End With
-            End Using
+            Call joinTransactionSql(saveSQL, DBName, EXPORT)
 
             If echo Then
                 Call "job done!".__INFO_ECHO
             End If
         End If
+    End Sub
+
+    ''' <summary>
+    ''' Merge the sql files that exported into a large single sql transaction file.
+    ''' </summary>
+    ''' <param name="saveSQL$"></param>
+    ''' <param name="dbName$"></param>
+    ''' <param name="EXPORT$"></param>
+    Private Sub joinTransactionSql(saveSQL$, dbName$, EXPORT$)
+        Using SQL As StreamWriter = saveSQL.OpenWriter
+            With SQL
+                Call .WriteLine(OptionsTempChange.Replace("%s", dbName))
+
+                For Each path As String In ls - l - r - "*.sql" <= EXPORT
+                    Using reader As StreamReader = path.OpenReader
+
+                        Do While Not reader.EndOfStream
+                            Call .WriteLine(reader.ReadLine)
+                        Loop
+
+                    End Using
+                Next
+
+                Call .WriteLine(OptionsRestore, Now.ToString)
+            End With
+        End Using
     End Sub
 
     <Extension>
