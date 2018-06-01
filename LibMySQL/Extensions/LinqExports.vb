@@ -199,7 +199,7 @@ Public Module LinqExports
                          Optional distinct As Boolean = True,
                          Optional AI As Boolean = False)
 
-        Dim INSERT$ = schemaTable.GenerateInsertSql
+        Dim INSERT$ = schemaTable.GenerateInsertSql(trimAutoIncrement:=Not AI)
         Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
         Dim insertBlocks$() = block _
             .Where(Function(r) Not r Is Nothing) _
