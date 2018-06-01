@@ -66,14 +66,40 @@ Public Module LinqExports
                               Optional singleTransaction As Boolean = False,
                               Optional echo As Boolean = True,
                               Optional AI As Boolean = False)
+        Dim saveSQL$ = EXPORT
+
+        If singleTransaction Then
+            EXPORT = App.GetAppSysTempFile(sessionID:=App.PID)
+        End If
+
+        Dim DBName$ = source.dumpRows(EXPORT, bufferSize, singleTransaction, echo, AI)
+
+        If singleTransaction Then
+
+            If echo Then
+                Call $"Output single transaction SQL file to: {saveSQL}".__INFO_ECHO
+            End If
+
+            Call joinTransactionSql(saveSQL, DBName, EXPORT)
+
+            If echo Then
+                Call "job done!".__INFO_ECHO
+            End If
+        End If
+    End Sub
+
+    <Extension>
+    Private Function dumpRows(source As IEnumerable(Of MySQLTable),
+                              EXPORT$,
+                              bufferSize%,
+                              singleTransaction As Boolean,
+                              echo As Boolean,
+                              AI As Boolean) As String
 
         Dim writer As New Dictionary(Of String, StreamWriter)
         Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
         Dim tableNames As New Dictionary(Of Type, String)
         Dim DBName$ = ""
-        Dim saveSQL$ = EXPORT
-
-        EXPORT = App.GetAppSysTempFile(sessionID:=App.PID)
 
         For Each obj As MySQLTable In source
             Dim type As Type = obj.GetType
@@ -139,19 +165,8 @@ Public Module LinqExports
             Call handle.Dispose()
         Next
 
-        If singleTransaction Then
-
-            If echo Then
-                Call $"Output single transaction SQL file to: {saveSQL}".__INFO_ECHO
-            End If
-
-            Call joinTransactionSql(saveSQL, DBName, EXPORT)
-
-            If echo Then
-                Call "job done!".__INFO_ECHO
-            End If
-        End If
-    End Sub
+        Return DBName
+    End Function
 
     ''' <summary>
     ''' Merge the sql files that exported into a large single sql transaction file.
