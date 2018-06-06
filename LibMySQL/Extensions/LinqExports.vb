@@ -65,14 +65,14 @@ Public Module LinqExports
                               Optional bufferSize% = 500,
                               Optional singleTransaction As Boolean = False,
                               Optional echo As Boolean = True,
-                              Optional AI As Boolean = False)
+                              Optional auto_increment As Boolean = False)
         Dim saveSQL$ = EXPORT
 
         If singleTransaction Then
             EXPORT = App.GetAppSysTempFile(sessionID:=App.PID)
         End If
 
-        Dim DBName$ = source.dumpRows(EXPORT, bufferSize, singleTransaction, echo, AI)
+        Dim DBName$ = source.dumpRows(EXPORT, bufferSize, singleTransaction, echo, auto_increment)
 
         If singleTransaction Then
 
