@@ -43,6 +43,7 @@ Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.UnixBash
+Imports Microsoft.VisualBasic.Linq
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
@@ -101,7 +102,7 @@ Public Module LinqExports
         Dim tableNames As New Dictionary(Of Type, String)
         Dim DBName$ = ""
 
-        For Each obj As MySQLTable In source
+        For Each obj As MySQLTable In source.SafeQuery
             Dim type As Type = obj.GetType
             Dim tblName$
 
