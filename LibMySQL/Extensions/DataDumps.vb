@@ -279,11 +279,11 @@ Public Module DataDumps
                                                         Optional encoding As Encodings = Encodings.Default,
                                                         Optional type$ = "insert",
                                                         Optional distinct As Boolean = True,
-                                                        Optional AI As Boolean = False) As Boolean
+                                                        Optional auto_increment As Boolean = False) As Boolean
         Dim sql$ = source.DumpTransaction(
             type:=type,
             distinct:=distinct,
-            AI:=AI)
+            AI:=auto_increment)
 
         If Not path.ExtensionSuffix.TextEquals("sql") Then
             Dim name$ = GetType(T).Name
