@@ -43,7 +43,7 @@ Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel.SchemaMaps
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 
-Public Module DataClient
+Public Module DataClientExtensions
 
     ''' <summary>
     ''' 从数据库之中加载所有的数据到程序的内存之中，只推荐表的数据量比较小的使用，
@@ -81,23 +81,25 @@ Public Module DataClient
     ''' </summary>
     ''' <param name="schema"></param>
     ''' <param name="o"></param>
-    ''' <param name="ZeroAsNull"></param>
+    ''' <param name="zeroAsNull"></param>
     ''' <returns></returns>
-    <Extension> Public Function OccupancyLoad(schema As BindProperty(Of DatabaseField)(),
-                                              o As MySQLTable,
-                                              Optional ZeroAsNull As Boolean = False) As Double
+    <Extension> Public Function OccupancyLoad(Of MySqlTable As Class)(
+                       schema As BindProperty(Of DatabaseField)(),
+                       o As MySqlTable,
+                       Optional zeroAsNull As Boolean = False) As Double
+
         Dim n% = schema _
             .Where(Function(field)
-                       Return o.HasValue(field, ZeroAsNull)
+                       Return o.HasValue(field, zeroAsNull)
                    End Function) _
             .Count
         Return n / schema.Length
     End Function
 
-    <Extension>
-    Public Function HasValue(entity As MySQLTable, field As BindProperty(Of DatabaseField), Optional ZeroAsNULL As Boolean = False) As Boolean
-        Static emptyDate As Date = New Date
+    ReadOnly emptyDate As Date = New Date
 
+    <Extension>
+    Public Function HasValue(Of MySqlTable As Class)(entity As MySqlTable, field As BindProperty(Of DatabaseField), Optional zeroAsNULL As Boolean = False) As Boolean
         With field
             Dim value As Object = .GetValue(entity)
 
@@ -115,7 +117,7 @@ Public Module DataClient
                 If n <> 0 Then
                     Return True
                 Else
-                    If ZeroAsNULL Then
+                    If zeroAsNULL Then
                         ' 空值，不增加
                         Return False
                     Else
@@ -134,7 +136,7 @@ Public Module DataClient
     ''' <param name="obj"></param>
     ''' <param name="group"></param>
     ''' <returns></returns>
-    <Extension> Public Function GroupMerge(Of T As MySQLTable)(obj As T, schema As BindProperty(Of DatabaseField)(), group As T()) As T
+    <Extension> Public Function GroupFills(Of T As Class)(obj As T, schema As BindProperty(Of DatabaseField)(), group As T()) As T
         For Each field As BindProperty(Of DatabaseField) In schema
             If obj.HasValue(field, True) Then
                 ' 目标已经在当前的这个属性上面存在值了，则跳过
