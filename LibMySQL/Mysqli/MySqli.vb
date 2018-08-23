@@ -163,7 +163,7 @@ Public Class MySqli : Implements IDisposable
     ''' </param>
     Public Function ExecuteScalar(Of T As {New, Class})(SQL As String) As T
         Dim result As DataSet = Fetch(SQL.Trim.EnsureLimit1)
-        Dim reader As DataTableReader = result.CreateDataReader
+        Dim reader As DataTableReader = result?.CreateDataReader
         Dim value As T = DbReflector.ReadFirst(Of T)(reader)
         Return value
     End Function
@@ -296,9 +296,9 @@ Public Class MySqli : Implements IDisposable
     ''' <param name="SQL"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function Fetch(SQL As String) As DataSet
+    Public Function Fetch(SQL$, Optional throwEx As Boolean = False) As DataSet
         Dim MySql As New MySqlConnection(_UriMySQL)
-        Dim DataSet As New DataSet
+        Dim data As New DataSet
         Dim MySqlCommand As New MySqlCommand(SQL) With {
             .Connection = MySql
         }
@@ -307,15 +307,20 @@ Public Class MySqli : Implements IDisposable
         }
 
         Try
-            Call Adapter.Fill(DataSet)
+            Call Adapter.Fill(data)
         Catch ex As Exception
-            ex = __throwExceptionHelper(ex, SQL, False)
-            Call ex.PrintException
-            Call App.LogException(ex)
-            Return Nothing
+            If throwEx Then
+                Throw New Exception(SQL, ex)
+            Else
+                ex = __throwExceptionHelper(ex, SQL, False)
+                Call ex.PrintException
+                Call App.LogException(ex)
+
+                Return Nothing
+            End If
         End Try
 
-        Return DataSet
+        Return data
     End Function
 
     ''' <summary>
