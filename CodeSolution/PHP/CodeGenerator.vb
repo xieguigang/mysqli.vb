@@ -73,21 +73,26 @@ Namespace PHP
         End Function
 
         <Extension>
-        Private Function GenerateCode(table As Table, namesapce As String) As String
+        Private Function GenerateCode(table As Table, namespace$) As String
             Dim php As New StringBuilder
+            Dim type$
 
             Call php.AppendLine("class " & table.TableName & " extends SQLTable {")
 
             For Each field As Field In table.Fields
+                type = phpTypes(field.DataType.MySQLType)
+
                 Call php.AppendLine($"/**")
+
+                For Each line As String In field.Comment.LineTokens
+                    Call php.AppendLine($" * {line}")
+                Next
+
                 Call php.AppendLine($" *")
-                Call php.AppendLine($" * @var ")
+                Call php.AppendLine($" * @var {type}")
                 Call php.AppendLine($"*/")
                 Call php.AppendLine($"public ${field.FieldName};")
             Next
-
-            Call php.AppendLine("public function __toString() {")
-            Call php.AppendLine("}")
 
             Call php.AppendLine("}")
 
