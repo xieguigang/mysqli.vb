@@ -95,9 +95,9 @@ Namespace VisualBasic
         ''' <param name="SQL"></param>
         ''' <param name="[Namesapce]"></param>
         ''' <returns></returns>
-        Public Function GenerateClass(SQL As String, [Namesapce] As String) As NamedValue(Of String)
+        Public Function GenerateClass(SQL$, namesapce$) As NamedValue(Of String)
             Dim table As Table = SQLParser.ParseTable(SQL)
-            Dim vb$ = {table}.GenerateCode(Namesapce)
+            Dim vb$ = {table}.GenerateCode(namesapce)
 
             Return New NamedValue(Of String) With {
                 .Name = table.TableName,

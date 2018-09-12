@@ -12,5 +12,9 @@
         Public Property [Default] As String
         Public Property Extra As String
 
+        Public Overrides Function ToString() As String
+            Return $"Dim {Field} As {Type}"
+        End Function
+
     End Class
 End Namespace

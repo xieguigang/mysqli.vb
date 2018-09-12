@@ -63,28 +63,15 @@ Namespace Reflection.DbAttributes
     <AttributeUsage(AttributeTargets.Property, AllowMultiple:=False, Inherited:=True)>
     Public Class DataType : Inherits DbAttribute
 
-        Dim _type As MySqlDbType
-        Dim _argvs As String
         Dim typeCaster As Func(Of Object, Object)
 
         Public ReadOnly Property MySQLType As MySqlDbType
-            <MethodImpl(MethodImplOptions.AggressiveInlining)>
-            Get
-                Return _type
-            End Get
-        End Property
-
         Public ReadOnly Property ParameterValue As String
-            <MethodImpl(MethodImplOptions.AggressiveInlining)>
-            Get
-                Return _argvs
-            End Get
-        End Property
 
         Sub New(type As MySqlDbType, Optional argvs$ = "")
-            Me._type = type
-            Me._argvs = argvs
             Me.typeCaster = type.TypeHandler
+            Me.MySQLType = type
+            Me.ParameterValue = argvs
         End Sub
 
         ReadOnly defaultEmpty As DefaultValue(Of String) = ""
@@ -94,12 +81,12 @@ Namespace Reflection.DbAttributes
         ''' </summary>
         ''' <returns></returns>
         Public Overrides Function ToString() As String
-            Return _type.ToString & ($" ({_argvs})" Or defaultEmpty)
+            Return MySQLType.ToString & ($" ({ParameterValue})" Or defaultEmpty)
         End Function
 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Shared Narrowing Operator CType(dataType As DataType) As MySqlDbType
-            Return dataType._type
+            Return dataType.MySQLType
         End Operator
 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
