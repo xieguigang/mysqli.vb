@@ -55,13 +55,13 @@ Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Scripting.Expressions
-Imports Microsoft.VisualBasic.Scripting.SymbolBuilder
+Imports Microsoft.VisualBasic.Scripting.SymbolBuilder.VBLanguage
 Imports Microsoft.VisualBasic.Text
+Imports Microsoft.VisualBasic.Text.Xml
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 Imports MySqlScript = Oracle.LinuxCompatibility.MySQL.Scripting.Extensions
-Imports Microsoft.VisualBasic.Text.Xml
 
 Namespace VisualBasic
 
@@ -85,7 +85,7 @@ Namespace VisualBasic
                 name = name.Replace(c, "_")
             Next
 
-            name = VBLanguage.AutoEscapeVBKeyword(name.Replace(" ", "_"))
+            name = KeywordProcessor.AutoEscapeVBKeyword(name.Replace(" ", "_"))
             Return name
         End Function
 
