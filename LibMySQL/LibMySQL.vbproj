@@ -481,6 +481,7 @@
     <Compile Include="Mysqli\Uri\UriEncryption.vb" />
     <Compile Include="Mysqli\Uri\UriBuilder.vb" />
     <Compile Include="Mysqli\Expression\Table.vb" />
+    <Compile Include="Reflection\SchemaDescribe.vb" />
     <Compile Include="Reflection\DataModels\NamespaceDoc.vb" />
     <Compile Include="Reflection\DataModels\SqlGenerateMethods.vb" />
     <Compile Include="Reflection\DbAttributes\TableName.vb" />

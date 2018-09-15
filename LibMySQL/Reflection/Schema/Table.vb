@@ -95,7 +95,9 @@ Namespace Reflection.Schema
         Public ReadOnly Property FieldNames As String()
             <MethodImpl(MethodImplOptions.AggressiveInlining)>
             Get
-                Return _databaseFields.Select(Function(x) x.Value.FieldName).ToArray
+                Return _databaseFields _
+                    .Select(Function(x) x.Value.FieldName) _
+                    .ToArray
             End Get
         End Property
 
