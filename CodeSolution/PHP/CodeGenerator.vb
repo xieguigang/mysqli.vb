@@ -84,10 +84,10 @@ Imports(""MVC.MySql.schemaDriver"");
 class {tables.First.Database} {{
 
     public static function LoadCache() {{
-        {loads.JoinBy(vbLf)}
+        {loads.JoinBy(vbLf & New String(" "c, 8))}
     }}
 
-    {functions.JoinBy(vbLf & vbLf)}
+    {functions.JoinBy(vbLf)}
 }}"
         End Function
 
@@ -109,7 +109,9 @@ class {tables.First.Database} {{
                         End Function) _
                 .ToArray
 
-            Return $"[{fields.JoinBy(", " & vbLf)}]"
+            Return $"[
+            {fields.JoinBy(", " & vbLf & New String(" "c, 12))}
+        ]"
         End Function
 
         <Extension>
