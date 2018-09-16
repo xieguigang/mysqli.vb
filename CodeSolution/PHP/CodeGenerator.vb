@@ -40,6 +40,7 @@
 
 #End Region
 
+Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Oracle.LinuxCompatibility.MySQL.Reflection
@@ -48,6 +49,11 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace PHP
 
+    ''' <summary>
+    ''' Auto code generator for php.NET framework
+    ''' 
+    ''' > https://github.com/GCModeller-Cloud/php-dotnet/blob/master/Framework/MVC/MySql/schemaDriver.php
+    ''' </summary>
     Public Module CodeGenerator
 
         ReadOnly phpTypes As New Dictionary(Of MySqlDbType, String) From {
@@ -55,6 +61,34 @@ Namespace PHP
             {MySqlDbType.Double, "double"},
             {MySqlDbType.VarChar, "string"}
         }
+
+        Public Function GenerateCode(mysqlDoc As StreamReader) As String
+            Dim tables As Table() = mysqlDoc.LoadSQLDoc
+            Dim functions$() = tables _
+                .Select(AddressOf SchemaFunction) _
+                .ToArray
+            Dim loads = tables _
+                .Select(Function(table)
+                            Return $"MVC\MySql\SchemaInfo::WriteCache(""${table.TableName}"", self::{table.TableName}());"
+                        End Function) _
+                .ToArray
+
+            Return $"<?php
+
+Imports(""MVC.MySql.schemaDriver"");
+
+/**
+ * {tables.First.Database}.mysqli.class
+*/
+class {tables.First.Database} {{
+
+    public static function LoadCache() {{
+        {loads.JoinBy(vbLf)}
+    }}
+
+    {functions.JoinBy(vbLf & vbLf)}
+}}"
+        End Function
 
         <Extension>
         Public Function SchemaDescrib(describ As NamedCollection(Of SchemaDescribe)) As String
