@@ -44,6 +44,7 @@ Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Oracle.LinuxCompatibility.MySQL.Reflection
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace PHP
 
@@ -74,6 +75,22 @@ Namespace PHP
                 .ToArray
 
             Return $"[{fields.JoinBy(", " & vbLf)}]"
+        End Function
+
+        <Extension>
+        Public Function SchemaFunction(table As Table) As String
+            Dim schema = Reflection.SchemaDescribe.FromTable(table)
+            Dim array = schema.SchemaDescrib
+
+            Return $"
+    /**
+     * MySql table: ``{table.Database}.{table.TableName}``
+     *
+     * @return array MySql schema table array.
+    */
+    public static function {table.TableName}() {{
+        return {array};
+    }}"
         End Function
     End Module
 End Namespace
