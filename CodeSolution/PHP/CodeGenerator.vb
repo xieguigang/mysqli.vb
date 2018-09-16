@@ -62,6 +62,7 @@ Namespace PHP
             {MySqlDbType.VarChar, "string"}
         }
 
+        <Extension>
         Public Function GenerateCode(mysqlDoc As StreamReader) As String
             Dim tables As Table() = mysqlDoc.LoadSQLDoc
             Dim functions$() = tables _
