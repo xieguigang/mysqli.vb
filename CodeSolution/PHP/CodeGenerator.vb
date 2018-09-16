@@ -70,9 +70,14 @@ Namespace PHP
                 .ToArray
             Dim loads = tables _
                 .Select(Function(table)
-                            Return $"MVC\MySql\SchemaInfo::WriteCache(""${table.TableName}"", self::{table.TableName}());"
+                            Return $"MVC\MySql\SchemaInfo::WriteCache(""{table.TableName}"", self::{table.TableName}());"
                         End Function) _
                 .ToArray
+            Dim names As String = tables _
+                .Select(Function(table)
+                            Return "* > + " & table.TableName & ": " & Mid(table.Comment.TrimNewLine(), 60) & "..."
+                        End Function) _
+                .JoinBy(vbLf & " ")
 
             Return $"<?php
 
@@ -80,19 +85,30 @@ Imports(""MVC.MySql.schemaDriver"");
 
 /**
  * {tables.First.Database}.mysqli.class
+ *
+ {names}
 */
 class {tables.First.Database} {{
 
+    /**
+     * Write ``{tables.First.Database}.mysqli.class`` mysql schema 
+     * cache data to MVC\MySql\SchemaInfo cache.
+    */
     public static function LoadCache() {{
         {loads.JoinBy(vbLf & New String(" "c, 8))}
     }}
 
+    #region ""{tables.First.Database}.mysqli.class""
     {functions.JoinBy(vbLf)}
+    #endregion
 }}"
         End Function
 
         <Extension>
         Public Function SchemaDescrib(describ As NamedCollection(Of SchemaDescribe)) As String
+            Dim maxLen As Integer = describ _
+                .MaxLengthString(Function(field) field.Field) _
+                .Length
             Dim fields$() = describ _
                 .Select(Function(field)
                             Dim keyValues As New List(Of String) From {
@@ -103,7 +119,10 @@ class {tables.First.Database} {{
                                 $"""{NameOf(field.Extra)}"" => ""{field.Extra}""",
                                 $"""{NameOf(field.Default)}"" => ""{field.Default}"""
                             }
-                            Dim fieldValue$ = $"""{field.Field}"" => [{keyValues.JoinBy(", ")}]"
+                            Dim dl = maxLen - field.Field.Length
+                            Dim blank = New String(" "c, dl)
+                            Dim values = keyValues.JoinBy(", ")
+                            Dim fieldValue$ = $"""{field.Field}"" {blank}=> [{values}]"
 
                             Return fieldValue
                         End Function) _
