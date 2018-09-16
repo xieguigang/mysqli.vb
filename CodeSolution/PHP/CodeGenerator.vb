@@ -41,10 +41,9 @@
 #End Region
 
 Imports System.Runtime.CompilerServices
-Imports System.Text
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
+Imports Oracle.LinuxCompatibility.MySQL.Reflection
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
-Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace PHP
 
@@ -56,47 +55,25 @@ Namespace PHP
             {MySqlDbType.VarChar, "string"}
         }
 
-        ''' <summary>
-        ''' 生成Class代码
-        ''' </summary>
-        ''' <param name="SQL"></param>
-        ''' <param name="[Namesapce]"></param>
-        ''' <returns></returns>
-        Public Function GenerateClass(SQL$, namesapce$) As NamedValue(Of String)
-            Dim table As Table = SQLParser.ParseTable(SQL)
-            Dim php As String = CodeGenerator.GenerateCode(table, namesapce)
-
-            Return New NamedValue(Of String) With {
-                .Name = table.TableName,
-                .Value = php
-            }
-        End Function
-
         <Extension>
-        Private Function GenerateCode(table As Table, namespace$) As String
-            Dim php As New StringBuilder
-            Dim type$
+        Public Function SchemaDescrib(describ As NamedCollection(Of SchemaDescribe)) As String
+            Dim fields$() = describ _
+                .Select(Function(field)
+                            Dim keyValues As New List(Of String) From {
+                                $"""{NameOf(field.Field)}"" => ""{field.Field}""",
+                                $"""{NameOf(field.Key)}"" => ""{field.Key}""",
+                                $"""{NameOf(field.Null)}"" => ""{field.Null}""",
+                                $"""{NameOf(field.Type)}"" => ""{field.Type}""",
+                                $"""{NameOf(field.Extra)}"" => ""{field.Extra}""",
+                                $"""{NameOf(field.Default)}"" => ""{field.Default}"""
+                            }
+                            Dim fieldValue$ = $"""{field.Field}"" => [{keyValues.JoinBy(", ")}]"
 
-            Call php.AppendLine("class " & table.TableName & " extends SQLTable {")
+                            Return fieldValue
+                        End Function) _
+                .ToArray
 
-            For Each field As Field In table.Fields
-                type = phpTypes(field.DataType.MySQLType)
-
-                Call php.AppendLine($"/**")
-
-                For Each line As String In field.Comment.LineTokens
-                    Call php.AppendLine($" * {line}")
-                Next
-
-                Call php.AppendLine($" *")
-                Call php.AppendLine($" * @var {type}")
-                Call php.AppendLine($"*/")
-                Call php.AppendLine($"public ${field.FieldName};")
-            Next
-
-            Call php.AppendLine("}")
-
-            Return php.ToString
+            Return $"[{fields.JoinBy(", " & vbLf)}]"
         End Function
     End Module
 End Namespace
