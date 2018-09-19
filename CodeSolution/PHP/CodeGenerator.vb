@@ -111,7 +111,7 @@ namespace PHP_NET\MySqli {{
         #endregion
     }}
     
-    {dbName}::->LoadCache();
+    {dbName}::LoadCache();
 }}"
         End Function
 
