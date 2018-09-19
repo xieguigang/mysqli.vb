@@ -78,29 +78,40 @@ Namespace PHP
                             Return "* > + " & table.TableName & ": " & Mid(table.Comment.TrimNewLine(), 60) & "..."
                         End Function) _
                 .JoinBy(vbLf & " ")
+            Dim dbName As String = tables.First.Database
 
             Return $"<?php
+# Auto generated code by php.NET tools
+#
+# time: {Now.ToString}
+# by:   {My.User.Name}
+#
 
-Imports(""MVC.MySql.schemaDriver"");
+namespace PHP_NET\MySqli {{
 
-/**
- * {tables.First.Database}.mysqli.class
- *
- {names}
-*/
-class {tables.First.Database} {{
+    Imports(""MVC.MySql.schemaDriver"");
 
     /**
-     * Write ``{tables.First.Database}.mysqli.class`` mysql schema 
-     * cache data to MVC\MySql\SchemaInfo cache.
+     * {dbName}.mysqli.class
+     *
+     {names}
     */
-    public static function LoadCache() {{
-        {loads.JoinBy(vbLf & New String(" "c, 8))}
-    }}
+    class {dbName} {{
 
-    #region ""{tables.First.Database}.mysqli.class""
-    {functions.JoinBy(vbLf)}
-    #endregion
+        /**
+         * Write ``{dbName}.mysqli.class`` mysql schema 
+         * cache data to MVC\MySql\SchemaInfo cache.
+        */
+        public static function LoadCache() {{
+            {loads.JoinBy(vbLf & New String(" "c, 8))}
+        }}
+
+        #region ""{dbName}.mysqli.class""
+        {functions.JoinBy(vbLf)}
+        #endregion
+    }}
+    
+    {dbName}::->LoadCache();
 }}"
         End Function
 
