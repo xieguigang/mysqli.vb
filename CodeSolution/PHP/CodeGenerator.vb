@@ -70,17 +70,18 @@ Namespace PHP
                 .ToArray
             Dim loads = tables _
                 .Select(Function(table)
-                            Return $"MVC\MySql\SchemaInfo::WriteCache(""{table.TableName}"", self::{table.TableName}());"
+                            Return $"\MVC\MySql\SchemaInfo::WriteCache(""{table.TableName}"", self::{table.TableName}());"
                         End Function) _
                 .ToArray
             Dim names As String = tables _
                 .Select(Function(table)
-                            Return "* > + " & table.TableName & ": " & Mid(table.Comment.TrimNewLine(), 60) & "..."
+                            Return "    * > + " & table.TableName & ": " & Mid(table.Comment.TrimNewLine(), 60) & "..."
                         End Function) _
                 .JoinBy(vbLf & " ")
             Dim dbName As String = tables.First.Database
 
             Return $"<?php
+
 # Auto generated code by php.NET tools
 #
 # time: {Now.ToString}
@@ -94,7 +95,7 @@ namespace PHP_NET\MySqli {{
     /**
      * {dbName}.mysqli.class
      *
-     {names}
+ {names}
     */
     class {dbName} {{
 
@@ -103,7 +104,7 @@ namespace PHP_NET\MySqli {{
          * cache data to MVC\MySql\SchemaInfo cache.
         */
         public static function LoadCache() {{
-            {loads.JoinBy(vbLf & New String(" "c, 8))}
+            {loads.JoinBy(vbLf & New String(" "c, 4 * 3))}
         }}
 
         #region ""{dbName}.mysqli.class""
@@ -146,12 +147,22 @@ namespace PHP_NET\MySqli {{
 
         <Extension>
         Public Function SchemaFunction(table As Table) As String
-            Dim schema = Reflection.SchemaDescribe.FromTable(table)
+            Dim schema = SchemaDescribe.FromTable(table)
             Dim array = schema.SchemaDescrib
+            Dim comments As String = table.Comment _
+                .LineTokens(escape:=True) _
+                .Select(Function(c) "     * " & c) _
+                .JoinBy(vbLf)
+
+            If comments.StringEmpty Then
+                comments = "     * "
+            End If
 
             Return $"
     /**
      * MySql table: ``{table.Database}.{table.TableName}``
+     *
+{comments}
      *
      * @return array MySql schema table array.
     */
