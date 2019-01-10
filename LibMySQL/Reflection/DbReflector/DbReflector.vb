@@ -87,7 +87,7 @@ Namespace Reflection
         ''' <returns></returns>
         ''' <remarks></remarks>
         Public Shared Function ReadFirst(Of T As {New, Class})(reader As DataTableReader) As T
-            If Not reader.HasRows Then
+            If reader Is Nothing OrElse Not reader.HasRows Then
                 Return Nothing
             Else
                 Call reader.Read()
