@@ -411,38 +411,40 @@ Public Class MySqli : Implements IDisposable
     ''' </returns>
     ''' <remarks></remarks>
     Public Function CommitTransaction(transaction$, Optional ByRef excep As Exception = Nothing) As Boolean
-        Using MyConnection As New MySqlConnection(_UriMySQL)
-            MyConnection.Open()
+        If transaction.StringEmpty Then
+            Try
+                Throw New ArgumentNullException("Empty transaction string!")
+            Catch ex As Exception
+                excep = ex
+                Return False
+            End Try
+        End If
 
-            Dim MyCommand As MySqlCommand = MyConnection.CreateCommand()
-            Dim MyTrans As MySqlTransaction
+        Using MyConnection As New MySqlConnection(_UriMySQL)
+            Call MyConnection.Open()
 
             ' Start a local transaction
-            MyTrans = MyConnection.BeginTransaction()
-
+            Dim MyTrans = MyConnection.BeginTransaction()
             ' Must assign both transaction object and connection
             ' to Command object for a pending local transaction
-            MyCommand.Connection = MyConnection
-            MyCommand.Transaction = MyTrans
+            Dim MyCommand As New MySqlCommand(transaction, MyConnection)
 
             Try
-                MyCommand.CommandText = transaction
-                MyCommand.ExecuteNonQuery()
-                MyTrans.Commit()
+                Call MyCommand.ExecuteNonQuery()
+                Call MyTrans.Commit()
+            Catch ex As Exception
+                If MyConnection.State <> ConnectionState.Closed Then
+                    Call MyTrans.Rollback()
+                End If
 
-                Return True
-            Catch e As Exception
-                Try
-                    MyTrans.Rollback()
-                Catch ex As MySqlException
-                    e = New Exception(__throwExceptionHelper(ex, transaction, False).ToString, e)
-                End Try
-                excep = e
+                excep = ex
                 Return False
             Finally
-                MyConnection.Close()
+
             End Try
         End Using
+
+        Return True
     End Function
 
     Private Function __throwExceptionHelper(ex As Exception, SQL$, throwExp As Boolean) As Exception

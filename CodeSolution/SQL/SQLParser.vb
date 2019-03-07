@@ -268,9 +268,10 @@ _SET_PRIMARYKEY:
         createTableSQL = ASCII.ReplaceQuot(createTableSQL, "\'")
 
         ' The database fields reflection result {Name, Attribute}
+        ' Assuming at least only one primary key in a table
         Dim tableSchema As New Table(fieldList) With {
             .TableName = tableName,
-            .PrimaryFields = primaryKeys.AsList,   ' Assuming at least only one primary key in a table
+            .PrimaryFields = primaryKeys.AsList,
             .Index = primaryKey,
             .Comment = comment,
             .SQL = createTableSQL
@@ -300,9 +301,10 @@ _SET_PRIMARYKEY:
         End If
 
         Dim pos% = InStr(fieldDef, "COMMENT '", CompareMethod.Text)
-        Dim p As int = 0
+        Dim p As VBInteger = 0
 
-        If pos = 0 Then  '没有注释，则百分之百就是列属性了
+        If pos = 0 Then
+            ' 没有注释，则百分之百就是列属性了
             pos = Integer.MaxValue
         End If
 

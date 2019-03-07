@@ -111,9 +111,9 @@ Namespace Reflection.Schema
                          MySqlDbType.Text,
                          MySqlDbType.TinyText
 
-                        Call sb.AppendFormat("DEFAULT `{0}`", [Default])
+                        Call sb.Append($"DEFAULT `{[Default]}`")
                     Case Else
-                        Call sb.AppendFormat("DEFAULT {0}", [Default])
+                        Call sb.Append($"DEFAULT {[Default]}")
                 End Select
             End If
 
