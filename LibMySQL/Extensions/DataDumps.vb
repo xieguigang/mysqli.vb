@@ -222,7 +222,7 @@ Public Module DataDumps
         End With
     End Function
 
-    ReadOnly Unknown As DefaultValue(Of String) = NameOf(Unknown)
+    ReadOnly Unknown As [Default](Of  String) = NameOf(Unknown)
 
     ''' <summary>
     ''' Write a very large SQL table data collection into a SQL file.
