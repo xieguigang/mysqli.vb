@@ -74,7 +74,7 @@ Namespace Reflection.DbAttributes
             Me.ParameterValue = argvs
         End Sub
 
-        ReadOnly defaultEmpty As [Default](Of  String) = ""
+        ReadOnly defaultEmpty As [Default](Of String) = ""
 
         ''' <summary>
         ''' 显示mysql数据库之中的数据类型的定义字符串

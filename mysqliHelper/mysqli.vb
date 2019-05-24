@@ -125,7 +125,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Uri
     Const dataFile$ = "mysqli.dat"
     Const NameKey$ = "mysqli.profile"
 
-    ReadOnly defaultProfile As [Default](Of  String) = dataFile
+    ReadOnly defaultProfile As DefaultValue(Of String) = dataFile
 
     Public Sub RunConfig()
         Dim update As Action(Of ConnectionUri) =
