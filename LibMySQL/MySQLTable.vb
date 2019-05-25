@@ -49,6 +49,8 @@ Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 <XmlType("MySQLi-SQL", [Namespace]:="https://www.mysql.com/")>
 Public MustInherit Class MySQLTable : Inherits SchemaMaps.SQLTable
 
+    Friend scripting As Object
+
     ''' <summary>
     ''' Generates the mysql specific ``REPLACE INTO`` SQL statement. 
     ''' (如果已经存在了一条相同主键值的记录，则删除它然后在插入更新值；

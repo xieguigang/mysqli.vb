@@ -477,7 +477,7 @@
     <Compile Include="Extensions\LinqExports.vb" />
     <Compile Include="Mysqli\Expression\Middleware.vb" />
     <Compile Include="Mysqli\Expression\QueryHelper.vb" />
-    <Compile Include="Mysqli\Linq.vb" />
+    <Compile Include="Scripting\Linq.vb" />
     <Compile Include="Mysqli\Uri\UriEncryption.vb" />
     <Compile Include="Mysqli\Uri\UriBuilder.vb" />
     <Compile Include="Mysqli\Expression\Table.vb" />
@@ -488,6 +488,7 @@
     <Compile Include="Reflection\DbAttributes\DataType.vb" />
     <Compile Include="Reflection\DbReflector\ExecuteScalar.vb" />
     <Compile Include="Scripting\Extensions.vb" />
+    <Compile Include="Scripting\LinqToMySQL.vb" />
     <Compile Include="ServerApp\MemoryCache.vb" />
     <Compile Include="ServerApp\MemorySize.vb" />
     <Compile Include="MySQLTable.vb" />
