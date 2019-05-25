@@ -55,6 +55,11 @@ Namespace Scripting
         ''' </summary>
         Public Const DateTimePattern$ = "\d{4}[-]\d{2}[-]\d{2}\s\d{2}([:]\d{2}){2}"
 
+        ''' <summary>
+        ''' The input string is <see cref="DateTimePattern"/>?
+        ''' </summary>
+        ''' <param name="str"></param>
+        ''' <returns></returns>
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <Extension>
         Public Function IsMySQLDateTimePattern(str As String) As Boolean
@@ -164,6 +169,11 @@ Namespace Scripting
             End If
         End Function
 
+        ''' <summary>
+        ''' do escape for mysql query
+        ''' </summary>
+        ''' <param name="value"></param>
+        ''' <returns></returns>
         Private Function replaceInternal(value As String) As String
             Dim sb As New StringBuilder(value.Replace("\", "\\"))
 
