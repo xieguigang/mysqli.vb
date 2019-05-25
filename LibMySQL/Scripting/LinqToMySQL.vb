@@ -66,11 +66,16 @@ Namespace Scripting
             Dim expression = tokens.GroupBy(Function(t) t.Name).ToDictionary(Function(g) g.Key, Function(g) g.ToArray)
             Dim parts As New List(Of String)
             Dim tableName$ = $"`{table.Database}`.`{table.TableName}`"
+            Dim getOption = Function(nameKey As String)
+                                Return expression.TryGetValue(nameKey, [default]:={}).SingleOrDefault
+                            End Function
 
             ' 在一个linq表达式之中,Select是必定存在的
             Dim rowVar$ = expression!Select.parameterName
             Dim projections = expression!Select.projections
-            Dim condition$ = expression.TryGetValue("Where", [default]:={}).SingleOrDefault.whereExpression(rowVar)
+            Dim condition$ = getOption("Where").whereExpression(rowVar)
+            Dim distinct = getOption("Distinct")
+            Dim orderBy = rowVar.orderExpression(getOption("OrderBy"), getOption("OrderByDescending"))
 
             parts += "SELECT"
             parts += projections.projectionExpression(rowVar)
@@ -83,8 +88,30 @@ Namespace Scripting
                 parts += condition
             End If
 
+            If Not distinct.IsEmpty Then
+                parts += "DISTINCT"
+            End If
+
+            If Not orderBy.StringEmpty Then
+                parts += "ORDER BY"
+                parts += orderBy
+            End If
+
             Dim sql$ = parts.JoinBy(" ")
             Return sql
+        End Function
+
+        <Extension>
+        Private Function orderExpression(rowVar$, asc As NamedValue(Of String()), desc As NamedValue(Of String())) As String
+            If Not asc.IsEmpty Then
+                Dim key = asc.Value(Scan0)
+                Return key.Replace($"{rowVar}.", "") & " ASC"
+            ElseIf Not desc.IsEmpty Then
+                Dim key = desc.Value(Scan0)
+                Return key.Replace($"{rowVar}.", "") & " DESC"
+            Else
+                Return Nothing
+            End If
         End Function
 
         <Extension>
@@ -93,7 +120,10 @@ Namespace Scripting
                 Return ""
             End If
 
-            Dim expression = test.Value(Scan0).GetTagValue("=>", trim:=True).Value
+            Dim expression = test.Value(Scan0) _
+                .GetTagValue("=>", trim:=True) _
+                .Value _
+                .Replace($"{rowVar}.", "")
 
             Return expression
         End Function
