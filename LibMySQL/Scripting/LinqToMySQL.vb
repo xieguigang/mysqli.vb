@@ -70,6 +70,7 @@ Namespace Scripting
             ' 在一个linq表达式之中,Select是必定存在的
             Dim rowVar$ = expression!Select.parameterName
             Dim projections = expression!Select.projections
+            Dim condition$ = expression.TryGetValue("Where", [default]:={}).SingleOrDefault.whereExpression(rowVar)
 
             parts += "SELECT"
             parts += projections.projectionExpression(rowVar)
@@ -77,8 +78,24 @@ Namespace Scripting
             parts += "FROM"
             parts += tableName
 
+            If Not condition.StringEmpty Then
+                parts += "WHERE"
+                parts += condition
+            End If
+
             Dim sql$ = parts.JoinBy(" ")
             Return sql
+        End Function
+
+        <Extension>
+        Private Function whereExpression(test As NamedValue(Of String()), rowVar$) As String
+            If test.IsEmpty Then
+                Return ""
+            End If
+
+            Dim expression = test.Value(Scan0).GetTagValue("=>", trim:=True).Value
+
+            Return expression
         End Function
 
         <Extension>
