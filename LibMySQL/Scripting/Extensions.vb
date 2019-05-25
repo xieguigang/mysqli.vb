@@ -48,7 +48,7 @@ Imports Table = Oracle.LinuxCompatibility.MySQL.Reflection.Schema.Table
 
 Namespace Scripting
 
-    Public Module Extensions
+    <HideModuleName> Public Module Extensions
 
         ''' <summary>
         ''' 2018-04-24 03:15:21

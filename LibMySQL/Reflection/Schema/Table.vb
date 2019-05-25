@@ -101,6 +101,16 @@ Namespace Reflection.Schema
             End Get
         End Property
 
+        Public ReadOnly Property fullName As String
+            Get
+                If Database.StringEmpty Then
+                    Return $"`{TableName}`"
+                Else
+                    Return $"`{Database}`.`{TableName}`"
+                End If
+            End Get
+        End Property
+
         ''' <summary>
         ''' 这张数据表所在数据库的名称
         ''' </summary>
@@ -152,7 +162,7 @@ Namespace Reflection.Schema
         ''' <param name="schema"></param>
         Sub New(schema As Type)
             Call Me.New
-            Call Me.__getSchema(schema)
+            Call Me.getSchema(schema)
             SchemaType = schema
         End Sub
 
@@ -172,8 +182,8 @@ Namespace Reflection.Schema
             Return TableName
         End Function
 
-        Private Sub __getSchema(schema As Type)
-            Dim ItemProperty As PropertyInfo() = schema.GetProperties
+        Private Sub getSchema(schema As Type)
+            Dim itemProperties As PropertyInfo() = schema.GetProperties
             Dim Field As Field
             Dim Index2 As String = String.Empty
             Dim IndexProperty2 As PropertyInfo = Nothing
@@ -181,12 +191,12 @@ Namespace Reflection.Schema
             TableName = GetTableName(schema)
             Database = GetDatabaseName(schema)
 
-            For i As Integer = 0 To ItemProperty.Length - 1
+            For i As Integer = 0 To itemProperties.Length - 1
 
                 ' Parse the field attribute from the ctype operator, 
                 ' this property must have a DatabaseField custom 
                 ' Attribute to indicate that it is a database field.
-                Field = ItemProperty(i)
+                Field = itemProperties(i)
 
                 If Field Is Nothing Then
                     Continue For
@@ -203,16 +213,17 @@ Namespace Reflection.Schema
 
                     If Extensions.Numerics.IndexOf(Field.DataType) > -1 AndAlso Field.PrimaryKey Then
                         Index = Field.FieldName
-                        IndexProperty = ItemProperty(i)
+                        IndexProperty = itemProperties(i)
                     End If
 
                     Index2 = Field.FieldName
-                    IndexProperty2 = ItemProperty(i)
+                    IndexProperty2 = itemProperties(i)
                 End If
             Next
 
-            ' If we can not found a index from its unique field, then we indexing from its primary key.
-            Call __indexing(Index2, IndexProperty2, ItemProperty)
+            ' If we can not found a index from its unique field, 
+            ' then we indexing from its primary key.
+            Call __indexing(Index2, IndexProperty2, itemProperties)
         End Sub
 
         ''' <summary>
@@ -223,10 +234,13 @@ Namespace Reflection.Schema
         ''' <param name="ItemProperty"></param>
         ''' <remarks></remarks>
         Private Sub __indexing(Index2 As String, Indexproperty2 As PropertyInfo, ItemProperty As PropertyInfo())
-            If Not String.IsNullOrEmpty(Index) Then Return ' If we have a unique index from previous work, then this operation is no more needed. 
+            ' If we have a unique index from previous work, then this operation is no more needed. 
+            If Not String.IsNullOrEmpty(Index) Then Return
 
             If String.IsNullOrEmpty(Index2) Then
-                If PrimaryFields.Count > 0 Then            ' Indexing from the primary key, the primary key may be more than one
+                If PrimaryFields.Count > 0 Then
+                    ' Indexing from the primary key, 
+                    ' the primary key may be more than one
                     Dim LQuery As String =
                         LinqAPI.DefaultFirst(Of String) <=
                         From Field In Fields
@@ -250,7 +264,8 @@ Namespace Reflection.Schema
                         Select iPinfo '
                 End If
             Else
-                Index = Index2   ' The data type of this index field is a text type. 
+                ' The data type of this index field is a text type. 
+                Index = Index2
                 IndexProperty = Indexproperty2
             End If
         End Sub

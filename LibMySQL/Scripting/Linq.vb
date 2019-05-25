@@ -42,44 +42,27 @@
 
 #End Region
 
-Imports System.Dynamic
-Imports Oracle.LinuxCompatibility.MySQL.Expressions
-Imports Oracle.LinuxCompatibility.MySQL.Uri
+
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace Scripting
-
-    Public Class SQL(Of T As {New, MySQLTable}) : Inherits DynamicObject
-
-        Public ReadOnly Property SQL As String
-            Get
-                Return buildSQL()
-            End Get
-        End Property
-
-        Private Function buildSQL() As String
-
-        End Function
-
-        Public Shared Narrowing Operator CType(sql As SQL(Of T)) As T
-            Dim wrapper As New T
-            wrapper.scripting = sql
-            Return wrapper
-        End Operator
-    End Class
 
     ''' <summary>
     ''' Linq to MySQL
     ''' </summary>
-    ''' <typeparam name="TTable"></typeparam>
-    Public Class Linq(Of TTable As {New, MySQLTable})
-        Implements IEnumerable(Of SQL(Of TTable))
+    ''' <typeparam name="T"></typeparam>
+    Public Class Linq(Of T As {New, MySQLTable})
+        Implements IEnumerable(Of T)
 
-        Private Iterator Function IEnumerable_GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
-            Yield New SQL(Of TTable)
+        Public Overrides Function ToString() As String
+            Return New Table(GetType(T)).fullName
         End Function
 
-        Public Function GetEnumerator() As IEnumerator(Of SQL(Of TTable)) Implements IEnumerable(Of SQL(Of TTable)).GetEnumerator
-            Throw New NotImplementedException()
+        Public Iterator Function GetEnumerator() As IEnumerator(Of T) Implements IEnumerable(Of T).GetEnumerator
+        End Function
+
+        Private Iterator Function IEnumerable_GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
+            Yield GetEnumerator()
         End Function
     End Class
 End Namespace
