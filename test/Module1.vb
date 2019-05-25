@@ -18,6 +18,9 @@ Module Module1
                                   Select row
                                   Take 1)
 
+
+        Dim trace As New StackTrace
+
         Pause()
     End Sub
 End Module
