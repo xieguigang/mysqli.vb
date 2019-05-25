@@ -2,6 +2,7 @@
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Text
 Imports Microsoft.VisualBasic.Text.Parser
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
@@ -76,25 +77,37 @@ Namespace Scripting
             Dim condition$ = getOption("Where").whereExpression(rowVar)
             Dim distinct = getOption("Distinct")
             Dim orderBy = rowVar.orderExpression(getOption("OrderBy"), getOption("OrderByDescending"))
+            Dim takes = getOption("Take")
 
             parts += "SELECT"
             parts += projections.projectionExpression(rowVar)
+            parts += ASCII.LF
 
             parts += "FROM"
             parts += tableName
+            parts += ASCII.LF
 
             If Not condition.StringEmpty Then
                 parts += "WHERE"
                 parts += condition
+                parts += ASCII.LF
             End If
 
             If Not distinct.IsEmpty Then
                 parts += "DISTINCT"
+                parts += ASCII.LF
             End If
 
             If Not orderBy.StringEmpty Then
                 parts += "ORDER BY"
                 parts += orderBy
+                parts += ASCII.LF
+            End If
+
+            If Not takes.IsEmpty Then
+                parts += "LIMIT"
+                parts += takes.Value(Scan0)
+                parts += ASCII.LF
             End If
 
             Dim sql$ = parts.JoinBy(" ")
@@ -104,11 +117,11 @@ Namespace Scripting
         <Extension>
         Private Function orderExpression(rowVar$, asc As NamedValue(Of String()), desc As NamedValue(Of String())) As String
             If Not asc.IsEmpty Then
-                Dim key = asc.Value(Scan0)
-                Return key.Replace($"{rowVar}.", "") & " ASC"
+                Dim key = asc.Value(Scan0).GetTagValue("=>", trim:=True)
+                Return key.Value.Replace($"{rowVar}.", "").Replace($"{key.Name}.", "") & " ASC"
             ElseIf Not desc.IsEmpty Then
-                Dim key = desc.Value(Scan0)
-                Return key.Replace($"{rowVar}.", "") & " DESC"
+                Dim key = desc.Value(Scan0).GetTagValue("=>", trim:=True)
+                Return key.Value.Replace($"{rowVar}.", "").Replace($"{key.Name}.", "") & " DESC"
             Else
                 Return Nothing
             End If
@@ -225,9 +238,16 @@ Namespace Scripting
                 .Where(Function(t) t.Value.Length = 1) _
                 .Select(Function(t) t.Value(Scan0).GetTagValue("=>", trim:=True)) _
                 .Where(Function(t) t.Value.IsPattern("Convert[(].+[)]")) _
-                .First
+                .FirstOrDefault
 
-            Return token.Name
+            If token.IsEmpty Then
+                Return expression(Scan0) _
+                    .Value(Scan0) _
+                    .GetTagValue("=>", trim:=True) _
+                    .Name
+            Else
+                Return token.Name
+            End If
         End Function
     End Module
 End Namespace
