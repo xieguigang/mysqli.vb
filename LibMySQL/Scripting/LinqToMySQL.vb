@@ -41,7 +41,7 @@ Namespace Scripting
                     If TypeOf arg Is MethodCallExpression Then
                         query = arg
                     Else
-                        Exit Do
+                        Throw New NotImplementedException(arg.GetType.FullName)
                     End If
                 Else
                     Throw New NotImplementedException(arg.GetType.FullName)
@@ -65,13 +65,80 @@ Namespace Scripting
             Dim rowVar$ = expression!Select.parameterName
             Dim projections = expression!Select.projections
 
+
+
             Dim sql$ = parts.JoinBy(" ")
             Return sql
         End Function
 
         <Extension>
-        Private Function projections(expression As NamedValue(Of String())()) As String()
+        Private Function projections(expression As NamedValue(Of String())()) As NamedValue(Of String)()
+            Dim token = expression _
+                .Where(Function(t) t.Value.Length = 1) _
+                .Select(Function(t) t.Value(Scan0).GetTagValue("=>", trim:=True)) _
+                .Where(Function(t) Not t.Value.IsPattern("Convert[(].+[)]")) _
+                .First
+            Dim proj$ = token.Value
 
+            If proj.StartsWith("new VB$AnonymousType") Then
+                proj = proj.GetStackValue("(", ")")
+                Return proj.projectFields.ToArray
+            Else
+                Throw New NotImplementedException
+            End If
+        End Function
+
+        ''' <summary>
+        ''' Returns [fieldName => value expression]
+        ''' </summary>
+        ''' <param name="expression"></param>
+        ''' <returns></returns>
+        <Extension>
+        Private Iterator Function projectFields(expression As String) As IEnumerable(Of NamedValue(Of String))
+            Dim chars As CharPtr = expression
+            Dim buffer As New List(Of Char)
+            Dim c As Char
+            Dim funcStack As New Stack(Of Char)
+            Dim valueExpression As Boolean = False
+
+            ' 字段之间使用逗号分隔
+            Do While Not chars.EndRead
+                c = ++chars
+
+                If valueExpression Then
+
+                    If c = "("c Then
+                        Call funcStack.Push("("c)
+                    ElseIf c = ")"c Then
+                        Call funcStack.Pop()
+                    End If
+
+                    If c = ","c AndAlso funcStack.Count = 0 Then
+                        Yield buffer.CharString.GetTagValue("=", trim:=True)
+
+                        buffer *= 0
+                        valueExpression = False
+
+                        Continue Do
+                    End If
+
+                ElseIf c = ","c Then
+                    Yield buffer.CharString.GetTagValue("=", trim:=True)
+
+                    buffer *= 0
+                    valueExpression = False
+
+                    Continue Do
+                ElseIf c = "="c Then
+                    valueExpression = True
+                End If
+
+                buffer += c
+            Loop
+
+            If buffer > 0 Then
+                Yield buffer.CharString.GetTagValue("=", trim:=True)
+            End If
         End Function
 
         <Extension>
