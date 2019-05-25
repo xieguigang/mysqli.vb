@@ -22,6 +22,7 @@ Namespace Scripting
                                     .Select(Function(a) a.ToString) _
                                     .ToArray
                             End Function
+            Dim table As Type
 
             tokens += New NamedValue(Of String()) With {
                 .Name = query.Method.Name,
@@ -40,8 +41,11 @@ Namespace Scripting
 
                     If TypeOf arg Is MethodCallExpression Then
                         query = arg
-                    Else
-                        Throw New NotImplementedException(arg.GetType.FullName)
+                    ElseIf TypeOf arg Is MemberExpression Then
+                        Dim from = DirectCast(arg, MemberExpression)
+
+                        table = from.Type.GenericTypeArguments(Scan0)
+                        Exit Do
                     End If
                 Else
                     Throw New NotImplementedException(arg.GetType.FullName)
