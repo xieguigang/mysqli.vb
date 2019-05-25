@@ -3,6 +3,7 @@ Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Text.Parser
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace Scripting
 
@@ -22,7 +23,7 @@ Namespace Scripting
                                     .Select(Function(a) a.ToString) _
                                     .ToArray
                             End Function
-            Dim table As Type
+            Dim table As Type = Nothing
 
             tokens += New NamedValue(Of String()) With {
                 .Name = query.Method.Name,
@@ -57,22 +58,42 @@ Namespace Scripting
                 }
             Loop
 
-            Return tokens.MySQL
+            Return tokens.MySQL(table)
         End Function
 
         <Extension>
-        Public Function MySQL(tokens As IEnumerable(Of NamedValue(Of String()))) As String
+        Public Function MySQL(tokens As IEnumerable(Of NamedValue(Of String())), table As Table) As String
             Dim expression = tokens.GroupBy(Function(t) t.Name).ToDictionary(Function(g) g.Key, Function(g) g.ToArray)
             Dim parts As New List(Of String)
+            Dim tableName$ = $"`{table.Database}`.`{table.TableName}`"
 
             ' 在一个linq表达式之中,Select是必定存在的
             Dim rowVar$ = expression!Select.parameterName
             Dim projections = expression!Select.projections
 
+            parts += "SELECT"
+            parts += projections.projectionExpression(rowVar)
 
+            parts += "FROM"
+            parts += tableName
 
             Dim sql$ = parts.JoinBy(" ")
             Return sql
+        End Function
+
+        <Extension>
+        Private Function projectionExpression(proj As NamedValue(Of String)(), rowVar$) As String
+            Dim list As New List(Of String)
+
+            If proj.Length = 1 AndAlso proj(Scan0).Name = "*" Then
+                Return "*"
+            End If
+
+            For Each field In proj
+                list += $"{field.Value.Replace($"{rowVar}.", "")} AS {field.Name}"
+            Next
+
+            Return list.JoinBy(", ")
         End Function
 
         <Extension>
@@ -88,7 +109,13 @@ Namespace Scripting
                 proj = proj.GetStackValue("(", ")")
                 Return proj.projectFields.ToArray
             Else
-                Throw New NotImplementedException
+                If token.Name = proj Then
+                    Return {
+                        New NamedValue(Of String) With {.Name = "*", .Value = Nothing}
+                    }
+                Else
+                    Throw New NotImplementedException
+                End If
             End If
         End Function
 
