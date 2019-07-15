@@ -149,7 +149,7 @@ namespace {[namespace]} {{
             Dim fields$() = table _
                 .Select(Function(field)
                             Return $"    /**
-      * {field.Note} 
+      * [{field.Type}] {field.Note} 
       * 
       * @var {phpTypes(field.MySqlType)}
      */" & vbCrLf &
