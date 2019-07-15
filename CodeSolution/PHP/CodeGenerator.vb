@@ -63,7 +63,7 @@ Namespace PHP
         }
 
         <Extension>
-        Public Function GenerateCode(mysqlDoc As StreamReader) As String
+        Public Function GeneratePhpModelCode(mysqlDoc As StreamReader) As String
             Dim tables As Table() = mysqlDoc.LoadSQLDoc
             Dim functions$() = tables _
                 .Select(AddressOf SchemaFunction) _
