@@ -258,6 +258,7 @@ _SET_PRIMARYKEY:
         Dim comment As String = r.Match(createTableSQL, "COMMENT='.+';", RegexOptions.Singleline).Value
         Dim fieldList = fields _
             .Select(AddressOf __createField) _
+            .Where(Function(field) Not field Is Nothing) _
             .ToDictionary(Function(field) field.FieldName)
 
         If Not String.IsNullOrEmpty(comment) Then
@@ -324,6 +325,11 @@ _SET_PRIMARYKEY:
     Private Function __createField(fieldDef As String) As Reflection.Schema.Field
         Dim name$ = r.Match(fieldDef, "`.+?`", RegexICSng).Value
         Dim tokens$() = {name}.Join(fieldDef.Replace(name, "").Trim.Split)
+
+        If InStr(fieldDef, "UNIQUE INDEX") > 0 Then
+            ' 这是一个索引的定义，不是数据表的字段定义
+            Return Nothing
+        End If
 
         Try
             Return __createField(fieldDef, tokens)
