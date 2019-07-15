@@ -84,7 +84,7 @@ Module CLI
         Dim SQL As String = args("/sql")
         Dim out$ = args("-o")
         Dim ns As String = args("/namespace")
-        Dim language$ = args("/language") Or "visualbasic"
+        Dim language$ = args("--language") Or "visualbasic"
 
         ' 当文件不存在的时候可能是std_in，则判断是否存在out并且是split状态
         If Not SQL.FileExists Then
