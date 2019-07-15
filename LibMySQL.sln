@@ -202,8 +202,8 @@ Global
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.mysqli_X64_release|x86.Build.0 = mysqli_X64_release|Any CPU
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.Publish|Any CPU.ActiveCfg = Release|Any CPU
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.Publish|Any CPU.Build.0 = Release|Any CPU
-		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.Publish|x64.ActiveCfg = Release|Any CPU
-		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.Publish|x64.Build.0 = Release|Any CPU
+		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.Publish|x64.ActiveCfg = Publish|x64
+		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.Publish|x64.Build.0 = Publish|x64
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.Publish|x86.ActiveCfg = Release|Any CPU
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.Publish|x86.Build.0 = Release|Any CPU
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -274,8 +274,8 @@ Global
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.docs|x86.Build.0 = Debug|Any CPU
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.GCModeller_release(x64)|Any CPU.ActiveCfg = Release|Any CPU
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.GCModeller_release(x64)|Any CPU.Build.0 = Release|Any CPU
-		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.GCModeller_release(x64)|x64.ActiveCfg = Release|Any CPU
-		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.GCModeller_release(x64)|x64.Build.0 = Release|Any CPU
+		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.GCModeller_release(x64)|x64.ActiveCfg = Release|x64
+		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.GCModeller_release(x64)|x64.Build.0 = Release|x64
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.GCModeller_release(x64)|x86.ActiveCfg = Release|Any CPU
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.GCModeller_release(x64)|x86.Build.0 = Release|Any CPU
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.mysqli_X64_release|Any CPU.ActiveCfg = Release|Any CPU
@@ -286,8 +286,8 @@ Global
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.mysqli_X64_release|x86.Build.0 = Release|Any CPU
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Publish|Any CPU.ActiveCfg = Release|Any CPU
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Publish|Any CPU.Build.0 = Release|Any CPU
-		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Publish|x64.ActiveCfg = Release|Any CPU
-		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Publish|x64.Build.0 = Release|Any CPU
+		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Publish|x64.ActiveCfg = Release|x64
+		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Publish|x64.Build.0 = Release|x64
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Publish|x86.ActiveCfg = Release|Any CPU
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Publish|x86.Build.0 = Release|Any CPU
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
