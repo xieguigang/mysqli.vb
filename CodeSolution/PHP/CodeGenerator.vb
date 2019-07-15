@@ -126,12 +126,14 @@ namespace {[namespace]} {{
 
         <Extension>
         Public Function TableToPhpClass(table As NamedCollection(Of SchemaDescribe)) As String
-            Dim fields$() = table.Select(Function(field)
-                                             Return $"/**
-                                               * 
-                                              */" & vbCrLf & $"public ${field.Field};"
-                                         End Function) _
-                                 .ToArray
+            Dim fields$() = table _
+                .Select(Function(field)
+                            Return $"    /**
+      * 
+     */" & vbCrLf &
+     $"    public ${field.Field};"
+                        End Function) _
+                .ToArray
 
             Return $"class {table.name} {{
     
