@@ -101,7 +101,7 @@ Module CLI
             ' 这个编码会导致php脚本的解析不正常
             ' 在这里使用不带有BOM头信息的utf8编码
             Using output As StreamWriter = args.OpenStreamOutput("-o", Encodings.UTF8WithoutBOM)
-                Call output.WriteLine(mysqlDoc.GeneratePhpModelCode())
+                Call output.WriteLine(mysqlDoc.GeneratePhpModelCode(ns))
                 Call output.Flush()
             End Using
 

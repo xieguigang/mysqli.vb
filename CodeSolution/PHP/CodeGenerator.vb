@@ -63,7 +63,7 @@ Namespace PHP
         }
 
         <Extension>
-        Public Function GeneratePhpModelCode(mysqlDoc As StreamReader) As String
+        Public Function GeneratePhpModelCode(mysqlDoc As StreamReader, Optional namespace$ = "MySqli") As String
             Dim tables As Table() = mysqlDoc.LoadSQLDoc
             Dim functions$() = tables _
                 .Select(AddressOf SchemaFunction) _
@@ -88,7 +88,7 @@ Namespace PHP
 # by:   {My.User.Name}
 #
 
-namespace PHP_NET\MySqli {{
+namespace {[namespace]} {{
 
     Imports(""MVC.MySql.schemaDriver"");
 
