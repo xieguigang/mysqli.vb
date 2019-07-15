@@ -56,10 +56,19 @@ Namespace PHP
     ''' </summary>
     Public Module CodeGenerator
 
+        ''' <summary>
+        ''' Map mysql data type to php data type
+        ''' </summary>
         ReadOnly phpTypes As New Dictionary(Of MySqlDbType, String) From {
             {MySqlDbType.BigInt, "integer"},
+            {MySqlDbType.Int64, "integer"},
             {MySqlDbType.Double, "double"},
-            {MySqlDbType.VarChar, "string"}
+            {MySqlDbType.VarChar, "string"},
+            {MySqlDbType.DateTime, "string"},
+            {MySqlDbType.Date, "string"},
+            {MySqlDbType.Int32, "integer"},
+            {MySqlDbType.Boolean, "boolean"},
+            {MySqlDbType.Text, "string"}
         }
 
         <Extension>
@@ -140,16 +149,22 @@ namespace {[namespace]} {{
             Dim fields$() = table _
                 .Select(Function(field)
                             Return $"    /**
+      * {field.Note} 
       * 
+      * @var {phpTypes(field.MySqlType)}
      */" & vbCrLf &
      $"    public ${field.Field};"
                         End Function) _
                 .ToArray
 
-            Return $"class {table.name} {{
+            Return $"
+    /**
+     * {table.description}
+    */
+    class {table.name} {{
     
-    {fields.JoinBy(vbCrLf)}
-}}"
+        {fields.JoinBy(vbCrLf)}
+    }}"
         End Function
 
         <Extension>

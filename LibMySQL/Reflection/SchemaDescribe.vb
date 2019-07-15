@@ -1,5 +1,6 @@
 ﻿Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace Reflection
@@ -15,6 +16,9 @@ Namespace Reflection
         Public Property Key As String
         Public Property [Default] As String
         Public Property Extra As String
+        Public Property Note As String
+
+        Public Property MySqlType As MySqlDbType
 
         Public ReadOnly Property IsAutoIncrement As Boolean
             Get
@@ -36,17 +40,21 @@ Namespace Reflection
                 .Select(AddressOf FromField) _
                 .ToArray
 
-            Return New NamedCollection(Of SchemaDescribe)(name, describs)
+            Return New NamedCollection(Of SchemaDescribe)(name, describs) With {
+                .description = schema.Comment
+            }
         End Function
 
         Public Shared Function FromField(field As Field) As SchemaDescribe
             Return New SchemaDescribe With {
                 .Field = field.FieldName,
                 .Type = field.DataType.ToString,
+                .MySqlType = field.DataType.MySQLType,
                 .[Default] = field.Default,
                 .Extra = "" Or "auto_increment".When(field.AutoIncrement),
                 .Key = "" Or "PRI".When(field.PrimaryKey),
-                .Null = "YES" Or "NO".When(field.NotNull)
+                .Null = "YES" Or "NO".When(field.NotNull),
+                .Note = field.Comment
             }
         End Function
     End Class
