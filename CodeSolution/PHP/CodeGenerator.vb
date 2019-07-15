@@ -110,6 +110,17 @@ namespace {[namespace]} {{
             {loads.JoinBy(vbLf & New String(" "c, 4 * 3))}
         }}
 
+        private static function Field($schema) {{
+            return [
+                ""Field""   => $schema[0], 
+                ""Key""     => $schema[1], 
+                ""Null""    => $schema[2], 
+                ""Type""    => $schema[3], 
+                ""Extra""   => $schema[4], 
+                ""Default"" => $schema[5]
+            ];
+        }}
+
         #region ""{dbName}.mysqli.class""
         {functions.JoinBy(vbLf)}
         #endregion
@@ -149,17 +160,17 @@ namespace {[namespace]} {{
             Dim fields$() = describ _
                 .Select(Function(field)
                             Dim keyValues As New List(Of String) From {
-                                $"""{NameOf(field.Field)}"" => ""{field.Field}""",
-                                $"""{NameOf(field.Key)}"" => ""{field.Key}""",
-                                $"""{NameOf(field.Null)}"" => ""{field.Null}""",
-                                $"""{NameOf(field.Type)}"" => ""{field.Type}""",
-                                $"""{NameOf(field.Extra)}"" => ""{field.Extra}""",
-                                $"""{NameOf(field.Default)}"" => ""{field.Default}"""
+                                $"""{field.Field}""",
+                                $"""{field.Key}""",
+                                $"""{field.Null}""",
+                                $"""{field.Type}""",
+                                $"""{field.Extra}""",
+                                $"""{field.Default}"""
                             }
                             Dim dl = maxLen - field.Field.Length
                             Dim blank = New String(" "c, dl)
                             Dim values = keyValues.JoinBy(", ")
-                            Dim fieldValue$ = $"""{field.Field}"" {blank}=> [{values}]"
+                            Dim fieldValue$ = $"""{field.Field}"" {blank}=> self::Field([{values}])"
 
                             Return fieldValue
                         End Function) _
