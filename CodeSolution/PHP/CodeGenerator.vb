@@ -148,8 +148,13 @@ namespace {[namespace]} {{
         Public Function TableToPhpClass(table As NamedCollection(Of SchemaDescribe)) As String
             Dim fields$() = table _
                 .Select(Function(field)
+                            Dim comments$ = Strings.Trim(field.Note) _
+                                .Replace("\n", vbCrLf) _
+                                .LineTokens _
+                                .JoinBy(vbCrLf & "    * ")
+
                             Return $"    /**
-      * [{field.Type}] {field.Note} 
+      * <MySQLDbTypes::{field.Type}> {comments} 
       * 
       * @var {phpTypes(field.MySqlType)}
      */" & vbCrLf &

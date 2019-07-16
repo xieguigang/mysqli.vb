@@ -23,7 +23,7 @@ Namespace Reflection
         Public ReadOnly Property IsAutoIncrement As Boolean
             Get
                 Dim isAutoIncre = Extra = "auto_increment"
-                Dim isInt32 = InStr(Type, "int") > 0
+                Dim isInt32 = InStr(Type, "int", CompareMethod.Text) > 0
 
                 Return isInt32 AndAlso isAutoIncre
             End Get
