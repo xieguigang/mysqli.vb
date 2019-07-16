@@ -201,12 +201,19 @@ namespace {[namespace]} {{
         {fields.JoinBy(vbCrLf)}
 
         /**
+         * 数据表模型对象缓存
+         *
+         * @var \Table
+        */
+        private static $mysql_model;
+
+        /**
          * 获取得到`{dbName}`.`{table.name}`数据表的数据库操作模型
          *
          * @return \Table 一个数据表模型对象
         */
         public static function Model() {{
-            return {dbName}::GetModel(""{table.name}"");
+            return empty(self::$mysql_model) ? self::$mysql_model : (self::$mysql_model = {dbName}::GetModel(""{table.name}""));
         }}
 
         /**
@@ -217,10 +224,18 @@ namespace {[namespace]} {{
         }}
 
         /**
+         * add a new row data into table `{dbName}`.`{table.name}`
+        */
+        public static function add($data) {{
+            $model = empty(self::$mysql_model) ? self::$mysql_model : (self::$mysql_model = {dbName}::GetModel(""{table.name}""));
+            return $model->add($data);
+        }}
+
+        /**
          * @return {table.name}[]
         */
         public static function select($where, $limit = NULL, $orderBy = NULL, $desc = false) {{
-            $model = {dbName}::GetModel(""{table.name}"");
+            $model = empty(self::$mysql_model) ? self::$mysql_model : (self::$mysql_model = {dbName}::GetModel(""{table.name}""));
             $model = $model->where($where);
 
             if (!empty($limit)) {{
@@ -238,10 +253,12 @@ namespace {[namespace]} {{
         }}
 
         /**
+         * Find a single `{dbName}`.`{table.name}` record row with given condition. 
+         *
          * @return {table.name}
         */
         public static function find($where, $orderBy = NULL, $desc = false) {{
-            $model = {dbName}::GetModel(""{table.name}"");
+            $model = empty(self::$mysql_model) ? self::$mysql_model : (self::$mysql_model = {dbName}::GetModel(""{table.name}""));
             $model = $model->where($where);
 
             if (!empty($orderBy)) {{
