@@ -200,6 +200,18 @@ namespace {[namespace]} {{
     
         {fields.JoinBy(vbCrLf)}
 
+        /**
+         * 获取得到`{dbName}`.`{table.name}`数据表的数据库操作模型
+         *
+         * @return \Table 一个数据表模型对象
+        */
+        public static function Model() {{
+            return {dbName}::GetModel(""{table.name}"");
+        }}
+
+        /**
+         * @return {table.name}
+        */
         private static function provider() {{
             return new {table.name}();
         }}
