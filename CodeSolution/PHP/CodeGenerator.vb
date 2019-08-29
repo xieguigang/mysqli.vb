@@ -68,7 +68,9 @@ Namespace PHP
             {MySqlDbType.Date, "string"},
             {MySqlDbType.Int32, "integer"},
             {MySqlDbType.Boolean, "boolean"},
-            {MySqlDbType.Text, "string"}
+            {MySqlDbType.Text, "string"},
+            {MySqlDbType.UInt32, "integer"},
+            {MySqlDbType.UInt64, "integer"}
         }
 
         ''' <summary>
@@ -213,7 +215,11 @@ namespace {[namespace]} {{
          * @return \Table 一个数据表模型对象
         */
         public static function Model() {{
-            return empty(self::$mysql_model) ? self::$mysql_model : (self::$mysql_model = {dbName}::GetModel(""{table.name}""));
+            if (empty(self::$mysql_model)) {{
+                self::$mysql_model = {dbName}::GetModel(""{table.name}"");
+            }}
+
+            return self::$mysql_model;
         }}
 
         /**
@@ -226,17 +232,15 @@ namespace {[namespace]} {{
         /**
          * add a new row data into table `{dbName}`.`{table.name}`
         */
-        public static function add($data) {{
-            $model = empty(self::$mysql_model) ? self::$mysql_model : (self::$mysql_model = {dbName}::GetModel(""{table.name}""));
-            return $model->add($data);
+        public static function add($data) {{            
+            return self::Model()->add($data);
         }}
 
         /**
          * @return {table.name}[]
         */
         public static function select($where, $limit = NULL, $orderBy = NULL, $desc = false) {{
-            $model = empty(self::$mysql_model) ? self::$mysql_model : (self::$mysql_model = {dbName}::GetModel(""{table.name}""));
-            $model = $model->where($where);
+            $model = self::Model()->where($where);
 
             if (!empty($limit)) {{
                 $model = $model->limit($limit);
@@ -258,8 +262,7 @@ namespace {[namespace]} {{
          * @return {table.name}
         */
         public static function find($where, $orderBy = NULL, $desc = false) {{
-            $model = empty(self::$mysql_model) ? self::$mysql_model : (self::$mysql_model = {dbName}::GetModel(""{table.name}""));
-            $model = $model->where($where);
+            $model = self::Model()->where($where);
 
             if (!empty($orderBy)) {{
                 $model = $model->order_by($orderBy, $desc);
