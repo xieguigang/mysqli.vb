@@ -259,7 +259,9 @@ _SET_PRIMARYKEY:
         Dim fieldList = fields _
             .Select(AddressOf __createField) _
             .Where(Function(field) Not field Is Nothing) _
-            .ToDictionary(Function(field) field.FieldName)
+            .ToDictionary(Function(field)
+                              Return field.FieldName
+                          End Function)
 
         If Not String.IsNullOrEmpty(comment) Then
             comment = Mid(comment, 10)
@@ -314,7 +316,7 @@ _SET_PRIMARYKEY:
 
         Dim field As New Field With {
             .FieldName = FieldName,
-            .DataType = __createDataType(DataType.Replace(",", "").Trim),  ' Some data type can be merged into a same type when we mapping a database table
+            .DataType = InternalCreateDataType(DataType.Replace(",", "").Trim),
             .Comment = Comment,
             .AutoIncrement = IsAutoIncrement,
             .NotNull = IsNotNull
@@ -343,7 +345,10 @@ _SET_PRIMARYKEY:
     ''' </summary>
     ''' <param name="type_define"></param>
     ''' <returns></returns>
-    Private Function __createDataType(type_define$) As Reflection.DbAttributes.DataType
+    ''' <remarks>
+    ''' Some data type can be merged into a same type when we mapping a database table
+    ''' </remarks>
+    Private Function InternalCreateDataType(type_define$) As Reflection.DbAttributes.DataType
         Dim type As Reflection.DbAttributes.MySqlDbType
         Dim parameter As String = ""
 
@@ -365,7 +370,7 @@ _SET_PRIMARYKEY:
             type = Reflection.DbAttributes.MySqlDbType.VarChar
             parameter = __getNumberValue(type_define, 45)
 
-        ElseIf Regex.Match(type_define, "double", RegexOptions.IgnoreCase).Success OrElse InStr(type_define, "float") > 0 Then
+        ElseIf Regex.Match(type_define, "double", RegexOptions.IgnoreCase).Success OrElse InStr(type_define, "float", CompareMethod.Text) > 0 Then
             type = Reflection.DbAttributes.MySqlDbType.Double
 
         ElseIf Regex.Match(type_define, "datetime", RegexOptions.IgnoreCase).Success OrElse
@@ -377,7 +382,8 @@ _SET_PRIMARYKEY:
         ElseIf Regex.Match(type_define, "text", RegexOptions.IgnoreCase).Success Then
             type = Reflection.DbAttributes.MySqlDbType.Text
 
-        ElseIf InStr(type_define, "enum(", CompareMethod.Text) > 0 Then   ' enum类型转换为String类型？？？？
+        ElseIf InStr(type_define, "enum(", CompareMethod.Text) > 0 Then
+            ' enum类型转换为String类型？？？？
             type = Reflection.DbAttributes.MySqlDbType.String
 
         ElseIf InStr(type_define, "Blob", CompareMethod.Text) > 0 OrElse
@@ -393,10 +399,8 @@ _SET_PRIMARYKEY:
             parameter = __getNumberValue(type_define, 1)
 
         Else
-
             'More complex type is not support yet, but you can easily extending the mapping code at here
-            Throw New NotImplementedException($"Type define is not support yet for    {NameOf(type_define)}   >>> ""{type_define}""")
-
+            Throw New NotImplementedException($"Type define is not support yet for {NameOf(type_define)}=""{type_define}""")
         End If
 
         Return New Reflection.DbAttributes.DataType(type, parameter)

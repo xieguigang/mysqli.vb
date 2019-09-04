@@ -698,19 +698,23 @@ NO_KEY:
             Dim sqlDump As String = Nothing
             Dim Schema As Table() = SQLParser.LoadSQLDoc(file, sqlDump)
             Dim CreateTables As String() = Regex.Split(sqlDump, SCHEMA_SECTIONS)
+            ' The first block of the text splits is the 
+            ' SQL comments from the MySQL data exporter. 
             Dim SchemaSQLLQuery = From tbl As String
-                                  In CreateTables.Skip(1)          ' The first block of the text splits is the SQL comments from the MySQL data exporter. 
+                                  In CreateTables.Skip(1)
                                   Let s_TableName As String = Regex.Match(tbl, "`.+?`").Value
                                   Select tableName = Mid(s_TableName, 2, Len(s_TableName) - 2),
                                       tbl
             Dim SchemaSQL As Dictionary(Of String, String) = Nothing
+
             Try
                 SchemaSQL = SchemaSQLLQuery _
                     .ToDictionary(Function(x) x.tableName,
                                   Function(x) x.tbl)
             Catch ex As Exception
                 Dim g = SchemaSQLLQuery.ToArray.CheckDuplicated(Of String)(Function(x) x.tableName)
-                Dim dupliTables As String = String.Join(", ", g.Select(Function(tb) tb.Tag).ToArray)
+                Dim dupliTables As String = g.Select(Function(tb) tb.Tag).JoinBy(", ")
+
                 Throw New Exception("Duplicated tables:  " & dupliTables, ex)
             End Try
 
