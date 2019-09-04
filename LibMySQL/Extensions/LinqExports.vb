@@ -108,7 +108,7 @@ Public Module LinqExports
         Dim tableNames As New Dictionary(Of Type, String)
         Dim DBName$ = ""
 
-        For Each obj As MySQLTable In source.SafeQuery
+        For Each obj As MySQLTable In source
             Dim type As Type = obj.GetType
             Dim tblName$
 
@@ -139,7 +139,12 @@ Public Module LinqExports
 
             With buffer(tblName)
                 If .bufferData = bufferSize Then
-                    Call .bufferData.DumpBlock(.schema, writer(tblName), distinct:=distinct, auto_increment:=auto_increment)
+                    Call .bufferData.DumpBlock(
+                        schemaTable:= .schema,
+                        out:=writer(tblName),
+                        distinct:=distinct,
+                        auto_increment:=auto_increment
+                    )
                     Call .bufferData.Clear()
 
                     If echo Then
@@ -153,7 +158,12 @@ Public Module LinqExports
 
         For Each buf In buffer.EnumerateTuples
             With buf.obj
-                Call .bufferData.DumpBlock(.schema, writer(buf.name), distinct:=distinct, auto_increment:=auto_increment)
+                Call .bufferData.DumpBlock(
+                    schemaTable:= .schema,
+                    out:=writer(buf.name),
+                    distinct:=distinct,
+                    auto_increment:=auto_increment
+                )
             End With
 
             With writer(buf.name)
