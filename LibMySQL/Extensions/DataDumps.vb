@@ -151,7 +151,7 @@ Public Module DataDumps
 
         If action.TextEquals("insert") Then
             For Each block In source.Split(200)
-                Call block.DumpBlock(schemaTable, out, distinct, AI:=AI)
+                Call block.DumpBlock(schemaTable, out, distinct, auto_increment:=AI)
             Next
         Else
             Call source _

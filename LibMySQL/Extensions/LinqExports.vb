@@ -56,27 +56,32 @@ Public Module LinqExports
     ''' <summary>
     ''' 将数据结果导出到一个文件夹之中，文件名为表名称
     ''' </summary>
-    ''' <param name="source">名字必须为表名称</param>
-    ''' <param name="EXPORT$"></param>
+    ''' <param name="source">这个序列之中包含有某一个非常大型的mysql数据库项目中的不同的数据表的数据模型</param>
+    ''' <param name="EXPORT">导出的sql文件的文件路径或者项目输出的文件夹路径</param>
     ''' <param name="singleTransaction">
     ''' Merge the sql files that exported into a large single sql transaction file? Default is not.
     ''' </param>
+    ''' <param name="echo">For debug test used only.</param>
     <Extension>
     Public Sub ProjectDumping(source As IEnumerable(Of MySQLTable), EXPORT$,
                               Optional bufferSize% = 500,
                               Optional singleTransaction As Boolean = False,
                               Optional echo As Boolean = True,
+                              Optional distinct As Boolean = True,
                               Optional auto_increment As Boolean = False)
         Dim saveSQL$ = EXPORT
 
         If singleTransaction Then
-            EXPORT = App.GetAppSysTempFile(sessionID:=App.PID)
+            EXPORT = App.GetAppSysTempFile(
+                ext:=".sql",
+                sessionID:=App.PID,
+                prefix:=$"mysql_{App.PID.ToHexString}"
+            )
         End If
 
-        Dim DBName$ = source.dumpRows(EXPORT, bufferSize, singleTransaction, echo, auto_increment)
+        Dim DBName$ = source.dumpRows(EXPORT, bufferSize, singleTransaction, echo, distinct, auto_increment)
 
         If singleTransaction Then
-
             If echo Then
                 Call $"Output single transaction SQL file to: {saveSQL}".__INFO_ECHO
             End If
@@ -95,7 +100,8 @@ Public Module LinqExports
                               bufferSize%,
                               singleTransaction As Boolean,
                               echo As Boolean,
-                              AI As Boolean) As String
+                              distinct As Boolean,
+                              auto_increment As Boolean) As String
 
         Dim writer As New Dictionary(Of String, StreamWriter)
         Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
@@ -133,7 +139,7 @@ Public Module LinqExports
 
             With buffer(tblName)
                 If .bufferData = bufferSize Then
-                    Call .bufferData.DumpBlock(.schema, writer(tblName), AI:=AI)
+                    Call .bufferData.DumpBlock(.schema, writer(tblName), distinct:=distinct, auto_increment:=auto_increment)
                     Call .bufferData.Clear()
 
                     If echo Then
@@ -147,7 +153,7 @@ Public Module LinqExports
 
         For Each buf In buffer.EnumerateTuples
             With buf.obj
-                Call .bufferData.DumpBlock(.schema, writer(buf.name), AI:=AI)
+                Call .bufferData.DumpBlock(.schema, writer(buf.name), distinct:=distinct, auto_increment:=auto_increment)
             End With
 
             With writer(buf.name)
@@ -184,7 +190,9 @@ Public Module LinqExports
                     Using reader As StreamReader = path.OpenReader
 
                         Do While Not reader.EndOfStream
-                            Call .WriteLine(reader.ReadLine)
+                            Call reader _
+                                .ReadLine _
+                                .DoCall(AddressOf .WriteLine)
                         Loop
 
                     End Using
@@ -198,13 +206,13 @@ Public Module LinqExports
     <Extension>
     Public Sub DumpBlock(block As IEnumerable(Of MySQLTable), schemaTable As Table, out As TextWriter,
                          Optional distinct As Boolean = True,
-                         Optional AI As Boolean = False)
+                         Optional auto_increment As Boolean = False)
 
-        Dim INSERT$ = schemaTable.GenerateInsertSql(trimAutoIncrement:=Not AI)
+        Dim INSERT$ = schemaTable.GenerateInsertSql(trimAutoIncrement:=Not auto_increment)
         Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
         Dim insertBlocks$() = block _
             .Where(Function(r) Not r Is Nothing) _
-            .Select(Function(r) r.GetDumpInsertValue(AI)) _
+            .Select(Function(r) r.GetDumpInsertValue(auto_increment)) _
             .ToArray
 
         If distinct Then
