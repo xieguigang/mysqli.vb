@@ -44,11 +44,11 @@
 Imports System.Runtime.CompilerServices
 Imports System.Runtime.InteropServices
 Imports System.Text
+Imports Microsoft.VisualBasic.ApplicationServices.Terminal
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.Default
 Imports Microsoft.VisualBasic.SecurityString
-Imports Microsoft.VisualBasic.Terminal
 Imports Oracle.LinuxCompatibility.MySQL
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
