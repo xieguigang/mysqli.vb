@@ -155,7 +155,7 @@
     <WarningsAsErrors>
     </WarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'docs|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BioDeep_database|AnyCPU' ">
     <DefineTrace>true</DefineTrace>
     <OutputPath>./bin</OutputPath>
     <DocumentationFile>Oracle.LinuxCompatibility.LibMySQL.xml</DocumentationFile>
@@ -167,7 +167,7 @@
     <WarningsAsErrors>
     </WarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'docs|x64'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BioDeep_database|x64' ">
     <DefineTrace>true</DefineTrace>
     <OutputPath>./bin</OutputPath>
     <DocumentationFile>Oracle.LinuxCompatibility.LibMySQL.xml</DocumentationFile>
@@ -179,7 +179,7 @@
     <WarningsAsErrors>
     </WarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'docs|x86'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BioDeep_database|x86' ">
     <DefineTrace>true</DefineTrace>
     <OutputPath>./bin</OutputPath>
     <DocumentationFile>Oracle.LinuxCompatibility.LibMySQL.xml</DocumentationFile>
