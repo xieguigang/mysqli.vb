@@ -60,7 +60,8 @@ Module CLI
 
     Const InputsNotFound As String = "The required input parameter ""/sql"" is not specified!"
 
-    <ExportAPI("--reflects", Example:="--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
+    <ExportAPI("--reflects")>
+    <Example("--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
     <Description("Automatically generates visualbasic source code from the MySQL database schema dump.")>
     <Usage("--reflects /sql <sql_path/std_in> [-o <output_path> /namespace <namespace> --language <php/visualbasic, default=visualbasic> /split]")>
     <Argument("/sql", False, CLITypes.File, PipelineTypes.std_in,
@@ -75,9 +76,6 @@ Module CLI
     <Argument("/split", True,
               AcceptTypes:={GetType(Boolean)},
               Description:="Split the source code into sevral files and named by table name?")>
-    <Argument("/auto_increment.disable", True,
-              AcceptTypes:={GetType(Boolean)},
-              Description:="Enable output the auto increment field in the mysql table instead of auto increment in the process of mysql inserts.")>
     <Group(Program.ORM_CLI)>
     Public Function ReflectsConvert(args As CommandLine) As Integer
         Dim split As Boolean = args("/split")
