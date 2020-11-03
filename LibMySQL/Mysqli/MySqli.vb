@@ -55,7 +55,7 @@ Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Scripting
 Imports Microsoft.VisualBasic.Serialization.JSON
-Imports MySql.Data.MySqlClient
+Imports MySqlConnector
 Imports Oracle.LinuxCompatibility.MySQL.Reflection
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Scripting
