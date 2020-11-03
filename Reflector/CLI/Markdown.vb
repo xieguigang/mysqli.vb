@@ -53,11 +53,11 @@ Partial Module CLI
     <Usage("/MySQL.Markdown /sql <database.sql/std_in> [/toc /out <out.md/std_out>]")>
     <Description("Generates the SDK document of your mysql database.")>
     <Group(Program.DocsTool)>
-    <Argument("/sql", False, CLITypes.File, PipelineTypes.std_in,
+    <ArgumentAttribute("/sql", False, CLITypes.File, PipelineTypes.std_in,
               Description:="The sql content source from a sql file or sql ``std_out`` output")>
-    <Argument("/out", True, CLITypes.File, PipelineTypes.std_out,
+    <ArgumentAttribute("/out", True, CLITypes.File, PipelineTypes.std_out,
               Description:="The markdown document output to a specific file or output onto the ``std_out`` device.")>
-    <Argument("/toc", True, CLITypes.Boolean, Description:="Add topics of content?")>
+    <ArgumentAttribute("/toc", True, CLITypes.Boolean, Description:="Add topics of content?")>
     Public Function MySQLMarkdown(args As CommandLine) As Integer
         With args.OpenStreamOutput("/out", Encodings.UTF8WithoutBOM)
             If Not .BaseStream Is GetType(FileStream) Then
