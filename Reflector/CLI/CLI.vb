@@ -60,22 +60,24 @@ Module CLI
 
     Const InputsNotFound As String = "The required input parameter ""/sql"" is not specified!"
 
-    <ExportAPI("--reflects")>
-    <Example("--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
+    <ExportAPI("--reflects", Example:="--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
     <Description("Automatically generates visualbasic source code from the MySQL database schema dump.")>
     <Usage("--reflects /sql <sql_path/std_in> [-o <output_path> /namespace <namespace> --language <php/visualbasic, default=visualbasic> /split]")>
-    <ArgumentAttribute("/sql", False, CLITypes.File, PipelineTypes.std_in,
+    <Argument("/sql", False, CLITypes.File, PipelineTypes.std_in,
               AcceptTypes:={GetType(String)},
               Description:="The file path of the MySQL database schema dump file."),
-     ArgumentAttribute("-o", True, CLITypes.File,
+     Argument("-o", True, CLITypes.File,
               AcceptTypes:={GetType(String)},
               Description:="The output file path of the generated visual basic source code file from the SQL dump file ""/sql"""),
-     ArgumentAttribute("/namespace", True,
+     Argument("/namespace", True,
               AcceptTypes:={GetType(String)},
               Description:="The namespace value will be insert into the generated source code if this parameter is not null.")>
-    <ArgumentAttribute("/split", True,
+    <Argument("/split", True,
               AcceptTypes:={GetType(Boolean)},
               Description:="Split the source code into sevral files and named by table name?")>
+    <Argument("/auto_increment.disable", True,
+              AcceptTypes:={GetType(Boolean)},
+              Description:="Enable output the auto increment field in the mysql table instead of auto increment in the process of mysql inserts.")>
     <Group(Program.ORM_CLI)>
     Public Function ReflectsConvert(args As CommandLine) As Integer
         Dim split As Boolean = args("/split")

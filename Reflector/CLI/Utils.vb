@@ -10,8 +10,8 @@ Partial Module CLI
     <ExportAPI("/union")>
     <Usage("/union /in <directory> [/out <out.sql>]")>
     <Description("Union all of the sql file in the target directory into a one big sql text file.")>
-    <ArgumentAttribute("/in", False, CLITypes.File, PipelineTypes.std_in, AcceptTypes:={GetType(MySQLTable)}, Description:="")>
-    <ArgumentAttribute("/out", True, CLITypes.File, PipelineTypes.std_out, AcceptTypes:={GetType(MySQLTable)}, Description:="")>
+    <Argument("/in", False, CLITypes.File, PipelineTypes.std_in, AcceptTypes:={GetType(MySQLTable)}, Description:="")>
+    <Argument("/out", True, CLITypes.File, PipelineTypes.std_out, AcceptTypes:={GetType(MySQLTable)}, Description:="")>
     Public Function Union(args As CommandLine) As Integer
         Dim imports$ = args.ReadInput("/in")
 
