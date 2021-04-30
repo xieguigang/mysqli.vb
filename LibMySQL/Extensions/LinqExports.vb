@@ -41,6 +41,7 @@
 
 Imports System.IO
 Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.ApplicationServices
 Imports Microsoft.VisualBasic.ComponentModel.Collection
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.UnixBash
@@ -73,7 +74,7 @@ Public Module LinqExports
         Dim saveSQL$ = EXPORT
 
         If singleTransaction Then
-            EXPORT = App.GetAppSysTempFile(
+            EXPORT = TempFileSystem.GetAppSysTempFile(
                 ext:=".sql",
                 sessionID:=App.PID,
                 prefix:=$"mysql_{App.PID.ToHexString}"
