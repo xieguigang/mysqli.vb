@@ -595,24 +595,12 @@
     <Compile Include="Mysqli\Uri\UriEncryption.vb" />
     <Compile Include="Mysqli\Uri\UriBuilder.vb" />
     <Compile Include="Mysqli\Expression\Table.vb" />
-    <Compile Include="Reflection\SchemaDescribe.vb" />
-    <Compile Include="Reflection\DataModels\NamespaceDoc.vb" />
-    <Compile Include="Reflection\DataModels\SqlGenerateMethods.vb" />
-    <Compile Include="Reflection\DbAttributes\TableName.vb" />
-    <Compile Include="Reflection\DbAttributes\DataType.vb" />
-    <Compile Include="Reflection\DbReflector\ExecuteScalar.vb" />
     <Compile Include="Scripting\Extensions.vb" />
     <Compile Include="Scripting\LinqToMySQL.vb" />
     <Compile Include="ServerApp\MemoryCache.vb" />
     <Compile Include="ServerApp\MemorySize.vb" />
     <Compile Include="GlobalSuppressions.vb" />
     <Compile Include="Mysqli\RecordStatus.vb" />
-    <Compile Include="Reflection\DbAttributes\MySqlDbType.vb" />
-    <Compile Include="Reflection\Schema\Table.vb" />
-    <Compile Include="Reflection\Schema\FieldAttributes.vb" />
-    <Compile Include="Reflection\DataTable.vb" />
-    <Compile Include="Reflection\DbReflector\DbReflector.vb" />
-    <Compile Include="Reflection\DbAttributes\DbAttributes.vb" />
     <Compile Include="Mysqli\Uri\ConnectionUri.vb" />
     <Compile Include="Extensions\Extensions.vb" />
     <Compile Include="Mysqli\MySqli.vb" />
@@ -631,11 +619,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Reflection\DataModels\SQL.vb" />
-    <Compile Include="Reflection\DataModels\Update.vb" />
-    <Compile Include="Reflection\DataModels\Insert.vb" />
-    <Compile Include="Reflection\DataModels\Delete.vb" />
-    <Compile Include="Reflection\DataModels\CreateTable.vb" />
     <Compile Include="Workbench\Dump\RestoreWorker.vb" />
     <Compile Include="Workbench\ServerInstances.vb" />
     <Compile Include="Workbench\Connections.vb" />

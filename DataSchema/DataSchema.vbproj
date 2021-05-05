@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{7A752AA2-5A30-4AC8-9142-EA23B190450E}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Oracle.LinuxCompatibility.LibMySQL</RootNamespace>
+    <RootNamespace>Oracle.LinuxCompatibility.MySQL</RootNamespace>
     <AssemblyName>Oracle.LinuxCompatibility.LibMySQL.DataSchema</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
@@ -81,6 +81,23 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="MySQLTable.vb" />
+    <Compile Include="Reflection\DataModels\CreateTable.vb" />
+    <Compile Include="Reflection\DataModels\Delete.vb" />
+    <Compile Include="Reflection\DataModels\Insert.vb" />
+    <Compile Include="Reflection\DataModels\NamespaceDoc.vb" />
+    <Compile Include="Reflection\DataModels\SQL.vb" />
+    <Compile Include="Reflection\DataModels\SqlGenerateMethods.vb" />
+    <Compile Include="Reflection\DataModels\Update.vb" />
+    <Compile Include="Reflection\DataTable.vb" />
+    <Compile Include="Reflection\DbAttributes\DataType.vb" />
+    <Compile Include="Reflection\DbAttributes\DbAttributes.vb" />
+    <Compile Include="Reflection\DbAttributes\MySqlDbType.vb" />
+    <Compile Include="Reflection\DbAttributes\TableName.vb" />
+    <Compile Include="Reflection\DbReflector\DbReflector.vb" />
+    <Compile Include="Reflection\DbReflector\ExecuteScalar.vb" />
+    <Compile Include="Reflection\SchemaDescribe.vb" />
+    <Compile Include="Reflection\Schema\FieldAttributes.vb" />
+    <Compile Include="Reflection\Schema\Table.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
