@@ -64,6 +64,10 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\DataClient.vb" />
+    <Compile Include="Extensions\DataDumps.vb" />
+    <Compile Include="Extensions\Extensions.vb" />
+    <Compile Include="Extensions\LinqExports.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

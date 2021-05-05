@@ -586,9 +586,6 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\DataClient.vb" />
-    <Compile Include="Extensions\DataDumps.vb" />
-    <Compile Include="Extensions\LinqExports.vb" />
     <Compile Include="Mysqli\Expression\Middleware.vb" />
     <Compile Include="Mysqli\Expression\QueryHelper.vb" />
     <Compile Include="Scripting\Linq.vb" />
@@ -602,7 +599,6 @@
     <Compile Include="GlobalSuppressions.vb" />
     <Compile Include="Mysqli\RecordStatus.vb" />
     <Compile Include="Mysqli\Uri\ConnectionUri.vb" />
-    <Compile Include="Extensions\Extensions.vb" />
     <Compile Include="Mysqli\MySqli.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
