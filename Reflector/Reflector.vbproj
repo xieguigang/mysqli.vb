@@ -352,6 +352,10 @@
       <Project>{6fbb3d95-4d76-42b8-a991-a4beed9831bc}</Project>
       <Name>CodeSolution</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DataSchema\DataSchema.vbproj">
+      <Project>{7a752aa2-5a30-4ac8-9142-ea23b190450e}</Project>
+      <Name>DataSchema</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LibMySQL\LibMySQL.vbproj">
       <Project>{2c34a044-1bde-44e8-a86e-e9971c87da21}</Project>
       <Name>LibMySQL</Name>
