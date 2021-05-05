@@ -89,7 +89,8 @@ Namespace Scripting
         ''' </summary>
         ''' <param name="SQL">已经被Trim过了的</param>
         ''' <returns></returns>
-        <Extension> Public Function EnsureLimit1(SQL As String) As String
+        <Extension>
+        Public Function EnsureLimit1(SQL As String) As String
             Dim limitFlag$ = r.Match(SQL, LIMIT1, RegexICSng).Value
 
             If String.IsNullOrEmpty(limitFlag) OrElse InStrRev(SQL, limitFlag) < SQL.Length - limitFlag.Length Then

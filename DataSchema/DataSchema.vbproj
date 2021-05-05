@@ -102,6 +102,9 @@
     <Compile Include="Reflection\SchemaDescribe.vb" />
     <Compile Include="Reflection\Schema\FieldAttributes.vb" />
     <Compile Include="Reflection\Schema\Table.vb" />
+    <Compile Include="Scripting\Extensions.vb" />
+    <Compile Include="Scripting\Linq.vb" />
+    <Compile Include="Scripting\LinqToMySQL.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
