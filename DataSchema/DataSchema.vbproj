@@ -97,8 +97,7 @@
     <Compile Include="Reflection\DbAttributes\DbAttributes.vb" />
     <Compile Include="Reflection\DbAttributes\MySqlDbType.vb" />
     <Compile Include="Reflection\DbAttributes\TableName.vb" />
-    <Compile Include="Reflection\DbReflector\DbReflector.vb" />
-    <Compile Include="Reflection\DbReflector\ExecuteScalar.vb" />
+    <Compile Include="Reflection\ExecuteScalar.vb" />
     <Compile Include="Reflection\SchemaDescribe.vb" />
     <Compile Include="Reflection\Schema\FieldAttributes.vb" />
     <Compile Include="Reflection\Schema\Table.vb" />

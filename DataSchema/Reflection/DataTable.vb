@@ -48,6 +48,7 @@
 #End Region
 
 Imports System.Runtime.CompilerServices
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 
 <Assembly: InternalsVisibleTo("Oracle.LinuxCompatibility.LibMySQL")>
@@ -170,6 +171,35 @@ Namespace Reflection
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Function Update(Record As Schema) As String
             Return UpdateSQL.Generate(Record)
+        End Function
+
+        ''' <summary>
+        ''' 从数据库之中加载所有的数据到程序的内存之中，只推荐表的数据量比较小的使用，
+        ''' 使用这个函数加载完数据到内存之中后，进行内存之中的查询操作，会很明显提升应用程序的执行性能
+        ''' 
+        ''' ```SQL
+        ''' SELECT * FROM `{table.Database}`.`{table.TableName}`;
+        ''' ```
+        ''' </summary>
+        ''' <returns></returns>
+        Public Shared Function SelectALL() As String
+            Dim table As TableName = GetType(Schema).GetAttribute(Of TableName)
+            Dim SQL$ = $"SELECT * FROM `{table.Database}`.`{table.Name}`;"
+
+            Return SQL
+        End Function
+
+        Public Shared Function Truncate() As String
+            Dim table As TableName = GetType(Schema).GetAttribute(Of TableName)
+            Dim SQL$
+
+            If table.Database.StringEmpty Then
+                SQL = $"TRUNCATE `{table.Name}`;"
+            Else
+                SQL = $"TRUNCATE `{table.Database}`.`{table.Name}`;"
+            End If
+
+            Return SQL
         End Function
     End Class
 End Namespace

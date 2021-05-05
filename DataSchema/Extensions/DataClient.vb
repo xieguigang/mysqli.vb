@@ -46,37 +46,6 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Public Module DataClientExtensions
 
     ''' <summary>
-    ''' 从数据库之中加载所有的数据到程序的内存之中，只推荐表的数据量比较小的使用，
-    ''' 使用这个函数加载完数据到内存之中后，进行内存之中的查询操作，会很明显提升应用程序的执行性能
-    ''' 
-    ''' ```SQL
-    ''' SELECT * FROM `{table.Database}`.`{table.TableName}`;
-    ''' ```
-    ''' </summary>
-    ''' <typeparam name="T"></typeparam>
-    ''' <param name="mysql"></param>
-    ''' <returns></returns>
-    <Extension> Public Function SelectALL(Of T As MySQLTable)(mysql As MySqli) As T()
-        Dim table As TableName = GetType(T).GetAttribute(Of TableName)
-        Dim SQL$ = $"SELECT * FROM `{table.Database}`.`{table.Name}`;"
-        Return mysql.Query(Of T)(SQL)
-    End Function
-
-    <Extension>
-    Public Function Truncate(Of T As MySQLTable)(mysqli As MySqli) As Boolean
-        Dim table As TableName = GetType(T).GetAttribute(Of TableName)
-        Dim SQL$
-
-        If table.Database.StringEmpty Then
-            SQL = $"TRUNCATE `{table.Name}`;"
-        Else
-            SQL = $"TRUNCATE `{table.Database}`.`{table.Name}`;"
-        End If
-
-        Return mysqli.Execute(SQL) > 0
-    End Function
-
-    ''' <summary>
     ''' 这个函数统计出<see cref="MySQLTable"/>所代表的二维表格之中，具有值得属性的数量占所有的属性的百分比
     ''' </summary>
     ''' <param name="schema"></param>

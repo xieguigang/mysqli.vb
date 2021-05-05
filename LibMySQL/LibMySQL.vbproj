@@ -586,6 +586,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mysqli\DbReflector.vb" />
     <Compile Include="Mysqli\QueryHandler.vb" />
     <Compile Include="Mysqli\Expression\Middleware.vb" />
     <Compile Include="Mysqli\Expression\QueryHelper.vb" />
