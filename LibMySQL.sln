@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "LibMySQL", "LibMySQL\LibMySQL.vbproj", "{2C34A044-1BDE-44E8-A86E-E9971C87DA21}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Reflector", "Reflector\Reflector.vbproj", "{8A02381A-18E7-44CD-9A5A-F67310864C3D}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "47-dotnet_Microsoft.VisualBasic", "..\sciBASIC#\Microsoft.VisualBasic.Core\src\47-dotnet_Microsoft.VisualBasic.vbproj"", "{FECCE1FD-E1D4-49E3-A668-60BB5E7AED99}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "47-dotnet_Microsoft.VisualBasic", "..\sciBASIC#\Microsoft.VisualBasic.Core\src\47-dotnet_Microsoft.VisualBasic.vbproj", "{FECCE1FD-E1D4-49E3-A668-60BB5E7AED99}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "CodeSolution", "CodeSolution\CodeSolution.vbproj", "{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "MIME-htmls", "..\sciBASIC#\mime\text%html\MIME-htmls.vbproj", "{2DD4BE80-DDC3-4767-94A7-10F1C3395716}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "test", "test\test.vbproj", "{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DataSchema", "DataSchema\DataSchema.vbproj", "{7A752AA2-5A30-4AC8-9142-EA23B190450E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -296,6 +298,48 @@ Global
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Release|x64.Build.0 = Release|Any CPU
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Release|x86.ActiveCfg = Release|Any CPU
 		{389F54A4-DE45-487B-84BB-DB9BBA82CF1A}.Release|x86.Build.0 = Release|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Debug|x64.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Debug|x86.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.DEMO|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.DEMO|Any CPU.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.DEMO|x64.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.DEMO|x64.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.DEMO|x86.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.DEMO|x86.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.docs|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.docs|Any CPU.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.docs|x64.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.docs|x64.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.docs|x86.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.docs|x86.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.GCModeller_release(x64)|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.GCModeller_release(x64)|Any CPU.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.GCModeller_release(x64)|x64.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.GCModeller_release(x64)|x64.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.GCModeller_release(x64)|x86.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.GCModeller_release(x64)|x86.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.mysqli_X64_release|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.mysqli_X64_release|Any CPU.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.mysqli_X64_release|x64.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.mysqli_X64_release|x64.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.mysqli_X64_release|x86.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.mysqli_X64_release|x86.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Publish|Any CPU.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Publish|x64.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Publish|x64.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Publish|x86.ActiveCfg = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Publish|x86.Build.0 = Debug|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Release|x64.ActiveCfg = Release|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Release|x64.Build.0 = Release|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Release|x86.ActiveCfg = Release|Any CPU
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -305,6 +349,7 @@ Global
 		{FECCE1FD-E1D4-49E3-A668-60BB5E7AED99} = {402F6543-128D-4CBE-8DA7-83B0B8D47019}
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC} = {E4100F6E-E278-4003-86B4-26C19BCF30FF}
 		{2DD4BE80-DDC3-4767-94A7-10F1C3395716} = {402F6543-128D-4CBE-8DA7-83B0B8D47019}
+		{7A752AA2-5A30-4AC8-9142-EA23B190450E} = {E4100F6E-E278-4003-86B4-26C19BCF30FF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7CDA6FAB-122E-4F7A-B0CE-34CDA772C39D}

@@ -1,40 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Oracle.LinuxCompatibility.MySQL.SQLTable" Collapsed="true">
-    <Position X="29.75" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAABAAAAAAEAAAAEAAAAAAAAAAAAAAAAAAAAAARAAAA=</HashCode>
-      <FileName>CodeBridge\SQLTable.vb</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Oracle.LinuxCompatibility.MySQL.ConnectionUri" Collapsed="true">
-    <Position X="28" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <FileName>MYSQL.Client\ConnectionUri.vb</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Oracle.LinuxCompatibility.MySQL.MySQL" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="33.25" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <FileName>MYSQL.Client\MySQL.vb</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="Oracle.LinuxCompatibility.MySQL.Table(Of TTable)" Collapsed="true">
-    <Position X="31.5" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <FileName>MYSQL.Client\Table.vb</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Oracle.LinuxCompatibility.MySQL.TinyServer" Collapsed="true">
-    <Position X="26.25" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAICAAAAAAAAAAAAAAAAAAAgQAAAAAABAAAAA=</HashCode>
-      <FileName>TinyServer\TinyServer.vb</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.My.MySettings" Collapsed="true">
-    <Position X="31.5" Y="1.5" Width="1.5" />
+    <Position X="28" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAEAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
@@ -49,7 +16,7 @@
   <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.DbReflector" Collapsed="true">
     <Position X="33.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <FileName>Reflection\DbReflector.vb</FileName>
+      <FileName>Reflection\DbReflector\DbReflector.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.DbAttribute" Collapsed="true">
@@ -68,13 +35,13 @@
   <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.TableName" Collapsed="true">
     <Position X="10.25" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <FileName>Reflection\DbAttributes\DbAttributes.vb</FileName>
+      <FileName>Reflection\DbAttributes\TableName.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.DataType" Collapsed="true">
     <Position X="14.75" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <FileName>Reflection\DbAttributes\DbAttributes.vb</FileName>
+      <FileName>Reflection\DbAttributes\DataType.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.[Default]" Collapsed="true">
@@ -132,14 +99,15 @@
       <FileName>Reflection\DbAttributes\DbAttributes.vb</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.Schema.Field" Collapsed="true">
+  <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.Schema.Field" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="28" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Reflection\Schema\FieldAttributes.vb</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.Schema.Table" Collapsed="true">
-    <Position X="33.25" Y="2.5" Width="1.5" />
+    <Position X="33.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Reflection\Schema\Table.vb</FileName>
     </TypeIdentifier>
@@ -148,32 +116,32 @@
     <Position X="29.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAQAAAAAAAAAAAAAAAQAAAAAACAAAAAAAAQAAA=</HashCode>
-      <FileName>Reflection\SQL\CreateTable.vb</FileName>
+      <FileName>Reflection\DataModels\CreateTable.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.SQL.Delete(Of Schema)" Collapsed="true">
-    <Position X="2.75" Y="4.75" Width="1.5" />
+    <Position X="3" Y="4.75" Width="1.75" />
     <TypeIdentifier>
-      <FileName>Reflection\SQL\Delete.vb</FileName>
+      <FileName>Reflection\DataModels\Delete.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.SQL.Insert(Of Schema)" Collapsed="true">
-    <Position X="5" Y="4.75" Width="1.5" />
+    <Position X="5.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <FileName>Reflection\SQL\Insert.vb</FileName>
+      <FileName>Reflection\DataModels\Insert.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.SQL.SQL" Collapsed="true">
-    <Position X="2.75" Y="3.5" Width="1.5" />
+    <Position X="3" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAQAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Reflection\SQL\SQL.vb</FileName>
+      <FileName>Reflection\DataModels\SQL.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.SQL.Update(Of Schema)" Collapsed="true">
-    <Position X="0.5" Y="4.75" Width="1.5" />
+    <Position X="0.5" Y="4.75" Width="1.75" />
     <TypeIdentifier>
-      <FileName>Reflection\SQL\Update.vb</FileName>
+      <FileName>Reflection\DataModels\Update.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Workbench.Configuration.Connections" Collapsed="true">
@@ -184,14 +152,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Workbench.Configuration.ServerInstances" Collapsed="true">
-    <Position X="28" Y="2.5" Width="1.5" />
+    <Position X="29.75" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Workbench\ServerInstances.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Workbench.Configuration.value" Collapsed="true">
-    <Position X="28" Y="3.5" Width="1.5" />
+    <Position X="26.25" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIAAEAAAACAAAAAAAAEAAAAAAAFEAAAAAAAAAAAAgA=</HashCode>
       <FileName>Workbench\ServerInstances.vb</FileName>
@@ -212,71 +180,195 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Oracle.LinuxCompatibility.MySQL.Workbench.Dump.RestoreWorker" Collapsed="true">
-    <Position X="26.25" Y="2.5" Width="1.5" />
+    <Position X="33.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Workbench\Dump\RestoreWorker.vb</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="Oracle.LinuxCompatibility.MySQL.MySqli" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Mysqli\MySqli.vb</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Oracle.LinuxCompatibility.MySQL.MySQLTable" Collapsed="true">
+    <Position X="31.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAAgAAAAAAAAAAAAAAAAARAAAA=</HashCode>
+      <FileName>MySQLTable.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oracle.LinuxCompatibility.MySQL.Expressions.Table(Of TTable)" Collapsed="true">
+    <Position X="31.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Mysqli\Expression\Table.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oracle.LinuxCompatibility.MySQL.Uri.ConnectionUri" Collapsed="true">
+    <Position X="28" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Mysqli\Uri\ConnectionUri.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.SchemaDescribe" Collapsed="true">
+    <Position X="28" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQQAABAAAAAAAAQEBAEAAAAAAAAAAAAAAQIAAAECgAA=</HashCode>
+      <FileName>Reflection\SchemaDescribe.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oracle.LinuxCompatibility.MySQL.Reflection.Helper.SchemaCache(Of T)" Collapsed="true">
+    <Position X="26.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Reflection\DbReflector\ExecuteScalar.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oracle.LinuxCompatibility.MySQL.Scripting.Linq(Of T)" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="31.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAEAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Scripting\Linq.vb</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Oracle.LinuxCompatibility.MySQL.ServerApp.MemoryCache(Of T)" Collapsed="true">
+    <Position X="33.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QCCAAAAgAAEAAAAAAAABAABAAAQAAggBBAIIQAAAABg=</HashCode>
+      <FileName>ServerApp\MemoryCache.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oracle.LinuxCompatibility.MySQL.ServerApp.MemorySize(Of T)" Collapsed="true">
+    <Position X="26.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAIAAAAAAEAAAAAAAkAAAAAAAAAQAAQAAAAAQ=</HashCode>
+      <FileName>ServerApp\MemorySize.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Oracle.LinuxCompatibility.MySQL.Expressions.FieldArgument" Collapsed="true">
+    <Position X="26.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Mysqli\Expression\Middleware.vb</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Oracle.LinuxCompatibility.MySQL.Expressions.WhereArgument(Of T)" Collapsed="true">
+    <Position X="28" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABEAAAAAAAAIAFAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Mysqli\Expression\Middleware.vb</FileName>
+    </TypeIdentifier>
+  </Struct>
   <Enum Name="Oracle.LinuxCompatibility.MySQL.RecordStatus" Collapsed="true">
-    <Position X="28" Y="7" Width="1.5" />
+    <Position X="28" Y="10.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAIgAAAAAAAAAAAAAA=</HashCode>
-      <FileName>MYSQL.Client\RecordStatus.vb</FileName>
+      <FileName>Mysqli\RecordStatus.vb</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.MySqlDbType" Collapsed="true">
-    <Position X="26.25" Y="7" Width="1.5" />
+    <Position X="26.25" Y="10.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QkAAEAAhJEAEEDAATAACgAIANAIQDAEAEEACCAgogwE=</HashCode>
-      <FileName>Reflection\DbAttributes\DbDataTypes.vb</FileName>
+      <HashCode>QkAAEAAhJEAEEDAATAACgAIAtAIQDAEAEEACCAgogwE=</HashCode>
+      <FileName>Reflection\DbAttributes\MySqlDbType.vb</FileName>
     </TypeIdentifier>
   </Enum>
-  <Module Name="Oracle.LinuxCompatibility.MySQL.CodeGenerator" Collapsed="true">
-    <Position X="26.25" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>CIBCIECEAAAAQAAIgQAABAQJAAhAAABgAAAAAASAACA=</HashCode>
-      <FileName>CodeBridge\CodeGenerator.vb</FileName>
-    </TypeIdentifier>
-  </Module>
-  <Module Name="Oracle.LinuxCompatibility.MySQL.SQLParser" Collapsed="true">
-    <Position X="28" Y="5.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAACAAAAGIAAAAAEAgAQEAABAAAAAAAggIA=</HashCode>
-      <FileName>CodeBridge\SQLParser.vb</FileName>
-    </TypeIdentifier>
-  </Module>
-  <Module Name="Oracle.LinuxCompatibility.MySQL.CommonExtension" Collapsed="true">
-    <Position X="28" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAEAAAAAQACAAAAAAAAAAAAAAAAAAIABAAAAAAAAAA=</HashCode>
-      <FileName>Extensions\CommonExtension.vb</FileName>
-    </TypeIdentifier>
-  </Module>
-  <Module Name="Oracle.LinuxCompatibility.MySQL.RunDll" Collapsed="true">
-    <Position X="33.25" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Extensions\RunDll.vb</FileName>
-    </TypeIdentifier>
-  </Module>
   <Module Name="Oracle.LinuxCompatibility.MySQL.My.Resources.Resources" Collapsed="true">
-    <Position X="31.5" Y="4.75" Width="1.5" />
+    <Position X="26.25" Y="7.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAgQAAAAAABAAEIA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
     </TypeIdentifier>
   </Module>
   <Module Name="Oracle.LinuxCompatibility.MySQL.My.MySettingsProperty" Collapsed="true">
-    <Position X="29.75" Y="4.75" Width="1.5" />
+    <Position X="29.75" Y="6.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Module>
   <Module Name="Oracle.LinuxCompatibility.MySQL.Reflection.SQL.SqlGenerateMethods" Collapsed="true">
+    <Position X="28" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAgAAAAAIABAAAIAAAAAABAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Reflection\DataModels\SqlGenerateMethods.vb</FileName>
+    </TypeIdentifier>
+  </Module>
+  <Module Name="Oracle.LinuxCompatibility.MySQL.DataClientExtensions" Collapsed="true">
+    <Position X="28" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAEAEABCAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Extensions\DataClient.vb</FileName>
+    </TypeIdentifier>
+  </Module>
+  <Module Name="Oracle.LinuxCompatibility.MySQL.DataDumps" Collapsed="true">
+    <Position X="29.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABABABAgAAAAQIAAAAAAEAABgAAAAAAAIABA=</HashCode>
+      <FileName>Extensions\DataDumps.vb</FileName>
+    </TypeIdentifier>
+  </Module>
+  <Module Name="Oracle.LinuxCompatibility.MySQL.Extensions" Collapsed="true">
+    <Position X="31.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAwAKAAAAAAAAAAAAAAAAAAIABQAAAACAAAA=</HashCode>
+      <FileName>Extensions\Extensions.vb</FileName>
+    </TypeIdentifier>
+  </Module>
+  <Module Name="Oracle.LinuxCompatibility.MySQL.LinqExports" Collapsed="true">
+    <Position X="26.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAgAAAAAAAAAAAAAAAAAAgAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Extensions\LinqExports.vb</FileName>
+    </TypeIdentifier>
+  </Module>
+  <Module Name="Oracle.LinuxCompatibility.MySQL.Expressions.QueryHelper" Collapsed="true">
+    <Position X="33.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAICAAAAAAAAAAAQgAACEIAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Mysqli\Expression\QueryHelper.vb</FileName>
+    </TypeIdentifier>
+  </Module>
+  <Module Name="Oracle.LinuxCompatibility.MySQL.Uri.UriBuilder" Collapsed="true">
+    <Position X="29.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAGEBAAAAAAAQAQAAAAAACAAAIAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Mysqli\Uri\UriBuilder.vb</FileName>
+    </TypeIdentifier>
+  </Module>
+  <Module Name="Oracle.LinuxCompatibility.MySQL.Uri.UriEncryption" Collapsed="true">
+    <Position X="31.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Mysqli\Uri\UriEncryption.vb</FileName>
+    </TypeIdentifier>
+  </Module>
+  <Module Name="Oracle.LinuxCompatibility.MySQL.Reflection.SQL.NamespaceDoc" Collapsed="true">
+    <Position X="31.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Reflection\DataModels\NamespaceDoc.vb</FileName>
+    </TypeIdentifier>
+  </Module>
+  <Module Name="Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.CTypeDynamicsExtensions" Collapsed="true">
     <Position X="26.25" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAIABAAAIAAAAAABAAAAAAABAAAAAAAA=</HashCode>
-      <FileName>Reflection\SQL\SqlGenerateMethods.vb</FileName>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAIABAAAAAAAAAA=</HashCode>
+      <FileName>Reflection\DbAttributes\DataType.vb</FileName>
+    </TypeIdentifier>
+  </Module>
+  <Module Name="Oracle.LinuxCompatibility.MySQL.Scripting.Extensions" Collapsed="true">
+    <Position X="33.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABBACAMAAAAAAQKAAAAAABAABBAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scripting\Extensions.vb</FileName>
+    </TypeIdentifier>
+  </Module>
+  <Module Name="Oracle.LinuxCompatibility.MySQL.Scripting.LinqToMySQL" Collapsed="true">
+    <Position X="28" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAMQAAAAAAAAQAAABAAAAAAAAAAAAAAAACEgAAAAAAA=</HashCode>
+      <FileName>Scripting\LinqToMySQL.vb</FileName>
     </TypeIdentifier>
   </Module>
   <Font Name="Segoe UI" Size="9" />
