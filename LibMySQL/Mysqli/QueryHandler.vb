@@ -1,14 +1,15 @@
-﻿Imports Oracle.LinuxCompatibility.MySQL.Reflection
-Imports System.Text
+﻿Imports System.Text
 Imports MySqlConnector
+Imports Oracle.LinuxCompatibility.MySQL.Reflection
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
-Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 Imports Oracle.LinuxCompatibility.MySQL.Uri
+Imports any = Microsoft.VisualBasic.Scripting
 
-Public Class QueryHandler(Of Schema) : Inherits DataTable(Of Schema)
-    Implements IDisposable
+Public Class QueryHandler(Of Schema) : Implements IDisposable
 
     Dim WithEvents MySQL As MySqli
+    Dim sql As New DataTable(Of Schema)
+
     ''' <summary>
     ''' The sql transaction that will be commit to the mysql database.
     ''' (将要被提交至MYSQL数据库之中的SQL事务集)
@@ -45,6 +46,55 @@ Public Class QueryHandler(Of Schema) : Inherits DataTable(Of Schema)
     End Property
 
     ''' <summary>
+    ''' Execute create table sql
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function Create() As Boolean
+        Dim sql As String = Me.sql.Create
+#If DEBUG Then
+        Console.WriteLine(sql)
+#End If
+        Return MySQL.Execute(sql)
+    End Function
+
+    Public Sub Delete(Record As Schema)
+        Call _listData.Remove(Record)
+        Call Transaction.AppendLine(sql.Delete(Record))
+    End Sub
+
+    Public Sub Insert(record As Schema)
+        Call _listData.Add(record)
+        Call Transaction.AppendLine(sql.Insert(record))
+    End Sub
+
+    Public Sub Update(record As Schema)
+        Dim OldRecord As Schema = GetHandle(record)
+        Dim Handle As Integer = _listData.IndexOf(OldRecord)
+
+        _listData(Handle) = record
+
+        Call Transaction.AppendLine(sql.Update(record))
+    End Sub
+
+    ''' <summary>
+    ''' Get a specific record in the dataset by compaired the UNIQUE_INDEX field value.
+    ''' (通过值唯一的索引字段来获取一个特定的数据记录)
+    ''' </summary>
+    ''' <param name="Record"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Private Function GetHandle(Record As Schema) As Schema
+        Dim [String] As String = sql.TableSchema.IndexProperty.GetValue(Record, Nothing).ToString 'Get the Index field value
+        Dim LQuery As IEnumerable(Of Schema) = From schema As Schema
+                                               In _listData
+                                               Let val As Object = sql.GetValue(schema)
+                                               Let str As String = any.ToString(val)
+                                               Where String.Equals([String], str)
+                                               Select schema ' Use LINQ and index value find out the target item 
+        Return LQuery.First  'return the item handle
+    End Function
+
+    ''' <summary>
     ''' Query a data table using Reflection.(使用反射机制来查询一个数据表)
     ''' </summary>
     ''' <param name="SQL">Sql 'SELECT' query statement.(Sql 'SELECT' 查询语句)</param>
@@ -60,13 +110,13 @@ Public Class QueryHandler(Of Schema) : Inherits DataTable(Of Schema)
             MySql.Open()
             Reader = MySqlCommand.ExecuteReader(CommandBehavior.CloseConnection)
 
-            Dim Ordinals = (From Field As Field In TableSchema.Fields 'This table schema is created from the previous reflection operations
+            Dim Ordinals = (From Field As Field In Me.sql.TableSchema.Fields 'This table schema is created from the previous reflection operations
                             Let Ordinal As Integer = Reader.GetOrdinal(Field.FieldName)
                             Where Ordinal >= 0
                             Select Ordinal, Field, TypeCast = Function(value As Object) Field.DataType.TypeCasting(value)).ToArray
 
             While Reader.Read 'When we call this function, the pointer will move to next line in the table automatically.  
-                Dim FillObject = Activator.CreateInstance(TableSchema.SchemaType) 'Create a instance of specific type: our record schema. 
+                Dim FillObject = Activator.CreateInstance(Me.sql.TableSchema.SchemaType) 'Create a instance of specific type: our record schema. 
 
                 For Each Field In Ordinals  'Scan all of the fields in the field list and get the field value.
                     Call Field.Field.PropertyInfo.SetValue(FillObject, Field.TypeCast(Reader.GetValue(Field.Ordinal)), Nothing)
@@ -100,11 +150,11 @@ Public Class QueryHandler(Of Schema) : Inherits DataTable(Of Schema)
         Call Me.Commit()  '
 
         If Count <= 0 Then  'Load all data when count is zero or negative.
-            _listData = Query($"SELECT * FROM {TableSchema.TableName};")
+            _listData = Query($"SELECT * FROM {sql.TableSchema.TableName};")
             p = _listData.Count
         Else
             Dim NewData As List(Of Schema)
-            NewData = Query($"SELECT * FROM {TableSchema.TableName} LIMIT {p},{Count};")
+            NewData = Query($"SELECT * FROM {sql.TableSchema.TableName} LIMIT {p},{Count};")
             _listData.AddRange(NewData)
             p += Count  'pointer move next block.
         End If

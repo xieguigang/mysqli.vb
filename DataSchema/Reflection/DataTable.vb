@@ -47,11 +47,10 @@
 
 #End Region
 
-Imports System.Text
-Imports MySqlConnector
-Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
+Imports System.Runtime.CompilerServices
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
-Imports Oracle.LinuxCompatibility.MySQL.Uri
+
+<Assembly: InternalsVisibleTo("Oracle.LinuxCompatibility.LibMySQL")>
 
 Namespace Reflection
 
@@ -87,43 +86,33 @@ Namespace Reflection
         ''' (从一个类对象上面的自定义属性之中解析出来的表结构信息)
         ''' </summary>
         ''' <remarks></remarks>
-        Protected TableSchema As Reflection.Schema.Table
+        Protected Friend TableSchema As Reflection.Schema.Table
 
-        Friend Sub New()
-            TableSchema = GetType(Schema) 'Start reflection and parsing the table structure information.
+        Public Sub New()
+            ' Start reflection and parsing the table structure information.
+            TableSchema = GetType(Schema)
 
-            DeleteSQL = TableSchema  'Initialize the sql generator using the table structure information that parse from the custom attribut of a class object.
+            ' Initialize the sql generator using the table
+            ' structure information that parse from the custom
+            ' attribut of a class object.
+            DeleteSQL = TableSchema
             InsertSQL = TableSchema
             UpdateSQL = TableSchema
         End Sub
 
-        ''' <summary>
-        ''' Execute ``CREATE TABLE`` sql.
-        ''' </summary>
-        ''' <returns></returns>
-        Public Function Create() As Boolean
-            Dim SQL As String = CreateTableSQL.FromSchema(TableSchema)
-#If DEBUG Then
-            Console.WriteLine(SQL)
-#End If
-            Return MySQL.Execute(SQL)
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function GetValue(data As Schema) As Object
+            Return TableSchema.IndexProperty.GetValue(data, Nothing)
         End Function
 
         ''' <summary>
-        ''' Get a specific record in the dataset by compaired the UNIQUE_INDEX field value.
-        ''' (通过值唯一的索引字段来获取一个特定的数据记录)
+        ''' create ``CREATE TABLE`` sql.
         ''' </summary>
-        ''' <param name="Record"></param>
         ''' <returns></returns>
-        ''' <remarks></remarks>
-        Private Function GetHandle(Record As Schema) As Schema
-            Dim [String] As String = TableSchema.IndexProperty.GetValue(Record, Nothing).ToString 'Get the Index field value
-            Dim LQuery As IEnumerable(Of Schema) = From schema As Schema
-                                                   In _listData
-                                                   Let str As String = TableSchema.IndexProperty.GetValue(schema, Nothing).ToString
-                                                   Where String.Equals([String], str)
-                                                   Select schema ' Use LINQ and index value find out the target item 
-            Return LQuery.First  'return the item handle
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function Create() As String
+            Return CreateTableSQL.FromSchema(TableSchema)
         End Function
 
         ''' <summary>
@@ -137,12 +126,11 @@ Namespace Reflection
         ''' </summary>
         ''' <param name="Record"></param>
         ''' <remarks></remarks>
-        Public Sub Delete(Record As Schema)
-            Dim SQL As String = DeleteSQL.Generate(Record)
-
-            Call _listData.Remove(Record)
-            Call Transaction.AppendLine(SQL)
-        End Sub
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function Delete(Record As Schema) As String
+            Return DeleteSQL.Generate(Record)
+        End Function
 
         ''' <summary>
         ''' Insert a record in the table. Please notice that, in order to decrease the usage of CPU and networking traffic, the 
@@ -155,12 +143,11 @@ Namespace Reflection
         ''' </summary>
         ''' <param name="Record"></param>
         ''' <remarks></remarks>
-        Public Overloads Sub Insert(Record As Schema)
-            Dim SQL As String = InsertSQL.Generate(Record)
-
-            Call _listData.Add(Record)
-            Call Transaction.AppendLine(SQL)
-        End Sub
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Overloads Function Insert(Record As Schema) As String
+            Return InsertSQL.Generate(Record)
+        End Function
 
         ''' <summary>
         ''' Update a record in the table. Please notice that, in order to decrease the usage of CPU and networking traffic, the 
@@ -173,14 +160,10 @@ Namespace Reflection
         ''' </summary>
         ''' <param name="Record"></param>
         ''' <remarks></remarks>
-        Public Sub Update(Record As Schema)
-            Dim SQL As String = UpdateSQL.Generate(Record)
-            Dim OldRecord As Schema = GetHandle(Record)
-            Dim Handle As Integer = _listData.IndexOf(OldRecord)
-
-            _listData(Handle) = Record
-
-            Call Transaction.AppendLine(SQL)
-        End Sub
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function Update(Record As Schema) As String
+            Return UpdateSQL.Generate(Record)
+        End Function
     End Class
 End Namespace
