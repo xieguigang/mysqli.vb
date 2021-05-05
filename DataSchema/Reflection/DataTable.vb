@@ -88,6 +88,12 @@ Namespace Reflection
         ''' <remarks></remarks>
         Protected Friend TableSchema As Reflection.Schema.Table
 
+        Public ReadOnly Property TableName As String
+            Get
+                Return TableSchema.TableName
+            End Get
+        End Property
+
         Public Sub New()
             ' Start reflection and parsing the table structure information.
             TableSchema = GetType(Schema)

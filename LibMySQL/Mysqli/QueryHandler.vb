@@ -15,7 +15,7 @@ Public Class QueryHandler(Of Schema) : Implements IDisposable
     ''' (将要被提交至MYSQL数据库之中的SQL事务集)
     ''' </summary>
     ''' <remarks></remarks>
-    Dim Transaction As StringBuilder = New StringBuilder(2048)
+    Dim Transaction As New StringBuilder(2048)
     Dim p As Long
 
     ''' <summary>
@@ -39,7 +39,7 @@ Public Class QueryHandler(Of Schema) : Implements IDisposable
     ''' (数据库的表之中的数据集，请不要直接在这个属性之上修改数据)
     ''' </summary>
     ''' <remarks></remarks>
-    ReadOnly Property ListData As List(Of Schema)
+    ReadOnly Property ListData As IEnumerable(Of Schema)
         Get
             Return _listData
         End Get
@@ -84,14 +84,19 @@ Public Class QueryHandler(Of Schema) : Implements IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Private Function GetHandle(Record As Schema) As Schema
-        Dim [String] As String = sql.TableSchema.IndexProperty.GetValue(Record, Nothing).ToString 'Get the Index field value
-        Dim LQuery As IEnumerable(Of Schema) = From schema As Schema
-                                               In _listData
-                                               Let val As Object = sql.GetValue(schema)
-                                               Let str As String = any.ToString(val)
-                                               Where String.Equals([String], str)
-                                               Select schema ' Use LINQ and index value find out the target item 
-        Return LQuery.First  'return the item handle
+        ' Get the Index field value
+        Dim [String] As String = any.ToString(sql.GetValue(Record))
+        ' Use LINQ and index value find out the target item 
+        Dim LQuery As IEnumerable(Of Schema) =
+            From schema As Schema
+            In _listData
+            Let val As Object = sql.GetValue(schema)
+            Let str As String = any.ToString(val)
+            Where String.Equals([String], str)
+            Select schema
+
+        ' return the item handle
+        Return LQuery.First
     End Function
 
     ''' <summary>
@@ -150,11 +155,11 @@ Public Class QueryHandler(Of Schema) : Implements IDisposable
         Call Me.Commit()  '
 
         If Count <= 0 Then  'Load all data when count is zero or negative.
-            _listData = Query($"SELECT * FROM {sql.TableSchema.TableName};")
+            _listData = Query($"SELECT * FROM {sql.TableName};")
             p = _listData.Count
         Else
             Dim NewData As List(Of Schema)
-            NewData = Query($"SELECT * FROM {sql.TableSchema.TableName} LIMIT {p},{Count};")
+            NewData = Query($"SELECT * FROM {sql.TableName} LIMIT {p},{Count};")
             _listData.AddRange(NewData)
             p += Count  'pointer move next block.
         End If
@@ -185,7 +190,7 @@ Public Class QueryHandler(Of Schema) : Implements IDisposable
     ''' <param name="schema"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Narrowing Operator CType(schema As DataTable(Of Schema)) As List(Of Schema)
+    Public Shared Narrowing Operator CType(schema As QueryHandler(Of Schema)) As List(Of Schema)
         Return schema.ListData
     End Operator
 
@@ -195,8 +200,8 @@ Public Class QueryHandler(Of Schema) : Implements IDisposable
     ''' <param name="uri"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Widening Operator CType(uri As ConnectionUri) As DataTable(Of Schema)
-        Return New DataTable(Of Schema) With {.MySQL = uri}
+    Public Shared Widening Operator CType(uri As ConnectionUri) As QueryHandler(Of Schema)
+        Return New QueryHandler(Of Schema) With {.MySQL = uri}
     End Operator
 
     ''' <summary>
@@ -205,8 +210,8 @@ Public Class QueryHandler(Of Schema) : Implements IDisposable
     ''' <param name="uri"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Widening Operator CType(uri As String) As DataTable(Of Schema)
-        Return New DataTable(Of Schema) With {.MySQL = uri}
+    Public Shared Widening Operator CType(uri As String) As QueryHandler(Of Schema)
+        Return New QueryHandler(Of Schema) With {.MySQL = uri}
     End Operator
 
     ''' <summary>
@@ -215,8 +220,8 @@ Public Class QueryHandler(Of Schema) : Implements IDisposable
     ''' <param name="xml"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Widening Operator CType(xml As Xml.Linq.XElement) As DataTable(Of Schema)
-        Return New DataTable(Of Schema) With {.MySQL = CType(xml, ConnectionUri)}
+    Public Shared Widening Operator CType(xml As XElement) As QueryHandler(Of Schema)
+        Return New QueryHandler(Of Schema) With {.MySQL = CType(xml, ConnectionUri)}
     End Operator
 
 #Region "IDisposable Support"
