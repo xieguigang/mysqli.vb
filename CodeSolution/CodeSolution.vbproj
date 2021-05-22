@@ -332,6 +332,10 @@
       <Project>{2dd4be80-ddc3-4767-94a7-10f1c3395716}</Project>
       <Name>mime-htmls</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\sciBASIC#\mime\text%25markdown\markdown.vbproj">
+      <Project>{83ec1406-fe08-46a1-88b3-ce56d7e9961c}</Project>
+      <Name>markdown</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataSchema\DataSchema.vbproj">
       <Project>{7a752aa2-5a30-4ac8-9142-ea23b190450e}</Project>
       <Name>DataSchema</Name>

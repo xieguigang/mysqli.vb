@@ -356,10 +356,6 @@
       <Project>{7a752aa2-5a30-4ac8-9142-ea23b190450e}</Project>
       <Name>DataSchema</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LibMySQL\LibMySQL.vbproj">
-      <Project>{2c34a044-1bde-44e8-a86e-e9971c87da21}</Project>
-      <Name>LibMySQL</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
