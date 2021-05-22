@@ -514,7 +514,8 @@
       <HintPath>..\..\..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="Google.Protobuf, Version=3.16.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\biodeep\bionovogene_health\metacardio\packages\Google.Protobuf.3.16.0-rc1\lib\net45\Google.Protobuf.dll</HintPath>
+      <HintPath>..\..\..\packages\Google.Protobuf.3.17.0\lib\net45\Google.Protobuf.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="K4os.Compression.LZ4, Version=1.2.10.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\biodeep\bionovogene_health\metacardio\packages\K4os.Compression.LZ4.1.2.10-beta\lib\net46\K4os.Compression.LZ4.dll</HintPath>
@@ -527,7 +528,8 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data, Version=8.0.24.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\biodeep\bionovogene_health\metacardio\packages\MySql.Data.8.0.24\lib\net48\MySql.Data.dll</HintPath>
+      <HintPath>..\..\..\packages\MySql.Data.8.0.25\lib\net48\MySql.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MySqlConnector, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\biodeep\biodeepdb_v3\Rscript\packages\MySqlConnector.1.3.8\lib\net471\MySqlConnector.dll</HintPath>
@@ -568,10 +570,10 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml.Serialization" />
     <Reference Include="Ubiety.Dns.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\biodeep\bionovogene_health\metacardio\packages\MySql.Data.8.0.24\lib\net48\Ubiety.Dns.Core.dll</HintPath>
+      <HintPath>..\..\..\packages\MySql.Data.8.0.25\lib\net48\Ubiety.Dns.Core.dll</HintPath>
     </Reference>
     <Reference Include="Zstandard.Net, Version=1.1.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\biodeep\bionovogene_health\metacardio\packages\MySql.Data.8.0.24\lib\net48\Zstandard.Net.dll</HintPath>
+      <HintPath>..\..\..\packages\MySql.Data.8.0.25\lib\net48\Zstandard.Net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
