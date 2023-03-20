@@ -89,7 +89,7 @@ Namespace Uri
             Return newURI
         End Function
 
-        ReadOnly defaultPort As DefaultValue(Of String) = "3306"
+        ReadOnly defaultPort As [Default](Of String) = "3306"
 
         ''' <summary>
         ''' ``Database={0}; Data Source={1}; User Id={2}; Password={3}; Port={4}``
@@ -147,7 +147,7 @@ Namespace Uri
         ''' </summary>
         Public Const MYSQL_CONNECTION$ = "Database={0}; Data Source={1}; User Id={2}; Password={3}; Port={4}"
 
-        ReadOnly defaultPort3306 As DefaultValue(Of UInteger) = CType(3306, UInteger).AsDefault(Function(port) CType(port, Integer) <= 0)
+        ReadOnly defaultPort3306 As [Default](Of UInteger) = CType(3306, UInteger).AsDefault(Function(port) CType(port, Integer) <= 0)
 
         <Extension>
         Friend Function BuildConnectionString(uri As ConnectionUri) As String

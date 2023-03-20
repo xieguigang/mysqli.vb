@@ -51,6 +51,7 @@
 
 #End Region
 
+Imports System.Data
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Scripting
