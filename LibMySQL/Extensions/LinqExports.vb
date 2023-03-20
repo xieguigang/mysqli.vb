@@ -68,17 +68,17 @@ Public Module LinqExports
                               Optional bufferSize% = 500,
                               Optional singleTransaction As Boolean = False,
                               Optional echo As Boolean = True,
-                              Optional auto_increment As Boolean = False)
+                              Optional auto_increment As Boolean = False,
+                              Optional truncate As Boolean = False)
         Dim saveSQL$ = EXPORT
 
         If singleTransaction Then
             EXPORT = TempFileSystem.GetAppSysTempFile(sessionID:=App.PID)
         End If
 
-        Dim DBName$ = source.dumpRows(EXPORT, bufferSize, singleTransaction, echo, auto_increment)
+        Dim DBName$ = source.dumpRows(EXPORT, bufferSize, singleTransaction, echo, auto_increment, truncate)
 
         If singleTransaction Then
-
             If echo Then
                 Call $"Output single transaction SQL file to: {saveSQL}".__INFO_ECHO
             End If
@@ -97,7 +97,8 @@ Public Module LinqExports
                               bufferSize%,
                               singleTransaction As Boolean,
                               echo As Boolean,
-                              AI As Boolean) As String
+                              AI As Boolean,
+                              truncate As Boolean) As String
 
         Dim writer As New Dictionary(Of String, StreamWriter)
         Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
@@ -125,6 +126,10 @@ Public Module LinqExports
                         If echo Then
                             Call ("  --> " & DirectCast(.BaseStream, FileStream).Name).__INFO_ECHO
                         End If
+                    End If
+
+                    If truncate Then
+                        Call .WriteLine($"TRUNCATE `{DBName}`.`{tblName}`;")
                     End If
 
                     Call .LockTable(tblName)

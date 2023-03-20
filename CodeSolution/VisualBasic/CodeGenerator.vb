@@ -442,11 +442,20 @@ Namespace VisualBasic
             End If
 
             For Each field As SeqValue(Of Field) In fields.SeqIterator
+                ' 20230320 deal with the datetime value
+                Dim type = field.value.DataType.MySQLType
+                Dim fieldValue As String
+
+                If type = MySqlDbType.Date OrElse type = MySqlDbType.DateTime Then
+                    fieldValue = FixInvalids((+field).FieldName) & ".ToString(""yyyy-MM-dd hh:mm:ss"")"
+                Else
+                    fieldValue = FixInvalids((+field).FieldName)
+                End If
 
                 ' 在代码之中应该是propertyName而不是数据库之中的fieldName
                 ' 因为schema对象是直接从SQL之中解析出来的，所以反射属性为空
                 ' 在这里使用TrimKeyword(Field.FieldName)来生成代码之中的属性的名称
-                values = values.Replace("{" & field.i & "}", "{" & FixInvalids((+field).FieldName) & "}")
+                values = values.Replace("{" & field.i & "}", "{" & fieldValue & "}")
             Next
 
             Return values
