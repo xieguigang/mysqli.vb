@@ -41,6 +41,8 @@
 
 Imports System.IO
 Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.ApplicationServices
+Imports Microsoft.VisualBasic.ComponentModel.Collection
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Microsoft.VisualBasic.Linq
@@ -70,7 +72,7 @@ Public Module LinqExports
         Dim saveSQL$ = EXPORT
 
         If singleTransaction Then
-            EXPORT = App.GetAppSysTempFile(sessionID:=App.PID)
+            EXPORT = TempFileSystem.GetAppSysTempFile(sessionID:=App.PID)
         End If
 
         Dim DBName$ = source.dumpRows(EXPORT, bufferSize, singleTransaction, echo, auto_increment)
