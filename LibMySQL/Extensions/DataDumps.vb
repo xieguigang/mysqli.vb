@@ -164,7 +164,7 @@ Public Module DataDumps
     End Sub
 
     <Extension>
-    Friend Sub LockTable(out As TextWriter, tableName$)
+    Public Sub LockTable(out As TextWriter, tableName$)
         Call out.WriteLine("--")
         Call out.WriteLine($"-- Dumping data for table `{tableName}`")
         Call out.WriteLine("--")
