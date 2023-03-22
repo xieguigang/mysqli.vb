@@ -207,6 +207,7 @@ Namespace VisualBasic
             Call vb.AppendLine()
             Call vb.AppendLine("Imports " & LinqMappingNs)
             Call vb.AppendLine("Imports System.Xml.Serialization")
+            Call vb.AppendLine("Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel.SchemaMaps")
             Call vb.AppendLine("Imports " & LibMySQLReflectionNs)
             Call vb.AppendLine("Imports " & $"MySqlScript = {GetType(MySqlScript).FullName}")
             Call vb.AppendLine()
