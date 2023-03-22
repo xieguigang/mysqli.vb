@@ -339,7 +339,7 @@ _SET_PRIMARYKEY:
         Dim type As Reflection.DbAttributes.MySqlDbType
         Dim parameter As String = ""
 
-        If r.Match(type_define, "tinyint\(\d+\)", RegexOptions.IgnoreCase).Success Then
+        If type_define.TextEquals("tinyint") OrElse r.Match(type_define, "tinyint\(\d+\)", RegexOptions.IgnoreCase).Success Then
             parameter = __getNumberValue(type_define, 1)
 
             If parameter = "1" Then
