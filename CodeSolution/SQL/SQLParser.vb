@@ -357,7 +357,7 @@ _SET_PRIMARYKEY:
             type = Reflection.DbAttributes.MySqlDbType.VarChar
             parameter = __getNumberValue(type_define, 45)
 
-        ElseIf Regex.Match(type_define, "double", RegexOptions.IgnoreCase).Success OrElse InStr(type_define, "float") > 0 Then
+        ElseIf Regex.Match(type_define, "double", RegexOptions.IgnoreCase).Success OrElse InStr(type_define, "float", CompareMethod.Text) > 0 Then
             type = Reflection.DbAttributes.MySqlDbType.Double
 
         ElseIf Regex.Match(type_define, "datetime", RegexOptions.IgnoreCase).Success OrElse
