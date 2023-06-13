@@ -76,7 +76,17 @@ Public Module LinqExports
             EXPORT = TempFileSystem.GetAppSysTempFile(sessionID:=App.PID)
         End If
 
-        Dim DBName$ = source.dumpRows(EXPORT, bufferSize, singleTransaction, echo, auto_increment, truncate)
+        Dim task As New DumpTaskRunner(
+            EXPORT:=EXPORT,
+            bufferSize:=bufferSize,
+            singleTransaction:=singleTransaction,
+            echo:=echo,
+            AI:=auto_increment,
+            truncate:=truncate
+        )
+        Dim DBName$ = task.DumpRows(source)
+
+        Call task.Dispose()
 
         If singleTransaction Then
             If echo Then
@@ -90,91 +100,6 @@ Public Module LinqExports
             End If
         End If
     End Sub
-
-    <Extension>
-    Private Function dumpRows(source As IEnumerable(Of MySQLTable),
-                              EXPORT$,
-                              bufferSize%,
-                              singleTransaction As Boolean,
-                              echo As Boolean,
-                              AI As Boolean,
-                              truncate As Boolean) As String
-
-        Dim writer As New Dictionary(Of String, StreamWriter)
-        Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
-        Dim tableNames As New Dictionary(Of Type, String)
-        Dim DBName$ = ""
-
-        For Each obj As MySQLTable In source.SafeQuery
-            Dim type As Type = obj.GetType
-            Dim tblName$
-
-            If Not tableNames.ContainsKey(type) Then
-                tableNames(type) = TableName.GetTableName(type)
-            End If
-
-            tblName = tableNames(type)
-
-            If Not writer.ContainsKey(tblName) Then
-                buffer(tblName) = (New Table(type), New List(Of MySQLTable))
-                DBName = buffer(tblName).schema.Database
-
-                With $"{EXPORT}/{DBName}_{tblName}.sql".OpenWriter
-                    If Not singleTransaction Then
-                        Call .WriteLine(OptionsTempChange.Replace("%s", DBName))
-
-                        If echo Then
-                            Call ("  --> " & DirectCast(.BaseStream, FileStream).Name).__INFO_ECHO
-                        End If
-                    End If
-
-                    If truncate Then
-                        Call .WriteLine($"TRUNCATE `{DBName}`.`{tblName}`;")
-                    End If
-
-                    Call .LockTable(tblName)
-                    Call .WriteLine()
-                    Call writer.Add(tblName, .ByRef)
-                End With
-            End If
-
-            With buffer(tblName)
-                If .bufferData = bufferSize Then
-                    Call .bufferData.DumpBlock(.schema, writer(tblName), AI:=AI)
-                    Call .bufferData.Clear()
-
-                    If echo Then
-                        Call $"write_buffer({tblName})".__DEBUG_ECHO
-                    End If
-                Else
-                    Call .bufferData.Add(obj)
-                End If
-            End With
-        Next
-
-        For Each buf In buffer.EnumerateTuples
-            With buf.obj
-                Call .bufferData.DumpBlock(.schema, writer(buf.name), AI:=AI)
-            End With
-
-            With writer(buf.name)
-                Call .WriteLine()
-                Call .UnlockTable(buf.name)
-
-                If Not singleTransaction Then
-                    Call .WriteLine(OptionsRestore, Now.ToString)
-                End If
-            End With
-        Next
-
-        For Each handle As StreamWriter In writer.Values
-            Call handle.Flush()
-            Call handle.Close()
-            Call handle.Dispose()
-        Next
-
-        Return DBName
-    End Function
 
     ''' <summary>
     ''' Merge the sql files that exported into a large single sql transaction file.
