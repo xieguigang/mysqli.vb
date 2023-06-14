@@ -44,13 +44,9 @@
 Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Text
-Imports System.Text.RegularExpressions
-Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
-Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
-Imports r = System.Text.RegularExpressions.Regex
 
 Namespace SQLParser
 
@@ -61,7 +57,7 @@ Namespace SQLParser
             Dim tokens As TableTokens = TableTokens.ParseTokens(createTableSQL.Replace(vbLf, vbCr))
 
             Try
-                Return __parseTable(SQL, tokens)
+                Return CreateSchemaTable(tokens)
             Catch ex As Exception
                 Dim dump As New StringBuilder
                 Call dump.AppendLine(SQL)
@@ -69,28 +65,13 @@ Namespace SQLParser
                 Call dump.AppendLine(NameOf(createTableSQL) & "   ====> ")
                 Call dump.AppendLine(createTableSQL)
                 Call dump.AppendLine(vbCrLf)
-                Call dump.AppendLine($"TableName:={tokens.Name}")
+                Call dump.AppendLine($"TableName:={tokens.name}")
                 Call dump.AppendLine(New String("-"c, 120))
                 Call dump.AppendLine(vbCrLf)
                 Call dump.AppendLine(String.Join(vbCrLf & "  >  ", tokens.fields))
 
                 Throw New Exception(dump.ToString, ex)
             End Try
-        End Function
-
-        Private Function __parseTable(SQL As String, Tokens As TableTokens) As Reflection.Schema.Table
-            Dim DB As String = GetDBName(SQL)
-            Dim TableName As String = Tokens.name
-            Dim PrimaryKey As String = Tokens.name
-            Dim FieldsTokens As String() = Tokens.fields
-            Dim Table As Table = SetValue(Of Table).InvokeSet(
-                __createSchema(FieldsTokens,
-                               TableName,
-                               PrimaryKey,
-                               SQL, comment:=Nothing),
-                NameOf(Reflection.Schema.Table.Database),
-                DB)
-            Return Table
         End Function
 
         ''' <summary>
@@ -110,18 +91,13 @@ Namespace SQLParser
                           In sqlDoc.SplitTableCreateInternal
                           Let tokens As TableTokens = TableTokens.ParseTokens(sql:=table)
                           Select tokens).ToArray
-            Dim setValue = New SetValue(Of Table)().GetSet(NameOf(Table.Database))
-            Dim SqlSchema = LinqAPI.Exec(Of Table) _
-                                                   _
-            () <= From table
-                  In tables
-                  Let tbl As Table = __createSchema(
-                      table.fields,
-                      table.name,
-                      table.primaryKey,
-                      table.original,
-                      comment:=table.comment)
-                  Select setValue(tbl, DB)
+            Dim SqlSchema = tables _
+                .Select(Function(ti)
+                            Dim tbl = CreateSchemaTable(ti)
+                            tbl.Database = DB
+                            Return tbl
+                        End Function) _
+                .ToArray
 
             Return SqlSchema
         End Function
@@ -138,26 +114,24 @@ Namespace SQLParser
         ''' Create a MySQL table schema object.
         ''' </summary>
         ''' <returns></returns>
-        Private Function __createSchema(token As TableTokens) As Reflection.Schema.Table
+        Private Function CreateSchemaTable(token As TableTokens) As Reflection.Schema.Table
             Try
                 Return CreateSchemaInner(token)
             Catch ex As Exception
-
                 With New StringBuilder
-                    Call .AppendLine(NameOf(createTableSQL))
+                    Call .AppendLine("CreateTableSQL")
                     Call .AppendLine(New String("="c, 120))
-                    Call .AppendLine(createTableSQL)
+                    Call .AppendLine(token.original)
                     Call .AppendLine(vbCrLf)
-                    Call .AppendLine($"{NameOf(tableName)}   ===>  {tableName}")
-                    Call .AppendLine($"{NameOf(primaryKey)}  ===>  {primaryKey}")
+                    Call .AppendLine($"tableName   ===>  {token.name}")
+                    Call .AppendLine($"primaryKey  ===>  {token.primaryKey}")
                     Call .AppendLine(vbCrLf)
-                    Call .AppendLine(NameOf(fields))
+                    Call .AppendLine("fields")
                     Call .AppendLine(New String("="c, 120))
-                    Call .AppendLine(String.Join(vbCrLf, fields))
+                    Call .AppendLine(String.Join(vbCrLf, token.fields))
 
                     Throw New Exception(.ToString, ex)
                 End With
-
             End Try
         End Function
     End Module
