@@ -12,7 +12,7 @@ Namespace SQLParser
         ''' Regex expression for parsing the comments of the field in a table definition.
         ''' </summary>
         Const FIELD_COMMENTS As String = "COMMENT '.+?',"
-        Const FIELD_DEFAULT As String = "DEFAULT\s+(" & NumericPattern & ")|(" & Patterns.Identifer & "\(\s*\))|('.*?')"
+        Const FIELD_DEFAULT As String = "DEFAULT\s+((" & NumericPattern & ")|(" & Patterns.Identifer & "\(\s*\))|('.*?'))"
 
         Private Function CreateField(fieldDef$, tokens$()) As Field
             Dim fieldName As String = tokens(0)
@@ -29,7 +29,7 @@ Namespace SQLParser
 
             If Not String.IsNullOrEmpty(commentText) Then
                 commentText = Mid(commentText, 10)
-                commentText = Mid(commentText, 1, Len(commentText) - 2)
+                commentText = commentText.Trim("'"c, ","c)
             End If
             If Not String.IsNullOrEmpty(defaultVal) Then
                 defaultVal = defaultVal.Substring(7).Trim.Trim("'"c)
