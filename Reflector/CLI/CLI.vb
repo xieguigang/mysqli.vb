@@ -226,6 +226,18 @@ Module CLI
 
                 For Each field As Field In newModel.Fields
                     If current_fields.ContainsKey(field.FieldName) Then
+                        ' check of the data type is different or not
+                        Dim current_field As Field = current_fields(field.FieldName)
+
+                        If current_field.DataType <> field.DataType Then
+                            ' data type has been updated
+                            Call report.AppendLine($"Data type of current table filed ``{current_field.FieldName}`` has been updated:")
+                            Call report.AppendLine()
+                            Call report.AppendLine("```sql")
+                            Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` CHANGE COLUMN `{field.FieldName}` `{field.FieldName}` {field.DataType.ToString};")
+                            Call report.AppendLine("```")
+                            Call report.AppendLine()
+                        End If
                     Else
                         ' add new data field
                         Call report.AppendLine($"Add a new data field ``{field.FieldName}``:")

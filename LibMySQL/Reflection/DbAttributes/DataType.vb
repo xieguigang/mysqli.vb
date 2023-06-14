@@ -97,6 +97,27 @@ Namespace Reflection.DbAttributes
             Return _type.ToString & ($" ({_argvs})" Or defaultEmpty)
         End Function
 
+        ''' <summary>
+        ''' compares two data type is equals to each other ot not?
+        ''' </summary>
+        ''' <param name="t1"></param>
+        ''' <param name="t2"></param>
+        ''' <returns></returns>
+        Public Shared Operator =(t1 As DataType, t2 As DataType) As Boolean
+            If t1._type <> t2._type Then
+                Return False
+            End If
+            If t1._argvs <> t2._argvs Then
+                Return False
+            End If
+
+            Return True
+        End Operator
+
+        Public Shared Operator <>(t1 As DataType, t2 As DataType) As Boolean
+            Return Not t1 = t2
+        End Operator
+
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Shared Narrowing Operator CType(dataType As DataType) As MySqlDbType
             Return dataType._type
