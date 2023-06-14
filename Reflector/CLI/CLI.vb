@@ -1,41 +1,41 @@
 ﻿#Region "Microsoft.VisualBasic::cb6052dbb5fda7969ecea8e453a2ad15, Reflector\CLI\CLIProgram.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    ' Module CLIProgram
-    ' 
-    '     Function: __EXPORT, ExportDumpDir, ReflectsConvert
-    ' 
-    ' /********************************************************************************/
+' Module CLIProgram
+' 
+'     Function: __EXPORT, ExportDumpDir, ReflectsConvert
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -49,6 +49,8 @@ Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Scripting.MetaData
+Imports Oracle.LinuxCompatibility.MySQL.CodeSolution
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports MySQL2vb = Oracle.LinuxCompatibility.MySQL.CodeSolution.VisualBasic.CodeGenerator
 
 <CLI>
@@ -191,5 +193,31 @@ Module CLI
         Next
 
         Return LQuery.IsNullOrEmpty.CLICode
+    End Function
+
+    <ExportAPI("--compares")>
+    <Description("Compare the difference betweens two database schema. This cli tools is used 
+                  for make upgrades of current database schema to the new updates database 
+                  schema.")>
+    <Usage("--compares /current <schema.sql> /updates <schema.sql> [/output <report.md>]")>
+    <Argument("/current", False, CLITypes.File, PipelineTypes.undefined,
+              AcceptTypes:={GetType(String)},
+              Description:="The file path to the database schema sql file that current used in the product environment.")>
+    <Argument("/updates", False, CLITypes.File, PipelineTypes.undefined,
+              AcceptTypes:={GetType(String)},
+              Description:="The file path to the database schema sql file that modified and will be updates to the current used product environment.")>
+    Public Function schemaCompares(args As CommandLine) As Integer
+        Dim current As String = args <= "/current"
+        Dim updates As String = args <= "/updates"
+        Dim output As String = args("/output") Or $"{current.ParentPath}/{current.BaseName}_upgrades_to_{updates.BaseName}.schema_compares.report.md"
+        Dim schema_current As Dictionary(Of String, Table) = SQLParser.LoadSQLDoc(current).ToDictionary(Function(t) t.TableName)
+        Dim schema_updates As Table() = SQLParser.LoadSQLDoc(updates)
+        Dim report As New StringBuilder
+
+        For Each newModel As Table In schema_updates
+
+        Next
+
+        Return report.ToString.SaveTo(output).CLICode
     End Function
 End Module
