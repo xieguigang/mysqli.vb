@@ -252,10 +252,28 @@ Module CLI
 
                         If current_field.DataType <> field.DataType Then
                             ' data type has been updated
-                            Call report.AppendLine($"Data type of current table filed ``{current_field.FieldName}`` has been updated:")
+                            Call report.AppendLine($"Data type of current table field ``{current_field.FieldName}`` has been updated:")
                             Call report.AppendLine()
                             Call report.AppendLine("```sql")
-                            Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` CHANGE COLUMN `{field.FieldName}` {field};")
+                            Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` CHANGE COLUMN `{field.FieldName}` {field} COMMENT '{field.Comment}' ;")
+                            Call report.AppendLine("```")
+                            Call report.AppendLine()
+                        End If
+
+                        If current_field.AutoIncrement <> field.AutoIncrement OrElse
+                            current_field.Unique <> field.Unique OrElse
+                            current_field.Binary <> field.Binary OrElse
+                            current_field.Default <> field.Default OrElse
+                            current_field.NotNull <> field.NotNull OrElse
+                            current_field.PrimaryKey <> field.PrimaryKey OrElse
+                            current_field.Unsigned <> field.Unsigned OrElse
+                            current_field.ZeroFill <> field.ZeroFill Then
+
+                            ' field attribute has been changed
+                            Call report.AppendLine($"Field data attribute of current table ``{current_field.FieldName}`` has been updated:")
+                            Call report.AppendLine()
+                            Call report.AppendLine("```sql")
+                            Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` CHANGE COLUMN `{field.FieldName}` {field} COMMENT '{field.Comment}' ;")
                             Call report.AppendLine("```")
                             Call report.AppendLine()
                         End If
@@ -264,7 +282,7 @@ Module CLI
                         Call report.AppendLine($"Add a new data field ``{field.FieldName}``:")
                         Call report.AppendLine()
                         Call report.AppendLine("```sql")
-                        Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` ADD COLUMN {field};")
+                        Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` ADD COLUMN {field} COMMENT '{field.Comment}' ;")
                         Call report.AppendLine("```")
                         Call report.AppendLine()
                     End If
