@@ -41,11 +41,6 @@ Namespace SQLParser
                                   Return field.FieldName
                               End Function)
 
-            If Not String.IsNullOrEmpty(comment) Then
-                comment = Mid(comment, 10)
-                comment = Mid(comment, 1, Len(comment) - 2)
-            End If
-
             tokens.original = ASCII.ReplaceQuot(tokens.original, "\'")
 
             ' The database fields reflection result {Name, Attribute}
