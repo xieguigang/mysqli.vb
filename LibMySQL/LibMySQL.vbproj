@@ -10,9 +10,137 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>README.md</PackageLicenseFile>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <ApplicationIcon>Project1.ico</ApplicationIcon>
+    <UseApplicationFramework>True</UseApplicationFramework>
+    <PackageIcon>Mimetypes-text-x-sql-icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-windows|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-windows|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-windows|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <Optimize>False</Optimize>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <Optimize>False</Optimize>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <Optimize>False</Optimize>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-windows|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <Optimize>False</Optimize>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <Optimize>False</Optimize>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <Optimize>False</Optimize>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Rsharp_app_release|net6.0-windows|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Rsharp_app_release|net6.0|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Rsharp_app_release|net48|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Rsharp_app_release|net6.0-windows|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Rsharp_app_release|net6.0|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Rsharp_app_release|net48|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Project1.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Mimetypes-text-x-sql-icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
