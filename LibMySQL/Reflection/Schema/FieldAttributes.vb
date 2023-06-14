@@ -64,13 +64,27 @@ Namespace Reflection.Schema
         Public Property Unique As Boolean
         Public Property PrimaryKey As Boolean
         Public Property DataType As DataType
+
+        ''' <summary>
+        ''' UNSIGNED
+        ''' </summary>
+        ''' <returns></returns>
         Public Property Unsigned As Boolean
+        ''' <summary>
+        ''' NOT NULL
+        ''' </summary>
+        ''' <returns></returns>
         Public Property NotNull As Boolean
         ''' <summary>
-        ''' 值是自动增长的
+        ''' AUTO_INCREMENT
+        ''' (值是自动增长的)
         ''' </summary>
         ''' <returns></returns>
         Public Property AutoIncrement As Boolean
+        ''' <summary>
+        ''' ZEROFILL
+        ''' </summary>
+        ''' <returns></returns>
         Public Property ZeroFill As Boolean
         Public Property Binary As Boolean
         Public Property [Default] As String = String.Empty
@@ -78,7 +92,7 @@ Namespace Reflection.Schema
         ''' <summary>
         ''' The property information of this custom database field attribute. 
         ''' </summary>
-        ''' <remarks></remarks>
+        ''' <remarks>The reflection binding</remarks>
         Public Property [PropertyInfo] As PropertyInfo
 
         Public Property Comment As String
