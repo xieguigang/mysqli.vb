@@ -1,4 +1,5 @@
-﻿Imports System.Text.RegularExpressions
+﻿Imports System.Runtime.CompilerServices
+Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic.Language
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports r = System.Text.RegularExpressions.Regex
@@ -51,6 +52,7 @@ Namespace SQLParser
             Return field
         End Function
 
+        <Extension>
         Public Function CreateField(fieldDef As String) As Reflection.Schema.Field
             Dim name$ = r.Match(fieldDef, "`.+?`", RegexICSng).Value
             Dim tokens$() = {name}.Join(fieldDef.Replace(name, "").Trim.Split)
