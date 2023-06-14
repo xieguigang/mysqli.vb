@@ -45,6 +45,7 @@ Imports System.Text
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.InteropService.SharedORM
 Imports Microsoft.VisualBasic.CommandLine.Reflection
+Imports Microsoft.VisualBasic.ComponentModel.Collection
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Microsoft.VisualBasic.Linq
@@ -215,7 +216,49 @@ Module CLI
         Dim report As New StringBuilder
 
         For Each newModel As Table In schema_updates
+            Call report.AppendLine($"### Updates for ``{newModel.TableName}``")
+            Call report.AppendLine()
 
+            If schema_current.ContainsKey(newModel.TableName) Then
+                Dim current_table As Table = schema_current(newModel.TableName)
+                Dim current_fields = current_table.Fields.ToDictionary(Function(f) f.FieldName)
+                Dim dbName As String = current_table.Database
+
+                For Each field As Field In newModel.Fields
+                    If current_fields.ContainsKey(field.FieldName) Then
+                    Else
+                        ' add new data field
+                        Call report.AppendLine($"Add a new data field ``{field.FieldName}``:")
+                        Call report.AppendLine()
+                        Call report.AppendLine("```sql")
+                        Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` ADD COLUMN `{field.FieldName}` {field.DataType.ToString};")
+                        Call report.AppendLine("```")
+                        Call report.AppendLine()
+                    End If
+                Next
+
+                Dim newModelFields As Index(Of String) = newModel.FieldNames.Indexing
+
+                For Each fieldName As String In current_fields.Keys
+                    If Not fieldName Like newModelFields Then
+                        ' current field in current used database schema has been delete
+                        Call report.AppendLine($"A field(``{fieldName}``) has been deleted in the updates model:")
+                        Call report.AppendLine()
+                        Call report.AppendLine("```sql")
+                        Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` DROP COLUMN `{fieldName}`;")
+                        Call report.AppendLine("```")
+                        Call report.AppendLine()
+                    End If
+                Next
+            Else
+                ' add new table
+                Call report.AppendLine("Current database schema didn't has this table, a new table will be created:")
+                Call report.AppendLine()
+                Call report.AppendLine("```sql")
+                Call report.AppendLine(newModel.SQL)
+                Call report.AppendLine("```")
+                Call report.AppendLine()
+            End If
         Next
 
         Return report.ToString.SaveTo(output).CLICode
