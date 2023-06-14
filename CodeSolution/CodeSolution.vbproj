@@ -292,7 +292,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PHP\CodeGenerator.vb" />
+    <Compile Include="CodeGenerator\PHP\CodeGenerator.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -309,10 +309,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="R\CodeGenerator.vb" />
+    <Compile Include="CodeGenerator\R\CodeGenerator.vb" />
     <Compile Include="SQL\SchemaMarkdown.vb" />
     <Compile Include="SQL\SQLParser.vb" />
-    <Compile Include="VisualBasic\CodeGenerator.vb" />
+    <Compile Include="CodeGenerator\VisualBasic\CodeGenerator.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
