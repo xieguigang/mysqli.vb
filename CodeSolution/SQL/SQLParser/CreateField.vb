@@ -1,6 +1,6 @@
 ﻿Imports System.Runtime.CompilerServices
-Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Scripting.SymbolBuilder.VBLanguage
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports r = System.Text.RegularExpressions.Regex
 
@@ -12,13 +12,16 @@ Namespace SQLParser
         ''' Regex expression for parsing the comments of the field in a table definition.
         ''' </summary>
         Const FIELD_COMMENTS As String = "COMMENT '.+?',"
+        Const FIELD_DEFAULT As String = "DEFAULT\s+(" & NumericPattern & ")|(" & Patterns.Identifer & "\(\s*\))|('.*?')"
 
         Private Function CreateField(fieldDef$, tokens$()) As Field
             Dim fieldName As String = tokens(0)
             Dim dataType As String = tokens(1)
             Dim commentText As String = r.Match(fieldDef, FIELD_COMMENTS).Value
             Dim i As Integer = InStr(fieldDef, fieldName)
+            Dim defaultVal As String
 
+            defaultVal = r.Match(fieldDef, FIELD_DEFAULT, RegexICSng).Value
             fieldDef = Mid(fieldDef, i + Len(fieldName))
             i = InStr(fieldDef, dataType)
             fieldDef = Mid(fieldDef, i + Len(dataType)).Replace(",", "").Trim
@@ -27,6 +30,11 @@ Namespace SQLParser
             If Not String.IsNullOrEmpty(commentText) Then
                 commentText = Mid(commentText, 10)
                 commentText = Mid(commentText, 1, Len(commentText) - 2)
+            End If
+            If Not String.IsNullOrEmpty(defaultVal) Then
+                defaultVal = defaultVal.Substring(7).Trim.Trim("'"c)
+            Else
+                defaultVal = Nothing
             End If
 
             Dim pos% = InStr(fieldDef, "COMMENT '", CompareMethod.Text)
@@ -50,7 +58,8 @@ Namespace SQLParser
                 .AutoIncrement = autoIncrement,
                 .NotNull = IsNotNull,
                 .Unsigned = unsigned,
-                .ZeroFill = zeroFill
+                .ZeroFill = zeroFill,
+                .[Default] = defaultVal
             }
 
             Return field

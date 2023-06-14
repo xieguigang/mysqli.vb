@@ -1,46 +1,46 @@
 ﻿#Region "Microsoft.VisualBasic::eeb3c6053c1fa9c26aa6c46aa1791914, LibMySQL\Reflection\Schema\FieldAttributes.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    '     Class Field
-    ' 
-    '         Properties: [Default], [PropertyInfo], AutoIncrement, Binary, Comment
-    '                     DataType, FieldName, NotNull, PrimaryKey, Unique
-    '                     Unsigned, ZeroFill
-    ' 
-    '         Function: ParseAttributes, PropertyParser, ToString
-    ' 
-    ' 
-    ' /********************************************************************************/
+'     Class Field
+' 
+'         Properties: [Default], [PropertyInfo], AutoIncrement, Binary, Comment
+'                     DataType, FieldName, NotNull, PrimaryKey, Unique
+'                     Unsigned, ZeroFill
+' 
+'         Function: ParseAttributes, PropertyParser, ToString
+' 
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -117,7 +117,7 @@ Namespace Reflection.Schema
                 End If
             End With
 
-            If Len([Default]) > 0 Then
+            If hasDefault() Then
                 Call sb.Append(" ")
 
                 Select Case DataType.MySQLType
@@ -126,13 +126,36 @@ Namespace Reflection.Schema
                          MySqlDbType.Text,
                          MySqlDbType.TinyText
 
-                        Call sb.AppendFormat("DEFAULT `{0}`", [Default])
+                        Call sb.AppendFormat("DEFAULT '{0}'", [Default])
+                    Case MySqlDbType.Date
+                        If [Default].TextEquals("now()") Then
+                            Call sb.Append("DEFAULT now()")
+                        Else
+                            Call sb.AppendFormat("DEFAULT '{0}'", [Default])
+                        End If
                     Case Else
                         Call sb.AppendFormat("DEFAULT {0}", [Default])
                 End Select
             End If
 
             Return sb.ToString
+        End Function
+
+        Private Function hasDefault() As Boolean
+            If [Default] Is Nothing Then
+                Return False
+            End If
+
+            Select Case DataType.MySQLType
+                Case MySqlDbType.LongText,
+                     MySqlDbType.MediumText,
+                     MySqlDbType.Text,
+                     MySqlDbType.TinyText
+
+                    Return True
+                Case Else
+                    Return Not [Default].StringEmpty
+            End Select
         End Function
 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>

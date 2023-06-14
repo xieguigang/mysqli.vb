@@ -246,7 +246,7 @@ Module CLI
                             Call report.AppendLine($"Description comment of data field has been updated:")
                             Call report.AppendLine()
                             Call report.AppendLine("```sql")
-                            Call report.AppendLine($"ALTER TABLE `{dbName}`.`{newModel.TableName}` CHANGE COLUMN `{field.FieldName}` `{field.FieldName}` {field.DataType.ToString} COMMENT '{field.Comment}' ;")
+                            Call report.AppendLine($"ALTER TABLE `{dbName}`.`{newModel.TableName}` CHANGE COLUMN `{field.FieldName}` {field} COMMENT '{field.Comment}' ;")
                             Call report.AppendLine("```")
                         End If
 
@@ -255,7 +255,7 @@ Module CLI
                             Call report.AppendLine($"Data type of current table filed ``{current_field.FieldName}`` has been updated:")
                             Call report.AppendLine()
                             Call report.AppendLine("```sql")
-                            Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` CHANGE COLUMN `{field.FieldName}` `{field.FieldName}` {field.DataType.ToString};")
+                            Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` CHANGE COLUMN `{field.FieldName}` {field};")
                             Call report.AppendLine("```")
                             Call report.AppendLine()
                         End If
@@ -264,7 +264,7 @@ Module CLI
                         Call report.AppendLine($"Add a new data field ``{field.FieldName}``:")
                         Call report.AppendLine()
                         Call report.AppendLine("```sql")
-                        Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` ADD COLUMN `{field.FieldName}` {field.DataType.ToString};")
+                        Call report.AppendLine($"ALTER TABLE `{dbName}`.`{current_table.TableName}` ADD COLUMN {field};")
                         Call report.AppendLine("```")
                         Call report.AppendLine()
                     End If

@@ -36,8 +36,8 @@ Namespace SQLParser
                 type = Reflection.DbAttributes.MySqlDbType.Double
 
             ElseIf Regex.Match(type_define, "datetime", RegexOptions.IgnoreCase).Success OrElse
-            Regex.Match(type_define, "date", RegexOptions.IgnoreCase).Success OrElse
-            Regex.Match(type_define, "timestamp", RegexOptions.IgnoreCase).Success Then
+                Regex.Match(type_define, "date", RegexOptions.IgnoreCase).Success OrElse
+                Regex.Match(type_define, "timestamp", RegexOptions.IgnoreCase).Success Then
 
                 type = Reflection.DbAttributes.MySqlDbType.DateTime
 
@@ -48,8 +48,8 @@ Namespace SQLParser
                 type = Reflection.DbAttributes.MySqlDbType.String
 
             ElseIf InStr(type_define, "Blob", CompareMethod.Text) > 0 OrElse
-            Regex.Match(type_define, "varbinary\(\d+\)", RegexOptions.IgnoreCase).Success OrElse
-            Regex.Match(type_define, "binary\(\d+\)", RegexOptions.IgnoreCase).Success Then
+                Regex.Match(type_define, "varbinary\(\d+\)", RegexOptions.IgnoreCase).Success OrElse
+                Regex.Match(type_define, "binary\(\d+\)", RegexOptions.IgnoreCase).Success Then
                 type = Reflection.DbAttributes.MySqlDbType.Blob
 
             ElseIf Regex.Match(type_define, "decimal\(", RegexOptions.IgnoreCase).Success Then
@@ -60,16 +60,15 @@ Namespace SQLParser
                 parameter = GetNumberValue(type_define, 1)
 
             Else
-
-                'More complex type is not support yet, but you can easily extending the mapping code at here
+                ' More complex type is not support yet, but you can
+                ' easily extending the mapping code at here
                 Throw New NotImplementedException($"Type define is not support yet for    {NameOf(type_define)}   >>> ""{type_define}""")
-
             End If
 
             Return New Reflection.DbAttributes.DataType(type, parameter)
         End Function
 
-        Private Function GetNumberValue(typeDef$, default$) As String
+        Private Function GetNumberValue(typeDef$, Optional default$ = Nothing) As String
             Dim parameter$ = r.Match(typeDef, "\(.+?\)").Value
 
             If parameter.StringEmpty Then
