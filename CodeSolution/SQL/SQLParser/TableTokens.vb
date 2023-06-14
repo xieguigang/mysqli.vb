@@ -17,6 +17,10 @@ Namespace SQLParser
         Public Property comment As String
         Public Property original As String
 
+        Public Overrides Function ToString() As String
+            Return original
+        End Function
+
         Public Shared Function ParseTokens(sql As String) As TableTokens
             Dim tokens = sqlParser(sql)
             Dim tableName As String = tokens.Value(Scan0)

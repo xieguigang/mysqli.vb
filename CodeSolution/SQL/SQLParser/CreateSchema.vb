@@ -29,7 +29,7 @@ Namespace SQLParser
                 primaryKeys = New String() {}
             End If
 
-            Dim comment As String = r.Match(tokens.original, "COMMENT='.+';", RegexOptions.Singleline).Value
+            Dim comment As String = tokens.comment
             Dim fieldList = tokens.fields _
                 .Select(Function(si) si.CreateField) _
                 .ToDictionary(Function(field)
