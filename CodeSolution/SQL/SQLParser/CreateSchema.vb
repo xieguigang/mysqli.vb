@@ -1,5 +1,4 @@
 ﻿Imports System.Runtime.CompilerServices
-Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports r = System.Text.RegularExpressions.Regex
@@ -7,6 +6,13 @@ Imports r = System.Text.RegularExpressions.Regex
 Namespace SQLParser
 
     Module CreateSchema
+
+        Private Function ParseTableName(tableName As String) As String
+            Dim tokens As String() = r.Matches(tableName, "`.+?`").ToArray
+            tableName = tokens.Last
+            tableName = Mid(tableName, 2, Len(tableName) - 2)
+            Return tableName
+        End Function
 
         ''' <summary>
         ''' Create a MySQL table schema object.
@@ -16,8 +22,7 @@ Namespace SQLParser
         <Extension>
         Public Function CreateSchemaInner(tokens As TableTokens) As Table
             Dim primaryKeys$()
-            Dim tableName = r.Matches(tokens.name, "`.+?`").ToArray.Last
-            tableName = Mid(tableName, 2, Len(tableName) - 2)
+            Dim tableName = ParseTableName(tableName:=tokens.name)
             Dim primaryKey = r.Match(tokens.primaryKey, "\(`.+?`\)").Value
 
             If Not String.IsNullOrEmpty(primaryKey) Then
