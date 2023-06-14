@@ -258,10 +258,7 @@ _SET_PRIMARYKEY:
         Dim comment As String = r.Match(createTableSQL, "COMMENT='.+';", RegexOptions.Singleline).Value
         Dim fieldList = fields _
             .Select(AddressOf __createField) _
-            .Where(Function(field) Not field Is Nothing) _
-            .ToDictionary(Function(field)
-                              Return field.FieldName
-                          End Function)
+            .ToDictionary(Function(field) field.FieldName)
 
         If Not String.IsNullOrEmpty(comment) Then
             comment = Mid(comment, 10)
@@ -271,10 +268,9 @@ _SET_PRIMARYKEY:
         createTableSQL = ASCII.ReplaceQuot(createTableSQL, "\'")
 
         ' The database fields reflection result {Name, Attribute}
-        ' Assuming at least only one primary key in a table
         Dim tableSchema As New Table(fieldList) With {
             .TableName = tableName,
-            .PrimaryFields = primaryKeys.AsList,
+            .PrimaryFields = primaryKeys.AsList,   ' Assuming at least only one primary key in a table
             .Index = primaryKey,
             .Comment = comment,
             .SQL = createTableSQL
@@ -306,8 +302,7 @@ _SET_PRIMARYKEY:
         Dim pos% = InStr(fieldDef, "COMMENT '", CompareMethod.Text)
         Dim p As i32 = 0
 
-        If pos = 0 Then
-            ' 没有注释，则百分之百就是列属性了
+        If pos = 0 Then  '没有注释，则百分之百就是列属性了
             pos = Integer.MaxValue
         End If
 
@@ -316,7 +311,7 @@ _SET_PRIMARYKEY:
 
         Dim field As New Field With {
             .FieldName = FieldName,
-            .DataType = InternalCreateDataType(DataType.Replace(",", "").Trim),
+            .DataType = __createDataType(DataType.Replace(",", "").Trim),  ' Some data type can be merged into a same type when we mapping a database table
             .Comment = Comment,
             .AutoIncrement = IsAutoIncrement,
             .NotNull = IsNotNull
@@ -327,11 +322,6 @@ _SET_PRIMARYKEY:
     Private Function __createField(fieldDef As String) As Reflection.Schema.Field
         Dim name$ = r.Match(fieldDef, "`.+?`", RegexICSng).Value
         Dim tokens$() = {name}.Join(fieldDef.Replace(name, "").Trim.Split)
-
-        If InStr(fieldDef, "UNIQUE INDEX") > 0 Then
-            ' 这是一个索引的定义，不是数据表的字段定义
-            Return Nothing
-        End If
 
         Try
             Return __createField(fieldDef, tokens)
@@ -345,14 +335,11 @@ _SET_PRIMARYKEY:
     ''' </summary>
     ''' <param name="type_define"></param>
     ''' <returns></returns>
-    ''' <remarks>
-    ''' Some data type can be merged into a same type when we mapping a database table
-    ''' </remarks>
-    Private Function InternalCreateDataType(type_define$) As Reflection.DbAttributes.DataType
+    Private Function __createDataType(type_define$) As Reflection.DbAttributes.DataType
         Dim type As Reflection.DbAttributes.MySqlDbType
         Dim parameter As String = ""
 
-        If r.Match(type_define, "tinyint\(\d+\)", RegexOptions.IgnoreCase).Success Then
+        If type_define.TextEquals("tinyint") OrElse r.Match(type_define, "tinyint\(\d+\)", RegexOptions.IgnoreCase).Success Then
             parameter = __getNumberValue(type_define, 1)
 
             If parameter = "1" Then
@@ -382,8 +369,7 @@ _SET_PRIMARYKEY:
         ElseIf Regex.Match(type_define, "text", RegexOptions.IgnoreCase).Success Then
             type = Reflection.DbAttributes.MySqlDbType.Text
 
-        ElseIf InStr(type_define, "enum(", CompareMethod.Text) > 0 Then
-            ' enum类型转换为String类型？？？？
+        ElseIf InStr(type_define, "enum(", CompareMethod.Text) > 0 Then   ' enum类型转换为String类型？？？？
             type = Reflection.DbAttributes.MySqlDbType.String
 
         ElseIf InStr(type_define, "Blob", CompareMethod.Text) > 0 OrElse
@@ -399,8 +385,10 @@ _SET_PRIMARYKEY:
             parameter = __getNumberValue(type_define, 1)
 
         Else
+
             'More complex type is not support yet, but you can easily extending the mapping code at here
-            Throw New NotImplementedException($"Type define is not support yet for {NameOf(type_define)}=""{type_define}""")
+            Throw New NotImplementedException($"Type define is not support yet for    {NameOf(type_define)}   >>> ""{type_define}""")
+
         End If
 
         Return New Reflection.DbAttributes.DataType(type, parameter)

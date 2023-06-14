@@ -49,8 +49,8 @@ Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Scripting.MetaData
-Imports Microsoft.VisualBasic.Text
-Imports Oracle.LinuxCompatibility.MySQL.CodeSolution.PHP
+Imports Oracle.LinuxCompatibility.MySQL.CodeSolution
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports MySQL2vb = Oracle.LinuxCompatibility.MySQL.CodeSolution.VisualBasic.CodeGenerator
 
 <CLI>
@@ -84,7 +84,7 @@ Module CLI
         Dim SQL As String = args("/sql")
         Dim out$ = args("-o")
         Dim ns As String = args("/namespace")
-        Dim language$ = args("--language") Or "visualbasic"
+        Dim language$ = args("/language") Or "visualbasic"
 
         ' 当文件不存在的时候可能是std_in，则判断是否存在out并且是split状态
         If Not SQL.FileExists Then
@@ -92,20 +92,6 @@ Module CLI
                 Call VBDebugger.Warning(InputsNotFound)
                 Return -1
             End If
-        End If
-
-        If language.TextEquals("php") Then
-            Dim mysqlDoc As StreamReader = args.OpenStreamInput("/sql")
-
-            ' 如果选择utf8编码的话，在windows平台上面utf8是默认带有BOM头的
-            ' 这个编码会导致php脚本的解析不正常
-            ' 在这里使用不带有BOM头信息的utf8编码
-            Using output As StreamWriter = args.OpenStreamOutput("-o", Encodings.UTF8WithoutBOM)
-                Call output.WriteLine(mysqlDoc.GeneratePhpModelCode(ns))
-                Call output.Flush()
-            End Using
-
-            Return 0
         End If
 
         If FileIO.FileSystem.FileExists(SQL) Then
@@ -207,5 +193,31 @@ Module CLI
         Next
 
         Return LQuery.IsNullOrEmpty.CLICode
+    End Function
+
+    <ExportAPI("--compares")>
+    <Description("Compare the difference betweens two database schema. This cli tools is used 
+                  for make upgrades of current database schema to the new updates database 
+                  schema.")>
+    <Usage("--compares /current <schema.sql> /updates <schema.sql> [/output <report.md>]")>
+    <Argument("/current", False, CLITypes.File, PipelineTypes.undefined,
+              AcceptTypes:={GetType(String)},
+              Description:="The file path to the database schema sql file that current used in the product environment.")>
+    <Argument("/updates", False, CLITypes.File, PipelineTypes.undefined,
+              AcceptTypes:={GetType(String)},
+              Description:="The file path to the database schema sql file that modified and will be updates to the current used product environment.")>
+    Public Function schemaCompares(args As CommandLine) As Integer
+        Dim current As String = args <= "/current"
+        Dim updates As String = args <= "/updates"
+        Dim output As String = args("/output") Or $"{current.ParentPath}/{current.BaseName}_upgrades_to_{updates.BaseName}.schema_compares.report.md"
+        Dim schema_current As Dictionary(Of String, Table) = SQLParser.LoadSQLDoc(current).ToDictionary(Function(t) t.TableName)
+        Dim schema_updates As Table() = SQLParser.LoadSQLDoc(updates)
+        Dim report As New StringBuilder
+
+        For Each newModel As Table In schema_updates
+
+        Next
+
+        Return report.ToString.SaveTo(output).CLICode
     End Function
 End Module

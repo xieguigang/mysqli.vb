@@ -42,7 +42,6 @@
 #End Region
 
 Imports System.Runtime.CompilerServices
-Imports Oracle.LinuxCompatibility.MySQL.Reflection
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace Expressions
@@ -51,33 +50,6 @@ Namespace Expressions
     ''' MySQL query helper
     ''' </summary>
     Public Module QueryHelper
-
-        ''' <summary>
-        ''' 从数据库之中加载所有的数据到程序的内存之中，只推荐表的数据量比较小的使用，
-        ''' 使用这个函数加载完数据到内存之中后，进行内存之中的查询操作，会很明显提升应用程序的执行性能
-        ''' 
-        ''' ```SQL
-        ''' SELECT * FROM `{table.Database}`.`{table.TableName}`;
-        ''' ```
-        ''' </summary>
-        ''' <typeparam name="T"></typeparam>
-        ''' <param name="mysql"></param>
-        ''' <returns></returns>
-        <Extension>
-        Public Function SelectALL(Of T As MySQLTable)(mysql As MySqli) As T()
-            Return mysql.Query(Of T)(DataTable(Of T).SelectALL())
-        End Function
-
-        ''' <summary>
-        ''' clear table data
-        ''' </summary>
-        ''' <typeparam name="T"></typeparam>
-        ''' <param name="mysqli"></param>
-        ''' <returns></returns>
-        <Extension>
-        Public Function Truncate(Of T As MySQLTable)(mysqli As MySqli) As Boolean
-            Return mysqli.Execute(DataTable(Of T).Truncate) > 0
-        End Function
 
         ''' <summary>
         ''' ``SELECT * FROM table;``
