@@ -215,6 +215,10 @@ Module CLI
         Dim schema_updates As Table() = SQLParser.LoadSQLDoc(updates)
         Dim report As New StringBuilder
 
+        Call report.AppendLine("# Schema update report")
+        Call report.AppendLine()
+        Call report.AppendLine($"Update report for schema of ``{current.FileName}`` updates to new model ``{updates.FileName}``")
+
         For Each newModel As Table In schema_updates
             Call report.AppendLine($"### Updates for ``{newModel.TableName}``")
             Call report.AppendLine()
@@ -223,6 +227,15 @@ Module CLI
                 Dim current_table As Table = schema_current(newModel.TableName)
                 Dim current_fields = current_table.Fields.ToDictionary(Function(f) f.FieldName)
                 Dim dbName As String = current_table.Database
+
+                If newModel.Comment <> current_table.Comment Then
+                    Call report.AppendLine("Update table description comment:")
+                    Call report.AppendLine()
+                    Call report.AppendLine("```sql")
+                    Call report.AppendLine($"ALTER TABLE `{dbName}`.`{newModel.TableName}` COMMENT = '{newModel.Comment}' ;")
+                    Call report.AppendLine("```")
+                    Call report.AppendLine()
+                End If
 
                 For Each field As Field In newModel.Fields
                     If current_fields.ContainsKey(field.FieldName) Then
