@@ -90,7 +90,7 @@ Public Module SQLParser
                 __createSchema(FieldsTokens,
                                TableName,
                                PrimaryKey,
-                               SQL),
+                               SQL, comment:=Nothing),
                 NameOf(Reflection.Schema.Table.Database),
                 DB)
         Return Table
@@ -121,17 +121,19 @@ Public Module SQLParser
                       Select primaryKey,
                           tableName,
                           Fields = fieldsTokens,
-                          original = table).ToArray
+                          original = table,
+                          comment = tokens.Description).ToArray
         Dim setValue = New SetValue(Of Table)().GetSet(NameOf(Table.Database))
         Dim SqlSchema = LinqAPI.Exec(Of Table) _
- _
+                                               _
             () <= From table
                   In tables
                   Let tbl As Table = __createSchema(
                       table.Fields,
                       table.tableName,
                       table.primaryKey,
-                      table.original)
+                      table.original,
+                      comment:=table.comment)
                   Select setValue(tbl, DB)
 
         Return SqlSchema
@@ -170,10 +172,22 @@ Public Module SQLParser
 
     Const DB_NAME As String = "CREATE\s+((DATABASE)|(SCHEMA))\s+IF\s+NOT\s+EXISTS\s+`.+?`"
 
+    ''' <summary>
+    ''' Just parse the primary key and the data field list at here
+    ''' </summary>
+    ''' <param name="SQL"></param>
+    ''' <returns></returns>
     Private Function __sqlParser(SQL As String) As NamedValue(Of String())
         Dim tokens$() = SQL.LineTokens
         Dim p% = tokens.Lookup("PRIMARY KEY")
         Dim primaryKey As String
+        Dim table_comment As String = Strings.Trim(tokens.Last)
+
+        If Not table_comment.StartsWith("COMMENT = ") Then
+            table_comment = Nothing
+        Else
+            table_comment = table_comment.GetStackValue("'", "'").Trim
+        End If
 
         If p = -1 Then ' 没有设置主键
             p = tokens.Lookup("UNIQUE KEY")
@@ -197,33 +211,35 @@ _SET_PRIMARYKEY:
             tokens = tokens.Take(p).ToArray
         End If
 
-        Return New NamedValue(Of String())(primaryKey, tokens)
+        Return New NamedValue(Of String())(primaryKey, tokens, table_comment)
     End Function
 
     ''' <summary>
     ''' Create a MySQL table schema object.
     ''' </summary>
-    ''' <param name="Fields"></param>
-    ''' <param name="TableName"></param>
-    ''' <param name="PrimaryKey"></param>
-    ''' <param name="CreateTableSQL"></param>
+    ''' <param name="fields"></param>
+    ''' <param name="tableName"></param>
+    ''' <param name="primaryKey"></param>
+    ''' <param name="createTableSQL"></param>
     ''' <returns></returns>
-    Private Function __createSchema(Fields As String(), TableName As String, PrimaryKey As String, CreateTableSQL As String) As Reflection.Schema.Table
+    Private Function __createSchema(fields As String(), tableName As String, primaryKey As String, createTableSQL As String, comment As String) As Reflection.Schema.Table
         Try
-            Return __createSchemaInner(Fields, TableName, PrimaryKey, CreateTableSQL)
+            Dim table As Table = __createSchemaInner(fields, tableName, primaryKey, createTableSQL)
+            table.Comment = comment
+            Return table
         Catch ex As Exception
 
             With New StringBuilder
-                Call .AppendLine(NameOf(CreateTableSQL))
+                Call .AppendLine(NameOf(createTableSQL))
                 Call .AppendLine(New String("="c, 120))
-                Call .AppendLine(CreateTableSQL)
+                Call .AppendLine(createTableSQL)
                 Call .AppendLine(vbCrLf)
-                Call .AppendLine($"{NameOf(TableName)}   ===>  {TableName}")
-                Call .AppendLine($"{NameOf(PrimaryKey)}  ===>  {PrimaryKey}")
+                Call .AppendLine($"{NameOf(tableName)}   ===>  {tableName}")
+                Call .AppendLine($"{NameOf(primaryKey)}  ===>  {primaryKey}")
                 Call .AppendLine(vbCrLf)
-                Call .AppendLine(NameOf(Fields))
+                Call .AppendLine(NameOf(fields))
                 Call .AppendLine(New String("="c, 120))
-                Call .AppendLine(String.Join(vbCrLf, Fields))
+                Call .AppendLine(String.Join(vbCrLf, fields))
 
                 Throw New Exception(.ToString, ex)
             End With

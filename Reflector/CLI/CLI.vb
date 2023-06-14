@@ -211,8 +211,8 @@ Module CLI
         Dim current As String = args <= "/current"
         Dim updates As String = args <= "/updates"
         Dim output As String = args("/output") Or $"{current.ParentPath}/{current.BaseName}_upgrades_to_{updates.BaseName}.schema_compares.report.md"
-        Dim schema_current As Dictionary(Of String, Table) = SQLParser.LoadSQLDoc(current).ToDictionary(Function(t) t.TableName)
         Dim schema_updates As Table() = SQLParser.LoadSQLDoc(updates)
+        Dim schema_current As Dictionary(Of String, Table) = SQLParser.LoadSQLDoc(current).ToDictionary(Function(t) t.TableName)
         Dim report As New StringBuilder
 
         Call report.AppendLine("# Schema update report")
