@@ -242,6 +242,14 @@ Module CLI
                         ' check of the data type is different or not
                         Dim current_field As Field = current_fields(field.FieldName)
 
+                        If field.Comment <> current_field.Comment Then
+                            Call report.AppendLine($"Description comment of data field has been updated:")
+                            Call report.AppendLine()
+                            Call report.AppendLine("```sql")
+                            Call report.AppendLine($"ALTER TABLE `{dbName}`.`{newModel.TableName}` CHANGE COLUMN `{field.FieldName}` `{field.FieldName}` {field.DataType.ToString} COMMENT '{field.Comment}' ;")
+                            Call report.AppendLine("```")
+                        End If
+
                         If current_field.DataType <> field.DataType Then
                             ' data type has been updated
                             Call report.AppendLine($"Data type of current table filed ``{current_field.FieldName}`` has been updated:")
