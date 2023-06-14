@@ -108,25 +108,15 @@ Namespace SQLParser
             Dim DB As String = GetDBName(sqlDoc)
             Dim tables = (From table As String
                           In sqlDoc.SplitTableCreateInternal
-                          Let tokens As NamedValue(Of String()) = __sqlParser(SQL:=table)
-                          Let tableName As String = tokens.Value(Scan0)
-                          Let primaryKey As String = tokens.Name
-                          Let fieldsTokens = tokens _
-                          .Value _
-                          .Skip(1) _
-                          .ToArray
-                          Select primaryKey,
-                          tableName,
-                          Fields = fieldsTokens,
-                          original = table,
-                          comment = tokens.Description).ToArray
+                          Let tokens As TableTokens = TableTokens.ParseTokens(sql:=table)
+                          Select tokens).ToArray
             Dim setValue = New SetValue(Of Table)().GetSet(NameOf(Table.Database))
             Dim SqlSchema = LinqAPI.Exec(Of Table) _
                                                    _
             () <= From table
                   In tables
                   Let tbl As Table = __createSchema(
-                      table.Fields,
+                      table.fields,
                       table.tableName,
                       table.primaryKey,
                       table.original,
@@ -142,48 +132,6 @@ Namespace SQLParser
                 raw = .ByRef
                 Return LoadSQLDocFromStream(.ByRef)
             End With
-        End Function
-
-        ''' <summary>
-        ''' Just parse the primary key and the data field list at here
-        ''' </summary>
-        ''' <param name="SQL"></param>
-        ''' <returns></returns>
-        Private Function __sqlParser(SQL As String) As NamedValue(Of String())
-            Dim tokens$() = SQL.LineTokens
-            Dim p% = tokens.Lookup("PRIMARY KEY")
-            Dim primaryKey As String
-            Dim table_comment As String = Strings.Trim(tokens.Last)
-
-            If Not table_comment.StartsWith("COMMENT = ") Then
-                table_comment = Nothing
-            Else
-                table_comment = table_comment.GetStackValue("'", "'").Trim
-            End If
-
-            If p = -1 Then ' 没有设置主键
-                p = tokens.Lookup("UNIQUE KEY")
-            End If
-
-            If p = -1 Then
-                p = tokens.Lookup("KEY")
-            End If
-
-            If p = -1 Then
-                primaryKey = ""
-            Else
-_SET_PRIMARYKEY:
-                primaryKey = tokens(p)
-                tokens = tokens.Take(p).ToArray
-            End If
-
-            p = tokens.Lookup(") ENGINE=")
-
-            If Not p = -1 Then
-                tokens = tokens.Take(p).ToArray
-            End If
-
-            Return New NamedValue(Of String())(primaryKey, tokens, table_comment)
         End Function
 
         ''' <summary>
