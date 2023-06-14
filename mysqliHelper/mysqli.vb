@@ -44,11 +44,11 @@
 Imports System.Runtime.CompilerServices
 Imports System.Runtime.InteropServices
 Imports System.Text
-Imports Microsoft.VisualBasic.ApplicationServices.Terminal
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.Default
 Imports Microsoft.VisualBasic.SecurityString
+Imports Microsoft.VisualBasic.Terminal
 Imports Oracle.LinuxCompatibility.MySQL
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
@@ -125,7 +125,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Uri
     Const dataFile$ = "mysqli.dat"
     Const NameKey$ = "mysqli.profile"
 
-    ReadOnly defaultProfile As [Default](Of String) = dataFile
+    ReadOnly defaultProfile As DefaultValue(Of String) = dataFile
 
     Public Sub RunConfig()
         Dim update As Action(Of ConnectionUri) =
