@@ -12,7 +12,7 @@ Namespace SQLParser
         ''' </summary>
         Const FIELD_COMMENTS As String = "COMMENT '.+?',"
 
-        Public Function __createField(fieldDef$, tokens$()) As Field
+        Private Function CreateField(fieldDef$, tokens$()) As Field
             Dim FieldName As String = tokens(0)
             Dim DataType As String = tokens(1)
             Dim Comment As String = Regex.Match(fieldDef, FIELD_COMMENTS).Value
@@ -42,7 +42,7 @@ Namespace SQLParser
             ' when we mapping a database table
             Dim field As New Field With {
                 .FieldName = FieldName,
-                .DataType = __createDataType(DataType.Replace(",", "").Trim),
+                .DataType = CreateDataType.CreateDataType(DataType.Replace(",", "").Trim),
                 .Comment = Comment,
                 .AutoIncrement = IsAutoIncrement,
                 .NotNull = IsNotNull
@@ -51,14 +51,14 @@ Namespace SQLParser
             Return field
         End Function
 
-        Public Function __createField(fieldDef As String) As Reflection.Schema.Field
+        Public Function CreateField(fieldDef As String) As Reflection.Schema.Field
             Dim name$ = r.Match(fieldDef, "`.+?`", RegexICSng).Value
             Dim tokens$() = {name}.Join(fieldDef.Replace(name, "").Trim.Split)
 
             Try
-                Return __createField(fieldDef, tokens)
+                Return CreateField(fieldDef, tokens)
             Catch ex As Exception
-                Throw New Exception($"{NameOf(__createField)} ===>  {fieldDef}{vbCrLf & vbCrLf & vbCrLf}", ex)
+                Throw New Exception($"{NameOf(CreateField)} ===>  {fieldDef}{vbCrLf & vbCrLf & vbCrLf}", ex)
             End Try
         End Function
     End Module

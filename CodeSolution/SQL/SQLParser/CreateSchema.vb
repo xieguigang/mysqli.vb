@@ -31,7 +31,7 @@ Namespace SQLParser
 
             Dim comment As String = r.Match(tokens.original, "COMMENT='.+';", RegexOptions.Singleline).Value
             Dim fieldList = tokens.fields _
-            .Select(AddressOf __createField) _
+            .Select(AddressOf CreateField) _
             .ToDictionary(Function(field) field.FieldName)
 
             If Not String.IsNullOrEmpty(comment) Then

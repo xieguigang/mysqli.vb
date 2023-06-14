@@ -10,12 +10,12 @@ Namespace SQLParser
         ''' </summary>
         ''' <param name="type_define"></param>
         ''' <returns></returns>
-        Public Function __createDataType(type_define$) As Reflection.DbAttributes.DataType
+        Public Function CreateDataType(type_define$) As Reflection.DbAttributes.DataType
             Dim type As Reflection.DbAttributes.MySqlDbType
             Dim parameter As String = ""
 
             If type_define.TextEquals("tinyint") OrElse r.Match(type_define, "tinyint\(\d+\)", RegexOptions.IgnoreCase).Success Then
-                parameter = __getNumberValue(type_define, 1)
+                parameter = GetNumberValue(type_define, 1)
 
                 If parameter = "1" Then
                     ' boolean 
@@ -26,11 +26,11 @@ Namespace SQLParser
 
             ElseIf "int".TextEquals(type_define) OrElse r.Match(type_define, "int\(\d+\)", RegexOptions.IgnoreCase).Success Then
                 type = Reflection.DbAttributes.MySqlDbType.Int64
-                parameter = __getNumberValue(type_define, 11)
+                parameter = GetNumberValue(type_define, 11)
 
             ElseIf Regex.Match(type_define, "varchar\(\d+\)", RegexOptions.IgnoreCase).Success OrElse Regex.Match(type_define, "char\(\d+\)", RegexOptions.IgnoreCase).Success Then
                 type = Reflection.DbAttributes.MySqlDbType.VarChar
-                parameter = __getNumberValue(type_define, 45)
+                parameter = GetNumberValue(type_define, 45)
 
             ElseIf Regex.Match(type_define, "double", RegexOptions.IgnoreCase).Success OrElse InStr(type_define, "float", CompareMethod.Text) > 0 Then
                 type = Reflection.DbAttributes.MySqlDbType.Double
@@ -57,7 +57,7 @@ Namespace SQLParser
 
             ElseIf Regex.Match(type_define, "bit\(", RegexICSng).Success Then
                 type = Reflection.DbAttributes.MySqlDbType.Bit
-                parameter = __getNumberValue(type_define, 1)
+                parameter = GetNumberValue(type_define, 1)
 
             Else
 
@@ -69,7 +69,7 @@ Namespace SQLParser
             Return New Reflection.DbAttributes.DataType(type, parameter)
         End Function
 
-        Private Function __getNumberValue(typeDef$, default$) As String
+        Private Function GetNumberValue(typeDef$, default$) As String
             Dim parameter$ = r.Match(typeDef, "\(.+?\)").Value
 
             If parameter.StringEmpty Then
