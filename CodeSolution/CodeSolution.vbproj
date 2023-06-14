@@ -311,7 +311,8 @@
     </Compile>
     <Compile Include="CodeGenerator\R\CodeGenerator.vb" />
     <Compile Include="SQL\SchemaMarkdown.vb" />
-    <Compile Include="SQL\SQLParser.vb" />
+    <Compile Include="SQL\SQLParser\RegexpParser.vb" />
+    <Compile Include="SQL\SQLParser\SQLParser.vb" />
     <Compile Include="CodeGenerator\VisualBasic\CodeGenerator.vb" />
   </ItemGroup>
   <ItemGroup>
