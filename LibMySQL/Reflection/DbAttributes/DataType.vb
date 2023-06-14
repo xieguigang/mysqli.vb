@@ -1,49 +1,49 @@
 ﻿#Region "Microsoft.VisualBasic::570b9e4d5f4189fbceadc91589ab9905, LibMySQL\Reflection\DbAttributes\DataType.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    '     Class DataType
-    ' 
-    '         Properties: MySQLType, ParameterValue
-    ' 
-    '         Constructor: (+1 Overloads) Sub New
-    '         Function: ToString, TypeCasting
-    ' 
-    '     Module CTypeDynamicsExtensions
-    ' 
-    '         Function: TypeHandler, UInt32_2_UInteger
-    ' 
-    ' 
-    ' /********************************************************************************/
+'     Class DataType
+' 
+'         Properties: MySQLType, ParameterValue
+' 
+'         Constructor: (+1 Overloads) Sub New
+'         Function: ToString, TypeCasting
+' 
+'     Module CTypeDynamicsExtensions
+' 
+'         Function: TypeHandler, UInt32_2_UInteger
+' 
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -87,14 +87,18 @@ Namespace Reflection.DbAttributes
             Me.typeCaster = type.TypeHandler
         End Sub
 
-        ReadOnly defaultEmpty As [Default](Of String) = ""
-
         ''' <summary>
         ''' 显示mysql数据库之中的数据类型的定义字符串
         ''' </summary>
         ''' <returns></returns>
         Public Overrides Function ToString() As String
-            Return _type.ToString & ($" ({_argvs})" Or defaultEmpty)
+            Dim param As String = ""
+
+            If Not _argvs.StringEmpty Then
+                param = $" ({_argvs})"
+            End If
+
+            Return _type.Description.ToLower & param
         End Function
 
         ''' <summary>
@@ -137,7 +141,7 @@ Namespace Reflection.DbAttributes
     Public Module CTypeDynamicsExtensions
 
         ReadOnly _typeCasting As New Dictionary(Of MySqlDbType, Func(Of Object, Object)) From {
- _
+                                                                                               _
             {MySqlDbType.UInt32, AddressOf UInt32_2_UInteger},
             {MySqlDbType.Int32, Function(value As Object) If(IsDBNull(value), Nothing, value)},
             {MySqlDbType.Text, Function(value As Object) If(IsDBNull(value), "", CStr(value))},

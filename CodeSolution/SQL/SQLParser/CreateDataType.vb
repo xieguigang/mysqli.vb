@@ -25,7 +25,7 @@ Namespace SQLParser
                 End If
 
             ElseIf "int".TextEquals(type_define) OrElse r.Match(type_define, "int\(\d+\)", RegexOptions.IgnoreCase).Success Then
-                type = Reflection.DbAttributes.MySqlDbType.Int64
+                type = Reflection.DbAttributes.MySqlDbType.Int32
                 parameter = GetNumberValue(type_define, 11)
 
             ElseIf Regex.Match(type_define, "varchar\(\d+\)", RegexOptions.IgnoreCase).Success OrElse Regex.Match(type_define, "char\(\d+\)", RegexOptions.IgnoreCase).Success Then
