@@ -51,11 +51,12 @@
 
 #End Region
 
+Imports System.Data
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Scripting
 Imports Microsoft.VisualBasic.Serialization.JSON
-Imports MySqlConnector
+Imports MySql.Data.MySqlClient
 Imports Oracle.LinuxCompatibility.MySQL.Reflection
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Scripting
@@ -411,40 +412,38 @@ Public Class MySqli : Implements IDisposable
     ''' </returns>
     ''' <remarks></remarks>
     Public Function CommitTransaction(transaction$, Optional ByRef excep As Exception = Nothing) As Boolean
-        If transaction.StringEmpty Then
-            Try
-                Throw New ArgumentNullException("Empty transaction string!")
-            Catch ex As Exception
-                excep = ex
-                Return False
-            End Try
-        End If
-
         Using MyConnection As New MySqlConnection(_UriMySQL)
-            Call MyConnection.Open()
+            MyConnection.Open()
+
+            Dim MyCommand As MySqlCommand = MyConnection.CreateCommand()
+            Dim MyTrans As MySqlTransaction
 
             ' Start a local transaction
-            Dim MyTrans = MyConnection.BeginTransaction()
+            MyTrans = MyConnection.BeginTransaction()
+
             ' Must assign both transaction object and connection
             ' to Command object for a pending local transaction
-            Dim MyCommand As New MySqlCommand(transaction, MyConnection)
+            MyCommand.Connection = MyConnection
+            MyCommand.Transaction = MyTrans
 
             Try
-                Call MyCommand.ExecuteNonQuery()
-                Call MyTrans.Commit()
-            Catch ex As Exception
-                If MyConnection.State <> ConnectionState.Closed Then
-                    Call MyTrans.Rollback()
-                End If
+                MyCommand.CommandText = transaction
+                MyCommand.ExecuteNonQuery()
+                MyTrans.Commit()
 
-                excep = ex
+                Return True
+            Catch e As Exception
+                Try
+                    MyTrans.Rollback()
+                Catch ex As MySqlException
+                    e = New Exception(__throwExceptionHelper(ex, transaction, False).ToString, e)
+                End Try
+                excep = e
                 Return False
             Finally
-
+                MyConnection.Close()
             End Try
         End Using
-
-        Return True
     End Function
 
     Private Function __throwExceptionHelper(ex As Exception, SQL$, throwExp As Boolean) As Exception

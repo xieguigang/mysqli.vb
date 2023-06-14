@@ -1,334 +1,86 @@
 ﻿#Region "Microsoft.VisualBasic::5272c760ac6f97c6872eca6006de3fd9, CodeSolution\PHP\CodeGenerator.vb"
 
-' Author:
-' 
-'       asuka (amethyst.asuka@gcmodeller.org)
-'       xie (genetics@smrucc.org)
-'       xieguigang (xie.guigang@live.com)
-' 
-' Copyright (c) 2018 GPL3 Licensed
-' 
-' 
-' GNU GENERAL PUBLIC LICENSE (GPL3)
-' 
-' 
-' This program is free software: you can redistribute it and/or modify
-' it under the terms of the GNU General Public License as published by
-' the Free Software Foundation, either version 3 of the License, or
-' (at your option) any later version.
-' 
-' This program is distributed in the hope that it will be useful,
-' but WITHOUT ANY WARRANTY; without even the implied warranty of
-' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-' GNU General Public License for more details.
-' 
-' You should have received a copy of the GNU General Public License
-' along with this program. If not, see <http://www.gnu.org/licenses/>.
+    ' Author:
+    ' 
+    '       asuka (amethyst.asuka@gcmodeller.org)
+    '       xie (genetics@smrucc.org)
+    '       xieguigang (xie.guigang@live.com)
+    ' 
+    ' Copyright (c) 2018 GPL3 Licensed
+    ' 
+    ' 
+    ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
+    ' 
+    ' This program is free software: you can redistribute it and/or modify
+    ' it under the terms of the GNU General Public License as published by
+    ' the Free Software Foundation, either version 3 of the License, or
+    ' (at your option) any later version.
+    ' 
+    ' This program is distributed in the hope that it will be useful,
+    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ' GNU General Public License for more details.
+    ' 
+    ' You should have received a copy of the GNU General Public License
+    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-' /********************************************************************************/
+    ' /********************************************************************************/
 
-' Summaries:
+    ' Summaries:
 
-'     Module CodeGenerator
-' 
-'         Function: GenerateClass, GenerateCode
-' 
-' 
-' /********************************************************************************/
+    '     Module CodeGenerator
+    ' 
+    '         Function: GenerateClass, GenerateCode
+    ' 
+    ' 
+    ' /********************************************************************************/
 
 #End Region
 
-Imports System.IO
 Imports System.Runtime.CompilerServices
+Imports System.Text
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
-Imports Oracle.LinuxCompatibility.MySQL.Reflection
-Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace PHP
 
-    ''' <summary>
-    ''' Auto code generator for php.NET framework
-    ''' 
-    ''' > https://github.com/GCModeller-Cloud/php-dotnet/blob/master/Framework/MVC/MySql/schemaDriver.php
-    ''' </summary>
     Public Module CodeGenerator
 
         ''' <summary>
-        ''' Map mysql data type to php data type
+        ''' 生成Class代码
         ''' </summary>
-        ReadOnly phpTypes As New Dictionary(Of MySqlDbType, String) From {
-            {MySqlDbType.BigInt, "integer"},
-            {MySqlDbType.Int64, "integer"},
-            {MySqlDbType.Double, "double"},
-            {MySqlDbType.VarChar, "string"},
-            {MySqlDbType.DateTime, "string"},
-            {MySqlDbType.Date, "string"},
-            {MySqlDbType.Int32, "integer"},
-            {MySqlDbType.Boolean, "boolean"},
-            {MySqlDbType.Text, "string"},
-            {MySqlDbType.UInt32, "integer"},
-            {MySqlDbType.UInt64, "integer"}
-        }
-
-        ''' <summary>
-        ''' 
-        ''' </summary>
-        ''' <param name="mysqlDoc">表对象应该都是来自于同一个数据库之中的</param>
-        ''' <param name="namespace$"></param>
+        ''' <param name="SQL"></param>
+        ''' <param name="[Namesapce]"></param>
         ''' <returns></returns>
-        <Extension>
-        Public Function GeneratePhpModelCode(mysqlDoc As StreamReader, Optional namespace$ = "MySqli") As String
-            Dim tables As Table() = mysqlDoc.LoadSQLDoc
-            Dim dbName As String = tables(Scan0).Database
-            Dim functions$() = tables _
-                .Select(AddressOf SchemaFunction) _
-                .ToArray
-            Dim loads = tables _
-                .Select(Function(table)
-                            Dim tblName = table.TableName
-                            Dim ref$ = $"`{dbName}`.`{table.TableName}`"
+        Public Function GenerateClass(SQL As String, [Namesapce] As String) As NamedValue(Of String)
+            Dim Table As Table = SQLParser.ParseTable(SQL)
+            Dim php As String = CodeGenerator.GenerateCode(Table, Namesapce)
 
-                            Return $"\MVC\MySql\SchemaInfo::WriteCache(""{ref}"", self::schema_describOf_{tblName}());"
-                        End Function) _
-                .ToArray
-            Dim names As String = tables _
-                .Select(Function(table)
-                            Return "    * > + " & table.TableName & ": " & Mid(table.Comment.TrimNewLine(), 60) & "..."
-                        End Function) _
-                .JoinBy(vbLf & " ")
-            Dim classes As String() = tables _
-                .Select(AddressOf SchemaDescribe.FromTable) _
-                .Select(Function(def) TableToPhpClass(def, dbName)) _
-                .ToArray
-
-            Return $"<?php
-
-#
-# Auto generated code by php.NET tools
-#
-# * Do not edit this file manually as running the tools pipeline update 
-#   will overrides your modification.
-# * Any modification that you've make will be lost. 
-#
-# This mysql schema cache file is designed for php.NET framework:
-#
-# https://github.com/GCModeller-Cloud/php-dotnet.git
-#
-# time: {Now.ToString}
-# by:   {My.User.Name}
-#
-
-namespace {[namespace]} {{
-
-    Imports(""MVC.MySql.schemaDriver"");
-
-    /**
-     * {dbName}.mysqli.class
-     *
- {names}
-    */
-    class {dbName} {{
-
-        /**
-         * Write ``{dbName}.mysqli.class`` mysql schema 
-         * cache data to MVC\MySql\SchemaInfo cache.
-        */
-        public static function LoadCache() {{
-            {loads.JoinBy(vbLf & New String(" "c, 4 * 3))}
-        }}
-
-        /** 
-         * Create a new data table model for query data
-         * 
-         * @param string $tableName The data table name
-         * 
-         * @return \Table
-        */
-        public static function GetModel($tableName) {{
-            return new \Table([""{dbName}"" => $tableName]);
-        }}
-
-        private static function Field($schema) {{
-            return [
-                ""Field""   => $schema[0], 
-                ""Key""     => $schema[1], 
-                ""Null""    => $schema[2], 
-                ""Type""    => $schema[3], 
-                ""Extra""   => $schema[4], 
-                ""Default"" => $schema[5]
-            ];
-        }}
-
-        #region ""{dbName}.mysqli.class""
-        {functions.JoinBy(vbLf)}
-        #endregion
-    }}
-    
-    {dbName}::LoadCache();
-
-    // table php classes code:
-
-    {classes.JoinBy(vbCrLf & vbCrLf)}
-
-}}"
+            Return New NamedValue(Of String) With {
+                .Name = Table.TableName,
+                .Value = php
+            }
         End Function
 
         <Extension>
-        Public Function TableToPhpClass(table As NamedCollection(Of SchemaDescribe), dbName$) As String
-            Dim fields$() = table _
-                .Select(Function(field)
-                            Dim comments$ = Strings.Trim(field.Note) _
-                                .Replace("\n", vbCrLf) _
-                                .LineTokens _
-                                .JoinBy(vbCrLf & "    * ")
+        Private Function GenerateCode(table As Table, namesapce As String) As String
+            Dim php As New StringBuilder
 
-                            Return $"    /**
-      * <MySQLDbTypes::{field.Type}> {comments} 
-      * 
-      * @var {phpTypes(field.MySqlType)}
-     */" & vbCrLf &
-     $"    public ${field.Field};"
-                        End Function) _
-                .ToArray
+            Call php.AppendLine("class " & table.TableName & " extends SQLTable {")
 
-            Return $"
-    /**
-     * {table.description}
-    */
-    class {table.name} {{
-    
-        {fields.JoinBy(vbCrLf)}
+            For Each field In table.Fields
+                Call php.AppendLine($"public ${field.FieldName};")
+            Next
 
-        /**
-         * 数据表模型对象缓存
-         *
-         * @var \Table
-        */
-        private static $mysql_model;
+            Call php.AppendLine("public function __toString() {")
+            Call php.AppendLine("}")
 
-        /**
-         * 获取得到`{dbName}`.`{table.name}`数据表的数据库操作模型
-         *
-         * @return \Table 一个数据表模型对象
-        */
-        public static function Model() {{
-            if (empty(self::$mysql_model)) {{
-                self::$mysql_model = {dbName}::GetModel(""{table.name}"");
-            }}
+            Call php.AppendLine("}")
 
-            return self::$mysql_model;
-        }}
-
-        /**
-         * @return {table.name}
-        */
-        private static function provider() {{
-            return new {table.name}();
-        }}
-
-        /**
-         * add a new row data into table `{dbName}`.`{table.name}`
-        */
-        public static function add($data) {{            
-            return self::Model()->add($data);
-        }}
-
-        /**
-         * @return {table.name}[]
-        */
-        public static function select($where, $limit = NULL, $orderBy = NULL, $desc = false) {{
-            $model = self::Model()->where($where);
-
-            if (!empty($limit)) {{
-                $model = $model->limit($limit);
-            }}
-
-            if (!empty($orderBy)) {{
-                $model = $model->order_by($orderBy, $desc);
-            }}
-
-            $data   = $model->select();
-            $models = \MVC\MySql\Projector::Fills($data, self::provider);
-
-            $models;
-        }}
-
-        /**
-         * Find a single `{dbName}`.`{table.name}` record row with given condition. 
-         *
-         * @return {table.name}
-        */
-        public static function find($where, $orderBy = NULL, $desc = false) {{
-            $model = self::Model()->where($where);
-
-            if (!empty($orderBy)) {{
-                $model = $model->order_by($orderBy, $desc);
-            }}
-
-            $data = $model->find();
-            $obj  = \MVC\MySql\Projector::FillModel($data, new {table.name}());
-
-            return $obj;
-        }}
-    }}"
-        End Function
-
-        <Extension>
-        Public Function SchemaDescrib(describ As NamedCollection(Of SchemaDescribe)) As String
-            Dim maxLen As Integer = describ _
-                .MaxLengthString(Function(field) field.Field) _
-                .Length
-            Dim fields$() = describ _
-                .Select(Function(field)
-                            Dim keyValues As New List(Of String) From {
-                                $"""{field.Field}""",
-                                $"""{field.Key}""",
-                                $"""{field.Null}""",
-                                $"""{field.Type}""",
-                                $"""{field.Extra}""",
-                                $"""{field.Default}"""
-                            }
-                            Dim dl = maxLen - field.Field.Length
-                            Dim blank = New String(" "c, dl)
-                            Dim values = keyValues.JoinBy(", ")
-                            Dim fieldValue$ = $"""{field.Field}"" {blank}=> self::Field([{values}])"
-
-                            Return fieldValue
-                        End Function) _
-                .ToArray
-
-            Return $"[
-            {fields.JoinBy(", " & vbLf & New String(" "c, 12))}
-        ]"
-        End Function
-
-        <Extension>
-        Public Function SchemaFunction(table As Table) As String
-            Dim schema = SchemaDescribe.FromTable(table)
-            Dim array = schema.SchemaDescrib
-            Dim comments As String = table.Comment _
-                .LineTokens(escape:=True) _
-                .Select(Function(c) "     * " & c) _
-                .JoinBy(vbLf)
-
-            If comments.StringEmpty Then
-                comments = "     * "
-            End If
-
-            Return $"
-    /**
-     * MySql table: ``{table.Database}.{table.TableName}``
-     *
-{comments}
-     *
-     * @return array MySql schema table array.
-    */
-    private static function schema_describOf_{table.TableName}() {{
-        return {array};
-    }}"
+            Return php.ToString
         End Function
     End Module
 End Namespace

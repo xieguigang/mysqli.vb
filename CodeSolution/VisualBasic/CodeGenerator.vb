@@ -95,9 +95,9 @@ Namespace VisualBasic
         ''' <param name="SQL"></param>
         ''' <param name="[Namesapce]"></param>
         ''' <returns></returns>
-        Public Function GenerateClass(SQL$, namesapce$) As NamedValue(Of String)
+        Public Function GenerateClass(SQL As String, [Namesapce] As String) As NamedValue(Of String)
             Dim table As Table = SQLParser.ParseTable(SQL)
-            Dim vb$ = {table}.GenerateCode(namesapce)
+            Dim vb$ = {table}.GenerateCode(Namesapce)
 
             Return New NamedValue(Of String) With {
                 .Name = table.TableName,
@@ -207,6 +207,7 @@ Namespace VisualBasic
             Call vb.AppendLine()
             Call vb.AppendLine("Imports " & LinqMappingNs)
             Call vb.AppendLine("Imports System.Xml.Serialization")
+            Call vb.AppendLine("Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel.SchemaMaps")
             Call vb.AppendLine("Imports " & LibMySQLReflectionNs)
             Call vb.AppendLine("Imports " & $"MySqlScript = {GetType(MySqlScript).FullName}")
             Call vb.AppendLine()
@@ -442,11 +443,20 @@ Namespace VisualBasic
             End If
 
             For Each field As SeqValue(Of Field) In fields.SeqIterator
+                ' 20230320 deal with the datetime value
+                Dim type = field.value.DataType.MySQLType
+                Dim fieldValue As String
+
+                If type = MySqlDbType.Date OrElse type = MySqlDbType.DateTime Then
+                    fieldValue = FixInvalids((+field).FieldName) & ".ToString(""yyyy-MM-dd hh:mm:ss"")"
+                Else
+                    fieldValue = FixInvalids((+field).FieldName)
+                End If
 
                 ' 在代码之中应该是propertyName而不是数据库之中的fieldName
                 ' 因为schema对象是直接从SQL之中解析出来的，所以反射属性为空
                 ' 在这里使用TrimKeyword(Field.FieldName)来生成代码之中的属性的名称
-                values = values.Replace("{" & field.i & "}", "{" & FixInvalids((+field).FieldName) & "}")
+                values = values.Replace("{" & field.i & "}", "{" & fieldValue & "}")
             Next
 
             Return values
@@ -698,23 +708,19 @@ NO_KEY:
             Dim sqlDump As String = Nothing
             Dim Schema As Table() = SQLParser.LoadSQLDoc(file, sqlDump)
             Dim CreateTables As String() = Regex.Split(sqlDump, SCHEMA_SECTIONS)
-            ' The first block of the text splits is the 
-            ' SQL comments from the MySQL data exporter. 
             Dim SchemaSQLLQuery = From tbl As String
-                                  In CreateTables.Skip(1)
+                                  In CreateTables.Skip(1)          ' The first block of the text splits is the SQL comments from the MySQL data exporter. 
                                   Let s_TableName As String = Regex.Match(tbl, "`.+?`").Value
                                   Select tableName = Mid(s_TableName, 2, Len(s_TableName) - 2),
                                       tbl
             Dim SchemaSQL As Dictionary(Of String, String) = Nothing
-
             Try
                 SchemaSQL = SchemaSQLLQuery _
                     .ToDictionary(Function(x) x.tableName,
                                   Function(x) x.tbl)
             Catch ex As Exception
                 Dim g = SchemaSQLLQuery.ToArray.CheckDuplicated(Of String)(Function(x) x.tableName)
-                Dim dupliTables As String = g.Select(Function(tb) tb.Tag).JoinBy(", ")
-
+                Dim dupliTables As String = String.Join(", ", g.Select(Function(tb) tb.Tag).ToArray)
                 Throw New Exception("Duplicated tables:  " & dupliTables, ex)
             End Try
 
@@ -787,6 +793,7 @@ NO_KEY:
             Call VB.AppendLine()
             Call VB.AppendLine("Imports " & LinqMappingNs)
             Call VB.AppendLine("Imports System.Xml.Serialization")
+            Call VB.AppendLine("Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel.SchemaMaps")
             Call VB.AppendLine("Imports " & LibMySQLReflectionNs)
             Call VB.AppendLine("Imports " & $"MySqlScript = {GetType(MySqlScript).FullName}")
 
