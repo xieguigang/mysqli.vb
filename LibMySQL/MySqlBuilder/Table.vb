@@ -1,4 +1,5 @@
-﻿Imports Oracle.LinuxCompatibility.MySQL.Reflection.Helper
+﻿Imports Microsoft.VisualBasic.Linq
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.Helper
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
@@ -25,6 +26,16 @@ Namespace MySqlBuilder
             End If
 
             where(type).Add(val)
+
+            Return Me
+        End Function
+
+        Public Function PushWhere(type As String, vals As IEnumerable(Of String)) As QueryBuilder
+            If Not where.ContainsKey(type) Then
+                where.Add(type, New List(Of String))
+            End If
+
+            where(type).AddRange(vals.SafeQuery)
 
             Return Me
         End Function
@@ -120,8 +131,14 @@ Namespace MySqlBuilder
             Return New Model(mysql, schema, query)
         End Function
 
-        Public Function where() As Model
+        Public Function where(ParamArray asserts As FieldAssert()) As Model
+            Dim query As New QueryBuilder(Me.query)
+            query.PushWhere("sql", asserts.Select(Function(f) f.ToString))
+            Return New Model(mysql, schema, query)
+        End Function
 
+        Public Function field(name As String) As FieldAssert
+            Return New FieldAssert With {.name = $"`{schema.TableName}`.`{name}`"}
         End Function
 
         Public Function [and](q As String) As Model
