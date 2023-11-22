@@ -48,7 +48,7 @@ Namespace MySqlBuilder
                 Dim s As String = Nothing
 
                 If where.ContainsKey("sql") Then
-                    s = where("sql").JoinBy(" AND ")
+                    s = where("sql").Select(Function(a) $"({a})").JoinBy(" AND ")
                 End If
                 If where.ContainsKey("and") Then
                     If s.StringEmpty Then
