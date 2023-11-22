@@ -87,6 +87,11 @@ Namespace Reflection.DbAttributes
             Me.typeCaster = type.TypeHandler
         End Sub
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Sub SetMySqlType(type As MySqlDbType)
+            _type = type
+        End Sub
+
         ''' <summary>
         ''' 显示mysql数据库之中的数据类型的定义字符串
         ''' </summary>

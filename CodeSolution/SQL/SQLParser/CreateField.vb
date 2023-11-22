@@ -63,6 +63,15 @@ Namespace SQLParser
                 .[Default] = defaultVal
             }
 
+            If unsigned Then
+                Select Case field.DataType.MySQLType
+                    Case Reflection.DbAttributes.MySqlDbType.Int16 : field.DataType.SetMySqlType(Reflection.DbAttributes.MySqlDbType.UInt16)
+                    Case Reflection.DbAttributes.MySqlDbType.Int24 : field.DataType.SetMySqlType(Reflection.DbAttributes.MySqlDbType.UInt24)
+                    Case Reflection.DbAttributes.MySqlDbType.Int32 : field.DataType.SetMySqlType(Reflection.DbAttributes.MySqlDbType.UInt32)
+                    Case Reflection.DbAttributes.MySqlDbType.Int64 : field.DataType.SetMySqlType(Reflection.DbAttributes.MySqlDbType.UInt64)
+                End Select
+            End If
+
             Return field
         End Function
 
