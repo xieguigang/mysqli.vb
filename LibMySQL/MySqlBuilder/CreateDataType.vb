@@ -28,6 +28,9 @@ Namespace MySqlBuilder
                 type = Reflection.DbAttributes.MySqlDbType.Int32
                 parameter = GetNumberValue(type_define, 11)
 
+            ElseIf type_define.TextEquals("int unsigned") Then
+                type = Reflection.DbAttributes.MySqlDbType.UInt32
+
             ElseIf Regex.Match(type_define, "varchar\(\d+\)", RegexOptions.IgnoreCase).Success OrElse Regex.Match(type_define, "char\(\d+\)", RegexOptions.IgnoreCase).Success Then
                 type = Reflection.DbAttributes.MySqlDbType.VarChar
                 parameter = GetNumberValue(type_define, 45)

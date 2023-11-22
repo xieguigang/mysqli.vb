@@ -106,10 +106,10 @@ Namespace Reflection.DbAttributes
         ''' </summary>
         TinyInt
         UByte
-        UInt16
-        UInt24
-        UInt32
-        UInt64
+        <Description("int")> UInt16
+        <Description("int")> UInt24
+        <Description("int")> UInt32
+        <Description("int")> UInt64
         VarBinary
         VarChar
         VarString
