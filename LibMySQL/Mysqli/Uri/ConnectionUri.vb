@@ -143,6 +143,7 @@ Namespace Uri
         ''' <returns></returns>
         <XmlAttribute> Public Property TimeOut As Integer = -1
 
+        <DebuggerStepThrough>
         Sub New()
         End Sub
 
