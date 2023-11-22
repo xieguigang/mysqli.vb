@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Microsoft.VisualBasic.Linq
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Helper
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
@@ -11,10 +12,16 @@ Namespace MySqlBuilder
         Public where As New Dictionary(Of String, List(Of String))
         Public offset As Integer?
         Public page_size As Integer?
+        Public left_join As New List(Of NamedCollection(Of FieldAssert))
+        Public join_tmp As String
 
         Sub New(copy As QueryBuilder)
             If Not copy Is Nothing Then
                 where = New Dictionary(Of String, List(Of String))(copy.where)
+                offset = copy.offset
+                page_size = copy.page_size
+                left_join = New List(Of NamedCollection(Of FieldAssert))(copy.left_join)
+                join_tmp = copy.join_tmp
             End If
         End Sub
 
@@ -79,6 +86,19 @@ Namespace MySqlBuilder
             End If
         End Function
 
+        Public Function left_join_str() As String
+            If left_join.IsNullOrEmpty Then
+                Return ""
+            Else
+                Dim str As New List(Of String)
+
+                For Each tbl In left_join
+                    str.Add($"LEFT JOIN `{tbl.name}` ON ({tbl.value.JoinBy(" AND ")})")
+                Next
+
+                Return str.JoinBy(" ")
+            End If
+        End Function
     End Class
 
     Public Class Model
@@ -174,7 +194,8 @@ Namespace MySqlBuilder
 
         Public Function find(Of T As {New, Class})() As T
             Dim where As String = query.where_str
-            Dim sql As String = $"SELECT * FROM `{schema.Database}`.`{schema.TableName}` {where} LIMIT 1;"
+            Dim left_join As String = query.left_join_str
+            Dim sql As String = $"SELECT * FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} LIMIT 1;"
             _GetLastMySql = sql
             Dim result = mysql.ExecuteScalar(Of T)(sql)
             Return result
@@ -183,7 +204,8 @@ Namespace MySqlBuilder
         Public Function [select](Of T As {New, Class})() As T()
             Dim where As String = query.where_str
             Dim limit As String = query.limit_str
-            Dim sql As String = $"SELECT * FROM `{schema.Database}`.`{schema.TableName}` {where} {limit};"
+            Dim left_join As String = query.left_join_str
+            Dim sql As String = $"SELECT * FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {limit};"
             _GetLastMySql = sql
             Dim result = mysql.Query(Of T)(sql)
             Return result
@@ -239,12 +261,23 @@ Namespace MySqlBuilder
             Return New Model(mysql, schema, query)
         End Function
 
-        Public Function left_join() As Model
-
+        Public Function left_join(table As String) As Model
+            Dim query As New QueryBuilder(Me.query)
+            query.join_tmp = table
+            Return New Model(mysql, schema, query)
         End Function
 
-        Public Function [on]() As Model
+        Public Function [on](ParamArray fields As FieldAssert()) As Model
+            Dim query As New QueryBuilder(Me.query)
 
+            If query.join_tmp.StringEmpty Then
+                Throw New InvalidCastException
+            Else
+                query.left_join.Add(New NamedCollection(Of FieldAssert)(query.join_tmp, fields))
+                query.join_tmp = Nothing
+            End If
+
+            Return New Model(mysql, schema, query)
         End Function
 
     End Class
