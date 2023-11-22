@@ -176,7 +176,6 @@ Namespace MySqlBuilder
         End Function
 
         Public Function add(value As Object) As Boolean
-
             Dim sql As String = $"INSERT INTO `{schema.Database}`.`{schema.TableName}` (`display_title`) VALUES ('a');"
             _GetLastMySql = sql
         End Function
