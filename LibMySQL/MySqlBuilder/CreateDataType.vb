@@ -1,9 +1,9 @@
 ﻿Imports System.Text.RegularExpressions
 Imports r = System.Text.RegularExpressions.Regex
 
-Namespace SQLParser
+Namespace MySqlBuilder
 
-    Module CreateDataType
+    Public Module CreateDataType
 
         ''' <summary>
         ''' Mapping the MySQL database type and visual basic data type 

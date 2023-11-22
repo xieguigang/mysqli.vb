@@ -5,15 +5,25 @@ Namespace MySqlBuilder
 
     Public Class Model
 
-        ReadOnly conn As ConnectionUri
+        ReadOnly mysql As MySqli
         ReadOnly schema As Table
 
-        Sub New(conn As ConnectionUri)
-            Me.conn = conn
+        ''' <summary>
+        ''' 
+        ''' </summary>
+        ''' <param name="table">the table name</param>
+        ''' <param name="conn"></param>
+        Sub New(table As String, conn As ConnectionUri)
+            Me.mysql = conn
+            Me.schema = inspectSchema(conn.Database, table)
         End Sub
 
-        Private Sub inspectSchema()
+        Private Function inspectSchema(database As String, table As String) As Table
+            Dim sql As String = $"describe `{database}`.`{table}`;"
+            Dim schema = mysql.ExecuteDataset(sql)
 
-        End Sub
+        End Function
     End Class
+
+
 End Namespace

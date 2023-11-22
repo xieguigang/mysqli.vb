@@ -625,7 +625,8 @@ NO_KEY:
         ''' <param name="Field"></param>
         ''' <param name="IsPrimaryKey"></param>
         ''' <returns></returns>
-        <Extension> Private Function __createAttribute(Field As Field, IsPrimaryKey As Boolean) As String
+        <Extension>
+        Private Function __createAttribute(Field As Field, IsPrimaryKey As Boolean) As String
             Dim Code As String = $"    <DatabaseField(""{Field.FieldName}"")"
 
             If IsPrimaryKey Then
