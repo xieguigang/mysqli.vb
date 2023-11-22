@@ -6,10 +6,11 @@ Namespace MySqlBuilder
     Public Class FieldAssert
 
         Public Property name As String
+        Public Property op As String
         Public Property val As String
 
         Public Overrides Function ToString() As String
-            Return name & val
+            Return $"({name} {op} {val})"
         End Function
 
         Public Overloads Shared Operator =(field As FieldAssert, val As Date) As FieldAssert
@@ -29,22 +30,26 @@ Namespace MySqlBuilder
         End Operator
 
         Public Overloads Shared Operator =(field As FieldAssert, val As String) As FieldAssert
-            field.val = " = " & value(val)
+            field.val = value(val)
+            field.op = "="
             Return field
         End Operator
 
         Public Overloads Shared Operator <>(field As FieldAssert, val As String) As FieldAssert
-            field.val = " <> " & value(val)
+            field.val = value(val)
+            field.op = "<>"
             Return field
         End Operator
 
         Public Overloads Shared Operator >(field As FieldAssert, val As String) As FieldAssert
-            field.val = " > " & value(val)
+            field.val = value(val)
+            field.op = ">"
             Return field
         End Operator
 
         Public Overloads Shared Operator <(field As FieldAssert, val As String) As FieldAssert
-            field.val = " < " & value(val)
+            field.val = value(val)
+            field.op = "<"
             Return field
         End Operator
 
@@ -70,7 +75,13 @@ Namespace MySqlBuilder
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <DebuggerStepThrough>
         Public Function field(name As String) As FieldAssert
-            Return New FieldAssert With {.name = name}
+            Return New FieldAssert With {.name = $"`{name}`"}
+        End Function
+
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        <DebuggerStepThrough>
+        Public Function f(name As String) As FieldAssert
+            Return New FieldAssert With {.name = $"`{name}`"}
         End Function
 
     End Module

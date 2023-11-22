@@ -48,7 +48,7 @@ Namespace MySqlBuilder
                 Dim s As String = Nothing
 
                 If where.ContainsKey("sql") Then
-                    s = where("sql").Select(Function(a) $"({a})").JoinBy(" AND ")
+                    s = where("sql").JoinBy(" AND ")
                 End If
                 If where.ContainsKey("and") Then
                     If s.StringEmpty Then
@@ -144,6 +144,12 @@ Namespace MySqlBuilder
             Return New FieldAssert With {.name = $"`{schema.TableName}`.`{name}`"}
         End Function
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        <DebuggerStepThrough>
+        Public Function f(name As String) As FieldAssert
+            Return New FieldAssert With {.name = $"`{schema.TableName}`.`{name}`"}
+        End Function
+
         Public Function [and](q As String) As Model
             Dim query As New QueryBuilder(Me.query)
             query.PushWhere("and", q)
@@ -164,28 +170,48 @@ Namespace MySqlBuilder
 
         Public Function [select](Of T As {New, Class})() As T()
             Dim where As String = query.where_str
-            Dim sql As String = $"SELECT * FROM `{schema.Database}`.`{schema.TableName}` {where};"
+            Dim limit As String = query.limit_str
+            Dim sql As String = $"SELECT * FROM `{schema.Database}`.`{schema.TableName}` {where} {limit};"
             _GetLastMySql = sql
             Dim result = mysql.Query(Of T)(sql)
             Return result
         End Function
 
-        Public Function save(Optional limit1 As Boolean = True) As Boolean
+        Public Function save(ParamArray fields As FieldAssert()) As Boolean
             Dim where As String = query.where_str
-            Dim sql As String = $"UPDATE `{schema.Database}`.`{schema.TableName}` SET `count` = '2' {where} {If(limit1, "LIMIT 1", "")};"
+            Dim limit As String = query.limit_str
+            Dim setFields As New List(Of String)
+
+            For Each field As FieldAssert In fields
+                If field.op <> "=" Then
+                    Throw New InvalidOperationException
+                End If
+
+                Call setFields.Add($"{field.name} = {field.val}")
+            Next
+
+            Dim sql As String = $"UPDATE `{schema.Database}`.`{schema.TableName}` SET {setFields.JoinBy(", ")} {where} {limit};"
             _GetLastMySql = sql
             Dim result = mysql.Execute(sql)
             Return result > 0
         End Function
 
-        Public Function add(value As Object) As Boolean
-            Dim sql As String = $"INSERT INTO `{schema.Database}`.`{schema.TableName}` (`display_title`) VALUES ('a');"
+        Public Function add(ParamArray fields As FieldAssert()) As Boolean
+            Dim names As String = fields.Select(Function(a) a.name).JoinBy(", ")
+            Dim vals As String = fields.Select(Function(a) a.val).JoinBy(", ")
+            Dim sql As String = $"INSERT INTO `{schema.Database}`.`{schema.TableName}` ({names}) VALUES ({vals});"
             _GetLastMySql = sql
+            Dim result = mysql.Execute(sql)
+            Return result > 0
         End Function
 
         Public Function delete() As Boolean
-            Dim sql As String
+            Dim where As String = query.where_str
+            Dim limit As String = query.limit_str
+            Dim sql As String = $"DELETE FROM `{schema.Database}`.`{schema.TableName}` {where} {limit};"
             _GetLastMySql = sql
+            Dim result = mysql.Execute(sql)
+            Return result > 0
         End Function
 
         Public Function limit(m As Integer, Optional n As Integer? = Nothing) As Model
