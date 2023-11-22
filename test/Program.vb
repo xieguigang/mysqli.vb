@@ -9,7 +9,7 @@ Module Program
         Dim search1 = model.where(
             field("id") = 1,
             field("add_time") > #2023-11-11 12:00:00#
-        ).find(Of  )
+        ).find(Of mysql.knowledge)
 
 
         Pause()
