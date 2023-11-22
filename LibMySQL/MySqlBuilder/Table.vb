@@ -20,6 +20,12 @@ Namespace MySqlBuilder
             Me.schema = inspectSchema(conn.Database, table)
         End Sub
 
+        ''' <summary>
+        ''' inspect of the database table schema
+        ''' </summary>
+        ''' <param name="database"></param>
+        ''' <param name="table"></param>
+        ''' <returns></returns>
         Private Function inspectSchema(database As String, table As String) As Table
             Dim sql As String = $"describe `{database}`.`{table}`;"
             Dim schema = mysql.Query(Of FieldDescription)(sql) _
