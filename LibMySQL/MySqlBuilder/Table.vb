@@ -90,6 +90,11 @@ Namespace MySqlBuilder
         Public Shared ReadOnly Property GetLastMySql As String
 
         ''' <summary>
+        ''' cache of the table schema
+        ''' </summary>
+        Shared ReadOnly cache As New Dictionary(Of String, Table)
+
+        ''' <summary>
         ''' 
         ''' </summary>
         ''' <param name="table">the table name</param>
@@ -113,17 +118,24 @@ Namespace MySqlBuilder
         ''' <returns></returns>
         Private Function inspectSchema(database As String, table As String) As Table
             Dim sql As String = $"describe `{database}`.`{table}`;"
-            Dim schema = mysql.Query(Of FieldDescription)(sql) _
-                .ToDictionary(Function(f) f.Field,
-                              Function(f)
-                                  Return f.CreateField
-                              End Function)
-            Dim model As New Table(schema) With {
-                .Database = database,
-                .TableName = table
-            }
 
-            Return model
+            If Not cache.ContainsKey(sql) Then
+                Dim schema = mysql.Query(Of FieldDescription)(sql) _
+                    .ToDictionary(Function(f) f.Field,
+                                  Function(f)
+                                      Return f.CreateField
+                                  End Function)
+                Dim model As New Table(schema) With {
+                    .Database = database,
+                    .TableName = table
+                }
+
+                SyncLock cache
+                    cache(sql) = model
+                End SyncLock
+            End If
+
+            Return cache(sql)
         End Function
 
         Public Function where(q As String) As Model
