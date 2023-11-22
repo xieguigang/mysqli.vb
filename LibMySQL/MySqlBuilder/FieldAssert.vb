@@ -12,24 +12,34 @@ Namespace MySqlBuilder
         End Function
 
         Public Overloads Shared Operator =(field As FieldAssert, val As String) As FieldAssert
-            field.val = " = " & val
+            field.val = " = " & value(val)
             Return field
         End Operator
 
         Public Overloads Shared Operator <>(field As FieldAssert, val As String) As FieldAssert
-            field.val = " <> " & val
+            field.val = " <> " & value(val)
             Return field
         End Operator
 
         Public Overloads Shared Operator >(field As FieldAssert, val As String) As FieldAssert
-            field.val = " > " & val
+            field.val = " > " & value(val)
             Return field
         End Operator
 
         Public Overloads Shared Operator <(field As FieldAssert, val As String) As FieldAssert
-            field.val = " < " & val
+            field.val = " < " & value(val)
             Return field
         End Operator
+
+        Private Shared Function value(val As String) As String
+            If val.StringEmpty Then
+                Return "''"
+            ElseIf val.First = "~" Then
+                Return val.Substring(1)
+            Else
+                Return $"'{val}'"
+            End If
+        End Function
 
     End Class
 
@@ -41,6 +51,7 @@ Namespace MySqlBuilder
         ''' <param name="name"></param>
         ''' <returns></returns>
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        <DebuggerStepThrough>
         Public Function field(name As String) As FieldAssert
             Return New FieldAssert With {.name = name}
         End Function

@@ -1,4 +1,5 @@
-﻿Imports Microsoft.VisualBasic.Linq
+﻿Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.Linq
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Helper
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Uri
@@ -137,6 +138,8 @@ Namespace MySqlBuilder
             Return New Model(mysql, schema, query)
         End Function
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        <DebuggerStepThrough>
         Public Function field(name As String) As FieldAssert
             Return New FieldAssert With {.name = $"`{schema.TableName}`.`{name}`"}
         End Function
