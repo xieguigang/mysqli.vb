@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports Oracle.LinuxCompatibility.MySQL.Scripting
 
 Namespace MySqlBuilder
 
@@ -10,6 +11,22 @@ Namespace MySqlBuilder
         Public Overrides Function ToString() As String
             Return name & val
         End Function
+
+        Public Overloads Shared Operator =(field As FieldAssert, val As Date) As FieldAssert
+            Return field = val.ToMySqlDateTimeString
+        End Operator
+
+        Public Overloads Shared Operator <>(field As FieldAssert, val As Date) As FieldAssert
+            Return field <> val.ToMySqlDateTimeString
+        End Operator
+
+        Public Overloads Shared Operator >(field As FieldAssert, val As Date) As FieldAssert
+            Return field > val.ToMySqlDateTimeString
+        End Operator
+
+        Public Overloads Shared Operator <(field As FieldAssert, val As Date) As FieldAssert
+            Return field < val.ToMySqlDateTimeString
+        End Operator
 
         Public Overloads Shared Operator =(field As FieldAssert, val As String) As FieldAssert
             field.val = " = " & value(val)
