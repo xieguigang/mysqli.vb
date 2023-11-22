@@ -1,4 +1,5 @@
 ﻿Imports Oracle.LinuxCompatibility.MySQL.MySqlBuilder
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace Reflection.Helper
@@ -8,12 +9,12 @@ Namespace Reflection.Helper
     ''' </summary>
     Public Class FieldDescription
 
-        Public Property Field As String
-        Public Property Type As String
-        Public Property Null As String
-        Public Property Key As String
-        Public Property [Default] As String
-        Public Property Extra As String
+        <DatabaseField("Field")> Public Property Field As String
+        <DatabaseField("Type")> Public Property Type As String
+        <DatabaseField("Null")> Public Property Null As String
+        <DatabaseField("Key")> Public Property Key As String
+        <DatabaseField("Default")> Public Property [Default] As String
+        <DatabaseField("Extra")> Public Property Extra As String
 
         Public Function CreateField() As Field
             Return New Field With {
