@@ -59,7 +59,7 @@ Namespace MySqlBuilder
             ElseIf val.First = "~" Then
                 Return val.Substring(1)
             Else
-                Return $"'{val}'"
+                Return $"'{val.MySqlEscaping}'"
             End If
         End Function
 
