@@ -188,8 +188,22 @@ Namespace MySqlBuilder
             Return New Model(mysql, schema, query)
         End Function
 
-        Public Function [and]() As Model
+        Public Function [and](ParamArray asserts As FieldAssert()) As Model
+            Dim query As New QueryBuilder(Me.query)
+            query.PushWhere("and", asserts.Select(Function(f) f.ToString))
+            Return New Model(mysql, schema, query)
+        End Function
 
+        Public Function [or](q As String) As Model
+            Dim query As New QueryBuilder(Me.query)
+            query.PushWhere("or", q)
+            Return New Model(mysql, schema, query)
+        End Function
+
+        Public Function [or](ParamArray asserts As FieldAssert()) As Model
+            Dim query As New QueryBuilder(Me.query)
+            query.PushWhere("or", asserts.Select(Function(f) f.ToString))
+            Return New Model(mysql, schema, query)
         End Function
 
         Public Function find(Of T As {New, Class})() As T
@@ -201,11 +215,12 @@ Namespace MySqlBuilder
             Return result
         End Function
 
-        Public Function [select](Of T As {New, Class})() As T()
+        Public Function [select](Of T As {New, Class})(ParamArray fields As String()) As T()
             Dim where As String = query.where_str
             Dim limit As String = query.limit_str
             Dim left_join As String = query.left_join_str
-            Dim sql As String = $"SELECT * FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {limit};"
+            Dim fieldSet As String = If(fields.IsNullOrEmpty, "*", fields.JoinBy(", "))
+            Dim sql As String = $"SELECT {fieldSet} FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {limit};"
             _GetLastMySql = sql
             Dim result = mysql.Query(Of T)(sql)
             Return result
@@ -278,6 +293,14 @@ Namespace MySqlBuilder
             End If
 
             Return New Model(mysql, schema, query)
+        End Function
+
+        Public Function order_by(ParamArray fields As String()) As Model
+
+        End Function
+
+        Public Function distinct() As Model
+
         End Function
 
     End Class
