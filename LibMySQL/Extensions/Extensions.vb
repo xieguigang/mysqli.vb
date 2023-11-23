@@ -92,12 +92,6 @@ Public Module Extensions
         Return Nothing
     End Function
 
-    <Extension> Public Function AsDBI(Of Table As {New, MySQLTable})(uri As String) As Linq(Of Table)
-        Dim DBI As ConnectionUri = ConnectionUri.TryParsing(uri)
-        Dim Linq As New Linq(Of Table)(DBI)
-        Return Linq
-    End Function
-
     ''' <summary>
     ''' Get the specific type of custom attribute from a property.
     ''' (从一个属性对象中获取特定的自定义属性对象)
