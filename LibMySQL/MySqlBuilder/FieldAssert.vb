@@ -8,9 +8,14 @@ Namespace MySqlBuilder
         Public Property name As String
         Public Property op As String
         Public Property val As String
+        Public Property val2 As String
 
         Public Overrides Function ToString() As String
-            Return $"({name} {op} {val})"
+            If op.TextEquals("between") Then
+                Return $"({name} BETWEEN {val} AND {val2})"
+            Else
+                Return $"({name} {op} {val})"
+            End If
         End Function
 
         Public Overloads Shared Operator =(field As FieldAssert, val As Date) As FieldAssert
@@ -65,7 +70,7 @@ Namespace MySqlBuilder
             Return field
         End Operator
 
-        Private Shared Function value(val As String) As String
+        Friend Shared Function value(val As String) As String
             If val.StringEmpty Then
                 Return "''"
             ElseIf val.First = "~" Then
@@ -94,6 +99,15 @@ Namespace MySqlBuilder
         <DebuggerStepThrough>
         Public Function f(name As String) As FieldAssert
             Return New FieldAssert With {.name = $"`{name}`"}
+        End Function
+
+        <Extension>
+        Public Function between(f As FieldAssert, min As String, max As String) As FieldAssert
+            f.op = NameOf(between)
+            f.val = FieldAssert.value(min)
+            f.val2 = FieldAssert.value(max)
+
+            Return f
         End Function
 
     End Module
