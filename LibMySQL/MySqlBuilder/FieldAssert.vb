@@ -53,6 +53,18 @@ Namespace MySqlBuilder
             Return field
         End Operator
 
+        ''' <summary>
+        ''' field LIKE '%pattern%'
+        ''' </summary>
+        ''' <param name="field"></param>
+        ''' <param name="val"></param>
+        ''' <returns></returns>
+        Public Overloads Shared Operator Like(field As FieldAssert, val As String) As FieldAssert
+            field.val = value(val)
+            field.op = "LIKE"
+            Return field
+        End Operator
+
         Private Shared Function value(val As String) As String
             If val.StringEmpty Then
                 Return "''"
