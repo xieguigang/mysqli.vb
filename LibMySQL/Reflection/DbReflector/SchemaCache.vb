@@ -52,8 +52,15 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 
 Namespace Reflection.Helper
 
+    ''' <summary>
+    ''' A cache holder for the .net clr object schema inside the database
+    ''' </summary>
+    ''' <typeparam name="T"></typeparam>
     Public NotInheritable Class SchemaCache(Of T As Class)
 
+        ''' <summary>
+        ''' the field data of current data type mapping result
+        ''' </summary>
         Public Shared ReadOnly Cache As NamedValue(Of BindProperty(Of DatabaseField))()
 
         Private Sub New()
