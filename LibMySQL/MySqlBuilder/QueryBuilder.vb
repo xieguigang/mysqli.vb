@@ -10,6 +10,9 @@ Namespace MySqlBuilder
         Public page_size As Integer?
         Public left_join As New List(Of NamedCollection(Of FieldAssert))
         Public join_tmp As String
+        Public distinct As Boolean
+        Public order_by As String()
+        Public order_desc As Boolean
 
         Sub New(copy As QueryBuilder)
             If Not copy Is Nothing Then
@@ -18,6 +21,9 @@ Namespace MySqlBuilder
                 page_size = copy.page_size
                 left_join = New List(Of NamedCollection(Of FieldAssert))(copy.left_join)
                 join_tmp = copy.join_tmp
+                order_desc = copy.order_desc
+                order_by = copy.order_by
+                distinct = copy.distinct
             End If
         End Sub
 
@@ -42,6 +48,22 @@ Namespace MySqlBuilder
             where(type).AddRange(vals.SafeQuery)
 
             Return Me
+        End Function
+
+        Public Function order_by_str() As String
+            If order_by.IsNullOrEmpty Then
+                Return ""
+            End If
+
+            Return $"ORDER BY {order_by.JoinBy(", ")} {If(order_desc, "DESC", "")}"
+        End Function
+
+        Public Function distinct_str() As String
+            If distinct Then
+                Return ""
+            Else
+                Return "DISTINCT"
+            End If
         End Function
 
         Public Function where_str() As String
