@@ -63,24 +63,44 @@ Namespace MySqlBuilder
             Return cache(sql)
         End Function
 
+        ''' <summary>
+        ''' WHERE
+        ''' </summary>
+        ''' <param name="q"></param>
+        ''' <returns></returns>
         Public Function where(q As String) As Model
             Dim query As New QueryBuilder(Me.query)
             query.PushWhere("sql", q)
             Return New Model(mysql, schema, query)
         End Function
 
+        ''' <summary>
+        ''' WHERE
+        ''' </summary>
+        ''' <param name="asserts"></param>
+        ''' <returns></returns>
         Public Function where(ParamArray asserts As FieldAssert()) As Model
             Dim query As New QueryBuilder(Me.query)
             query.PushWhere("sql", asserts.Select(Function(f) f.ToString))
             Return New Model(mysql, schema, query)
         End Function
 
+        ''' <summary>
+        ''' `table`.`field`
+        ''' </summary>
+        ''' <param name="name"></param>
+        ''' <returns></returns>
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <DebuggerStepThrough>
         Public Function field(name As String) As FieldAssert
             Return New FieldAssert With {.name = $"`{schema.TableName}`.`{name}`"}
         End Function
 
+        ''' <summary>
+        ''' `table`.`field`
+        ''' </summary>
+        ''' <param name="name"></param>
+        ''' <returns></returns>
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <DebuggerStepThrough>
         Public Function f(name As String) As FieldAssert
@@ -111,6 +131,11 @@ Namespace MySqlBuilder
             Return New Model(mysql, schema, query)
         End Function
 
+        ''' <summary>
+        ''' SELECT LIMIT 1
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <returns></returns>
         Public Function find(Of T As {New, Class})() As T
             Dim where As String = query.where_str
             Dim left_join As String = query.left_join_str
@@ -120,6 +145,12 @@ Namespace MySqlBuilder
             Return result
         End Function
 
+        ''' <summary>
+        ''' SELECT
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="fields"></param>
+        ''' <returns></returns>
         Public Function [select](Of T As {New, Class})(ParamArray fields As String()) As T()
             Dim where As String = query.where_str
             Dim limit As String = query.limit_str
@@ -131,6 +162,11 @@ Namespace MySqlBuilder
             Return result
         End Function
 
+        ''' <summary>
+        ''' UPDATE
+        ''' </summary>
+        ''' <param name="fields"></param>
+        ''' <returns></returns>
         Public Function save(ParamArray fields As FieldAssert()) As Boolean
             Dim where As String = query.where_str
             Dim limit As String = query.limit_str
@@ -150,6 +186,11 @@ Namespace MySqlBuilder
             Return result > 0
         End Function
 
+        ''' <summary>
+        ''' INSERT INTO
+        ''' </summary>
+        ''' <param name="fields"></param>
+        ''' <returns></returns>
         Public Function add(ParamArray fields As FieldAssert()) As Boolean
             Dim names As String = fields.Select(Function(a) a.name).JoinBy(", ")
             Dim vals As String = fields.Select(Function(a) a.val).JoinBy(", ")
@@ -159,6 +200,10 @@ Namespace MySqlBuilder
             Return result > 0
         End Function
 
+        ''' <summary>
+        ''' DELETE FROM
+        ''' </summary>
+        ''' <returns></returns>
         Public Function delete() As Boolean
             Dim where As String = query.where_str
             Dim limit As String = query.limit_str
@@ -168,6 +213,12 @@ Namespace MySqlBuilder
             Return result > 0
         End Function
 
+        ''' <summary>
+        ''' LIMIT m,n
+        ''' </summary>
+        ''' <param name="m"></param>
+        ''' <param name="n"></param>
+        ''' <returns></returns>
         Public Function limit(m As Integer, Optional n As Integer? = Nothing) As Model
             Dim query As New QueryBuilder(Me.query)
 
@@ -181,12 +232,22 @@ Namespace MySqlBuilder
             Return New Model(mysql, schema, query)
         End Function
 
+        ''' <summary>
+        ''' LEFT JOIN
+        ''' </summary>
+        ''' <param name="table"></param>
+        ''' <returns></returns>
         Public Function left_join(table As String) As Model
             Dim query As New QueryBuilder(Me.query)
             query.join_tmp = table
             Return New Model(mysql, schema, query)
         End Function
 
+        ''' <summary>
+        ''' LEFT JOIN ON
+        ''' </summary>
+        ''' <param name="fields"></param>
+        ''' <returns></returns>
         Public Function [on](ParamArray fields As FieldAssert()) As Model
             Dim query As New QueryBuilder(Me.query)
 
@@ -200,12 +261,23 @@ Namespace MySqlBuilder
             Return New Model(mysql, schema, query)
         End Function
 
+        ''' <summary>
+        ''' ORDER BY
+        ''' </summary>
+        ''' <param name="fields"></param>
+        ''' <returns></returns>
         Public Function order_by(ParamArray fields As String()) As Model
             Dim query As New QueryBuilder(Me.query)
             query.order_by = fields
             Return New Model(mysql, schema, query)
         End Function
 
+        ''' <summary>
+        ''' ORDER BY DESC
+        ''' </summary>
+        ''' <param name="fields"></param>
+        ''' <param name="desc"></param>
+        ''' <returns></returns>
         Public Function order_by(fields As String(), desc As Boolean) As Model
             Dim query As New QueryBuilder(Me.query)
             query.order_by = fields
@@ -213,6 +285,10 @@ Namespace MySqlBuilder
             Return New Model(mysql, schema, query)
         End Function
 
+        ''' <summary>
+        ''' DISTINCT
+        ''' </summary>
+        ''' <returns></returns>
         Public Function distinct() As Model
             Dim query As New QueryBuilder(Me.query)
             query.distinct = True

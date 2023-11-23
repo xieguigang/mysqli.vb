@@ -70,28 +70,32 @@ Namespace MySqlBuilder
             If where.IsNullOrEmpty Then
                 Return ""
             Else
-                Dim s As String = Nothing
-
-                If where.ContainsKey("sql") Then
-                    s = where("sql").JoinBy(" AND ")
-                End If
-                If where.ContainsKey("and") Then
-                    If s.StringEmpty Then
-                        s = $"({where("and").JoinBy(" AND ")})"
-                    Else
-                        s = $"({s}) AND ({where("and").JoinBy(" AND ")})"
-                    End If
-                End If
-                If where.ContainsKey("or") Then
-                    If s.StringEmpty Then
-                        s = $"({where("or").JoinBy(" OR ")})"
-                    Else
-                        s = $"({s}) OR ({where("or").JoinBy(" OR ")})"
-                    End If
-                End If
-
-                Return $"WHERE {s}"
+                Return $"WHERE {build_where_str()}"
             End If
+        End Function
+
+        Private Function build_where_str() As String
+            Dim s As String = Nothing
+
+            If where.ContainsKey("sql") Then
+                s = where("sql").JoinBy(" AND ")
+            End If
+            If where.ContainsKey("and") Then
+                If s.StringEmpty Then
+                    s = $"({where("and").JoinBy(" AND ")})"
+                Else
+                    s = $"({s}) AND ({where("and").JoinBy(" AND ")})"
+                End If
+            End If
+            If where.ContainsKey("or") Then
+                If s.StringEmpty Then
+                    s = $"({where("or").JoinBy(" OR ")})"
+                Else
+                    s = $"({s}) OR ({where("or").JoinBy(" OR ")})"
+                End If
+            End If
+
+            Return s
         End Function
 
         Public Function limit_str() As String
