@@ -110,5 +110,11 @@ Namespace MySqlBuilder
             Return f
         End Function
 
+        Public Function [in](f As FieldAssert, vals As String()) As FieldAssert
+            f.op = NameOf([in])
+            f.val = vals.Select(Function(v) FieldAssert.value(v)).JoinBy(", ")
+            f.val = $"({f.val})"
+            Return f
+        End Function
     End Module
 End Namespace
