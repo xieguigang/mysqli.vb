@@ -201,11 +201,22 @@ Namespace MySqlBuilder
         End Function
 
         Public Function order_by(ParamArray fields As String()) As Model
+            Dim query As New QueryBuilder(Me.query)
+            query.order_by = fields
+            Return New Model(mysql, schema, query)
+        End Function
 
+        Public Function order_by(fields As String(), desc As Boolean) As Model
+            Dim query As New QueryBuilder(Me.query)
+            query.order_by = fields
+            query.order_desc = desc
+            Return New Model(mysql, schema, query)
         End Function
 
         Public Function distinct() As Model
-
+            Dim query As New QueryBuilder(Me.query)
+            query.distinct = True
+            Return New Model(mysql, schema, query)
         End Function
 
     End Class
