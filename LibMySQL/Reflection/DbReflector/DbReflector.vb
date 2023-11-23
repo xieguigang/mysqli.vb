@@ -67,6 +67,9 @@
 Imports System.Data
 Imports System.Reflection
 Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.ComponentModel.Collection
+Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
+Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel.SchemaMaps
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports MySql.Data.MySqlClient
@@ -97,7 +100,8 @@ Namespace Reflection
             ' Create a instance of specific type: our record schema. 
             Dim out As Object = Activator.CreateInstance(GetType(T))
 
-            For Each [property] In SchemaCache(Of T).Cache
+            ' loop for each field
+            For Each [property] As NamedValue(Of BindProperty(Of DatabaseField)) In SchemaCache(Of T).Cache
                 Dim ordinal% = reader.GetOrdinal([property].Name)
 
                 If ordinal >= 0 Then
@@ -111,16 +115,6 @@ Namespace Reflection
 
             Return DirectCast(out, T)
         End Function
-
-        Private Class __readFirst(Of T)
-
-            Public ReadOnly Property value As T
-
-            Public Function __getFirst(obj As T) As Boolean
-                _value = obj
-                Return True
-            End Function
-        End Class
 
         ''' <summary>
         ''' 查询并行化
