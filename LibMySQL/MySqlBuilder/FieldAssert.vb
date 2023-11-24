@@ -9,6 +9,13 @@ Namespace MySqlBuilder
         Public Property val As String
         Public Property val2 As String
 
+        Sub New()
+        End Sub
+
+        Sub New(name As String)
+            Me.name = name
+        End Sub
+
         Public Overrides Function ToString() As String
             If op.TextEquals("between") Then
                 Return $"({name} BETWEEN {val} AND {val2})"

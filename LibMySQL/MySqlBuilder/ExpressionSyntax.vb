@@ -12,13 +12,21 @@ Namespace MySqlBuilder
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <DebuggerStepThrough>
         Public Function field(name As String) As FieldAssert
-            Return New FieldAssert With {.name = $"`{name}`"}
+            If name.First <> "`" AndAlso name.Last <> "`" Then
+                name = $"`{name}`"
+            End If
+
+            Return New FieldAssert(name)
         End Function
 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <DebuggerStepThrough>
         Public Function f(name As String) As FieldAssert
-            Return New FieldAssert With {.name = $"`{name}`"}
+            If name.First <> "`" AndAlso name.Last <> "`" Then
+                name = $"`{name}`"
+            End If
+
+            Return New FieldAssert(name)
         End Function
 
         <Extension>
