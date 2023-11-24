@@ -17,6 +17,18 @@ Namespace MySqlBuilder
             End If
         End Function
 
+        Public Overloads Shared Operator =(x1 As FieldAssert, x2 As FieldAssert) As FieldAssert
+            x1.op = "="
+            x1.val = x2.name
+            Return x1
+        End Operator
+
+        Public Overloads Shared Operator <>(x1 As FieldAssert, x2 As FieldAssert) As FieldAssert
+            x1.op = "<>"
+            x1.val = x2.name
+            Return x1
+        End Operator
+
         Public Overloads Shared Operator =(field As FieldAssert, val As Date) As FieldAssert
             Return field = val.ToMySqlDateTimeString
         End Operator
