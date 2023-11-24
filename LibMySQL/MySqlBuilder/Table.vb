@@ -137,9 +137,9 @@ Namespace MySqlBuilder
         ''' <typeparam name="T"></typeparam>
         ''' <returns></returns>
         Public Function find(Of T As {New, Class})() As T
-            Dim where As String = query.where_str
-            Dim left_join As String = query.left_join_str
-            Dim order_by As String = query.order_by_str
+            Dim where As String = If(query?.where_str, "")
+            Dim left_join As String = If(query?.left_join_str, "")
+            Dim order_by As String = If(query?.order_by_str, "")
             Dim sql As String = $"SELECT * FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {order_by} LIMIT 1;"
             _GetLastMySql = sql
             Dim result = mysql.ExecuteScalar(Of T)(sql)
@@ -156,7 +156,7 @@ Namespace MySqlBuilder
             Dim where As String = If(query?.where_str, "")
             Dim limit As String = If(query?.limit_str, "")
             Dim left_join As String = If(query?.left_join_str, "")
-            Dim order_by As String = query.order_by_str
+            Dim order_by As String = If(query?.order_by_str, "")
             Dim fieldSet As String = If(fields.IsNullOrEmpty, "*", fields.JoinBy(", "))
             Dim sql As String = $"SELECT {fieldSet} FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {order_by} {limit};"
             _GetLastMySql = sql
