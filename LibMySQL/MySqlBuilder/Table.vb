@@ -152,9 +152,9 @@ Namespace MySqlBuilder
         ''' <param name="fields"></param>
         ''' <returns></returns>
         Public Function [select](Of T As {New, Class})(ParamArray fields As String()) As T()
-            Dim where As String = query.where_str
-            Dim limit As String = query.limit_str
-            Dim left_join As String = query.left_join_str
+            Dim where As String = If(query?.where_str, "")
+            Dim limit As String = If(query?.limit_str, "")
+            Dim left_join As String = If(query?.left_join_str, "")
             Dim fieldSet As String = If(fields.IsNullOrEmpty, "*", fields.JoinBy(", "))
             Dim sql As String = $"SELECT {fieldSet} FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {limit};"
             _GetLastMySql = sql
