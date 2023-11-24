@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.Linq
 
 Namespace MySqlBuilder
 
@@ -38,9 +39,13 @@ Namespace MySqlBuilder
             Return f
         End Function
 
-        Public Function [in](f As FieldAssert, vals As String()) As FieldAssert
+        <Extension>
+        Public Function [in](Of T)(f As FieldAssert, vals As IEnumerable(Of T)) As FieldAssert
             f.op = NameOf([in])
-            f.val = vals.Select(Function(v) FieldAssert.value(v)).JoinBy(", ")
+            f.val = vals _
+                .SafeQuery _
+                .Select(Function(v) FieldAssert.value(v.ToString)) _
+                .JoinBy(", ")
             f.val = $"({f.val})"
             Return f
         End Function

@@ -8,6 +8,7 @@ Namespace MySqlBuilder
         Public Property op As String
         Public Property val As String
         Public Property val2 As String
+        Public Property unary_not As Boolean
 
         Sub New()
         End Sub
@@ -17,11 +18,19 @@ Namespace MySqlBuilder
         End Sub
 
         Public Overrides Function ToString() As String
+            Dim str As String
+
             If op.TextEquals("between") Then
-                Return $"({name} BETWEEN {val} AND {val2})"
+                str = $"({name} BETWEEN {val} AND {val2})"
             Else
-                Return $"({name} {op} {val})"
+                str = $"({name} {op} {val})"
             End If
+
+            If unary_not Then
+                str = $"(NOT {str})"
+            End If
+
+            Return str
         End Function
 
         Public Overloads Shared Operator =(x1 As FieldAssert, x2 As FieldAssert) As FieldAssert
@@ -85,6 +94,11 @@ Namespace MySqlBuilder
         Public Overloads Shared Operator Like(field As FieldAssert, val As String) As FieldAssert
             field.val = value(val)
             field.op = "LIKE"
+            Return field
+        End Operator
+
+        Public Overloads Shared Operator Not(field As FieldAssert) As FieldAssert
+            field.unary_not = True
             Return field
         End Operator
 
