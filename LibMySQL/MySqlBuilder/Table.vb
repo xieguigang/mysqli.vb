@@ -21,7 +21,11 @@ Namespace MySqlBuilder
         ''' <returns></returns>
         Public ReadOnly Property GetLastMySql As String
             Get
-                Return m_getLastMySql
+                If chain Is Me Then
+                    Return m_getLastMySql
+                Else
+                    Return chain.m_getLastMySql
+                End If
             End Get
         End Property
 
