@@ -13,6 +13,7 @@ Namespace MySqlBuilder
         Sub New()
         End Sub
 
+        <DebuggerStepThrough>
         Sub New(name As String)
             Me.name = name
         End Sub

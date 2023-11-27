@@ -81,6 +81,7 @@ Public Class MySqli : Implements IDisposable
     Public Event ThrowException(Ex As Exception, SQL As String)
 
     Dim _reflector As DbReflector
+    Dim _lastError As Exception
 
     ''' <summary>
     ''' A Formatted connection string using for the connection established to the database server. 
@@ -88,6 +89,11 @@ Public Class MySqli : Implements IDisposable
     ''' <remarks></remarks>
     Public ReadOnly Property UriMySQL As ConnectionUri
     Public ReadOnly Property LastInsertedId As Long
+    Public ReadOnly Property LastError As Exception
+        Get
+            Return _lastError
+        End Get
+    End Property
 
     Public Overrides Function ToString() As String
         Return UriMySQL.GetJson
@@ -448,6 +454,7 @@ Public Class MySqli : Implements IDisposable
 
     Private Function __throwExceptionHelper(ex As Exception, SQL$, throwExp As Boolean) As Exception
         Dim url As New ConnectionUri(UriMySQL)
+        _lastError = ex
         url.Password = "********"
         ex = New Exception(url.GetJson, ex)
         ex = New Exception(SQL, ex)

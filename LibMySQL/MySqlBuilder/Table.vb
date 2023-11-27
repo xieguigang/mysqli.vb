@@ -29,6 +29,12 @@ Namespace MySqlBuilder
             End Get
         End Property
 
+        Public ReadOnly Property GetLastError As Exception
+            Get
+                Return mysql.LastError
+            End Get
+        End Property
+
         ''' <summary>
         ''' cache of the table schema
         ''' </summary>
