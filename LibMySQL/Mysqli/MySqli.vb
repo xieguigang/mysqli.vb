@@ -270,7 +270,7 @@ Public Class MySqli : Implements IDisposable
                 Return i
             Catch ex As Exception
                 If throwExp Then
-                    __throwExceptionHelper(ex, SQL, True)
+                    __throwExceptionHelper(ex, SQL, throwExp:=True)
                 Else
                     ex = __throwExceptionHelper(ex, SQL, False)
                     Call ex.PrintException
