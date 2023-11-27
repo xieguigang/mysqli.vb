@@ -36,6 +36,20 @@ Namespace MySqlBuilder
         End Property
 
         ''' <summary>
+        ''' get the error message of the last <see cref="Exception"/>.
+        ''' </summary>
+        ''' <returns></returns>
+        Public ReadOnly Property GetLastErrorMessage As String
+            Get
+                If mysql.LastError Is Nothing Then
+                    Return ""
+                Else
+                    Return mysql.LastError.Message
+                End If
+            End Get
+        End Property
+
+        ''' <summary>
         ''' cache of the table schema
         ''' </summary>
         Shared ReadOnly cache As New Dictionary(Of String, Table)
