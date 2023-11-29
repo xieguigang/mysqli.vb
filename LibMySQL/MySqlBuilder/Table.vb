@@ -49,6 +49,12 @@ Namespace MySqlBuilder
             End Get
         End Property
 
+        Public ReadOnly Property mysqli As ConnectionUri
+            Get
+                Return New ConnectionUri(mysql.UriMySQL)
+            End Get
+        End Property
+
         ''' <summary>
         ''' cache of the table schema
         ''' </summary>
