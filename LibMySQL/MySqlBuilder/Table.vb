@@ -178,7 +178,9 @@ Namespace MySqlBuilder
         ''' SELECT LIMIT 1
         ''' </summary>
         ''' <typeparam name="T"></typeparam>
-        ''' <returns></returns>
+        ''' <returns>
+        ''' this function returns nothing if not found
+        ''' </returns>
         Public Function find(Of T As {New, Class})() As T
             Dim where As String = If(query?.where_str, "")
             Dim left_join As String = If(query?.left_join_str, "")
