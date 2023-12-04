@@ -14,7 +14,9 @@ Namespace MySqlBuilder
             Dim type As Reflection.DbAttributes.MySqlDbType
             Dim parameter As String = ""
 
-            If type_define.TextEquals("tinyint") OrElse r.Match(type_define, "tinyint\(\d+\)", RegexOptions.IgnoreCase).Success Then
+            If type_define = "tinyint unsigned" Then
+                type = Reflection.DbAttributes.MySqlDbType.Byte
+            ElseIf type_define.TextEquals("tinyint") OrElse r.Match(type_define, "tinyint\(\d+\)", RegexOptions.IgnoreCase).Success Then
                 parameter = GetNumberValue(type_define, 1)
 
                 If parameter = "1" Then
@@ -61,7 +63,6 @@ Namespace MySqlBuilder
             ElseIf Regex.Match(type_define, "bit\(", RegexICSng).Success Then
                 type = Reflection.DbAttributes.MySqlDbType.Bit
                 parameter = GetNumberValue(type_define, 1)
-
             Else
                 ' More complex type is not support yet, but you can
                 ' easily extending the mapping code at here
