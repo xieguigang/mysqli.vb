@@ -78,6 +78,10 @@ Namespace MySqlBuilder
             Me.chain = chain
         End Sub
 
+        Public Overrides Function ToString() As String
+            Return $"`{schema.Database}`.`{schema.TableName}`({schema.FieldNames.JoinBy(", ")})"
+        End Function
+
         ''' <summary>
         ''' inspect of the database table schema
         ''' </summary>
