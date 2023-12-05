@@ -89,9 +89,9 @@ Namespace MySqlBuilder
             End If
             If where.ContainsKey("or") Then
                 If s.StringEmpty Then
-                    s = $"({where("or").JoinBy(" OR ")})"
+                    s = $"({where("or").JoinBy(" AND ")})"
                 Else
-                    s = $"({s}) OR ({where("or").JoinBy(" OR ")})"
+                    s = $"({s}) OR ({where("or").JoinBy(" AND ")})"
                 End If
             End If
 
