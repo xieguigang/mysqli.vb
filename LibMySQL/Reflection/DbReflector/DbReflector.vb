@@ -65,6 +65,7 @@
 #End Region
 
 Imports System.Data
+Imports System.Data.Common
 Imports System.Reflection
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.ComponentModel.Collection
@@ -99,10 +100,16 @@ Namespace Reflection
 
             ' Create a instance of specific type: our record schema. 
             Dim out As Object = Activator.CreateInstance(GetType(T))
+            Dim currentOrdinal As Index(Of String) = GetCurrentOrdinals(reader).Indexing
+            Dim ordinal As Integer
 
             ' loop for each field
             For Each [property] As NamedValue(Of BindProperty(Of DatabaseField)) In SchemaCache(Of T).Cache
-                Dim ordinal% = reader.GetOrdinal([property].Name)
+                If [property].Name Like currentOrdinal Then
+                    ordinal = reader.GetOrdinal([property].Name)
+                Else
+                    Continue For
+                End If
 
                 If ordinal >= 0 Then
                     Dim value = reader.GetValue(ordinal)
@@ -165,13 +172,24 @@ Namespace Reflection
             Return DirectCast(fillObject, T)
         End Function
 
+        ''' <summary>
+        ''' 获取当前表之中可用的列名称列表
+        ''' </summary>
+        ''' <param name="reader"></param>
+        ''' <returns></returns>
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Shared Function GetCurrentOrdinals(reader As DbDataReader) As IEnumerable(Of String)
+            Return From r As DataRow
+                   In reader.GetSchemaTable
+                   Let colname = r.Item("ColumnName").ToString
+                   Select colname
+        End Function
+
         Private Shared Function __queryInitSchema(Reader As MySqlDataReader, type As Type) As SeqValue(Of PropertyInfo)()
             Dim DbFieldAttr As DatabaseField
             Dim ItemTypeProperty = type.GetProperties
             Dim fields As New List(Of SeqValue(Of PropertyInfo))
-            Dim schema = (From r As DataRow
-                          In Reader.GetSchemaTable
-                          Select r).Select(Function(x) x.Item("ColumnName").ToString).ToArray   ' 获取当前表之中可用的列名称列表
+            Dim schema As Index(Of String) = GetCurrentOrdinals(Reader).Indexing
 
             For Each [property] As PropertyInfo In ItemTypeProperty    'Using the reflection to get the fields in the table schema only once.
                 DbFieldAttr = [property].GetAttribute(Of DatabaseField)()
@@ -180,7 +198,7 @@ Namespace Reflection
                 If String.IsNullOrEmpty(DbFieldAttr.Name) Then
                     DbFieldAttr.Name = [property].Name
                 End If
-                If Array.IndexOf(schema, DbFieldAttr.Name) = -1 Then
+                If Not DbFieldAttr.Name Like schema Then
                     Continue For  ' 反射操作的时候只对包含有的列属性进行赋值
                 End If
 
