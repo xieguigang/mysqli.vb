@@ -20,6 +20,19 @@ Namespace MySqlBuilder
             Return New FieldAssert(name)
         End Function
 
+        ''' <summary>
+        ''' Create a new table field reference
+        ''' </summary>
+        ''' <param name="table"></param>
+        ''' <param name="name"></param>
+        ''' <returns></returns>
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        <DebuggerStepThrough>
+        Public Function field(table As String, name As String) As FieldAssert
+            Return New FieldAssert($"`{table}`.`{name}`")
+        End Function
+
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <DebuggerStepThrough>
         Public Function f(name As String) As FieldAssert
