@@ -292,6 +292,7 @@ Namespace Reflection
             Catch ex As Exception
                 ex = New Exception(type.FullName, ex)
                 ex = New Exception(SQL, ex)
+                getError = ex.ToString
 
                 Call App.LogException(ex)
             Finally
