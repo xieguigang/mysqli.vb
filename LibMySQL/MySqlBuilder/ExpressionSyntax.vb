@@ -62,5 +62,10 @@ Namespace MySqlBuilder
             f.val = $"({f.val})"
             Return f
         End Function
+
+        <Extension>
+        Public Function [or](test As FieldAssert()) As String
+            Return (From ti As FieldAssert In test Let sql = ti.ToString Select sql).JoinBy(" OR ")
+        End Function
     End Module
 End Namespace
