@@ -196,6 +196,14 @@ Namespace MySqlBuilder
             Return result
         End Function
 
+        Public Function count() As Integer
+            Dim where As String = If(query?.where_str, "")
+            Dim sql As String = $"SELECT count(*) FROM `{schema.Database}`.`{schema.TableName}` {where};"
+            chain.m_getLastMySql = sql
+            Dim result = mysql.ExecuteAggregate(Of Integer)(sql)
+            Return result
+        End Function
+
         ''' <summary>
         ''' SELECT
         ''' </summary>
