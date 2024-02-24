@@ -2,16 +2,17 @@
 
   <PropertyGroup>
    
-    <TargetFrameworks>net6.0-windows;net6.0;net48</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
    
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
    
     <OutputType>Exe</OutputType>
    
     <ApplicationIcon>Project1.ico</ApplicationIcon>
-   
+    <Platforms>AnyCPU;x64</Platforms>
+    <Configurations>Debug;Release;mysqli_X64_release</Configurations>
     <UseApplicationFramework>False</UseApplicationFramework>
-   
+    <OutputPath>../App/</OutputPath>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 

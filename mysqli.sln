@@ -271,8 +271,8 @@ Global
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.LipidSearch|x86.Build.0 = Debug|x86
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.mysqli_X64_release|Any CPU.ActiveCfg = mysqli_X64_release|Any CPU
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.mysqli_X64_release|Any CPU.Build.0 = mysqli_X64_release|Any CPU
-		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.mysqli_X64_release|x64.ActiveCfg = mysqli_X64_release|x64
-		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.mysqli_X64_release|x64.Build.0 = mysqli_X64_release|x64
+		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.mysqli_X64_release|x64.ActiveCfg = Rsharp_app_release|x64
+		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.mysqli_X64_release|x64.Build.0 = Rsharp_app_release|x64
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.mysqli_X64_release|x86.ActiveCfg = mysqli_X64_release|x86
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.mysqli_X64_release|x86.Build.0 = mysqli_X64_release|x86
 		{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}.mzkit_win32|Any CPU.ActiveCfg = mysqli_X64_release|Any CPU
