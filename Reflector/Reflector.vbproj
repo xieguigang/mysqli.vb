@@ -17,6 +17,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="test2.vb" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Project1.ico" />
   </ItemGroup>
   

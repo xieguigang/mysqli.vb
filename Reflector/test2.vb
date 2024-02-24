@@ -47,7 +47,6 @@
 #End Region
 
 Imports Oracle.LinuxCompatibility.MySQL
-Imports Oracle.LinuxCompatibility.MySQL.Expressions
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 
 Module test2

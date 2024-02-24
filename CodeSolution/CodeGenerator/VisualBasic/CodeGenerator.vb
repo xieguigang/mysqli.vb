@@ -45,7 +45,6 @@
 
 #End Region
 
-Imports System.Data.Linq.Mapping
 Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Text
@@ -61,6 +60,8 @@ Imports Microsoft.VisualBasic.Text.Xml
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
+Imports ColumnAttribute = System.ComponentModel.DataAnnotations.Schema.ColumnAttribute
+Imports DataType = Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.DataType
 Imports MySqlScript = Oracle.LinuxCompatibility.MySQL.Scripting.Extensions
 
 Namespace VisualBasic
