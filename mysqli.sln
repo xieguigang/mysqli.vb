@@ -9,15 +9,13 @@ Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "libmysql", "LibMySQL\libmys
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Core", "..\..\..\GCModeller\src\runtime\sciBASIC#\Microsoft.VisualBasic.Core\src\Core.vbproj", "{A7FFE141-E491-415C-803A-58FD449AA7AA}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "CodeSolution", "CodeSolution\CodeSolution.vbproj", "{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "CodeSolution", "CodeSolution\CodeSolution.vbproj", "{6FBB3D95-4D76-42B8-A991-A4BEED9831BC}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Reflector", "Reflector\Reflector.vbproj", "{8A02381A-18E7-44CD-9A5A-F67310864C3D}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "markdown.NET5", "..\..\..\GCModeller\src\runtime\sciBASIC#\mime\text%markdown\markdown.NET5.vbproj", "{60080EDC-AD94-4B0C-A0D4-CD20FA7FF320}"
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "html_netcore5", "..\..\..\GCModeller\src\runtime\sciBASIC#\mime\text%html\html_netcore5.vbproj", "{C5A4C3F5-5627-4EC5-A03B-E790D7A29142}"
-EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "test", "test\test.vbproj", "{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -569,90 +567,6 @@ Global
 		{C5A4C3F5-5627-4EC5-A03B-E790D7A29142}.Rsharp_app_release|x64.Build.0 = Rsharp_app_release|x64
 		{C5A4C3F5-5627-4EC5-A03B-E790D7A29142}.Rsharp_app_release|x86.ActiveCfg = Rsharp_app_release|Any CPU
 		{C5A4C3F5-5627-4EC5-A03B-E790D7A29142}.Rsharp_app_release|x86.Build.0 = Rsharp_app_release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Biodeep|Any CPU.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Biodeep|Any CPU.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Biodeep|x64.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Biodeep|x64.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Biodeep|x86.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Biodeep|x86.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Debug|x64.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Debug|x86.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(Release_X64)|Any CPU.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(Release_X64)|Any CPU.Build.0 = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(Release_X64)|x64.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(Release_X64)|x64.Build.0 = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(Release_X64)|x86.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(Release_X64)|x86.Build.0 = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(UNIX-Release_X64)|Any CPU.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(UNIX-Release_X64)|Any CPU.Build.0 = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(UNIX-Release_X64)|x64.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(UNIX-Release_X64)|x64.Build.0 = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(UNIX-Release_X64)|x86.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.GCModeller(UNIX-Release_X64)|x86.Build.0 = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.gcmodeller_desktop|Any CPU.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.gcmodeller_desktop|Any CPU.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.gcmodeller_desktop|x64.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.gcmodeller_desktop|x64.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.gcmodeller_desktop|x86.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.gcmodeller_desktop|x86.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.LipidSearch|Any CPU.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.LipidSearch|Any CPU.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.LipidSearch|x64.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.LipidSearch|x64.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.LipidSearch|x86.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.LipidSearch|x86.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mysqli_X64_release|Any CPU.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mysqli_X64_release|Any CPU.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mysqli_X64_release|x64.ActiveCfg = Debug|x64
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mysqli_X64_release|x64.Build.0 = Debug|x64
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mysqli_X64_release|x86.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mysqli_X64_release|x86.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit_win32|Any CPU.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit_win32|Any CPU.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit_win32|x64.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit_win32|x64.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit_win32|x86.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit_win32|x86.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit|Any CPU.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit|Any CPU.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit|x64.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit|x64.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit|x86.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.mzkit|x86.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.NPSearch|Any CPU.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.NPSearch|Any CPU.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.NPSearch|x64.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.NPSearch|x64.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.NPSearch|x86.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.NPSearch|x86.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.PlantMAT|Any CPU.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.PlantMAT|Any CPU.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.PlantMAT|x64.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.PlantMAT|x64.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.PlantMAT|x86.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.PlantMAT|x86.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Publish|Any CPU.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Publish|x64.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Publish|x64.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Publish|x86.ActiveCfg = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Publish|x86.Build.0 = Debug|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Release|x64.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Release|x64.Build.0 = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Release|x86.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Release|x86.Build.0 = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Rsharp_app_release|Any CPU.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Rsharp_app_release|Any CPU.Build.0 = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Rsharp_app_release|x64.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Rsharp_app_release|x64.Build.0 = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Rsharp_app_release|x86.ActiveCfg = Release|Any CPU
-		{65BDD478-5ED5-4631-81C7-1CC9828CEBC3}.Rsharp_app_release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
