@@ -7,7 +7,7 @@
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
    
     <OutputType>Exe</OutputType>
-   
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <ApplicationIcon>Project1.ico</ApplicationIcon>
     <Platforms>AnyCPU;x64</Platforms>
     <Configurations>Debug;Release;mysqli_X64_release</Configurations>
