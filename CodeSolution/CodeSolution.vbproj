@@ -15,6 +15,8 @@
     <RootNamespace>Oracle.LinuxCompatibility.MySQL.CodeSolution</RootNamespace>
 
     <AssemblyName>Oracle.LinuxCompatibility.LibMySQL.CodeSolution</AssemblyName>
+
+    <Title>MySQL ORM CodeSolution for VisualBasic/PHP</Title>
   </PropertyGroup>
 
 
@@ -49,6 +51,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\GCModeller\src\runtime\sciBASIC#\Microsoft.VisualBasic.Core\src\Core.vbproj" />
+    <ProjectReference Include="..\..\..\..\GCModeller\src\runtime\sciBASIC#\mime\text%html\html_netcore5.vbproj" />
+    <ProjectReference Include="..\..\..\..\GCModeller\src\runtime\sciBASIC#\mime\text%markdown\markdown.NET5.vbproj" />
     <ProjectReference Include="..\LibMySQL\libmysql.vbproj" />
   </ItemGroup>
 </Project>
