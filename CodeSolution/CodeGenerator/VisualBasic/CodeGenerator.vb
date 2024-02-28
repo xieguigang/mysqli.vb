@@ -716,22 +716,28 @@ NO_KEY:
                                   Select tableName = Mid(s_TableName, 2, Len(s_TableName) - 2),
                                       tbl
             Dim SchemaSQL As Dictionary(Of String, String) = Nothing
+
             Try
                 SchemaSQL = SchemaSQLLQuery _
                     .ToDictionary(Function(x) x.tableName,
-                                  Function(x) x.tbl)
+                                  Function(x)
+                                      Return x.tbl
+                                  End Function)
             Catch ex As Exception
-                Dim g = SchemaSQLLQuery.ToArray.CheckDuplicated(Of String)(Function(x) x.tableName)
-                Dim dupliTables As String = String.Join(", ", g.Select(Function(tb) tb.Tag).ToArray)
+                Dim g = SchemaSQLLQuery.ToArray.CheckDuplicated(Function(x) x.tableName)
+                Dim dupliTables As String = g.Select(Function(tb) tb.Tag).JoinBy(", ")
+
                 Throw New Exception("Duplicated tables:  " & dupliTables, ex)
             End Try
 
-            Return __generateCodeSplit(
-                Schema,
+            Dim filename As String = If(path.FileExists, FileIO.FileSystem.GetFileInfo(path).Name, "")
+
+            Return Schema.__generateCodeSplit(
                 head:=CreateTables.First,
-                FileName:=If(path.FileExists, FileIO.FileSystem.GetFileInfo(path).Name, ""),
+                FileName:=filename,
                 TableSql:=SchemaSQL,
-                [Namespace]:=ns)
+                [Namespace]:=ns
+            )
         End Function
 
         ''' <summary>
@@ -742,6 +748,8 @@ NO_KEY:
         ''' <param name="FileName"></param>
         ''' <param name="TableSql"></param>
         ''' <returns></returns>
+        ''' 
+        <Extension>
         Private Function __generateCodeSplit(SqlDoc As IEnumerable(Of Table),
                                              head$, FileName$,
                                              TableSql As Dictionary(Of String, String),

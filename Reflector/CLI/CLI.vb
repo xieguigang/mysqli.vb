@@ -97,14 +97,13 @@ Module CLI
 
         If FileIO.FileSystem.FileExists(SQL) Then
             Dim writer As StreamWriter = Nothing
+            Dim reader = args.OpenStreamInput("/sql")
+
             If Not split Then
                 writer = args.OpenStreamOutput("-o")
             End If
-            Return __EXPORT(
-                SQL, args.OpenStreamInput("/sql"),
-                ns,
-                out, writer,
-                split)
+
+            Return __EXPORT(SQL, reader, ns, out, writer, split)
         Else
             Dim msg As String = $"The target schema sql dump file ""{SQL}"" is not exists on your file system!"
             Call VBDebugger.PrintException(msg)
