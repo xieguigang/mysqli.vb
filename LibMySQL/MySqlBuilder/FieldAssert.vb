@@ -34,6 +34,12 @@ Namespace MySqlBuilder
             Return str
         End Function
 
+        ''' <summary>
+        ''' left join xxx on xx = xx
+        ''' </summary>
+        ''' <param name="x1"></param>
+        ''' <param name="x2"></param>
+        ''' <returns></returns>
         Public Overloads Shared Operator =(x1 As FieldAssert, x2 As FieldAssert) As FieldAssert
             x1.op = "="
             x1.val = x2.name
