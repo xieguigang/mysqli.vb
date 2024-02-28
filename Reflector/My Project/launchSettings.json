@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Reflector": {
+      "commandName": "Project",
+      "commandLineArgs": " --reflects /sql \"../../web/mysql/graphdb.sql\" -o ./ /namespace graphdb --language visualbasic /split",
+      "workingDirectory": "E:\\graphQL\\src\\graphMySQL\\graphdb"
+    }
+  }
+}
