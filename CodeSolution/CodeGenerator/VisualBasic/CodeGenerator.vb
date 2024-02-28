@@ -801,7 +801,7 @@ NO_KEY:
             Call VB.AppendLine()
 
             Call VB.AppendLine()
-            Call VB.AppendLine("Imports " & LinqMappingNs)
+            ' Call VB.AppendLine("Imports " & LinqMappingNs)
             Call VB.AppendLine("Imports System.Xml.Serialization")
             Call VB.AppendLine("Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel.SchemaMaps")
             Call VB.AppendLine("Imports " & LibMySQLReflectionNs)
