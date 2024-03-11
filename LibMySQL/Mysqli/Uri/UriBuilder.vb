@@ -71,12 +71,12 @@ Namespace Uri
             Dim code = BencodeDecoder.Decode(uri.GetTagValue("://").Value)
             Dim obj As BDictionary = code(0)
             Dim conn_uri As New ConnectionUri With {
-                .Database = DirectCast(obj!Database, BString),
-                .IPAddress = DirectCast(obj!IPAddress, BString),
-                .Password = DirectCast(obj!Password, BString),
-                .Port = DirectCast(obj!Port, BString),
-                .TimeOut = DirectCast(obj!TimeOut, BString),
-                .User = DirectCast(obj!User, BString)
+                .Database = TryCast(obj!Database, BString),
+                .IPAddress = TryCast(obj!IPAddress, BString),
+                .Password = TryCast(obj!Password, BString),
+                .Port = TryCast(obj!Port, BString),
+                .TimeOut = TryCast(obj!TimeOut, BString),
+                .User = TryCast(obj!User, BString)
             }
 
             Return conn_uri
