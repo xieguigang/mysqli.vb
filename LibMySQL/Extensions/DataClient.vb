@@ -56,9 +56,11 @@ Public Module DataClientExtensions
     ''' <typeparam name="T"></typeparam>
     ''' <param name="mysql"></param>
     ''' <returns></returns>
-    <Extension> Public Function SelectALL(Of T As MySQLTable)(mysql As MySqli) As T()
+    <Extension>
+    Public Function SelectALL(Of T As MySQLTable)(mysql As MySqli) As T()
         Dim table As TableName = GetType(T).GetAttribute(Of TableName)
         Dim SQL$ = $"SELECT * FROM `{table.Database}`.`{table.Name}`;"
+
         Return mysql.Query(Of T)(SQL)
     End Function
 

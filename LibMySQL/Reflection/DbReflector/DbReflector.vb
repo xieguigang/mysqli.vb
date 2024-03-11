@@ -87,7 +87,7 @@ Namespace Reflection
         ''' <param name="Reader"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Shared Function ReadFirst(Of T As {New, Class})(reader As DataTableReader) As T
+        Public Shared Function ReadFirst(Of T As Class)(reader As DataTableReader) As T
             If Not reader.HasRows Then
                 Return Nothing
             Else
@@ -95,7 +95,7 @@ Namespace Reflection
             End If
         End Function
 
-        Public Shared Iterator Function Load(Of T As {New, Class})(reader As DataTableReader, getErr As Value(Of String)) As IEnumerable(Of T)
+        Public Shared Iterator Function Load(Of T As Class)(reader As DataTableReader, getErr As Value(Of String)) As IEnumerable(Of T)
             Dim clr_map As Type = GetType(T)
             Dim schema = InitSchema(reader, type:=clr_map).ToArray
             Dim [error] As Exception = Nothing

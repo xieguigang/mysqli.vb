@@ -359,7 +359,7 @@ Public Class MySqli : Implements IDisposable
     ''' <param name="Parallel"></param>
     ''' <param name="throwExp"></param>
     ''' <returns></returns>
-    Public Function Query(Of T As {New, Class})(SQL As String, Optional throwExp As Boolean = True) As T()
+    Public Function Query(Of T As Class)(SQL As String, Optional throwExp As Boolean = True) As T()
         Dim Result As DataSet = Fetch(SQL)
         Dim Reader As DataTableReader = Result.CreateDataReader
         Dim Err As Value(Of String) = ""
