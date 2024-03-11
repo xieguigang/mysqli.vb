@@ -53,6 +53,7 @@
 
 Imports System.Data
 Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Scripting
 Imports Microsoft.VisualBasic.Serialization.JSON
@@ -80,7 +81,6 @@ Public Class MySqli : Implements IDisposable
     ''' <remarks></remarks>
     Public Event ThrowException(Ex As Exception, SQL As String)
 
-    Dim _reflector As DbReflector
     Dim _lastError As Exception
 
     ''' <summary>
@@ -92,6 +92,15 @@ Public Class MySqli : Implements IDisposable
     Public ReadOnly Property LastError As Exception
         Get
             Return _lastError
+        End Get
+    End Property
+
+    Public ReadOnly Property Version As String
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Get
+            Using MySQL As New MySqlConnection(_UriMySQL)
+                Return MySQL.ServerVersion
+            End Using
         End Get
     End Property
 
@@ -154,7 +163,6 @@ Public Class MySqli : Implements IDisposable
     ''' <remarks></remarks>
     Public Function Connect(ConnectionString As String) As Double
         _UriMySQL = ConnectionString
-        _reflector = New DbReflector(_UriMySQL.GetConnectionString)
 
         Return Ping()
     End Function
@@ -289,12 +297,6 @@ Public Class MySqli : Implements IDisposable
         End Using
     End Function
 
-    Public Function ForEach(Of T)(SQL As String, Invoke As Action(Of T)) As String
-        Dim Err As String = ""
-        Call _reflector.ForEach(Of T)(SQL, Invoke, Err)
-        Return Err
-    End Function
-
     ''' <summary>
     ''' Execute a 'SELECT' query command and then returns the query result of this sql command.
     ''' (执行一个'SELECT'查询命令之后返回本查询命令的查询结果。请注意，这个工具并不会自动关闭数据库连接，
@@ -330,6 +332,24 @@ Public Class MySqli : Implements IDisposable
         Return data
     End Function
 
+    Public Iterator Function ForEach(Of T As {New, Class})(SQL As String, Optional throwEx As Boolean = True) As IEnumerable(Of T)
+        Dim Result As DataSet = Fetch(SQL)
+        Dim Reader As DataTableReader = Result.CreateDataReader
+        Dim Err As Value(Of String) = ""
+
+        For Each item As T In DbReflector.Load(Of T)(Reader, getErr:=Err)
+            Yield item
+        Next
+
+        If Not Err.Value.StringEmpty Then
+            If throwEx Then
+                Dim ex As New Exception(SQL)
+                ex = New Exception(Err, ex)
+                Throw ex
+            End If
+        End If
+    End Function
+
     ''' <summary>
     ''' 使用这个函数进行批量数据的查询操作，基于反射操作的ORM解决方案。
     ''' 假若只需要查询一条数据库记录的话，则推荐使用<see cref="ExecuteScalar(Of T)(String)"/>函数以获取更高的性能
@@ -339,14 +359,13 @@ Public Class MySqli : Implements IDisposable
     ''' <param name="Parallel"></param>
     ''' <param name="throwExp"></param>
     ''' <returns></returns>
-    Public Function Query(Of T As Class)(SQL As String, Optional Parallel As Boolean = False, Optional throwExp As Boolean = True) As T()
-        Dim Err As String = ""
-        Dim table As T() = If(Parallel,
-            _reflector.ParallelQuery(Of T)(SQL, GetErr:=Err),
-            _reflector.Query(Of T)(SQL, GetErr:=Err)
-        )
+    Public Function Query(Of T As {New, Class})(SQL As String, Optional throwExp As Boolean = True) As T()
+        Dim Result As DataSet = Fetch(SQL)
+        Dim Reader As DataTableReader = Result.CreateDataReader
+        Dim Err As Value(Of String) = ""
+        Dim table As T() = DbReflector.Load(Of T)(Reader, getErr:=Err).ToArray
 
-        If table Is Nothing Then
+        If Not Err.Value.StringEmpty Then
             If throwExp Then
                 Dim ex As New Exception(SQL)
                 ex = New Exception(Err, ex)
@@ -355,7 +374,7 @@ Public Class MySqli : Implements IDisposable
                 Return Nothing
             End If
         Else
-            Return table.ToArray
+            Return table
         End If
     End Function
 
@@ -503,15 +522,6 @@ Public Class MySqli : Implements IDisposable
         End If
     End Function
 
-    Public ReadOnly Property Version As String
-        <MethodImpl(MethodImplOptions.AggressiveInlining)>
-        Get
-            Using MySQL As New MySqlConnection(_UriMySQL)
-                Return MySQL.ServerVersion
-            End Using
-        End Get
-    End Property
-
     ''' <summary>
     ''' Open a mysql connection using a specific connection string
     ''' </summary>
@@ -521,8 +531,7 @@ Public Class MySqli : Implements IDisposable
     Public Shared Widening Operator CType(strUri As String) As MySqli
         Dim uri As ConnectionUri = strUri
         Dim mysqli As New MySqli With {
-            ._UriMySQL = uri,
-            ._reflector = New DbReflector(uri.GetConnectionString)
+            ._UriMySQL = uri
         }
         Return mysqli
     End Operator
@@ -535,8 +544,7 @@ Public Class MySqli : Implements IDisposable
     ''' <remarks></remarks>
     Public Shared Widening Operator CType(uri As ConnectionUri) As MySqli
         Return New MySqli With {
-            ._UriMySQL = uri,
-            ._reflector = New DbReflector(uri.GetConnectionString)
+            ._UriMySQL = uri
         }
     End Operator
 
