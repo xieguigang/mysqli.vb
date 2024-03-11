@@ -60,7 +60,12 @@ Namespace Uri
             Dim usr As String = passwordEncryption(uri.User)
             Dim pwd As String = passwordEncryption(uri.Password)
             Dim dbn As String = passwordEncryption(uri.Database)
-            Dim url As String = $"https://{uri.IPAddress}:{uri.Port}/client?user={usr}%password={pwd}%database={dbn}"
+            Dim url As String = New ConnectionUri(uri) With {
+                .User = usr,
+                .Password = pwd,
+                .Database = dbn
+            }.GetDisplayUri
+
             Return url
         End Function
 
