@@ -90,15 +90,11 @@ Namespace Uri
         ''' <param name="cnn"></param>
         ''' <returns></returns>
         Public Function MySQLParser(cnn As String) As ConnectionUri
-            Dim Database$ = cnn.getField("Database=")
-            Dim User$ = cnn.getField("User Id=")
-            Dim Password$ = cnn.getField("Password=")
-            Dim IPAddress$ = cnn.getField("Data Source=")
-            Dim ServicesPort$ = r _
-                .Match(cnn, "Port=\d+", RegexOptions.IgnoreCase) _
-                .Value _
-                .GetTagValue("="c) _
-                .Value
+            Dim Database$ = cnn.getField("Database")
+            Dim User$ = cnn.getField("User Id")
+            Dim Password$ = cnn.getField("Password")
+            Dim IPAddress$ = cnn.getField("Data Source")
+            Dim ServicesPort$ = cnn.getField("Port")
 
             Dim Uri As New ConnectionUri With {
                 .User = User,
@@ -114,10 +110,13 @@ Namespace Uri
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <Extension>
         Private Function getField(cnn$, fieldToken$) As String
-            Return r.Match(cnn, fieldToken & "\S+", RegexOptions.IgnoreCase) _
-                .Value _
-                .Remove(fieldToken, RegexOptions.IgnoreCase) _
-                .TrimSeperator
+            Dim matches = r.Match(cnn, $"{fieldToken}\s*[=]\s*\S+")
+
+            If matches.Success Then
+                Return matches.GetTagValue("=", trim:=True).Value
+            Else
+                Return Nothing
+            End If
         End Function
 
         <Extension> Private Function TrimSeperator(str As String) As String
