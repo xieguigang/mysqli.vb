@@ -47,6 +47,7 @@ Imports Microsoft.VisualBasic.MIME.Html
 Imports Microsoft.VisualBasic.MIME.text.markdown
 Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
+Imports MarkdownHTML = Microsoft.VisualBasic.MIME.text.markdown.MarkdownRender
 
 Public Module SchemaMarkdown
 

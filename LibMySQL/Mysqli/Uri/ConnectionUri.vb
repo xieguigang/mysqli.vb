@@ -47,11 +47,14 @@
 Imports System.Runtime.CompilerServices
 Imports System.Xml.Serialization
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Serialization.Bencoding
 
 Namespace Uri
 
     ''' <summary>
-    ''' The connection parameter for the MYSQL database server.(MySQL服务器的远程连接参数)
+    ''' The connection parameter for the MYSQL database server.
+    ''' 
+    ''' (MySQL服务器的远程连接参数)
     ''' </summary>
     ''' <remarks>
     ''' #### Using MySqlCommand
@@ -106,26 +109,26 @@ Namespace Uri
     Public Class ConnectionUri
 
         ''' <summary>
-        ''' The server IP address, you can using ``localhost`` to specific the local machine.(服务器的IP地址，可以使用localhost来指代本机)
+        ''' The server IP address, you can using ``localhost`` to specific the local machine.
         ''' </summary>
         ''' <value></value>
         ''' <returns></returns>
-        ''' <remarks></remarks>
+        ''' <remarks>(服务器的IP地址，可以使用localhost来指代本机)</remarks>
         <XmlAttribute> Public Property IPAddress As String
         ''' <summary>
-        ''' The port number of the remote database server.(数据库服务器的端口号)
+        ''' The port number of the remote database server.
         ''' </summary>
         ''' <value></value>
         ''' <returns></returns>
-        ''' <remarks></remarks>
+        ''' <remarks>(数据库服务器的端口号)</remarks>
         <XmlAttribute> Public Property Port As UInteger
 
         ''' <summary>
-        ''' ``Using &lt;database_name>``.(数据库的名称)
+        ''' ``Using &lt;database_name>``.
         ''' </summary>
         ''' <value></value>
         ''' <returns></returns>
-        ''' <remarks></remarks>
+        ''' <remarks>(数据库的名称)</remarks>
         <XmlAttribute> Public Property Database As String
         <XmlAttribute> Public Property User As String
         <XmlAttribute> Public Property Password As String
@@ -175,7 +178,7 @@ Namespace Uri
 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Function GetDisplayUri() As String
-            Return $"https://{Me.IPAddress}:{Me.Port}/mysql/db_{Me.Database}/user_{Me.User}"
+            Return $"mysql://{Me.ToBEncodeString}"
         End Function
 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
@@ -220,8 +223,6 @@ Namespace Uri
         ''' <param name="url">MySql connection string.(MySql连接字符串)</param>
         ''' <returns></returns>
         ''' <remarks>
-        ''' Example: 
-        ''' http://localhost:8080/client?user=username%password=password%database=database
         ''' </remarks>
         ''' 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
@@ -235,7 +236,7 @@ Namespace Uri
         ''' <param name="uri">MySQL连接字符串或者uri拓展格式</param>
         ''' <returns></returns>
         Public Shared Function TryParsing(uri As String) As ConnectionUri
-            If Not InStr(uri, "https://", CompareMethod.Text) > 0 Then
+            If Not InStr(uri, "mysql://", CompareMethod.Text) > 0 Then
                 Return UriBuilder.MySQLParser(uri)
             Else
                 Return UriBuilder.UriParser(uri)

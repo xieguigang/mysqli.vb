@@ -44,6 +44,7 @@ Imports System.Runtime.CompilerServices
 Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.Default
+Imports Microsoft.VisualBasic.Serialization.Bencoding
 Imports r = System.Text.RegularExpressions.Regex
 
 Namespace Uri
@@ -65,27 +66,10 @@ Namespace Uri
         ''' </summary>
         ''' <param name="uri"></param>
         ''' <returns></returns>
-        <Extension> Public Function UriParser(uri As String) As ConnectionUri
-            Dim temp$ = r.Match(uri, SERVERSITE).Value
-            Dim server$() = temp.Split("/"c).Last.Split(":"c)
-            Dim profiles$() = Mid(uri, InStr(uri, "client?", CompareMethod.Text) + 7).Split("%"c)
-            Dim fields = profiles _
-                .Select(Function(s) s.GetTagValue("=")) _
-                .ToDictionary(Function(f) f.Name,
-                              Function(f) f.Value)
-#If DEBUG Then
-        Call fields.GetJson(indent:=True).__DEBUG_ECHO
-#End If
-
-            Dim newURI As New ConnectionUri With {
-                .IPAddress = server.First,
-                .Port = CInt(Val(server.Last)),
-                .User = fields.TryGetValue("user"),
-                .Password = fields.TryGetValue("password"),
-                .Database = fields.TryGetValue("database")
-            }
-
-            Return newURI
+        <Extension>
+        Public Function UriParser(uri As String) As ConnectionUri
+            Dim code = BencodeDecoder.Decode(uri.GetTagValue("://").Value)
+            Return Nothing
         End Function
 
         ReadOnly defaultPort As [Default](Of String) = "3306"
