@@ -85,7 +85,8 @@ Public Module DataClientExtensions
     ''' <param name="o"></param>
     ''' <param name="zeroAsNull"></param>
     ''' <returns></returns>
-    <Extension> Public Function OccupancyLoad(Of MySqlTable As Class)(
+    <Extension>
+    Public Function OccupancyLoad(Of MySqlTable As Class)(
                        schema As BindProperty(Of DatabaseField)(),
                        o As MySqlTable,
                        Optional zeroAsNull As Boolean = False) As Double
@@ -138,14 +139,15 @@ Public Module DataClientExtensions
     ''' <param name="obj"></param>
     ''' <param name="group"></param>
     ''' <returns></returns>
-    <Extension> Public Function GroupFills(Of T As Class)(obj As T, schema As BindProperty(Of DatabaseField)(), group As T()) As T
+    <Extension>
+    Public Function GroupFills(Of T As Class)(obj As T, schema As BindProperty(Of DatabaseField)(), group As T()) As T
         For Each field As BindProperty(Of DatabaseField) In schema
             If obj.HasValue(field, True) Then
                 ' 目标已经在当前的这个属性上面存在值了，则跳过
                 Continue For
             End If
 
-            For Each x In group
+            For Each x As T In group
                 If x.HasValue(field, True) Then
                     ' 存在值，则进行设置
                     field.SetValue(obj, field.GetValue(x))
