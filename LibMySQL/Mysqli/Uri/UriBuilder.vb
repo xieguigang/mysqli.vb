@@ -91,17 +91,18 @@ Namespace Uri
         ''' <returns></returns>
         Public Function MySQLParser(cnn As String) As ConnectionUri
             Dim Database$ = cnn.getField("Database")
-            Dim User$ = cnn.getField("User Id")
+            Dim User$ = cnn.getField("User\s+Id")
             Dim Password$ = cnn.getField("Password")
-            Dim IPAddress$ = cnn.getField("Data Source")
+            Dim IPAddress$ = cnn.getField("Data\s+Source")
             Dim ServicesPort$ = cnn.getField("Port")
-
+            Dim timeout$ = cnn.getField("default\s+command\s+timeout")
             Dim Uri As New ConnectionUri With {
                 .User = User,
                 .Database = Database,
                 .Password = Password,
                 .IPAddress = IPAddress,
-                .Port = ServicesPort Or defaultPort
+                .Port = ServicesPort Or defaultPort,
+                .TimeOut = Val(timeout)
             }
 
             Return Uri
@@ -113,22 +114,10 @@ Namespace Uri
             Dim matches = r.Match(cnn, $"{fieldToken}\s*[=]\s*\S+")
 
             If matches.Success Then
-                Return matches.GetTagValue("=", trim:=True).Value
+                Return matches.GetTagValue("=", trim:=True).Value.TrimEnd(";"c).Trim
             Else
                 Return Nothing
             End If
-        End Function
-
-        <Extension> Private Function TrimSeperator(str As String) As String
-            If String.IsNullOrEmpty(str) Then
-                Return ""
-            Else
-                If str.Last = ";"c Then
-                    str = Mid(str, 1, Len(str) - 1)
-                End If
-            End If
-
-            Return str
         End Function
 #End Region
 
