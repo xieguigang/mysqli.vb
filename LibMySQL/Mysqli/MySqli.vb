@@ -66,9 +66,8 @@ Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 ''' <summary>
 ''' MySql database server connection module.
-''' (与MySql数据库服务器之间的通信操作的封装模块)
 ''' </summary>
-''' <remarks></remarks>
+''' <remarks>(与MySql数据库服务器之间的通信操作的封装模块)</remarks>
 Public Class MySqli : Implements IDisposable
 
     ''' <summary>
@@ -93,6 +92,7 @@ Public Class MySqli : Implements IDisposable
     ''' log exception method.
     ''' </summary>
     Dim _log As LogFile
+    Dim _logfile As String
 
     ''' <summary>
     ''' A Formatted connection string using for the connection established to the database server. 
@@ -114,6 +114,19 @@ Public Class MySqli : Implements IDisposable
             End Using
         End Get
     End Property
+
+    Public Sub New(strUri As String, Optional logfile As String = Nothing)
+        Call Me.New(CType(strUri, ConnectionUri), logfile)
+    End Sub
+
+    ''' <summary>
+    ''' Creates a new mysql session object from connection uri.
+    ''' </summary>
+    ''' <param name="uri"></param>
+    Sub New(uri As ConnectionUri, Optional logfile As String = Nothing)
+        _logfile = logfile
+        Connect(uri)
+    End Sub
 
     Public Overrides Function ToString() As String
         Return UriMySQL.GetJson
@@ -139,22 +152,6 @@ Public Class MySqli : Implements IDisposable
         Return Connect(ConnectionString:=MySQLConnection.GetConnectionString)
     End Function
 
-    Public Sub New(strUri As String)
-        Dim uri As ConnectionUri = strUri
-        Call Connect(uri)
-    End Sub
-
-    Public Sub New()
-    End Sub
-
-    ''' <summary>
-    ''' Creates a new mysql session object from connection uri.
-    ''' </summary>
-    ''' <param name="uri"></param>
-    Sub New(uri As ConnectionUri)
-        Call Connect(uri)
-    End Sub
-
     Public Function ConnectDatabase(DbName As String) As MySqli
         Dim uri As New ConnectionUri(UriMySQL, DbName)
         Return New MySqli(uri)
@@ -174,7 +171,11 @@ Public Class MySqli : Implements IDisposable
     ''' <remarks></remarks>
     Public Function Connect(ConnectionString As String) As Double
         _UriMySQL = ConnectionString
-        _log = New LogFile($"{App.AppSystemTemp}/{UriMySQL.Database}_{LogFile.NowTimeNormalizedString}.log", autoFlush:=True)
+        _logfile = If(_logfile, $"{App.AppSystemTemp}/{UriMySQL.Database}_{LogFile.NowTimeNormalizedString}.log")
+        _logfile = _logfile.GetFullPath
+        _log = New LogFile(_logfile, autoFlush:=True)
+
+        Call VBDebugger.EchoLine($"mysqli_error_log: {_logfile}")
 
         Return Ping()
     End Function

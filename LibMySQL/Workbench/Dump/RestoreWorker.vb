@@ -53,8 +53,7 @@ Namespace Workbench.Dump
         Public ReadOnly Property MySQL As MySqli
 
         Sub New(uri As ConnectionUri)
-            MySQL = New MySqli
-            Call MySQL.Connect(uri)
+            MySQL = New MySqli(uri)
         End Sub
 
         ''' <summary>
