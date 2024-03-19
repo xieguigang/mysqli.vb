@@ -83,6 +83,15 @@ Public Class MySqli : Implements IDisposable
     Public Event ThrowException(Ex As Exception, SQL As String)
 
     Dim _lastError As Exception
+
+    ''' <summary>
+    ''' 20240319
+    ''' 
+    ''' <see cref="App.LogException(Exception, ByRef String)"/> method will create 
+    ''' too much log file in the app data directory, this may crash the filesystem
+    ''' when too much error happends. so use this log file module instead the app 
+    ''' log exception method.
+    ''' </summary>
     Dim _log As LogFile
 
     ''' <summary>
@@ -198,7 +207,7 @@ Public Class MySqli : Implements IDisposable
         Catch ex As Exception
             ex = __throwExceptionHelper(ex, SQL, False)
             Call ex.PrintException
-            Call App.LogException(ex)
+            Call _log.LogException(ex, "mysqli_execute_aggregate")
 
             Return Nothing
         Finally
@@ -246,7 +255,7 @@ Public Class MySqli : Implements IDisposable
         Catch ex As Exception
             ex = __throwExceptionHelper(ex, SQL, False)
             Call ex.PrintException
-            Call App.LogException(ex)
+            Call _log.LogException(ex, "mysqli_execute_dataset")
 
             Return Nothing
         End Try
@@ -290,9 +299,11 @@ Public Class MySqli : Implements IDisposable
                     __throwExceptionHelper(ex, SQL, throwExp:=True)
                 Else
                     ex = __throwExceptionHelper(ex, SQL, False)
+
                     Call ex.PrintException
-                    Call App.LogException(ex)
+                    Call _log.LogException(ex, "mysqli_execute_sql")
                 End If
+
                 Return -1
             Finally
                 MySQL.Close()
@@ -326,7 +337,7 @@ Public Class MySqli : Implements IDisposable
             Else
                 ex = __throwExceptionHelper(ex, SQL, False)
                 Call ex.PrintException
-                Call App.LogException(ex)
+                Call _log.LogException(ex, "mysqli_fetch")
 
                 Return Nothing
             End If
@@ -369,11 +380,13 @@ Public Class MySqli : Implements IDisposable
         Dim table As T() = DbReflector.Load(Of T)(Reader, getErr:=Err).ToArray
 
         If Not Err.Value.StringEmpty Then
+            Dim ex As New Exception(SQL)
+            ex = New Exception(Err, ex)
+
             If throwExp Then
-                Dim ex As New Exception(SQL)
-                ex = New Exception(Err, ex)
                 Throw ex
             Else
+                Call _log.LogException(ex, "mysqli_fetch_query")
                 Return Nothing
             End If
         Else
@@ -390,7 +403,7 @@ Public Class MySqli : Implements IDisposable
             Return MySqlCommand.ExecuteReader(CommandBehavior.CloseConnection)
         Catch ex As Exception
             ex = __throwExceptionHelper(ex, SQL, False)
-            Call App.LogException(ex)
+            Call _log.LogException(ex, "mysqli_create_query")
             Call ex.PrintException
             Return Nothing
         Finally
@@ -507,7 +520,7 @@ Public Class MySqli : Implements IDisposable
             Catch ex As Exception
                 ex = __throwExceptionHelper(ex, "null", False)
                 Call ex.PrintException
-                Call App.LogException(ex)
+                Call _log.LogException(ex, $"mysqli_ping_{UriMySQL.Database}")
                 Return -1
             End Try
 
@@ -572,6 +585,7 @@ Public Class MySqli : Implements IDisposable
         If Not Me.disposedValue Then
             If disposing Then
                 ' TODO: dispose managed state (managed objects).
+                Call _log.Save()
                 Call _log.Dispose()
             End If
 
