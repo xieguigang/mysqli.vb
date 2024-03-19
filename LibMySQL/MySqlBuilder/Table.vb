@@ -66,8 +66,12 @@ Namespace MySqlBuilder
         ''' <param name="table">the table name</param>
         ''' <param name="conn"></param>
         Sub New(table As String, conn As ConnectionUri)
-            Me.mysql = conn
-            Me.schema = inspectSchema(conn.Database, table)
+            Call Me.New(table, CType(conn, MySqli))
+        End Sub
+
+        Sub New(table As String, mysqli As MySqli)
+            Me.mysql = mysqli
+            Me.schema = inspectSchema(mysqli.UriMySQL.Database, table)
             Me.chain = Me
         End Sub
 

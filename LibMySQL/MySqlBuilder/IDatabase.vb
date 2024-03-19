@@ -4,7 +4,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 Public MustInherit Class IDatabase
 
-    Protected mysqli As ConnectionUri
+    Protected mysqli As MySqli
 
     Public Sub New(mysqli As ConnectionUri)
         Me.mysqli = mysqli

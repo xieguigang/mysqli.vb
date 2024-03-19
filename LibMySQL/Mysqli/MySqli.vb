@@ -53,6 +53,7 @@
 
 Imports System.Data
 Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.ApplicationServices.Debugging.Logging
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Scripting
@@ -82,6 +83,7 @@ Public Class MySqli : Implements IDisposable
     Public Event ThrowException(Ex As Exception, SQL As String)
 
     Dim _lastError As Exception
+    Dim _log As LogFile
 
     ''' <summary>
     ''' A Formatted connection string using for the connection established to the database server. 
@@ -163,6 +165,7 @@ Public Class MySqli : Implements IDisposable
     ''' <remarks></remarks>
     Public Function Connect(ConnectionString As String) As Double
         _UriMySQL = ConnectionString
+        _log = New LogFile($"{App.AppSystemTemp}/{UriMySQL.Database}_{LogFile.NowTimeNormalizedString}.log", autoFlush:=True)
 
         Return Ping()
     End Function
@@ -529,11 +532,7 @@ Public Class MySqli : Implements IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Shared Widening Operator CType(strUri As String) As MySqli
-        Dim uri As ConnectionUri = strUri
-        Dim mysqli As New MySqli With {
-            ._UriMySQL = uri
-        }
-        Return mysqli
+        Return CType(CType(strUri, ConnectionUri), MySqli)
     End Operator
 
     ''' <summary>
@@ -543,9 +542,7 @@ Public Class MySqli : Implements IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Shared Widening Operator CType(uri As ConnectionUri) As MySqli
-        Return New MySqli With {
-            ._UriMySQL = uri
-        }
+        Return New MySqli(uri)
     End Operator
 
     ''' <summary>
@@ -575,6 +572,7 @@ Public Class MySqli : Implements IDisposable
         If Not Me.disposedValue Then
             If disposing Then
                 ' TODO: dispose managed state (managed objects).
+                Call _log.Dispose()
             End If
 
             ' TODO: free unmanaged resources (unmanaged objects) and override Finalize() below.
