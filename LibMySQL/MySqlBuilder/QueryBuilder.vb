@@ -13,6 +13,7 @@ Namespace MySqlBuilder
         Public distinct As Boolean
         Public order_by As String()
         Public order_desc As Boolean
+        Public group_by As String()
 
         Sub New(copy As QueryBuilder)
             If Not copy Is Nothing Then
@@ -24,6 +25,7 @@ Namespace MySqlBuilder
                 order_desc = copy.order_desc
                 order_by = copy.order_by
                 distinct = copy.distinct
+                group_by = copy.group_by
             End If
         End Sub
 
@@ -48,6 +50,14 @@ Namespace MySqlBuilder
             where(type).AddRange(vals.SafeQuery)
 
             Return Me
+        End Function
+
+        Public Function group_by_str() As String
+            If group_by.IsNullOrEmpty Then
+                Return ""
+            End If
+
+            Return $"GROUP BY {group_by.JoinBy(", ")}"
         End Function
 
         Public Function order_by_str() As String

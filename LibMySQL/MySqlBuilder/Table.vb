@@ -136,6 +136,12 @@ Namespace MySqlBuilder
             Return New Model(mysql, schema, query, chain)
         End Function
 
+        Public Function group_by(ParamArray fields As String()) As Model
+            Dim query As New QueryBuilder(Me.query)
+            query.group_by = fields
+            Return New Model(mysql, schema, query, chain)
+        End Function
+
         ''' <summary>
         ''' `table`.`field`
         ''' </summary>
