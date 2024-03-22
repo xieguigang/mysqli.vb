@@ -129,7 +129,7 @@ Namespace Reflection
                     Dim value As Object = reader.GetValue(ordinal)
 
                     If Not IsDBNull(value) Then
-                        Call (+prop).SetValue(fillObject, value, Nothing)
+                        Call prop.value.SetValue(fillObject, value, Nothing)
                     End If
                 Next
             Catch ex As Exception
