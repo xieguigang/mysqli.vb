@@ -361,6 +361,19 @@ Namespace MySqlBuilder
         End Function
 
         ''' <summary>
+        ''' ORDER BY DESC
+        ''' </summary>
+        ''' <param name="field"></param>
+        ''' <param name="desc"></param>
+        ''' <returns></returns>
+        Public Function order_by(field As String, desc As Boolean) As Model
+            Dim query As New QueryBuilder(Me.query)
+            query.order_by = {field}
+            query.order_desc = desc
+            Return New Model(mysql, schema, query, chain)
+        End Function
+
+        ''' <summary>
         ''' DISTINCT
         ''' </summary>
         ''' <returns></returns>
