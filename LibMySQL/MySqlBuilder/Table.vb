@@ -201,7 +201,7 @@ Namespace MySqlBuilder
             Dim order_by As String = If(query?.order_by_str, "")
             Dim group_by As String = If(query?.group_by_str, "")
             Dim fieldSet As String = If(fields.IsNullOrEmpty, "*", fields.JoinBy(", "))
-            Dim sql As String = $"SELECT {fieldSet} FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {order_by} {group_by} LIMIT 1;"
+            Dim sql As String = $"SELECT {fieldSet} FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {group_by} {order_by} LIMIT 1;"
             chain.m_getLastMySql = sql
             Dim result = mysql.ExecuteScalar(Of T)(sql)
             Return result
@@ -231,7 +231,9 @@ Namespace MySqlBuilder
             Dim group_by As String = If(query?.group_by_str, "")
             Dim distinct As String = If(query?.distinct_str, "")
             Dim fieldSet As String = If(fields.IsNullOrEmpty, "*", fields.JoinBy(", "))
-            Dim sql As String = $"SELECT {distinct} {fieldSet} FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {order_by} {group_by} {limit};"
+            ' 20240324 group by should before the order by
+            ' or the sql expression syntax error
+            Dim sql As String = $"SELECT {distinct} {fieldSet} FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {group_by} {order_by} {limit};"
             chain.m_getLastMySql = sql
             Dim result = mysql.Query(Of T)(sql)
             Return result
