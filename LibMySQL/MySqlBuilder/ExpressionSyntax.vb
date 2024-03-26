@@ -20,6 +20,14 @@ Namespace MySqlBuilder
             Return New FieldAssert(name)
         End Function
 
+        Public Function match(name As String) As FieldAssert
+            If name.First <> "`" AndAlso name.Last <> "`" Then
+                name = $"`{name}`"
+            End If
+
+            Return New FieldAssert(name) With {.op = NameOf(ExpressionSyntax.match)}
+        End Function
+
         ''' <summary>
         ''' Create a new table field reference
         ''' </summary>

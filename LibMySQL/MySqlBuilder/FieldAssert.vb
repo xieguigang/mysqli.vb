@@ -18,11 +18,31 @@ Namespace MySqlBuilder
             Me.name = name
         End Sub
 
+        Public Function against(text As String, booleanMode As Boolean) As FieldAssert
+            Dim mode As String
+
+            If op <> NameOf(ExpressionSyntax.match) Then
+                Throw New InvalidOperationException("operator is not match, this is not a match against full text search expression!")
+            End If
+            If booleanMode Then
+                mode = "boolean"
+            Else
+                mode = "NATURAL LANGUAGE"
+            End If
+
+            val = text
+            val2 = mode
+
+            Return Me
+        End Function
+
         Public Overrides Function ToString() As String
             Dim str As String
 
             If op.TextEquals("between") Then
                 str = $"({name} BETWEEN {val} AND {val2})"
+            ElseIf op.TextEquals(NameOf(ExpressionSyntax.match)) Then
+                str = $"MATCH({name}) against ('{val}' in {val2} mode)"
             Else
                 str = $"({name} {op} {val})"
             End If
