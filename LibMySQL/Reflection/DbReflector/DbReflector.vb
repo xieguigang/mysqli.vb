@@ -101,7 +101,7 @@ Namespace Reflection
             Dim [error] As Exception = Nothing
 
             Do While reader.Read
-                Yield __getObject(Of T)(reader, clr_map, schema, [error])
+                Yield directCastObject(Of T)(reader, clr_map, schema, [error])
 
                 If Not [error] Is Nothing Then
                     If getErr Is Nothing Then
@@ -115,7 +115,48 @@ Namespace Reflection
             Loop
         End Function
 
-        Private Shared Function __getObject(Of T)(reader As DataTableReader, type As Type, fields As SeqValue(Of PropertyInfo)(), ByRef err As Exception) As T
+        Private Shared Function tryCastObject(Of T)(reader As DataTableReader, type As Type, fields As SeqValue(Of PropertyInfo)(), ByRef err As Exception) As T
+            ' Create a instance of specific type: our record schema. 
+            Dim fillObject As Object = Activator.CreateInstance(type)
+            Dim i%
+
+            Try
+                ' Scan all of the fields in the field list
+                ' and get the field value.
+                For i = 0 To fields.Length - 1
+                    Dim prop As SeqValue(Of PropertyInfo) = fields(i)
+                    Dim ordinal As Integer = prop.i
+                    Dim value As Object = reader.GetValue(ordinal)
+                    Dim field As PropertyInfo = prop.value
+
+                    If Not IsDBNull(value) Then
+                        If field.PropertyType IsNot value.GetType Then
+                            ' try cast value type to matched with property type
+                            value = Conversion.CTypeDynamic(value, field.PropertyType)
+                        End If
+
+                        Call field.SetValue(fillObject, value, Nothing)
+                    End If
+                Next
+            Catch ex As Exception
+                Dim errorField = fields(i)
+                ex = New Exception($"[{errorField.i}] => {errorField.value.ToString}", ex)
+                err = ex
+            End Try
+
+            Return DirectCast(fillObject, T)
+        End Function
+
+        ''' <summary>
+        ''' database view to clr object in directcast
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="reader"></param>
+        ''' <param name="type"></param>
+        ''' <param name="fields"></param>
+        ''' <param name="err"></param>
+        ''' <returns></returns>
+        Private Shared Function directCastObject(Of T)(reader As DataTableReader, type As Type, fields As SeqValue(Of PropertyInfo)(), ByRef err As Exception) As T
             ' Create a instance of specific type: our record schema. 
             Dim fillObject As Object = Activator.CreateInstance(type)
             Dim i%
@@ -134,7 +175,10 @@ Namespace Reflection
                 Next
             Catch ex As Exception
                 Dim errorField = fields(i)
-                ex = New Exception($"[{errorField.i}] => {errorField.value.ToString}", ex)
+                Dim declares As PropertyInfo = errorField
+                Dim fieldDeclare As String = $"Dim {declares.DeclaringType.Name}::{declares.Name} As {declares.PropertyType.FullName}"
+
+                ex = New Exception($"[{errorField.i}] => {fieldDeclare}", ex)
                 err = ex
             End Try
 
