@@ -59,19 +59,25 @@ Namespace Uri
     ''' <remarks>
     ''' #### Using MySqlCommand
     '''
-    ''' A MySqlCommand has the CommandText And CommandType properties associated With it. The CommandText will be handled differently depending On the setting Of CommandType. 
+    ''' A MySqlCommand has the CommandText And CommandType properties associated With it. 
+    ''' The CommandText will be handled differently depending On the setting Of 
+    ''' CommandType. 
+    ''' 
     ''' CommandType can be one Of: 
     '''
     ''' + Text -An SQL text command (default)
     ''' + StoredProcedure -The name of a Stored Procedure
     ''' + TableDirect -The name of a table (New in Connector/Net 6.2)
     '''
-    ''' The Default CommandType, Text, is used For executing queries And other SQL commands. Some example Of this can be found In the following section Section 4.1.2, 
+    ''' The Default CommandType, Text, is used For executing queries And other SQL commands. 
+    ''' Some example Of this can be found In the following section Section 4.1.2, 
     ''' **“The MySqlCommand Object”**.
     '''
     ''' + If CommandType Is set to StoredProcedure, set CommandText to the name of the Stored Procedure to access.
-    ''' + If CommandType Is set to TableDirect, all rows And columns of the named table will be returned when you call one of the Execute methods. In effect, 
-    '''   this command performs a SELECT * on the table specified. The CommandText property Is set to the name of the table to query. This Is illustrated by the 
+    ''' + If CommandType Is set to TableDirect, all rows And columns of the named table 
+    '''   will be returned when you call one of the Execute methods. In effect, 
+    '''   this command performs a SELECT * on the table specified. The CommandText property 
+    '''   Is set to the name of the table to query. This Is illustrated by the 
     '''   following code snippet
     '''
     ''' ```vbnet
@@ -88,23 +94,33 @@ Namespace Uri
     ''' ' ...
     ''' ```
     ''' 
-    ''' Examples of using the CommandType of StoredProcedure can be found in the section Section 5.10, “Accessing Stored Procedures with Connector/Net”.
-    ''' Commands can have a timeout associated With them. This Is useful As you may Not want a situation were a command takes up an excessive amount Of time. 
-    ''' A timeout can be Set Using the CommandTimeout Property. The following code snippet sets a timeout Of one minute:
+    ''' Examples of using the CommandType of StoredProcedure can be found in the section 
+    ''' Section 5.10, “Accessing Stored Procedures with Connector/Net”.
+    ''' Commands can have a timeout associated With them. This Is useful As you may Not 
+    ''' want a situation were a command takes up an excessive amount Of time. 
+    ''' A timeout can be Set Using the CommandTimeout Property. The following code snippet
+    ''' sets a timeout Of one minute:
     '''
     ''' ```vbnet
     ''' Dim cmd As New MySqlCommand()
     ''' cmd.CommandTimeout = 60
     ''' ```
     ''' 
-    ''' The Default value Is 30 seconds. **Avoid a value Of 0, which indicates an indefinite wait.** To change the Default command timeout, use the connection String 
+    ''' The Default value Is 30 seconds. **Avoid a value Of 0, which indicates an indefinite
+    ''' wait.** To change the Default command timeout, use the connection String 
     ''' Option Default Command Timeout.
-    ''' Prior to MySQL Connector/Net 6.2, MySqlCommand.CommandTimeout included user processing time, that Is processing time Not related To direct use Of the connector. 
-    ''' Timeout was implemented through a .NET Timer, that triggered after CommandTimeout seconds. This timer consumed a thread.
-    ''' MySQL Connector/Net 6.2 introduced timeouts that are aligned With how Microsoft Handles SqlCommand.CommandTimeout. This Property Is the cumulative timeout 
-    ''' For all network reads And writes during command execution Or processing Of the results. A timeout can still occur In the MySqlReader.Read method after the first 
-    ''' row Is returned, And does Not include user processing time, only IO operations. The 6.2 implementation uses the underlying stream timeout facility, so Is more 
-    ''' efficient In that it does Not require the additional timer thread As was the Case With the previous implementation.
+    ''' Prior to MySQL Connector/Net 6.2, MySqlCommand.CommandTimeout included user processing 
+    ''' time, that Is processing time Not related To direct use Of the connector. 
+    ''' Timeout was implemented through a .NET Timer, that triggered after CommandTimeout seconds.
+    ''' This timer consumed a thread.
+    ''' MySQL Connector/Net 6.2 introduced timeouts that are aligned With how Microsoft Handles 
+    ''' SqlCommand.CommandTimeout. This Property Is the cumulative timeout 
+    ''' For all network reads And writes during command execution Or processing Of the results.
+    ''' A timeout can still occur In the MySqlReader.Read method after the first 
+    ''' row Is returned, And does Not include user processing time, only IO operations. 
+    ''' The 6.2 implementation uses the underlying stream timeout facility, so Is more 
+    ''' efficient In that it does Not require the additional timer thread As was the Case With 
+    ''' the previous implementation.
     ''' </remarks>
     Public Class ConnectionUri
 
@@ -145,6 +161,13 @@ Namespace Uri
         ''' </summary>
         ''' <returns></returns>
         <XmlAttribute> Public Property TimeOut As Integer = -1
+
+        ''' <summary>
+        ''' the file path of the error log file, null or empty string means default error log file in temp filesystem.
+        ''' </summary>
+        ''' <returns></returns>
+        <XmlText>
+        Public Property error_log As String
 
         <DebuggerStepThrough>
         Sub New()
