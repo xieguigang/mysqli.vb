@@ -115,6 +115,15 @@ Namespace Reflection
             Loop
         End Function
 
+        ''' <summary>
+        ''' database view to clr object in trycast if type mis-matched
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="reader"></param>
+        ''' <param name="type"></param>
+        ''' <param name="fields"></param>
+        ''' <param name="err"></param>
+        ''' <returns></returns>
         Private Shared Function tryCastObject(Of T)(reader As DataTableReader, type As Type, fields As SeqValue(Of PropertyInfo)(), ByRef err As Exception) As T
             ' Create a instance of specific type: our record schema. 
             Dim fillObject As Object = Activator.CreateInstance(type)
