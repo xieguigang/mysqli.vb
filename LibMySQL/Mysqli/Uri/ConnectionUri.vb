@@ -184,6 +184,7 @@ Namespace Uri
             Me.Port = o.Port
             Me.TimeOut = o.TimeOut
             Me.User = o.User
+            Me.error_log = If(o.error_log.StringEmpty, Nothing, o.error_log)
         End Sub
 
         ''' <summary>

@@ -76,7 +76,8 @@ Namespace Uri
                 .Password = TryCast(obj!Password, BString),
                 .Port = TryCast(obj!Port, BInteger),
                 .TimeOut = TryCast(obj!TimeOut, BInteger),
-                .User = TryCast(obj!User, BString)
+                .User = TryCast(obj!User, BString),
+                .error_log = TryCast(obj!error_log, BString)
             }
 
             Return conn_uri
