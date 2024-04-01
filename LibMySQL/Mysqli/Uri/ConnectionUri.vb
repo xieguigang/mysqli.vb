@@ -166,6 +166,9 @@ Namespace Uri
         ''' the file path of the error log file, null or empty string means default error log file in temp filesystem.
         ''' </summary>
         ''' <returns></returns>
+        ''' <remarks>
+        ''' the error log file path only works for the bencode uri serialization
+        ''' </remarks>
         <XmlText>
         Public Property error_log As String
 

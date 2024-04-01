@@ -124,7 +124,7 @@ Public Class MySqli : Implements IDisposable
     ''' </summary>
     ''' <param name="uri"></param>
     Sub New(uri As ConnectionUri, Optional logfile As String = Nothing)
-        _logfile = logfile
+        _logfile = If(logfile, uri.error_log)
         Connect(uri)
     End Sub
 
@@ -546,7 +546,7 @@ Public Class MySqli : Implements IDisposable
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Shared Widening Operator CType(strUri As String) As MySqli
-        Return CType(CType(strUri, ConnectionUri), MySqli)
+        Return New MySqli(CType(strUri, ConnectionUri))
     End Operator
 
     ''' <summary>

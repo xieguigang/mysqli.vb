@@ -41,7 +41,6 @@
 #End Region
 
 Imports System.Runtime.CompilerServices
-Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.Default
 Imports Microsoft.VisualBasic.Serialization.Bencoding
