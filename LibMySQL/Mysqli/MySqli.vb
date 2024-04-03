@@ -336,7 +336,11 @@ Public Class MySqli : Implements IDisposable
             If throwEx Then
                 Throw New Exception(SQL, ex)
             Else
+
+                ' wrap the mysql execute context into exception
+                ' and set the last error
                 ex = __throwExceptionHelper(ex, SQL, False)
+
                 Call ex.PrintException
                 Call _log.LogException(ex, "mysqli_fetch")
 
@@ -488,12 +492,20 @@ Public Class MySqli : Implements IDisposable
         End Using
     End Function
 
+    ''' <summary>
+    ''' wrap the sql execute context and set the <see cref="LastError"/>
+    ''' </summary>
+    ''' <param name="ex"></param>
+    ''' <param name="SQL$"></param>
+    ''' <param name="throwExp"></param>
+    ''' <returns></returns>
     Private Function __throwExceptionHelper(ex As Exception, SQL$, throwExp As Boolean) As Exception
         Dim url As New ConnectionUri(UriMySQL)
-        _lastError = ex
+
         url.Password = "********"
         ex = New Exception(url.GetJson, ex)
         ex = New Exception(SQL, ex)
+        _lastError = ex
 
         If throwExp Then
             Throw ex
