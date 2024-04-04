@@ -697,6 +697,50 @@ NO_KEY:
             Return GenerateCodeSplit(New StreamReader(New FileStream(SqlDump, FileMode.Open)), ns, SqlDump)
         End Function
 
+        <Extension>
+        Public Function GenerateDbSchema(tables As IEnumerable(Of String), dbname As String, Optional [namespace] As String = Nothing) As String
+            Dim sql As New StringBuilder
+
+            sql.AppendLine("Imports Oracle.LinuxCompatibility.MySQL") _
+                .AppendLine("Imports Oracle.LinuxCompatibility.MySQL.MySqlBuilder") _
+                .AppendLine("Imports Oracle.LinuxCompatibility.MySQL.Uri")
+
+            Call sql.AppendLine()
+
+            If Not [namespace].StringEmpty Then
+                Call sql.AppendLine($"Namespace {[namespace]}")
+            End If
+
+            Call sql.AppendLine()
+
+            Call sql.AppendLine($"Public MustInherit Class db_{dbname} : Inherits IDatabase")
+
+            For Each name As String In tables
+                Call sql.AppendLine($"Protected ReadOnly {name} As Model")
+            Next
+
+            Call sql.AppendLine("Protected Sub New(mysqli As ConnectionUri)")
+            Call sql.AppendLine("Call MyBase.New(mysqli)")
+
+            Call sql.AppendLine()
+
+            For Each name As String In tables
+                Call sql.AppendLine($"Me.{name} = model(Of {name})()")
+            Next
+
+            Call sql.AppendLine("End Sub")
+
+            Call sql.AppendLine("End Class")
+
+            Call sql.AppendLine()
+
+            If Not [namespace].StringEmpty Then
+                Call sql.AppendLine("End Namespace")
+            End If
+
+            Return sql.ToString
+        End Function
+
         ''' <summary>
         ''' 返回 {类名, 类定义}
         ''' </summary>

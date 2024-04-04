@@ -61,7 +61,8 @@ Module CLI
 
     Const InputsNotFound As String = "The required input parameter ""/sql"" is not specified!"
 
-    <ExportAPI("--reflects", Example:="--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
+    <ExportAPI("--reflects")>
+    <Example("--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
     <Description("Automatically generates visualbasic source code from the MySQL database schema dump.")>
     <Usage("--reflects /sql <sql_path/std_in> [-o <output_path> /namespace <namespace> --language <php/visualbasic, default=visualbasic> /split]")>
     <Argument("/sql", False, CLITypes.File, PipelineTypes.std_in,
