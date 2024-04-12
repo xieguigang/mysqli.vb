@@ -399,6 +399,27 @@ Public Class MySqli : Implements IDisposable
         End If
     End Function
 
+    Public Function Project(Of T As IComparable)(sql As String, field As String, Optional throwExp As Boolean = True) As T()
+        Dim Result As DataSet = Fetch(sql)
+        Dim Reader As DataTableReader = Result.CreateDataReader
+        Dim Err As Value(Of String) = ""
+        Dim array As T() = DbReflector.LoadProject(Of T)(Reader, field, getErr:=Err).ToArray
+
+        If Not Err.Value.StringEmpty Then
+            Dim ex As New Exception(sql)
+            ex = New Exception(Err, ex)
+
+            If throwExp Then
+                Throw ex
+            Else
+                Call _log.LogException(ex, "mysqli_fetch_query")
+                Return Nothing
+            End If
+        Else
+            Return array
+        End If
+    End Function
+
     Public Function CreateQuery(SQL As String) As MySqlDataReader
         Dim MySql As MySqlConnection = New MySqlConnection(_UriMySQL) '[ConnectionString] is a compiled mysql connection string from our class constructor.
         Dim MySqlCommand As MySqlCommand = New MySqlCommand(SQL, MySql)

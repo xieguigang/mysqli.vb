@@ -116,6 +116,27 @@ Namespace Reflection
         End Function
 
         ''' <summary>
+        ''' load table field projection
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="reader"></param>
+        ''' <param name="field"></param>
+        ''' <param name="getErr"></param>
+        ''' <returns></returns>
+        Public Shared Iterator Function LoadProject(Of T)(reader As DataTableReader, field As String, getErr As Value(Of String)) As IEnumerable(Of T)
+            Dim ordinal As Integer = reader.GetOrdinal(field)
+
+            If ordinal = -1 Then
+                getErr.Value = $"there is no field({field}) in the given table!"
+                Return
+            End If
+
+            Do While reader.Read
+                Yield DirectCast(reader.GetValue(ordinal), T)
+            Loop
+        End Function
+
+        ''' <summary>
         ''' database view to clr object in trycast if type mis-matched
         ''' </summary>
         ''' <typeparam name="T"></typeparam>

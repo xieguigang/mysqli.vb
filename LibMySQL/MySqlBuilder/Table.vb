@@ -224,6 +224,13 @@ Namespace MySqlBuilder
         ''' <param name="fields"></param>
         ''' <returns></returns>
         Public Function [select](Of T As {New, Class})(ParamArray fields As String()) As T()
+            Dim sql As String = selectSql(fields)
+            Dim result = mysql.Query(Of T)(sql)
+
+            Return result
+        End Function
+
+        Private Function selectSql(fields As String()) As String
             Dim where As String = If(query?.where_str, "")
             Dim limit As String = If(query?.limit_str, "")
             Dim left_join As String = If(query?.left_join_str, "")
@@ -235,8 +242,19 @@ Namespace MySqlBuilder
             ' or the sql expression syntax error
             Dim sql As String = $"SELECT {distinct} {fieldSet} FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {group_by} {order_by} {limit};"
             chain.m_getLastMySql = sql
-            Dim result = mysql.Query(Of T)(sql)
-            Return result
+            Return sql
+        End Function
+
+        ''' <summary>
+        ''' project a field column as vector from the database
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="field">the field name to project as vector</param>
+        ''' <returns></returns>
+        Public Function project(Of T As IComparable)(field As String) As T()
+            Dim sql As String = selectSql({field})
+            Dim vector As T() = mysql.Project(Of T)(sql, field)
+            Return vector
         End Function
 
         ''' <summary>
