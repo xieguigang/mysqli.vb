@@ -51,6 +51,7 @@ Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Oracle.LinuxCompatibility.MySQL.CodeSolution
+Imports Oracle.LinuxCompatibility.MySQL.CodeSolution.VisualBasic
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports MySQL2vb = Oracle.LinuxCompatibility.MySQL.CodeSolution.VisualBasic.CodeGenerator
 
@@ -61,7 +62,8 @@ Module CLI
 
     Const InputsNotFound As String = "The required input parameter ""/sql"" is not specified!"
 
-    <ExportAPI("--reflects", Example:="--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
+    <ExportAPI("--reflects")>
+    <Example("--reflects /sql ./test.sql /split /namespace ExampleNamespace")>
     <Description("Automatically generates visualbasic source code from the MySQL database schema dump.")>
     <Usage("--reflects /sql <sql_path/std_in> [-o <output_path> /namespace <namespace> --language <php/visualbasic, default=visualbasic> /split]")>
     <Argument("/sql", False, CLITypes.File, PipelineTypes.std_in,
@@ -137,6 +139,11 @@ Module CLI
             For Each doc As KeyValuePair(Of String, String) In codes
                 Call doc.Value.SaveTo($"{out}/{doc.Key}.vb", Encoding.Unicode)
             Next
+
+            Call codes.Keys _
+                .GenerateDbSchema(dbname:=out.BaseName, [namespace]:=ns) _
+                .SaveTo($"{out}/db_{out.BaseName}.vb", Encoding.UTF8)
+
         Else ' 整个的文档形式
             If output Is Nothing Then
                 If String.IsNullOrEmpty(out) Then
@@ -163,7 +170,7 @@ Module CLI
     ''' <param name="args"></param>
     ''' <returns></returns>
     <ExportAPI("--export.dump")>
-    <Description("Scans for the table schema sql files in a directory and converts these sql file as visualbasic source code.")>
+    <Description("Scans for the table schema sql files in a directory And converts these sql file as visualbasic source code.")>
     <Usage("--export.dump [-o <out_dir> /namespace <namespace> --dir <source_dir>]")>
     <Group(Program.ORM_CLI)>
     Public Function ExportDumpDir(args As CommandLine) As Integer
@@ -196,7 +203,7 @@ Module CLI
     End Function
 
     <ExportAPI("--compares")>
-    <Description("Compare the difference betweens two database schema. This cli tools is used 
+    <Description("Compare the difference betweens two database schema. This cli tools Is used 
                   for make upgrades of current database schema to the new updates database 
                   schema.")>
     <Usage("--compares /current <schema.sql> /updates <schema.sql> [/output <report.md>]")>
