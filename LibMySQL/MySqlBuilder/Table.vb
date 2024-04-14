@@ -82,6 +82,10 @@ Namespace MySqlBuilder
             Me.chain = chain
         End Sub
 
+        Public Function getDriver() As MySqli
+            Return mysql
+        End Function
+
         Public Overrides Function ToString() As String
             Return $"`{schema.Database}`.`{schema.TableName}`({schema.FieldNames.JoinBy(", ")})"
         End Function
