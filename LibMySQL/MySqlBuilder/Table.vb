@@ -242,6 +242,13 @@ Namespace MySqlBuilder
             Return result
         End Function
 
+        Public Function [select](ParamArray fields As String()) As System.Data.DataTableReader
+            Dim sql As String = selectSql(fields)
+            Dim result As System.Data.DataTableReader = mysql.Fetch(sql).CreateDataReader
+
+            Return result
+        End Function
+
         Private Function selectSql(fields As String()) As String
             Dim where As String = If(query?.where_str, "")
             Dim limit As String = If(query?.limit_str, "")

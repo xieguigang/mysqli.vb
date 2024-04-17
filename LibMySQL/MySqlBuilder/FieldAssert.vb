@@ -43,6 +43,8 @@ Namespace MySqlBuilder
                 str = $"({name} BETWEEN {val} AND {val2})"
             ElseIf op.TextEquals(NameOf(ExpressionSyntax.match)) Then
                 str = $"MATCH({name}) against ('{val}' in {val2} mode)"
+            ElseIf op.TextEquals("func") Then
+                str = val
             Else
                 str = $"({name} {op} {val})"
             End If
