@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Helper
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
@@ -152,9 +153,12 @@ Namespace MySqlBuilder
         ''' <param name="name"></param>
         ''' <returns></returns>
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
-        <DebuggerStepThrough>
         Public Function field(name As String) As FieldAssert
-            If name.StartsWith(schema.TableName & ".") OrElse name.StartsWith($"`${schema.TableName}`.") Then
+            Static prefix As New Regex("([^\.]+\.)|(`[^\.]+`\.)", RegexPythonRawString)
+
+            Dim prefix_s As Match = prefix.Match(name)
+
+            If prefix_s.Success Then
                 ' already has table name prefix
                 Return New FieldAssert With {.name = name}
             End If
