@@ -25,4 +25,13 @@ Public MustInherit Class IDatabase
         Return New Model(TableName.GetTableName(Of T), mysqli)
     End Function
 
+    ''' <summary>
+    ''' create a model reference to a specific table
+    ''' </summary>
+    ''' <param name="name">the table name</param>
+    ''' <returns></returns>
+    Public Function CreateModel(name As String) As Model
+        Return New Model(name, mysqli)
+    End Function
+
 End Class
