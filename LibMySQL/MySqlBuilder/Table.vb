@@ -154,6 +154,11 @@ Namespace MySqlBuilder
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <DebuggerStepThrough>
         Public Function field(name As String) As FieldAssert
+            If name.StartsWith(schema.TableName & ".") OrElse name.StartsWith($"`${schema.TableName}`.") Then
+                ' already has table name prefix
+                Return New FieldAssert With {.name = name}
+            End If
+
             Return New FieldAssert With {.name = $"`{schema.TableName}`.`{name}`"}
         End Function
 
@@ -165,7 +170,7 @@ Namespace MySqlBuilder
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <DebuggerStepThrough>
         Public Function f(name As String) As FieldAssert
-            Return New FieldAssert With {.name = $"`{schema.TableName}`.`{name}`"}
+            Return field(name)
         End Function
 
         Public Function [and](q As String) As Model
