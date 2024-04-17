@@ -121,13 +121,6 @@ Namespace Uri
         End Function
 #End Region
 
-        ''' <summary>
-        ''' ```
-        ''' Database={0}; Data Source={1}; User Id={2}; Password={3}; Port={4};
-        ''' ```
-        ''' </summary>
-        Public Const MYSQL_CONNECTION$ = "Database={0}; Data Source={1}; User Id={2}; Password={3}; Port={4}"
-
         ReadOnly defaultPort3306 As [Default](Of UInteger) = CType(3306, UInteger).AsDefault(Function(port) CType(port, Integer) <= 0)
 
         <Extension>
