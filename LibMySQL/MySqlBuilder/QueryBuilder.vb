@@ -69,7 +69,7 @@ Namespace MySqlBuilder
         End Function
 
         Public Function distinct_str() As String
-            If distinct Then
+            If Not distinct Then
                 Return ""
             Else
                 Return "DISTINCT"
