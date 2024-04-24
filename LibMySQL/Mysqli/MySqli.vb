@@ -314,12 +314,13 @@ Public Class MySqli : Implements IDisposable
 
     ''' <summary>
     ''' Execute a 'SELECT' query command and then returns the query result of this sql command.
-    ''' (执行一个'SELECT'查询命令之后返回本查询命令的查询结果。请注意，这个工具并不会自动关闭数据库连接，
-    ''' 请在使用完毕之后手工Close掉，以节省服务器资源) 
     ''' </summary>
     ''' <param name="SQL"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
+    ''' <returns>
+    ''' this function may returns nothing when mysql query error happends
+    ''' </returns>
+    ''' <remarks>(执行一个'SELECT'查询命令之后返回本查询命令的查询结果。请注意，这个工具并不会自动关闭数据库连接，
+    ''' 请在使用完毕之后手工Close掉，以节省服务器资源) </remarks>
     Public Function Fetch(SQL$, Optional throwEx As Boolean = False) As DataSet
         Dim MySql As New MySqlConnection(_UriMySQL)
         Dim data As New DataSet
@@ -377,12 +378,22 @@ Public Class MySqli : Implements IDisposable
     ''' <param name="SQL"></param>
     ''' <param name="Parallel"></param>
     ''' <param name="throwExp"></param>
-    ''' <returns></returns>
+    ''' <returns>
+    ''' this function will returns nothing if the mysql query error, 
+    ''' this is different with empty array when for query no data.
+    ''' </returns>
     Public Function Query(Of T As Class)(SQL As String, Optional throwExp As Boolean = True) As T()
         Dim Result As DataSet = Fetch(SQL)
-        Dim Reader As DataTableReader = Result.CreateDataReader
+        Dim Reader As DataTableReader = Result?.CreateDataReader
         Dim Err As Value(Of String) = ""
-        Dim table As T() = DbReflector.Load(Of T)(Reader, getErr:=Err).ToArray
+        Dim table As T()
+
+        If Reader Is Nothing Then
+            ' mysql query error
+            Return Nothing
+        Else
+            table = DbReflector.Load(Of T)(Reader, getErr:=Err).ToArray
+        End If
 
         If Not Err.Value.StringEmpty Then
             Dim ex As New Exception(SQL)
@@ -399,11 +410,27 @@ Public Class MySqli : Implements IDisposable
         End If
     End Function
 
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <typeparam name="T"></typeparam>
+    ''' <param name="sql"></param>
+    ''' <param name="field"></param>
+    ''' <param name="throwExp"></param>
+    ''' <returns>
+    ''' this function will returns nothing if the mysql query error
+    ''' </returns>
     Public Function Project(Of T As IComparable)(sql As String, field As String, Optional throwExp As Boolean = True) As T()
         Dim Result As DataSet = Fetch(sql)
-        Dim Reader As DataTableReader = Result.CreateDataReader
+        Dim Reader As DataTableReader = Result?.CreateDataReader
         Dim Err As Value(Of String) = ""
-        Dim array As T() = DbReflector.LoadProject(Of T)(Reader, field, getErr:=Err).ToArray
+        Dim array As T()
+
+        If Reader Is Nothing Then
+            Return Nothing
+        Else
+            array = DbReflector.LoadProject(Of T)(Reader, field, getErr:=Err).ToArray
+        End If
 
         If Not Err.Value.StringEmpty Then
             Dim ex As New Exception(sql)
