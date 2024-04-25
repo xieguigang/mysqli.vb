@@ -273,7 +273,7 @@ Namespace MySqlBuilder
         Public Function project(Of T As IComparable)(field As String) As T()
             Dim sql As String = selectSql({field})
             Dim fieldName As String = FieldAssert.ParseFieldName(field)
-            Dim vector As T() = mysql.Project(Of T)(sql, field)
+            Dim vector As T() = mysql.Project(Of T)(sql, fieldName)
             Return vector
         End Function
 
