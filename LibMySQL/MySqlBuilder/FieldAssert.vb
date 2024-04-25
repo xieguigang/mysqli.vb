@@ -1,4 +1,5 @@
-﻿Imports Oracle.LinuxCompatibility.MySQL.Scripting
+﻿Imports Microsoft.VisualBasic.Text.Parser
+Imports Oracle.LinuxCompatibility.MySQL.Scripting
 
 Namespace MySqlBuilder
 
@@ -130,6 +131,55 @@ Namespace MySqlBuilder
             field.unary_not = True
             Return field
         End Operator
+
+        Public Shared Function ParseFieldName(field As String, Optional strict As Boolean = False) As String
+            If field Is Nothing OrElse field = "" Then
+                If strict Then
+                    Throw New InvalidProgramException("the required field name should not be empty!")
+                Else
+                    Return ""
+                End If
+            ElseIf Not field.Contains("."c) Then
+                ' no table name prefix
+                Return field
+            End If
+
+            If Not field.Contains("`"c) Then
+                ' a.b
+                Return field.Split("."c).Last
+            End If
+
+            ' `a`.b
+            ' a.`b`
+            ' `a`.`b`
+            ' a or b may contains the . dot symbol
+            Dim escape As Boolean = False
+            Dim buf As New CharBuffer
+            Dim tokens As New List(Of String)
+
+            For Each c As Char In field
+                If escape Then
+                    If c = "`"c Then
+                        escape = False
+                        tokens.Add(New String(buf.PopAllChars))
+                    Else
+                        buf += c
+                    End If
+                Else
+                    If c = "`"c Then
+                        escape = True
+                        tokens.Add(New String(buf.PopAllChars))
+                    ElseIf c = "."c Then
+                        tokens.Add(New String(buf.PopAllChars))
+                        tokens.Add(".")
+                    Else
+                        buf += c
+                    End If
+                End If
+            Next
+
+            Return tokens.Where(Function(s) s.Length > 0 AndAlso s <> "."c).Last
+        End Function
 
         Friend Shared Function value(val As String) As String
             If val.StringEmpty Then

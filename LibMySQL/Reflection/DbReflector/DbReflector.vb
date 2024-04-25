@@ -120,7 +120,7 @@ Namespace Reflection
         ''' </summary>
         ''' <typeparam name="T"></typeparam>
         ''' <param name="reader"></param>
-        ''' <param name="field"></param>
+        ''' <param name="field">the table column name, should no table name prefix</param>
         ''' <param name="getErr"></param>
         ''' <returns></returns>
         Public Shared Iterator Function LoadProject(Of T)(reader As DataTableReader, field As String, getErr As Value(Of String)) As IEnumerable(Of T)
