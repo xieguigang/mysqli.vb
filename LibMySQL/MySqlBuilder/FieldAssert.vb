@@ -178,6 +178,10 @@ Namespace MySqlBuilder
                 End If
             Next
 
+            If buf > 0 Then
+                tokens.Add(New String(buf.PopAllChars))
+            End If
+
             Return tokens.Where(Function(s) s.Length > 0 AndAlso s <> "."c).Last
         End Function
 

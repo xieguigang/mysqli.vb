@@ -4,6 +4,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 Module Program
     Sub Main(args As String())
+        Call sql_test.Main2()
         Call Module1.connectionStringTest()
         Call testLongText()
     End Sub
