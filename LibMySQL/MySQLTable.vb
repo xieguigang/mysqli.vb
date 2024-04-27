@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::885003f3db0352a1c2e522b9d4e84e65, LibMySQL\MySQLTable.vb"
+﻿#Region "Microsoft.VisualBasic::4b69750714d1518e8bc7164160243843, G:/graphQL/src/mysqli/LibMySQL//MySQLTable.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 25
+    '    Code Lines: 9
+    ' Comment Lines: 12
+    '   Blank Lines: 4
+    '     File Size: 1.38 KB
+
 
     ' Class MySQLTable
     ' 

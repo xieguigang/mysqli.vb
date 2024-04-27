@@ -1,47 +1,57 @@
-﻿#Region "Microsoft.VisualBasic::01acce94920468d02d5b130750a48c0c, CodeSolution\VisualBasic\CodeGenerator.vb"
+﻿#Region "Microsoft.VisualBasic::e92b1f1a099a4e4f97fa4f2ae7ecf1c6, G:/graphQL/src/mysqli/CodeSolution//CodeGenerator/VisualBasic/CodeGenerator.vb"
 
-' Author:
-' 
-'       asuka (amethyst.asuka@gcmodeller.org)
-'       xie (genetics@smrucc.org)
-'       xieguigang (xie.guigang@live.com)
-' 
-' Copyright (c) 2018 GPL3 Licensed
-' 
-' 
-' GNU GENERAL PUBLIC LICENSE (GPL3)
-' 
-' 
-' This program is free software: you can redistribute it and/or modify
-' it under the terms of the GNU General Public License as published by
-' the Free Software Foundation, either version 3 of the License, or
-' (at your option) any later version.
-' 
-' This program is distributed in the hope that it will be useful,
-' but WITHOUT ANY WARRANTY; without even the implied warranty of
-' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-' GNU General Public License for more details.
-' 
-' You should have received a copy of the GNU General Public License
-' along with this program. If not, see <http://www.gnu.org/licenses/>.
+    ' Author:
+    ' 
+    '       asuka (amethyst.asuka@gcmodeller.org)
+    '       xie (genetics@smrucc.org)
+    '       xieguigang (xie.guigang@live.com)
+    ' 
+    ' Copyright (c) 2018 GPL3 Licensed
+    ' 
+    ' 
+    ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
+    ' 
+    ' This program is free software: you can redistribute it and/or modify
+    ' it under the terms of the GNU General Public License as published by
+    ' the Free Software Foundation, either version 3 of the License, or
+    ' (at your option) any later version.
+    ' 
+    ' This program is distributed in the hope that it will be useful,
+    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ' GNU General Public License for more details.
+    ' 
+    ' You should have received a copy of the GNU General Public License
+    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-' /********************************************************************************/
+    ' /********************************************************************************/
 
-' Summaries:
+    ' Summaries:
 
-'     Module CodeGenerator
-' 
-'         Function: ___DELETE_SQL, ___DELETE_SQL_Invoke, ___INSERT_SQL, ___INSERT_SQL_Invoke, ___REPLACE_SQL
-'                   ___REPLACE_SQL_Invoke, ___UPDATE_SQL, ___UPDATE_SQL_Invoke, __clone, __createAttribute
-'                   __generateCodeSplit, __INSERT_VALUES, __notImplementForIndex, __replaceInsertCommon, __replaceInsertInvokeCommon
-'                   __schemaDb, __toDataType, FixInvalids, GenerateClass, (+3 Overloads) GenerateCode
-'                   (+2 Overloads) GenerateCodeSplit, GenerateSingleDocument, getExprInvoke, PropertyName, SQLComments
-'                   VBClass, vbCode
-' 
-' 
-' /********************************************************************************/
+
+    ' Code Statistics:
+
+    '   Total Lines: 824
+    '    Code Lines: 559
+    ' Comment Lines: 130
+    '   Blank Lines: 135
+    '     File Size: 37.83 KB
+
+
+    '     Module CodeGenerator
+    ' 
+    '         Function: ___DELETE_SQL, ___DELETE_SQL_Invoke, ___INSERT_SQL, ___INSERT_SQL_Invoke, ___REPLACE_SQL
+    '                   ___REPLACE_SQL_Invoke, ___UPDATE_SQL, ___UPDATE_SQL_Invoke, __clone, __createAttribute
+    '                   __generateCodeSplit, __INSERT_VALUES, __notImplementForIndex, __replaceInsertCommon, __replaceInsertInvokeCommon
+    '                   __schemaDb, __toDataType, Clone, FixInvalids, GenerateClass
+    '                   (+3 Overloads) GenerateCode, (+2 Overloads) GenerateCodeSplit, GenerateDbSchema, GenerateSingleDocument, getExprInvoke
+    '                   PropertyName, SQLComments, valueRef, VBClass, vbCode
+    ' 
+    ' 
+    ' /********************************************************************************/
 
 #End Region
 

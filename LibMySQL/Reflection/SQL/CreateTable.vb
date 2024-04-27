@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::efe2f80e93ae6f15cdfef9c75515f85e, LibMySQL\Reflection\DataModels\CreateTable.vb"
+﻿#Region "Microsoft.VisualBasic::efe2f80e93ae6f15cdfef9c75515f85e, G:/graphQL/src/mysqli/LibMySQL//Reflection/SQL/CreateTable.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 78
+    '    Code Lines: 43
+    ' Comment Lines: 22
+    '   Blank Lines: 13
+    '     File Size: 2.77 KB
+
 
     '     Class CreateTableSQL
     ' 

@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::80ef916b7b2fd317bf6c87c9ae0478db, Reflector\test2.vb"
+﻿#Region "Microsoft.VisualBasic::987d2ee96f72e5a2363360f8007d4e33, G:/graphQL/src/mysqli/Reflector//test2.vb"
 
     ' Author:
     ' 
@@ -31,6 +31,16 @@
 
     ' Summaries:
 
+
+    ' Code Statistics:
+
+    '   Total Lines: 67
+    '    Code Lines: 52
+    ' Comment Lines: 0
+    '   Blank Lines: 15
+    '     File Size: 2.06 KB
+
+
     ' Module test2
     ' 
     '     Sub: Main
@@ -38,7 +48,7 @@
     ' 
     '         Properties: A, B, C
     ' 
-    '         Function: GetDeleteSQL, GetDumpInsertValue, GetInsertSQL, GetReplaceSQL, GetUpdateSQL
+    '         Function: GetDeleteSQL, GetDumpInsertValue, (+2 Overloads) GetInsertSQL, (+2 Overloads) GetReplaceSQL, GetUpdateSQL
     ' 
     ' 
     ' 

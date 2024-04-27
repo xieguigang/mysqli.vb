@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::900fdd514a4eb1e0bf9a8230bb979b9b, Reflector\Program.vb"
+﻿#Region "Microsoft.VisualBasic::3910ba011d624a3625b0b60165d0cb96, G:/graphQL/src/mysqli/Reflector//Program.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 10
+    '    Code Lines: 7
+    ' Comment Lines: 0
+    '   Blank Lines: 3
+    '     File Size: 265 B
+
 
     ' Module Program
     ' 

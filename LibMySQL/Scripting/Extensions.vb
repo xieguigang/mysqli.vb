@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::06cb0a3663aa7a240d0212d136fc4199, LibMySQL\Scripting\Extensions.vb"
+﻿#Region "Microsoft.VisualBasic::557c8f612ef521ce0de6b61a7137fb65, G:/graphQL/src/mysqli/LibMySQL//Scripting/Extensions.vb"
 
     ' Author:
     ' 
@@ -31,9 +31,20 @@
 
     ' Summaries:
 
+
+    ' Code Statistics:
+
+    '   Total Lines: 135
+    '    Code Lines: 80
+    ' Comment Lines: 35
+    '   Blank Lines: 20
+    '     File Size: 5.03 KB
+
+
     '     Module Extensions
     ' 
-    '         Function: DropTableSQL, EnsureLimit1, MySqlEscaping, replaceInternal, ToMySqlDateTimeString
+    '         Function: DropTableSQL, EnsureLimit1, IsMySQLDateTimePattern, MySqlEscaping, MySqlUnescaping
+    '                   replaceInternal, ToMySqlDateTimeString
     ' 
     ' 
     ' /********************************************************************************/

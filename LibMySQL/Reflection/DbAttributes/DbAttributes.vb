@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::0e311803c387082ad393f431f936e411, LibMySQL\Reflection\DbAttributes\DbAttributes.vb"
+﻿#Region "Microsoft.VisualBasic::0e311803c387082ad393f431f936e411, G:/graphQL/src/mysqli/LibMySQL//Reflection/DbAttributes/DbAttributes.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 110
+    '    Code Lines: 45
+    ' Comment Lines: 49
+    '   Blank Lines: 16
+    '     File Size: 4.00 KB
+
 
     '     Class DbAttribute
     ' 

@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::285f03377e36fc0dc550cdd1bc2237d7, LibMySQL\Workbench\Dump\RestoreWorker.vb"
+﻿#Region "Microsoft.VisualBasic::e9f5632ac5dfdf87bb5f373346f66710, G:/graphQL/src/mysqli/LibMySQL//Workbench/Dump/RestoreWorker.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 37
+    '    Code Lines: 22
+    ' Comment Lines: 6
+    '   Blank Lines: 9
+    '     File Size: 1.28 KB
+
 
     '     Class RestoreWorker
     ' 

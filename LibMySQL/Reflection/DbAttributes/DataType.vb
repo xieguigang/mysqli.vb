@@ -1,49 +1,64 @@
-﻿#Region "Microsoft.VisualBasic::570b9e4d5f4189fbceadc91589ab9905, LibMySQL\Reflection\DbAttributes\DataType.vb"
+﻿#Region "Microsoft.VisualBasic::d89f0f95c8088757b1b5084a1412df26, G:/graphQL/src/mysqli/LibMySQL//Reflection/DbAttributes/DataType.vb"
 
-' Author:
-' 
-'       asuka (amethyst.asuka@gcmodeller.org)
-'       xie (genetics@smrucc.org)
-'       xieguigang (xie.guigang@live.com)
-' 
-' Copyright (c) 2018 GPL3 Licensed
-' 
-' 
-' GNU GENERAL PUBLIC LICENSE (GPL3)
-' 
-' 
-' This program is free software: you can redistribute it and/or modify
-' it under the terms of the GNU General Public License as published by
-' the Free Software Foundation, either version 3 of the License, or
-' (at your option) any later version.
-' 
-' This program is distributed in the hope that it will be useful,
-' but WITHOUT ANY WARRANTY; without even the implied warranty of
-' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-' GNU General Public License for more details.
-' 
-' You should have received a copy of the GNU General Public License
-' along with this program. If not, see <http://www.gnu.org/licenses/>.
+    ' Author:
+    ' 
+    '       asuka (amethyst.asuka@gcmodeller.org)
+    '       xie (genetics@smrucc.org)
+    '       xieguigang (xie.guigang@live.com)
+    ' 
+    ' Copyright (c) 2018 GPL3 Licensed
+    ' 
+    ' 
+    ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
+    ' 
+    ' This program is free software: you can redistribute it and/or modify
+    ' it under the terms of the GNU General Public License as published by
+    ' the Free Software Foundation, either version 3 of the License, or
+    ' (at your option) any later version.
+    ' 
+    ' This program is distributed in the hope that it will be useful,
+    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ' GNU General Public License for more details.
+    ' 
+    ' You should have received a copy of the GNU General Public License
+    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-' /********************************************************************************/
+    ' /********************************************************************************/
 
-' Summaries:
+    ' Summaries:
 
-'     Class DataType
-' 
-'         Properties: MySQLType, ParameterValue
-' 
-'         Constructor: (+1 Overloads) Sub New
-'         Function: ToString, TypeCasting
-' 
-'     Module CTypeDynamicsExtensions
-' 
-'         Function: TypeHandler, UInt32_2_UInteger
-' 
-' 
-' /********************************************************************************/
+
+    ' Code Statistics:
+
+    '   Total Lines: 135
+    '    Code Lines: 97
+    ' Comment Lines: 18
+    '   Blank Lines: 20
+    '     File Size: 6.12 KB
+
+
+    '     Class DataType
+    ' 
+    '         Properties: MySQLType, ParameterValue
+    ' 
+    '         Constructor: (+1 Overloads) Sub New
+    ' 
+    '         Function: ToString, TypeCasting
+    ' 
+    '         Sub: SetMySqlType
+    ' 
+    '         Operators: <>, =
+    ' 
+    '     Module CTypeDynamicsExtensions
+    ' 
+    '         Function: TypeHandler, UInt32_2_UInteger
+    ' 
+    ' 
+    ' /********************************************************************************/
 
 #End Region
 

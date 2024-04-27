@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::d0444373063c15b31f24c88dea447b5c, LibMySQL\ServerApp\MemorySize.vb"
+﻿#Region "Microsoft.VisualBasic::d0444373063c15b31f24c88dea447b5c, G:/graphQL/src/mysqli/LibMySQL//ServerApp/MemorySize.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 89
+    '    Code Lines: 53
+    ' Comment Lines: 24
+    '   Blank Lines: 12
+    '     File Size: 3.26 KB
+
 
     '     Class MemorySize
     ' 

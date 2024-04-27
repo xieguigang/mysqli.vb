@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::31249747a33b26bc9cab2457ffb5ee2d, LibMySQL\Extensions\DataClient.vb"
+﻿#Region "Microsoft.VisualBasic::09f608d2667dfeb91b79cc6c0bbbfc98, G:/graphQL/src/mysqli/LibMySQL//Extensions/DataClient.vb"
 
     ' Author:
     ' 
@@ -31,9 +31,19 @@
 
     ' Summaries:
 
-    ' Module DataClient
+
+    ' Code Statistics:
+
+    '   Total Lines: 120
+    '    Code Lines: 76
+    ' Comment Lines: 29
+    '   Blank Lines: 15
+    '     File Size: 4.52 KB
+
+
+    ' Module DataClientExtensions
     ' 
-    '     Function: GroupMerge, HasValue, OccupancyLoad, SelectALL, Truncate
+    '     Function: GroupFills, HasValue, OccupancyLoad, SelectALL, Truncate
     ' 
     ' /********************************************************************************/
 
