@@ -1,46 +1,56 @@
-﻿#Region "Microsoft.VisualBasic::eeb3c6053c1fa9c26aa6c46aa1791914, LibMySQL\Reflection\Schema\FieldAttributes.vb"
+﻿#Region "Microsoft.VisualBasic::ee9ebac8b117684f9d2f4f5a3ba10d43, G:/graphQL/src/mysqli/LibMySQL//Reflection/Schema/FieldAttributes.vb"
 
-' Author:
-' 
-'       asuka (amethyst.asuka@gcmodeller.org)
-'       xie (genetics@smrucc.org)
-'       xieguigang (xie.guigang@live.com)
-' 
-' Copyright (c) 2018 GPL3 Licensed
-' 
-' 
-' GNU GENERAL PUBLIC LICENSE (GPL3)
-' 
-' 
-' This program is free software: you can redistribute it and/or modify
-' it under the terms of the GNU General Public License as published by
-' the Free Software Foundation, either version 3 of the License, or
-' (at your option) any later version.
-' 
-' This program is distributed in the hope that it will be useful,
-' but WITHOUT ANY WARRANTY; without even the implied warranty of
-' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-' GNU General Public License for more details.
-' 
-' You should have received a copy of the GNU General Public License
-' along with this program. If not, see <http://www.gnu.org/licenses/>.
+    ' Author:
+    ' 
+    '       asuka (amethyst.asuka@gcmodeller.org)
+    '       xie (genetics@smrucc.org)
+    '       xieguigang (xie.guigang@live.com)
+    ' 
+    ' Copyright (c) 2018 GPL3 Licensed
+    ' 
+    ' 
+    ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
+    ' 
+    ' This program is free software: you can redistribute it and/or modify
+    ' it under the terms of the GNU General Public License as published by
+    ' the Free Software Foundation, either version 3 of the License, or
+    ' (at your option) any later version.
+    ' 
+    ' This program is distributed in the hope that it will be useful,
+    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ' GNU General Public License for more details.
+    ' 
+    ' You should have received a copy of the GNU General Public License
+    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-' /********************************************************************************/
+    ' /********************************************************************************/
 
-' Summaries:
+    ' Summaries:
 
-'     Class Field
-' 
-'         Properties: [Default], [PropertyInfo], AutoIncrement, Binary, Comment
-'                     DataType, FieldName, NotNull, PrimaryKey, Unique
-'                     Unsigned, ZeroFill
-' 
-'         Function: ParseAttributes, PropertyParser, ToString
-' 
-' 
-' /********************************************************************************/
+
+    ' Code Statistics:
+
+    '   Total Lines: 170
+    '    Code Lines: 117
+    ' Comment Lines: 28
+    '   Blank Lines: 25
+    '     File Size: 6.35 KB
+
+
+    '     Class Field
+    ' 
+    '         Properties: [Default], [PropertyInfo], AutoIncrement, Binary, Comment
+    '                     DataType, FieldName, NotNull, PrimaryKey, Unique
+    '                     Unsigned, ZeroFill
+    ' 
+    '         Function: hasDefault, ParseAttributes, PropertyParser, ToString
+    ' 
+    ' 
+    ' /********************************************************************************/
 
 #End Region
 

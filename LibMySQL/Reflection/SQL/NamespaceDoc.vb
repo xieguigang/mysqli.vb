@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::9272797cc865b1691e357f6e03ce554d, LibMySQL\Reflection\DataModels\NamespaceDoc.vb"
+﻿#Region "Microsoft.VisualBasic::9272797cc865b1691e357f6e03ce554d, G:/graphQL/src/mysqli/LibMySQL//Reflection/SQL/NamespaceDoc.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 8
+    '    Code Lines: 4
+    ' Comment Lines: 3
+    '   Blank Lines: 1
+    '     File Size: 180 B
+
 
     '     Module NamespaceDoc
     ' 

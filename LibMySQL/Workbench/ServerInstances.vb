@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::3c94d6a1b18b8e1bdc237a3437cc1875, LibMySQL\Workbench\ServerInstances.vb"
+﻿#Region "Microsoft.VisualBasic::3c94d6a1b18b8e1bdc237a3437cc1875, G:/graphQL/src/mysqli/LibMySQL//Workbench/ServerInstances.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 36
+    '    Code Lines: 28
+    ' Comment Lines: 0
+    '   Blank Lines: 8
+    '     File Size: 1.30 KB
+
 
     '     Class ServerInstances
     ' 

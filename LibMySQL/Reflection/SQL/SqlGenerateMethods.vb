@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::d757da33699287d581d89ac9297c1d7a, LibMySQL\Reflection\DataModels\SqlGenerateMethods.vb"
+﻿#Region "Microsoft.VisualBasic::d757da33699287d581d89ac9297c1d7a, G:/graphQL/src/mysqli/LibMySQL//Reflection/SQL/SqlGenerateMethods.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 115
+    '    Code Lines: 77
+    ' Comment Lines: 19
+    '   Blank Lines: 19
+    '     File Size: 4.63 KB
+
 
     '     Module SqlGenerateMethods
     ' 

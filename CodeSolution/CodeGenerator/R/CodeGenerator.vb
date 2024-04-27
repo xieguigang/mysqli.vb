@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::ef3bcb8f82164fd4581a7fc7043ba8f3, CodeSolution\R\CodeGenerator.vb"
+﻿#Region "Microsoft.VisualBasic::ef3bcb8f82164fd4581a7fc7043ba8f3, G:/graphQL/src/mysqli/CodeSolution//CodeGenerator/R/CodeGenerator.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 61
+    '    Code Lines: 0
+    ' Comment Lines: 50
+    '   Blank Lines: 11
+    '     File Size: 2.35 KB
+
 
     ' 
     ' /********************************************************************************/

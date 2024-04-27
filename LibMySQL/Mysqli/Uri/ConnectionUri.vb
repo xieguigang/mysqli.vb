@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::544cd9ad938aeaaa3ae553fc2681df2b, LibMySQL\Mysqli\Uri\ConnectionUri.vb"
+﻿#Region "Microsoft.VisualBasic::44754b088a9e84b52d0493c2bdc8467c, G:/graphQL/src/mysqli/LibMySQL//Mysqli/Uri/ConnectionUri.vb"
 
     ' Author:
     ' 
@@ -31,10 +31,20 @@
 
     ' Summaries:
 
+
+    ' Code Statistics:
+
+    '   Total Lines: 232
+    '    Code Lines: 67
+    ' Comment Lines: 148
+    '   Blank Lines: 17
+    '     File Size: 10.02 KB
+
+
     '     Class ConnectionUri
     ' 
-    '         Properties: Database, IPAddress, Password, Port, TimeOut
-    '                     User
+    '         Properties: Database, error_log, IPAddress, Password, Port
+    '                     TimeOut, User
     ' 
     '         Constructor: (+2 Overloads) Sub New
     '         Function: (+2 Overloads) CreateObject, GetConnectionString, GetDisplayUri, ToString, TryParsing

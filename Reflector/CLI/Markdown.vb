@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::e5cf271b93a98daa8fe7e97e9cefaa84, Reflector\CLI\docs.vb"
+﻿#Region "Microsoft.VisualBasic::53fd5d29f9c4f9580c93b12334dae6c3, G:/graphQL/src/mysqli/Reflector//CLI/Markdown.vb"
 
     ' Author:
     ' 
@@ -31,7 +31,17 @@
 
     ' Summaries:
 
-    ' Module CLIProgram
+
+    ' Code Statistics:
+
+    '   Total Lines: 36
+    '    Code Lines: 31
+    ' Comment Lines: 0
+    '   Blank Lines: 5
+    '     File Size: 1.57 KB
+
+
+    ' Module CLI
     ' 
     '     Function: MySQLMarkdown
     ' 

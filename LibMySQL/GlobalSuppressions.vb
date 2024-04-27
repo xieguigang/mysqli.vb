@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::40e47231106b034746cc5d0379248cdc, LibMySQL\GlobalSuppressions.vb"
+﻿#Region "Microsoft.VisualBasic::40e47231106b034746cc5d0379248cdc, G:/graphQL/src/mysqli/LibMySQL//GlobalSuppressions.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 23
+    '    Code Lines: 10
+    ' Comment Lines: 11
+    '   Blank Lines: 2
+    '     File Size: 2.76 KB
+
 
     ' 
     ' /********************************************************************************/

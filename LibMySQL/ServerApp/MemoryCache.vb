@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::fe6c02e387cd21f49a6d65649986159a, LibMySQL\ServerApp\MemoryCache.vb"
+﻿#Region "Microsoft.VisualBasic::8008431b7eaace3b72a5365294483d32, G:/graphQL/src/mysqli/LibMySQL//ServerApp/MemoryCache.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 256
+    '    Code Lines: 155
+    ' Comment Lines: 64
+    '   Blank Lines: 37
+    '     File Size: 9.79 KB
+
 
     '     Class MemoryCache
     ' 

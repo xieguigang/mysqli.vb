@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::48c676b413ce11e3599f3a8c2d3cfe54, LibMySQL\Extensions\Extensions.vb"
+﻿#Region "Microsoft.VisualBasic::83c3118b72b58c2802d2fafb97b4cc6d, G:/graphQL/src/mysqli/LibMySQL//Extensions/Extensions.vb"
 
     ' Author:
     ' 
@@ -31,12 +31,22 @@
 
     ' Summaries:
 
+
+    ' Code Statistics:
+
+    '   Total Lines: 139
+    '    Code Lines: 95
+    ' Comment Lines: 26
+    '   Blank Lines: 18
+    '     File Size: 4.95 KB
+
+
     ' Module Extensions
     ' 
     '     Properties: MySqlDbTypes, Numerics
     ' 
-    '     Function: AsDBI, ClearTable, CopySets, GetAttribute, GetCreateTableMetaSQL
-    '               GetDbDataType, OrdinalSchema
+    '     Function: ClearTable, CopySets, GetAttribute, GetCreateTableMetaSQL, GetDbDataType
+    '               OrdinalSchema
     ' 
     ' /********************************************************************************/
 

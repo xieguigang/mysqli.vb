@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::aed97925289d31595dae8048d2e4daa9, LibMySQL\Reflection\DbAttributes\TableName.vb"
+﻿#Region "Microsoft.VisualBasic::e83880fe61f49de222b7d58a7059e273, G:/graphQL/src/mysqli/LibMySQL//Reflection/DbAttributes/TableName.vb"
 
     ' Author:
     ' 
@@ -31,12 +31,22 @@
 
     ' Summaries:
 
+
+    ' Code Statistics:
+
+    '   Total Lines: 68
+    '    Code Lines: 37
+    ' Comment Lines: 22
+    '   Blank Lines: 9
+    '     File Size: 2.36 KB
+
+
     '     Class TableName
     ' 
     '         Properties: Database, Name, SchemaSQL
     ' 
     '         Constructor: (+1 Overloads) Sub New
-    '         Function: GetTableName, ToString
+    '         Function: (+2 Overloads) GetTableName, ToString
     ' 
     ' 
     ' /********************************************************************************/

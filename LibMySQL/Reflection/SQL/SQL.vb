@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::fa1a9ecdc1b60055001775f033fcff7c, LibMySQL\Reflection\DataModels\SQL.vb"
+﻿#Region "Microsoft.VisualBasic::fa1a9ecdc1b60055001775f033fcff7c, G:/graphQL/src/mysqli/LibMySQL//Reflection/SQL/SQL.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 24
+    '    Code Lines: 14
+    ' Comment Lines: 4
+    '   Blank Lines: 6
+    '     File Size: 645 B
+
 
     '     Class SQL
     ' 

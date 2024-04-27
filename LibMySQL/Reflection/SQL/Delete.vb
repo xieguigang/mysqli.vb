@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::f9cfe201a34e55467ed33f6c01279a48, LibMySQL\Reflection\DataModels\Delete.vb"
+﻿#Region "Microsoft.VisualBasic::f9cfe201a34e55467ed33f6c01279a48, G:/graphQL/src/mysqli/LibMySQL//Reflection/SQL/Delete.vb"
 
     ' Author:
     ' 
@@ -30,6 +30,16 @@
     ' /********************************************************************************/
 
     ' Summaries:
+
+
+    ' Code Statistics:
+
+    '   Total Lines: 28
+    '    Code Lines: 15
+    ' Comment Lines: 9
+    '   Blank Lines: 4
+    '     File Size: 911 B
+
 
     '     Class Delete
     ' 
