@@ -220,6 +220,15 @@ Namespace MySqlBuilder
             Return result
         End Function
 
+        Public Function aggregate(Of T)(exp As String) As T
+            Dim where As String = If(query?.where_str, "")
+            Dim group_by As String = If(query?.group_by_str, "")
+            Dim sql As String = $"SELECT {exp} FROM `{schema.Database}`.`{schema.TableName}` {where} {group_by};"
+            chain.m_getLastMySql = sql
+            Dim result = mysql.ExecuteAggregate(Of T)(sql)
+            Return result
+        End Function
+
         Public Function count() As Integer
             Dim where As String = If(query?.where_str, "")
             Dim group_by As String = If(query?.group_by_str, "")
