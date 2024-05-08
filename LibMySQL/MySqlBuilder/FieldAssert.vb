@@ -1,57 +1,57 @@
 ﻿#Region "Microsoft.VisualBasic::830b617fe802307af6dc439e0a419842, G:/graphQL/src/mysqli/LibMySQL//MySqlBuilder/FieldAssert.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
-
-
-    ' Code Statistics:
-
-    '   Total Lines: 198
-    '    Code Lines: 148
-    ' Comment Lines: 18
-    '   Blank Lines: 32
-    '     File Size: 6.66 KB
+' Summaries:
 
 
-    '     Class FieldAssert
-    ' 
-    '         Properties: name, op, unary_not, val, val2
-    ' 
-    '         Constructor: (+2 Overloads) Sub New
-    '         Function: against, ParseFieldName, ToString, value
-    '         Operators: (+2 Overloads) <, (+3 Overloads) <>, (+3 Overloads) =, (+2 Overloads) >, (+2 Overloads) Like
-    '                    (+2 Overloads) Not
-    ' 
-    ' 
-    ' /********************************************************************************/
+' Code Statistics:
+
+'   Total Lines: 198
+'    Code Lines: 148
+' Comment Lines: 18
+'   Blank Lines: 32
+'     File Size: 6.66 KB
+
+
+'     Class FieldAssert
+' 
+'         Properties: name, op, unary_not, val, val2
+' 
+'         Constructor: (+2 Overloads) Sub New
+'         Function: against, ParseFieldName, ToString, value
+'         Operators: (+2 Overloads) <, (+3 Overloads) <>, (+3 Overloads) =, (+2 Overloads) >, (+2 Overloads) Like
+'                    (+2 Overloads) Not
+' 
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -130,6 +130,53 @@ Namespace MySqlBuilder
             x1.op = "<>"
             x1.val = x2.name
             Return x1
+        End Operator
+
+        Public Overloads Shared Operator =(field As FieldAssert, any As Object) As FieldAssert
+            If any Is Nothing Then
+                field.op = "is"
+                field.val = "null"
+
+                Return field
+            End If
+
+            Select Case any.GetType
+                Case GetType(String), GetType(Char) : Return field = CStr(any)
+                Case GetType(Integer), GetType(SByte), GetType(Short), GetType(Long) : Return field = CLng(any)
+                Case GetType(UInteger), GetType(Byte), GetType(UShort), GetType(ULong) : Return field = CULng(any)
+                Case GetType(Single), GetType(Double) : Return field = CStr(any)
+                Case GetType(Date) : Return field = CDate(any)
+                Case Else
+                    Throw New NotImplementedException(any.GetType.FullName)
+            End Select
+        End Operator
+
+        Public Overloads Shared Operator =(field As FieldAssert, i As ULong) As FieldAssert
+            field.val = i
+            field.op = "="
+            Return field
+        End Operator
+
+        Public Overloads Shared Operator <>(field As FieldAssert, i As ULong) As FieldAssert
+            field.val = i
+            field.op = "<>"
+            Return field
+        End Operator
+
+        Public Overloads Shared Operator =(field As FieldAssert, i As Long) As FieldAssert
+            field.val = i
+            field.op = "="
+            Return field
+        End Operator
+
+        Public Overloads Shared Operator <>(field As FieldAssert, i As Long) As FieldAssert
+            field.val = i
+            field.op = "<>"
+            Return field
+        End Operator
+
+        Public Overloads Shared Operator <>(field As FieldAssert, any As Object) As FieldAssert
+            Return Not (field = any)
         End Operator
 
         Public Overloads Shared Operator =(field As FieldAssert, val As Date) As FieldAssert
