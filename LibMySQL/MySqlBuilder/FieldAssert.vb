@@ -144,7 +144,7 @@ Namespace MySqlBuilder
                 Case GetType(String), GetType(Char) : Return field = CStr(any)
                 Case GetType(Integer), GetType(SByte), GetType(Short), GetType(Long) : Return field = CLng(any)
                 Case GetType(UInteger), GetType(Byte), GetType(UShort), GetType(ULong) : Return field = CULng(any)
-                Case GetType(Single), GetType(Double) : Return field = CStr(any)
+                Case GetType(Single), GetType(Double) : Return field = CDbl(any)
                 Case GetType(Date) : Return field = CDate(any)
                 Case Else
                     Throw New NotImplementedException(any.GetType.FullName)
@@ -171,6 +171,30 @@ Namespace MySqlBuilder
 
         Public Overloads Shared Operator <>(field As FieldAssert, i As Long) As FieldAssert
             field.val = i
+            field.op = "<>"
+            Return field
+        End Operator
+
+        Public Overloads Shared Operator =(field As FieldAssert, i As UInteger) As FieldAssert
+            field.val = i
+            field.op = "="
+            Return field
+        End Operator
+
+        Public Overloads Shared Operator <>(field As FieldAssert, i As UInteger) As FieldAssert
+            field.val = i
+            field.op = "<>"
+            Return field
+        End Operator
+
+        Public Overloads Shared Operator =(field As FieldAssert, d As Double) As FieldAssert
+            field.val = d
+            field.op = "="
+            Return field
+        End Operator
+
+        Public Overloads Shared Operator <>(field As FieldAssert, d As Double) As FieldAssert
+            field.val = d
             field.op = "<>"
             Return field
         End Operator
