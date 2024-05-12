@@ -372,20 +372,20 @@ Mysqlx_ssl_ctx_verify_depth
 Mysqlx_ssl_ctx_verify_mode
 Mysqlx_ssl_finished_accepts
 Mysqlx_ssl_server_not_after
-Mysqlx_ssl_server_not_before
-Mysqlx_ssl_verify_depth
-Mysqlx_ssl_verify_mode
-Mysqlx_ssl_version
-Mysqlx_stmt_create_collection
-Mysqlx_stmt_create_collection_index
-Mysqlx_stmt_disable_notices
+    Public Property Mysqlx_ssl_server_not_before
+    Public Property Mysqlx_ssl_verify_depth
+    Public Property Mysqlx_ssl_verify_mode
+    Public Property Mysqlx_ssl_version
+    Public Property Mysqlx_stmt_create_collection
+    Public Property Mysqlx_stmt_create_collection_index
+    Public Property Mysqlx_stmt_disable_notices
 Mysqlx_stmt_drop_collection
 Mysqlx_stmt_drop_collection_index
 Mysqlx_stmt_enable_notices
 Mysqlx_stmt_ensure_collection
 Mysqlx_stmt_execute_mysqlx
-Mysqlx_stmt_execute_sql
-Mysqlx_stmt_execute_xplugin
+    Public Property Mysqlx_stmt_execute_sql
+    Public Property Mysqlx_stmt_execute_xplugin
 Mysqlx_stmt_get_collection_options
 Mysqlx_stmt_kill_client
 Mysqlx_stmt_list_clients
@@ -428,74 +428,74 @@ Performance_schema_session_connect_attrs_lost
 Performance_schema_socket_classes_lost
 Performance_schema_socket_instances_lost
 Performance_schema_stage_classes_lost
-Performance_schema_statement_classes_lost
-Performance_schema_table_handles_lost
-Performance_schema_table_instances_lost
-Performance_schema_table_lock_stat_lost
-Performance_schema_thread_classes_lost
-Performance_schema_thread_instances_lost
-Performance_schema_users_lost
-Prepared_stmt_count
-Queries
-Questions
-Replica_open_temp_tables
-Resource_group_supported
-Rsa_public_key
-Secondary_engine_execution_count
-Select_full_join
-Select_full_range_join
-Select_range
-Select_range_check
-Select_scan
-Slave_open_temp_tables
+    Public Property Performance_schema_statement_classes_lost
+    Public Property Performance_schema_table_handles_lost
+    Public Property Performance_schema_table_instances_lost
+    Public Property Performance_schema_table_lock_stat_lost
+    Public Property Performance_schema_thread_classes_lost
+    Public Property Performance_schema_thread_instances_lost
+    Public Property Performance_schema_users_lost
+    Public Property Prepared_stmt_count
+    Public Property Queries
+    Public Property Questions
+    Public Property Replica_open_temp_tables
+    Public Property Resource_group_supported
+    Public Property Rsa_public_key
+    Public Property Secondary_engine_execution_count
+    Public Property Select_full_join
+    Public Property Select_full_range_join
+    Public Property Select_range
+    Public Property Select_range_check
+    Public Property Select_scan
+    Public Property Slave_open_temp_tables
 Slow_launch_threads
 Slow_queries
 Sort_merge_passes
-Sort_range
+    Public Property Sort_range
 Sort_rows
 Sort_scan
 Ssl_accept_renegotiates
 Ssl_accepts
 Ssl_callback_cache_hits
 Ssl_cipher
-Ssl_cipher_list
-Ssl_client_connects
-Ssl_connect_renegotiates
-Ssl_ctx_verify_depth
-Ssl_ctx_verify_mode
-Ssl_default_timeout
-Ssl_finished_accepts
-Ssl_finished_connects
-Ssl_server_not_after
-Ssl_server_not_before
-Ssl_session_cache_hits
-Ssl_session_cache_misses
-Ssl_session_cache_mode
-Ssl_session_cache_overflows
-Ssl_session_cache_size
-Ssl_session_cache_timeout
-Ssl_session_cache_timeouts
-Ssl_sessions_reused
-Ssl_used_session_cache_entries
-Ssl_verify_depth
-Ssl_verify_mode
-Ssl_version
-Table_locks_immediate
-Table_locks_waited
-Table_open_cache_hits
-Table_open_cache_misses
-Table_open_cache_overflows
-Tc_log_max_pages_used
-Tc_log_page_size
-Tc_log_page_waits
-Telemetry_traces_supported
-Threads_cached
-Threads_connected
-Threads_created
-Threads_running
-Tls_library_version
-Uptime
-Uptime_since_flush_status
+    Public Property Ssl_cipher_list
+    Public Property Ssl_client_connects
+    Public Property Ssl_connect_renegotiates
+    Public Property Ssl_ctx_verify_depth
+    Public Property Ssl_ctx_verify_mode
+    Public Property Ssl_default_timeout
+    Public Property Ssl_finished_accepts
+    Public Property Ssl_finished_connects
+    Public Property Ssl_server_not_after
+    Public Property Ssl_server_not_before
+    Public Property Ssl_session_cache_hits
+    Public Property Ssl_session_cache_misses
+    Public Property Ssl_session_cache_mode
+    Public Property Ssl_session_cache_overflows
+    Public Property Ssl_session_cache_size
+    Public Property Ssl_session_cache_timeout
+    Public Property Ssl_session_cache_timeouts
+    Public Property Ssl_sessions_reused
+    Public Property Ssl_used_session_cache_entries
+    Public Property Ssl_verify_depth
+    Public Property Ssl_verify_mode
+    Public Property Ssl_version
+    Public Property Table_locks_immediate
+    Public Property Table_locks_waited
+    Public Property Table_open_cache_hits
+    Public Property Table_open_cache_misses
+    Public Property Table_open_cache_overflows
+    Public Property Tc_log_max_pages_used
+    Public Property Tc_log_page_size
+    Public Property Tc_log_page_waits
+    Public Property Telemetry_traces_supported
+    Public Property Threads_cached
+    Public Property Threads_connected
+    Public Property Threads_created
+    Public Property Threads_running
+    Public Property Tls_library_version
+    Public Property Uptime
+    Public Property Uptime_since_flush_status
 
 
 End Class
