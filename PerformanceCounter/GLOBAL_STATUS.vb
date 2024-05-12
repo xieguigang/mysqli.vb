@@ -14,49 +14,49 @@ Public Class GLOBAL_STATUS
     Public Property Bytes_received
     Public Property Bytes_sent
     Public Property Caching_sha2_password_rsa_public_key
-Com_admin_commands
-Com_assign_to_keycache
-Com_alter_db
-Com_alter_event
-Com_alter_function
-Com_alter_instance
-Com_alter_procedure
-Com_alter_resource_group
-Com_alter_server
+    Public Property Com_admin_commands
+    Public Property Com_assign_to_keycache
+    Public Property Com_alter_db
+    Public Property Com_alter_event
+    Public Property Com_alter_function
+    Public Property Com_alter_instance
+    Public Property Com_alter_procedure
+    Public Property Com_alter_resource_group
+    Public Property Com_alter_server
     Public Property Com_alter_table
     Public Property Com_alter_tablespace
-Com_alter_user
-Com_alter_user_default_role
-Com_analyze
-Com_begin
-Com_binlog
-Com_call_procedure
-Com_change_db
-Com_change_master
+    Public Property Com_alter_user
+    Public Property Com_alter_user_default_role
+    Public Property Com_analyze
+    Public Property Com_begin
+    Public Property Com_binlog
+    Public Property Com_call_procedure
+    Public Property Com_change_db
+    Public Property Com_change_master
     Public Property Com_change_repl_filter
     Public Property Com_change_replication_source
     Public Property Com_check
     Public Property Com_checksum
     Public Property Com_clone
     Public Property Com_commit
-Com_create_db
-Com_create_event
-Com_create_function
-Com_create_index
-Com_create_procedure
-Com_create_role
-Com_create_server
-Com_create_table
-Com_create_resource_group
-Com_create_trigger
-Com_create_udf
-Com_create_user
-Com_create_view
-Com_create_spatial_reference_system
-Com_dealloc_sql
-Com_delete
-Com_delete_multi
-Com_do
+    Public Property Com_create_db
+    Public Property Com_create_event
+    Public Property Com_create_function
+    Public Property Com_create_index
+    Public Property Com_create_procedure
+    Public Property Com_create_role
+    Public Property Com_create_server
+    Public Property Com_create_table
+    Public Property Com_create_resource_group
+    Public Property Com_create_trigger
+    Public Property Com_create_udf
+    Public Property Com_create_user
+    Public Property Com_create_view
+    Public Property Com_create_spatial_reference_system
+    Public Property Com_dealloc_sql
+    Public Property Com_delete
+    Public Property Com_delete_multi
+    Public Property Com_do
 Com_drop_db
 Com_drop_event
 Com_drop_function
@@ -120,17 +120,17 @@ Com_show_binlog_events
 Com_show_binlogs
 Com_show_charsets
 Com_show_collations
-Com_show_create_db
-Com_show_create_event
-Com_show_create_func
-Com_show_create_proc
-Com_show_create_table
-Com_show_create_trigger
-Com_show_databases
-Com_show_engine_logs
-Com_show_engine_mutex
-Com_show_engine_status
-Com_show_events
+    Public Property Com_show_create_db
+    Public Property Com_show_create_event
+    Public Property Com_show_create_func
+    Public Property Com_show_create_proc
+    Public Property Com_show_create_table
+    Public Property Com_show_create_trigger
+    Public Property Com_show_databases
+    Public Property Com_show_engine_logs
+    Public Property Com_show_engine_mutex
+    Public Property Com_show_engine_status
+    Public Property Com_show_events
 Com_show_errors
 Com_show_fields
 Com_show_function_code
