@@ -9,6 +9,24 @@ Public Class GLOBAL_STATUS
 
     ReadOnly values As StringReader
 
+    Public ReadOnly Property Bytes_received As Double
+        Get
+            Return values.GetDouble("Bytes_received")
+        End Get
+    End Property
+
+    Public ReadOnly Property Bytes_sent As Double
+        Get
+            Return values.GetDouble("Bytes_sent")
+        End Get
+    End Property
+
+    Public ReadOnly Property Selects As ULong
+        Get
+            Return values.GetUInt64("Com_select")
+        End Get
+    End Property
+
     Sub New(data As Dictionary(Of String, String))
         values = StringReader.WrapDictionary(data)
     End Sub
