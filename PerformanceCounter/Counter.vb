@@ -65,6 +65,18 @@ Public Class Counter
         End Get
     End Property
 
+    Public ReadOnly Property Innodb_buffer_pool_read_requests As Double
+        Get
+            Return (current.Innodb_buffer_pool_read_requests - previous.Innodb_buffer_pool_read_requests) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
+    Public ReadOnly Property Innodb_buffer_pool_write_requests As Double
+        Get
+            Return (current.Innodb_buffer_pool_write_requests - previous.Innodb_buffer_pool_write_requests) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
     Sub New(mysql As MySqli)
         Me.mysql = mysql
         Me.previous = PerformanceCounter.GLOBAL_STATUS.Load(mysql)

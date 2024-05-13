@@ -62,6 +62,18 @@ Public Class GLOBAL_STATUS
         End Get
     End Property
 
+    Public ReadOnly Property Innodb_buffer_pool_read_requests As ULong
+        Get
+            Return values.GetUInt64("Innodb_buffer_pool_read_requests")
+        End Get
+    End Property
+
+    Public ReadOnly Property Innodb_buffer_pool_write_requests As ULong
+        Get
+            Return values.GetUInt64("Innodb_buffer_pool_write_requests")
+        End Get
+    End Property
+
     Sub New(data As Dictionary(Of String, String))
         global_status = data
         values = StringReader.WrapDictionary(data)
