@@ -10,6 +10,9 @@ Public Class Logger : Implements IDisposable
     ReadOnly Bytes_received As New List(Of Double)
     ReadOnly Bytes_sent As New List(Of Double)
     ReadOnly Selects As New List(Of Double)
+    ReadOnly Inserts As New List(Of Double)
+    ReadOnly Deletes As New List(Of Double)
+    ReadOnly Updates As New List(Of Double)
     ReadOnly Client_connections As New List(Of Double)
     ' ---------------------- end of log data ------------------------
 
@@ -39,7 +42,10 @@ Public Class Logger : Implements IDisposable
         Call counter.PullNext()
         Call Bytes_received.Add(counter.Bytes_received)
         Call Bytes_sent.Add(counter.Bytes_sent)
-        Call Selects.Add(counter.NumOfSelects)
+        Call Selects.Add(counter.NumOfSelect)
+        Call Inserts.Add(counter.NumOfInsert)
+        Call Deletes.Add(counter.NumOfDelete)
+        Call Updates.Add(counter.NumOfUpdate)
         Call Client_connections.Add(counter.ClientConnections)
         Call timestamp.Add(Now.UnixTimeStamp)
         Call VBDebugger.EchoLine(ToString)
@@ -61,6 +67,9 @@ Public Class Logger : Implements IDisposable
             {NameOf(Bytes_received), Bytes_received.ToArray},
             {NameOf(Bytes_sent), Bytes_sent.ToArray},
             {NameOf(Selects), Selects.ToArray},
+            {NameOf(Inserts), Inserts.ToArray},
+            {NameOf(Deletes), Deletes.ToArray},
+            {NameOf(Updates), Updates.ToArray},
             {NameOf(Client_connections), Client_connections.ToArray},
             {NameOf(timestamp), timestamp.ToArray}
         }
@@ -70,7 +79,14 @@ Public Class Logger : Implements IDisposable
         If timestamp.Count = 0 Then
             Return "<empty>"
         Else
-            Return $"[{timestamp.Last}] Bytes_received:{StringFormats.Lanudry(Bytes_received.Last)}/sec Bytes_sent:{StringFormats.Lanudry(Bytes_sent.Last)}/sec Client_connections: {CInt(Client_connections.Last)} SQL: {CInt(Selects.Last)} SELECT"
+            Dim counter As String() = {
+                $"Bytes_received:{StringFormats.Lanudry(Bytes_received.Last)}/sec",
+                $"Bytes_sent:{StringFormats.Lanudry(Bytes_sent.Last)}/sec",
+                $"Client_connections: {CInt(Client_connections.Last)}",
+                $"SQL: {CInt(Selects.Last)} SELECT {CInt(Inserts.Last)} INSERT {CInt(Updates.Last)} UPDATE {CInt(Deletes.Last)} DELETE"
+            }
+
+            Return $"[{timestamp.Last}] {counter.JoinBy(" ")}"
         End If
     End Function
 

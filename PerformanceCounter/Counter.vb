@@ -29,9 +29,27 @@ Public Class Counter
         End Get
     End Property
 
-    Public ReadOnly Property NumOfSelects As Double
+    Public ReadOnly Property NumOfSelect As Double
         Get
             Return (current.Selects - previous.Selects) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
+    Public ReadOnly Property NumOfInsert As Double
+        Get
+            Return (current.Inserts - previous.Inserts) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
+    Public ReadOnly Property NumOfUpdate As Double
+        Get
+            Return (current.Updates - previous.Updates) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
+    Public ReadOnly Property NumOfDelete As Double
+        Get
+            Return (current.Deletes - previous.Deletes) / deltaTime.TotalSeconds
         End Get
     End Property
 

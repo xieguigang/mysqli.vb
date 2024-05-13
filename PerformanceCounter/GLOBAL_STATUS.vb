@@ -29,6 +29,24 @@ Public Class GLOBAL_STATUS
         End Get
     End Property
 
+    Public ReadOnly Property Inserts As ULong
+        Get
+            Return values.GetUInt64("Com_insert")
+        End Get
+    End Property
+
+    Public ReadOnly Property Updates As ULong
+        Get
+            Return values.GetUInt64("Com_update")
+        End Get
+    End Property
+
+    Public ReadOnly Property Deletes As ULong
+        Get
+            Return values.GetUInt64("Com_delete")
+        End Get
+    End Property
+
     ''' <summary>
     ''' number of client connection in current
     ''' </summary>
