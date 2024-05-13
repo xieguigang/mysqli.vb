@@ -32,6 +32,7 @@ Public Class Counter
     Sub New(mysql As MySqli)
         Me.mysql = mysql
         Me.previous = GLOBAL_STATUS.Load(mysql)
+        Me.current = Me.previous
     End Sub
 
     Public Function PullNext() As Counter
