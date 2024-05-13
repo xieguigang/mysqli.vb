@@ -86,5 +86,9 @@ Public MustInherit Class IDatabase
         Return New Model(name, mysqli)
     End Function
 
+    Public Function getDriver() As MySqli
+        Return mysqli
+    End Function
+
 End Class
 
