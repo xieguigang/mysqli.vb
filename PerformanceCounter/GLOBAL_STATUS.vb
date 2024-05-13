@@ -9,6 +9,8 @@ Public Class GLOBAL_STATUS
 
     ReadOnly values As StringReader
 
+    Public ReadOnly Property time As Date = Now
+
     Public ReadOnly Property Bytes_received As Double
         Get
             Return values.GetDouble("Bytes_received")
