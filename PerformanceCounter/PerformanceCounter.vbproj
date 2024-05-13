@@ -1,10 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>PerformanceCounter</RootNamespace>
+    <RootNamespace>Oracle.LinuxCompatibility.LibMySQL.PerformanceCounter</RootNamespace>
     <TargetFrameworks>net6.0;net48</TargetFrameworks>
     <Platforms>AnyCPU;x64</Platforms>
     <Configurations>Debug;Release;Rsharp_app_release</Configurations>
+    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
+    <AssemblyName>Oracle.LinuxCompatibility.MySQL.PerformanceCounter</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
