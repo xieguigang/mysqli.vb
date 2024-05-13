@@ -29,6 +29,12 @@ Public Class Counter
         End Get
     End Property
 
+    Public ReadOnly Property NumOfSelects As Double
+        Get
+            Return (current.Selects - previous.Selects) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
     Sub New(mysql As MySqli)
         Me.mysql = mysql
         Me.previous = GLOBAL_STATUS.Load(mysql)

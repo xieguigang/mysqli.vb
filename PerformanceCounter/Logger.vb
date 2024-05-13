@@ -7,6 +7,8 @@ Public Class Logger : Implements IDisposable
     ReadOnly counter As Counter
     ReadOnly Bytes_received As New List(Of Double)
     ReadOnly Bytes_sent As New List(Of Double)
+    ReadOnly selects As New List(Of Double)
+
     ''' <summary>
     ''' unix timestamp
     ''' </summary>
@@ -33,6 +35,7 @@ Public Class Logger : Implements IDisposable
         Call counter.PullNext()
         Call Bytes_received.Add(counter.Bytes_received)
         Call Bytes_sent.Add(counter.Bytes_sent)
+        Call selects.Add(counter.NumOfSelects)
         Call timestamp.Add(Now.UnixTimeStamp)
         Call VBDebugger.EchoLine(ToString)
         Call Thread.Sleep(resolution)
@@ -52,6 +55,7 @@ Public Class Logger : Implements IDisposable
         Return New Dictionary(Of String, Double()) From {
             {NameOf(Bytes_received), Bytes_received.ToArray},
             {NameOf(Bytes_sent), Bytes_sent.ToArray},
+            {NameOf(selects), selects.ToArray},
             {NameOf(timestamp), timestamp.ToArray}
         }
     End Function
@@ -60,7 +64,7 @@ Public Class Logger : Implements IDisposable
         If timestamp.Count = 0 Then
             Return "<empty>"
         Else
-            Return $"[{timestamp.Last}] Bytes_received:{StringFormats.Lanudry(Bytes_received.Last)}/sec Bytes_sent:{StringFormats.Lanudry(Bytes_sent.Last)}/sec"
+            Return $"[{timestamp.Last}] Bytes_received:{StringFormats.Lanudry(Bytes_received.Last)}/sec Bytes_sent:{StringFormats.Lanudry(Bytes_sent.Last)}/sec SQL: {CInt(selects.Last)} SELECT"
         End If
     End Function
 
