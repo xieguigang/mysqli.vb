@@ -1,4 +1,5 @@
-﻿Imports Microsoft.VisualBasic.ValueTypes
+﻿Imports System.Threading
+Imports Microsoft.VisualBasic.ValueTypes
 Imports Oracle.LinuxCompatibility.MySQL
 
 Public Class Logger : Implements IDisposable
@@ -10,11 +11,16 @@ Public Class Logger : Implements IDisposable
     ''' unix timestamp
     ''' </summary>
     ReadOnly timestamp As New List(Of Double)
+    ''' <summary>
+    ''' sampling resolution, data in time unit seconds
+    ''' </summary>
+    ReadOnly resolution As Double = 1
 
     Private disposedValue As Boolean
 
-    Sub New(mysql As MySqli)
-        counter = New Counter(mysql)
+    Sub New(mysql As MySqli, Optional resolution As Double = 1)
+        Me.counter = New Counter(mysql)
+        Me.resolution = resolution * 1000
     End Sub
 
     Public Sub Run()
@@ -29,6 +35,7 @@ Public Class Logger : Implements IDisposable
         Call Bytes_sent.Add(counter.Bytes_sent)
         Call timestamp.Add(Now.UnixTimeStamp)
         Call VBDebugger.EchoLine(ToString)
+        Call Thread.Sleep(resolution)
     End Sub
 
     Public Function Run(timespan As TimeSpan) As Logger
