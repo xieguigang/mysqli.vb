@@ -68,15 +68,23 @@ Public Class GLOBAL_STATUS
     End Sub
 
     Public Shared Function Load(mysql As MySqli) As GLOBAL_STATUS
-        Dim pull As MySqlDataReader = mysql.ExecuteDataset("SHOW GLOBAL STATUS;")
-        Dim data As New Dictionary(Of String, String)
+        ' 20240513
+        '
+        ' the mysql connection resource needs to be disposed automatically, or
+        '
+        ' MySql.Data.MySqlClient.MySqlException (0x80004005): error connecting: Timeout expired.
+        ' The timeout period elapsed prior to obtaining a connection from the pool.
+        ' This may have occurred because all pooled connections were in use and max pool size was reached.
+        Using pull As MySqlDataReader = mysql.ExecuteDataset("SHOW GLOBAL STATUS;")
+            Dim data As New Dictionary(Of String, String)
 
-        Do While pull.Read
-            Call data.Add(
-                pull.GetString("Variable_name"),
-                pull.GetString("Value"))
-        Loop
+            Do While pull.Read
+                Call data.Add(
+                    pull.GetString("Variable_name"),
+                    pull.GetString("Value"))
+            Loop
 
-        Return New GLOBAL_STATUS(data)
+            Return New GLOBAL_STATUS(data)
+        End Using
     End Function
 End Class
