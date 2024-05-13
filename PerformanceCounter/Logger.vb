@@ -5,9 +5,13 @@ Imports Oracle.LinuxCompatibility.MySQL
 Public Class Logger : Implements IDisposable
 
     ReadOnly counter As Counter
+
+    ' ------------------------- log data ----------------------------
     ReadOnly Bytes_received As New List(Of Double)
     ReadOnly Bytes_sent As New List(Of Double)
-    ReadOnly selects As New List(Of Double)
+    ReadOnly Selects As New List(Of Double)
+    ReadOnly Client_connections As New List(Of Double)
+    ' ---------------------- end of log data ------------------------
 
     ''' <summary>
     ''' unix timestamp
@@ -35,7 +39,8 @@ Public Class Logger : Implements IDisposable
         Call counter.PullNext()
         Call Bytes_received.Add(counter.Bytes_received)
         Call Bytes_sent.Add(counter.Bytes_sent)
-        Call selects.Add(counter.NumOfSelects)
+        Call Selects.Add(counter.NumOfSelects)
+        Call Client_connections.Add(counter.ClientConnections)
         Call timestamp.Add(Now.UnixTimeStamp)
         Call VBDebugger.EchoLine(ToString)
         Call Thread.Sleep(resolution)
@@ -55,7 +60,8 @@ Public Class Logger : Implements IDisposable
         Return New Dictionary(Of String, Double()) From {
             {NameOf(Bytes_received), Bytes_received.ToArray},
             {NameOf(Bytes_sent), Bytes_sent.ToArray},
-            {NameOf(selects), selects.ToArray},
+            {NameOf(Selects), Selects.ToArray},
+            {NameOf(Client_connections), Client_connections.ToArray},
             {NameOf(timestamp), timestamp.ToArray}
         }
     End Function
@@ -64,7 +70,7 @@ Public Class Logger : Implements IDisposable
         If timestamp.Count = 0 Then
             Return "<empty>"
         Else
-            Return $"[{timestamp.Last}] Bytes_received:{StringFormats.Lanudry(Bytes_received.Last)}/sec Bytes_sent:{StringFormats.Lanudry(Bytes_sent.Last)}/sec SQL: {CInt(selects.Last)} SELECT"
+            Return $"[{timestamp.Last}] Bytes_received:{StringFormats.Lanudry(Bytes_received.Last)}/sec Bytes_sent:{StringFormats.Lanudry(Bytes_sent.Last)}/sec Client_connections: {CInt(Client_connections.Last)} SQL: {CInt(Selects.Last)} SELECT"
         End If
     End Function
 

@@ -35,6 +35,12 @@ Public Class Counter
         End Get
     End Property
 
+    Public ReadOnly Property ClientConnections As Integer
+        Get
+            Return current.Threads_connected
+        End Get
+    End Property
+
     Sub New(mysql As MySqli)
         Me.mysql = mysql
         Me.previous = GLOBAL_STATUS.Load(mysql)

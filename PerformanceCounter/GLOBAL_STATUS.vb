@@ -29,6 +29,16 @@ Public Class GLOBAL_STATUS
         End Get
     End Property
 
+    ''' <summary>
+    ''' number of client connection in current
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Threads_connected As Integer
+        Get
+            Return values.GetInt32("Threads_connected")
+        End Get
+    End Property
+
     Sub New(data As Dictionary(Of String, String))
         values = StringReader.WrapDictionary(data)
     End Sub
