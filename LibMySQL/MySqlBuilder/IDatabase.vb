@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::21ce3eea108f67e196f5392298d51fef, G:/graphQL/src/mysqli/LibMySQL//MySqlBuilder/IDatabase.vb"
+﻿#Region "Microsoft.VisualBasic::31ecf2ee556341c8796b02f017940fb1, src\mysqli\LibMySQL\MySqlBuilder\IDatabase.vb"
 
     ' Author:
     ' 
@@ -34,17 +34,17 @@
 
     ' Code Statistics:
 
-    '   Total Lines: 37
-    '    Code Lines: 15
+    '   Total Lines: 41
+    '    Code Lines: 18
     ' Comment Lines: 16
-    '   Blank Lines: 6
-    '     File Size: 1.15 KB
+    '   Blank Lines: 7
+    '     File Size: 1.23 KB
 
 
     ' Class IDatabase
     ' 
     '     Constructor: (+1 Overloads) Sub New
-    '     Function: CreateModel, model
+    '     Function: CreateModel, getDriver, model
     ' 
     ' /********************************************************************************/
 
@@ -91,4 +91,3 @@ Public MustInherit Class IDatabase
     End Function
 
 End Class
-

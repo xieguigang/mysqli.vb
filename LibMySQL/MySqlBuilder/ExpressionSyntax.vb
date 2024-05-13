@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::80d245bce11a2681460ae1eead8d7f05, G:/graphQL/src/mysqli/LibMySQL//MySqlBuilder/ExpressionSyntax.vb"
+﻿#Region "Microsoft.VisualBasic::80d245bce11a2681460ae1eead8d7f05, src\mysqli\LibMySQL\MySqlBuilder\ExpressionSyntax.vb"
 
     ' Author:
     ' 

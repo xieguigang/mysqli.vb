@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::1193fc778820933401cbd023c12f8d6b, G:/graphQL/src/mysqli/LibMySQL//MySqlBuilder/Table.vb"
+﻿#Region "Microsoft.VisualBasic::fda1967bd762b3fc91c345b9d7e3ca51, src\mysqli\LibMySQL\MySqlBuilder\Table.vb"
 
     ' Author:
     ' 
@@ -34,11 +34,11 @@
 
     ' Code Statistics:
 
-    '   Total Lines: 427
-    '    Code Lines: 256
+    '   Total Lines: 436
+    '    Code Lines: 264
     ' Comment Lines: 115
-    '   Blank Lines: 56
-    '     File Size: 16.05 KB
+    '   Blank Lines: 57
+    '     File Size: 16.50 KB
 
 
     '     Class Model
@@ -47,10 +47,10 @@
     ' 
     '         Constructor: (+3 Overloads) Sub New
     '         Function: (+2 Overloads) [and], [on], (+2 Overloads) [or], (+2 Overloads) [select], add
-    '                   count, delete, distinct, f, field
-    '                   find, getDriver, group_by, inspectSchema, left_join
-    '                   limit, (+3 Overloads) order_by, project, save, selectSql
-    '                   ToString, (+2 Overloads) where
+    '                   aggregate, count, delete, distinct, f
+    '                   field, find, getDriver, group_by, inspectSchema
+    '                   left_join, limit, (+3 Overloads) order_by, project, save
+    '                   selectSql, ToString, (+2 Overloads) where
     ' 
     ' 
     ' /********************************************************************************/

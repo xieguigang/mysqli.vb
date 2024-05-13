@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::a67dfe96ce33620180c9eaf17a43141b, G:/graphQL/src/mysqli/test//Program.vb"
+﻿#Region "Microsoft.VisualBasic::16a074e45c2d79105dbda261390fe494, src\mysqli\test\Program.vb"
 
     ' Author:
     ' 
@@ -107,4 +107,3 @@ Lovastatin, also known as the brand name product Mevacor, is a lipid-lowering dr
     End Sub
 
 End Module
-

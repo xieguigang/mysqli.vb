@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::d7ea00a716c2880ac518534cd8cdb0e0, G:/graphQL/src/mysqli/LibMySQL//Extensions/DumpTaskRunner.vb"
+﻿#Region "Microsoft.VisualBasic::aaf17249fc0f8a16ef3d977984103101, src\mysqli\LibMySQL\Extensions\DumpTaskRunner.vb"
 
     ' Author:
     ' 
@@ -199,4 +199,3 @@ Public Class DumpTaskRunner : Implements IDisposable
         GC.SuppressFinalize(Me)
     End Sub
 End Class
-

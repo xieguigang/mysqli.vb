@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::b885f16af256fc45e2b91d91c4ef771c, G:/graphQL/src/mysqli/test//sql_test.vb"
+﻿#Region "Microsoft.VisualBasic::ce106176ec7fc104d39f903a22b119eb, src\mysqli\test\sql_test.vb"
 
     ' Author:
     ' 
@@ -38,7 +38,7 @@
     '    Code Lines: 12
     ' Comment Lines: 0
     '   Blank Lines: 3
-    '     File Size: 559 B
+    '     File Size: 557 B
 
 
     ' Module sql_test
@@ -64,4 +64,3 @@ Public Module sql_test
         Pause()
     End Sub
 End Module
-

@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::4cc92d78b311353fe0b0c97e411a0b1e, G:/graphQL/src/mysqli/LibMySQL//Reflection/DbReflector/FieldDescription.vb"
+﻿#Region "Microsoft.VisualBasic::4cc92d78b311353fe0b0c97e411a0b1e, src\mysqli\LibMySQL\Reflection\DbReflector\FieldDescription.vb"
 
     ' Author:
     ' 

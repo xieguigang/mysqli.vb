@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::93e8f9d788a786c2b1051727322c44fb, G:/graphQL/src/mysqli/LibMySQL//Reflection/Schema/Table.vb"
+﻿#Region "Microsoft.VisualBasic::93e8f9d788a786c2b1051727322c44fb, src\mysqli\LibMySQL\Reflection\Schema\Table.vb"
 
     ' Author:
     ' 

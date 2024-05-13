@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::8008431b7eaace3b72a5365294483d32, G:/graphQL/src/mysqli/LibMySQL//ServerApp/MemoryCache.vb"
+﻿#Region "Microsoft.VisualBasic::8008431b7eaace3b72a5365294483d32, src\mysqli\LibMySQL\ServerApp\MemoryCache.vb"
 
     ' Author:
     ' 

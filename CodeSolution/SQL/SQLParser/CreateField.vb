@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::95bb23f334896c18f864107dda5f9ced, G:/graphQL/src/mysqli/CodeSolution//SQL/SQLParser/CreateField.vb"
+﻿#Region "Microsoft.VisualBasic::95bb23f334896c18f864107dda5f9ced, src\mysqli\CodeSolution\SQL\SQLParser\CreateField.vb"
 
     ' Author:
     ' 

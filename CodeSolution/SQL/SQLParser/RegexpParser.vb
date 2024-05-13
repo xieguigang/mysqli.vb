@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::d8e2c183f1046700e651a8b53e482a4a, G:/graphQL/src/mysqli/CodeSolution//SQL/SQLParser/RegexpParser.vb"
+﻿#Region "Microsoft.VisualBasic::d8e2c183f1046700e651a8b53e482a4a, src\mysqli\CodeSolution\SQL\SQLParser\RegexpParser.vb"
 
     ' Author:
     ' 

@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::62473c1b98e04658d957e1e02cd605bb, G:/graphQL/src/mysqli/LibMySQL//Workbench/Connections.vb"
+﻿#Region "Microsoft.VisualBasic::62473c1b98e04658d957e1e02cd605bb, src\mysqli\LibMySQL\Workbench\Connections.vb"
 
     ' Author:
     ' 

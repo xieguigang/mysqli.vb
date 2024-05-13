@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::865e350abb035e094862b715ef7a57f6, G:/graphQL/src/mysqli/LibMySQL//Extensions/LinqExports.vb"
+﻿#Region "Microsoft.VisualBasic::865e350abb035e094862b715ef7a57f6, src\mysqli\LibMySQL\Extensions\LinqExports.vb"
 
     ' Author:
     ' 

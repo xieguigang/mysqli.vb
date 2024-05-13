@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::e92b1f1a099a4e4f97fa4f2ae7ecf1c6, G:/graphQL/src/mysqli/CodeSolution//CodeGenerator/VisualBasic/CodeGenerator.vb"
+﻿#Region "Microsoft.VisualBasic::e92b1f1a099a4e4f97fa4f2ae7ecf1c6, src\mysqli\CodeSolution\CodeGenerator\VisualBasic\CodeGenerator.vb"
 
     ' Author:
     ' 

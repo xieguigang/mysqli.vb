@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::cb3c80da736cbfa0fc6891e88f6aad52, G:/graphQL/src/mysqli/LibMySQL//Extensions/DataDumps.vb"
+﻿#Region "Microsoft.VisualBasic::cb3c80da736cbfa0fc6891e88f6aad52, src\mysqli\LibMySQL\Extensions\DataDumps.vb"
 
     ' Author:
     ' 

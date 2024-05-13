@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::826ea4bf31121d6d583026aac8fed8e9, G:/graphQL/src/mysqli/CodeSolution//SQL/SQLParser/CreateSchema.vb"
+﻿#Region "Microsoft.VisualBasic::826ea4bf31121d6d583026aac8fed8e9, src\mysqli\CodeSolution\SQL\SQLParser\CreateSchema.vb"
 
     ' Author:
     ' 

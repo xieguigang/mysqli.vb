@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::eec6dd2db926b994d034951b51f081de, G:/graphQL/src/mysqli/LibMySQL//MySqlBuilder/CreateDataType.vb"
+﻿#Region "Microsoft.VisualBasic::eec6dd2db926b994d034951b51f081de, src\mysqli\LibMySQL\MySqlBuilder\CreateDataType.vb"
 
     ' Author:
     ' 

@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::40d3b8ef5ea75f3ac9392a0f86949219, G:/graphQL/src/mysqli/LibMySQL//Reflection/DbAttributes/MySqlDbType.vb"
+﻿#Region "Microsoft.VisualBasic::40d3b8ef5ea75f3ac9392a0f86949219, src\mysqli\LibMySQL\Reflection\DbAttributes\MySqlDbType.vb"
 
     ' Author:
     ' 

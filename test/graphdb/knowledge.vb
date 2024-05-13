@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::e2457738126c3ec2fd4cc15385e77af1, G:/graphQL/src/mysqli/test//graphdb/knowledge.vb"
+﻿#Region "Microsoft.VisualBasic::5eee0257e0ccc24ef8c43f31e1851267, src\mysqli\test\graphdb\knowledge.vb"
 
     ' Author:
     ' 
@@ -269,4 +269,3 @@ End Class
 
 
 End Namespace
-

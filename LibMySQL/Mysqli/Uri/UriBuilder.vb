@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::1c964574a1b12747e8c77ac1b51b81a3, G:/graphQL/src/mysqli/LibMySQL//Mysqli/Uri/UriBuilder.vb"
+﻿#Region "Microsoft.VisualBasic::1c964574a1b12747e8c77ac1b51b81a3, src\mysqli\LibMySQL\Mysqli\Uri\UriBuilder.vb"
 
     ' Author:
     ' 

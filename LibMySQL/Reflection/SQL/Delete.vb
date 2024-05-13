@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::f9cfe201a34e55467ed33f6c01279a48, G:/graphQL/src/mysqli/LibMySQL//Reflection/SQL/Delete.vb"
+﻿#Region "Microsoft.VisualBasic::f9cfe201a34e55467ed33f6c01279a48, src\mysqli\LibMySQL\Reflection\SQL\Delete.vb"
 
     ' Author:
     ' 

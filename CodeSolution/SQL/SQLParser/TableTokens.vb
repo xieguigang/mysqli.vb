@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::5803c7a3fae59e44ec8535e4d7e32e9b, G:/graphQL/src/mysqli/CodeSolution//SQL/SQLParser/TableTokens.vb"
+﻿#Region "Microsoft.VisualBasic::5803c7a3fae59e44ec8535e4d7e32e9b, src\mysqli\CodeSolution\SQL\SQLParser\TableTokens.vb"
 
     ' Author:
     ' 

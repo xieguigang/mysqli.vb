@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::d5a769edfdc2b5ec260577b48ecbbf14, G:/graphQL/src/mysqli/LibMySQL//Mysqli/Uri/UriEncryption.vb"
+﻿#Region "Microsoft.VisualBasic::d5a769edfdc2b5ec260577b48ecbbf14, src\mysqli\LibMySQL\Mysqli\Uri\UriEncryption.vb"
 
     ' Author:
     ' 

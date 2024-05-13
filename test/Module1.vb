@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::ae460951bc9590b360918c5068657044, G:/graphQL/src/mysqli/test//Module1.vb"
+﻿#Region "Microsoft.VisualBasic::2dbbd5350a611476789c92576cbdccba, src\mysqli\test\Module1.vb"
 
     ' Author:
     ' 
@@ -38,7 +38,7 @@
     '    Code Lines: 15
     ' Comment Lines: 0
     '   Blank Lines: 7
-    '     File Size: 671 B
+    '     File Size: 669 B
 
 
     ' Module Module1
@@ -71,4 +71,3 @@ Module Module1
         Pause()
     End Sub
 End Module
-
