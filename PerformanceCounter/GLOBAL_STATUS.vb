@@ -9,6 +9,11 @@ Public Class GLOBAL_STATUS
 
     ReadOnly values As StringReader
 
+    ''' <summary>
+    ''' the source data that pull from the mysql server
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property global_status As Dictionary(Of String, String)
     Public ReadOnly Property time As Date = Now
 
     Public ReadOnly Property Bytes_received As Double
@@ -58,6 +63,7 @@ Public Class GLOBAL_STATUS
     End Property
 
     Sub New(data As Dictionary(Of String, String))
+        global_status = data
         values = StringReader.WrapDictionary(data)
     End Sub
 

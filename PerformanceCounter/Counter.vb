@@ -13,6 +13,12 @@ Public Class Counter
         End Get
     End Property
 
+    Public ReadOnly Property global_status As Dictionary(Of String, String)
+        Get
+            Return current.global_status
+        End Get
+    End Property
+
     ''' <summary>
     ''' Bytes_received per seconds
     ''' </summary>
@@ -61,13 +67,13 @@ Public Class Counter
 
     Sub New(mysql As MySqli)
         Me.mysql = mysql
-        Me.previous = GLOBAL_STATUS.Load(mysql)
+        Me.previous = PerformanceCounter.GLOBAL_STATUS.Load(mysql)
         Me.current = Me.previous
     End Sub
 
     Public Function PullNext() As Counter
         previous = current
-        current = GLOBAL_STATUS.Load(mysql)
+        current = PerformanceCounter.GLOBAL_STATUS.Load(mysql)
         Return Me
     End Function
 

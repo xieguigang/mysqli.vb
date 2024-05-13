@@ -14,6 +14,7 @@ Public Class Logger : Implements IDisposable
     ReadOnly Deletes As New List(Of Double)
     ReadOnly Updates As New List(Of Double)
     ReadOnly Client_connections As New List(Of Double)
+    ReadOnly global_status As New List(Of Dictionary(Of String, String))
     ' ---------------------- end of log data ------------------------
 
     ''' <summary>
@@ -48,6 +49,7 @@ Public Class Logger : Implements IDisposable
         Call Updates.Add(counter.NumOfUpdate)
         Call Client_connections.Add(counter.ClientConnections)
         Call timestamp.Add(Now.UnixTimeStamp)
+        Call global_status.Add(counter.global_status)
         Call VBDebugger.EchoLine(ToString)
         Call Thread.Sleep(resolution)
     End Sub
@@ -60,6 +62,10 @@ Public Class Logger : Implements IDisposable
         Loop
 
         Return Me
+    End Function
+
+    Public Function GetGlobalStatus() As Dictionary(Of String, String)()
+        Return global_status.ToArray
     End Function
 
     Public Function GetLogging() As Dictionary(Of String, Double())
