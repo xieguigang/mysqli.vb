@@ -16,6 +16,7 @@ Public Class Logger : Implements IDisposable
     ReadOnly Client_connections As New List(Of Double)
     ReadOnly Innodb_buffer_pool_read_requests As New List(Of Double)
     ReadOnly Innodb_buffer_pool_write_requests As New List(Of Double)
+    ReadOnly Innodb_data_read As New List(Of Double)
 
     ReadOnly global_status As New List(Of Dictionary(Of String, String))
     ' ---------------------- end of log data ------------------------
@@ -55,6 +56,7 @@ Public Class Logger : Implements IDisposable
         Call Innodb_buffer_pool_read_requests.Add(counter.Innodb_buffer_pool_read_requests)
         Call Innodb_buffer_pool_write_requests.Add(counter.Innodb_buffer_pool_write_requests)
         Call global_status.Add(counter.global_status)
+        Call Innodb_data_read.Add(counter.Innodb_data_read)
         Call VBDebugger.EchoLine(ToString)
         Call Thread.Sleep(resolution)
     End Sub
@@ -83,6 +85,7 @@ Public Class Logger : Implements IDisposable
             {NameOf(Updates), Updates.ToArray},
             {NameOf(Innodb_buffer_pool_read_requests), Innodb_buffer_pool_read_requests.ToArray},
             {NameOf(Innodb_buffer_pool_write_requests), Innodb_buffer_pool_write_requests.ToArray},
+            {NameOf(Innodb_data_read), Innodb_data_read.ToArray},
             {NameOf(Client_connections), Client_connections.ToArray},
             {NameOf(timestamp), timestamp.ToArray}
         }
@@ -93,11 +96,12 @@ Public Class Logger : Implements IDisposable
             Return "<empty>"
         Else
             Dim counter As String() = {
-                $"Bytes_received:{StringFormats.Lanudry(Bytes_received.Last)}/sec",
-                $"Bytes_sent:{StringFormats.Lanudry(Bytes_sent.Last)}/sec",
+                $"Bytes_received:{StringFormats.Lanudry(Bytes_received.Last)}/s",
+                $"Bytes_sent:{StringFormats.Lanudry(Bytes_sent.Last)}/s",
                 $"Client_connections: {CInt(Client_connections.Last)}",
                 $"SQL: {CInt(Selects.Last)} SELECT {CInt(Inserts.Last)} INSERT {CInt(Updates.Last)} UPDATE {CInt(Deletes.Last)} DELETE",
-                $"Innodb_buffer_pool: {StringFormats.nsize(Innodb_buffer_pool_read_requests.Last)} pages/s read_requests {StringFormats.nsize(Innodb_buffer_pool_write_requests.Last)} pages/s write_requests"
+                $"Innodb_buffer_pool: {StringFormats.nsize(Innodb_buffer_pool_read_requests.Last)} pages/s read_requests {StringFormats.nsize(Innodb_buffer_pool_write_requests.Last)} pages/s write_requests",
+                $"Innodb_data_read: {StringFormats.Lanudry(Innodb_data_read.Last)}/s"
             }
 
             Return $"[{timestamp.Last}] {counter.JoinBy("; ")}"

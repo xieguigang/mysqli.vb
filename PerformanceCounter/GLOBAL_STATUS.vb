@@ -74,6 +74,12 @@ Public Class GLOBAL_STATUS
         End Get
     End Property
 
+    Public ReadOnly Property Innodb_data_read As ULong
+        Get
+            Return values.GetUInt64("Innodb_data_read")
+        End Get
+    End Property
+
     Sub New(data As Dictionary(Of String, String))
         global_status = data
         values = StringReader.WrapDictionary(data)

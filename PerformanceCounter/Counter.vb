@@ -77,6 +77,12 @@ Public Class Counter
         End Get
     End Property
 
+    Public ReadOnly Property Innodb_data_read As Double
+        Get
+            Return (current.Innodb_data_read - previous.Innodb_data_read) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
     Sub New(mysql As MySqli)
         Me.mysql = mysql
         Me.previous = PerformanceCounter.GLOBAL_STATUS.Load(mysql)
