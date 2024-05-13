@@ -19,13 +19,27 @@ Public Class Logger : Implements IDisposable
 
     Public Sub Run()
         Do While App.Running AndAlso Not disposedValue
-            Call counter.PullNext()
-            Call Bytes_received.Add(counter.Bytes_received)
-            Call Bytes_sent.Add(counter.Bytes_sent)
-            Call timestamp.Add(Now.UnixTimeStamp)
-            Call VBDebugger.EchoLine(ToString)
+            Call pullData()
         Loop
     End Sub
+
+    Private Sub pullData()
+        Call counter.PullNext()
+        Call Bytes_received.Add(counter.Bytes_received)
+        Call Bytes_sent.Add(counter.Bytes_sent)
+        Call timestamp.Add(Now.UnixTimeStamp)
+        Call VBDebugger.EchoLine(ToString)
+    End Sub
+
+    Public Function Run(timespan As TimeSpan) As Logger
+        Dim t0 = Now
+
+        Do While (Now - t0) < timespan AndAlso App.Running AndAlso Not disposedValue
+            Call pullData()
+        Loop
+
+        Return Me
+    End Function
 
     Public Function GetLogging() As Dictionary(Of String, Double())
         Return New Dictionary(Of String, Double()) From {

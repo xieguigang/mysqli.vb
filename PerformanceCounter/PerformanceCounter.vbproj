@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <RootNamespace>PerformanceCounter</RootNamespace>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net48</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
