@@ -97,7 +97,7 @@ Public Class Logger : Implements IDisposable
                 $"Bytes_sent:{StringFormats.Lanudry(Bytes_sent.Last)}/sec",
                 $"Client_connections: {CInt(Client_connections.Last)}",
                 $"SQL: {CInt(Selects.Last)} SELECT {CInt(Inserts.Last)} INSERT {CInt(Updates.Last)} UPDATE {CInt(Deletes.Last)} DELETE",
-                $"Innodb_buffer_pool: {CInt(Innodb_buffer_pool_read_requests.Last)}pages/s read_requests {CInt(Innodb_buffer_pool_write_requests.Last)}pages/s write_requests"
+                $"Innodb_buffer_pool: {StringFormats.nsize(Innodb_buffer_pool_read_requests.Last)} pages/s read_requests {StringFormats.nsize(Innodb_buffer_pool_write_requests.Last)} pages/s write_requests"
             }
 
             Return $"[{timestamp.Last}] {counter.JoinBy("; ")}"
