@@ -89,7 +89,7 @@ Namespace MySqlBuilder
                 type = Reflection.DbAttributes.MySqlDbType.VarChar
                 parameter = GetNumberValue(type_define, 45)
 
-            ElseIf Regex.Match(type_define, "double", RegexOptions.IgnoreCase).Success OrElse InStr(type_define, "float", CompareMethod.Text) > 0 Then
+            ElseIf Regex.Match(type_define, "double", RegexOptions.IgnoreCase).Success OrElse Strings.InStr(type_define, "float", CompareMethod.Text) > 0 Then
                 type = Reflection.DbAttributes.MySqlDbType.Double
 
             ElseIf Regex.Match(type_define, "datetime", RegexOptions.IgnoreCase).Success OrElse
@@ -101,10 +101,10 @@ Namespace MySqlBuilder
             ElseIf Regex.Match(type_define, "text", RegexOptions.IgnoreCase).Success Then
                 type = Reflection.DbAttributes.MySqlDbType.Text
 
-            ElseIf InStr(type_define, "enum(", CompareMethod.Text) > 0 Then   ' enum类型转换为String类型？？？？
+            ElseIf Strings.InStr(type_define, "enum(", CompareMethod.Text) > 0 Then   ' enum类型转换为String类型？？？？
                 type = Reflection.DbAttributes.MySqlDbType.String
 
-            ElseIf InStr(type_define, "Blob", CompareMethod.Text) > 0 OrElse
+            ElseIf Strings.InStr(type_define, "Blob", CompareMethod.Text) > 0 OrElse
                 Regex.Match(type_define, "varbinary\(\d+\)", RegexOptions.IgnoreCase).Success OrElse
                 Regex.Match(type_define, "binary\(\d+\)", RegexOptions.IgnoreCase).Success Then
                 type = Reflection.DbAttributes.MySqlDbType.Blob
