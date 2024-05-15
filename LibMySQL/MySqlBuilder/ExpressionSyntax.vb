@@ -132,6 +132,13 @@ Namespace MySqlBuilder
         End Function
 
         <Extension>
+        Public Function instr(f As FieldAssert, substr As String) As FieldAssert
+            f.op = "func"
+            f.val = $"INSTR({f.name}, '{substr.Replace("'", "\'")}')"
+            Return f
+        End Function
+
+        <Extension>
         Public Function [or](test As FieldAssert()) As String
             Return (From ti As FieldAssert In test Let sql = ti.ToString Select sql).JoinBy(" OR ")
         End Function
