@@ -83,6 +83,25 @@ Namespace Reflection
             End If
         End Function
 
+        Public Shared Function ReadFirst(reader As DataTableReader) As Dictionary(Of String, Object)
+            If reader Is Nothing OrElse Not reader.HasRows Then
+                Return Nothing
+            Else
+                Dim row As New Dictionary(Of String, Object)
+                Dim size As Integer = reader.FieldCount
+
+                Do While reader.Read
+                    For i As Integer = 0 To size - 1
+                        Call row.Add(reader.GetName(i), reader.GetValue(i))
+                    Next
+
+                    Exit Do
+                Loop
+
+                Return row
+            End If
+        End Function
+
         Public Shared Iterator Function Load(Of T As Class)(reader As DataTableReader, getErr As Value(Of String)) As IEnumerable(Of T)
             Dim clr_map As Type = GetType(T)
             Dim schema = InitSchema(reader, type:=clr_map).ToArray
