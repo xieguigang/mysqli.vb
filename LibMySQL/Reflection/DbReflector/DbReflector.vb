@@ -89,10 +89,17 @@ Namespace Reflection
             Else
                 Dim row As New Dictionary(Of String, Object)
                 Dim size As Integer = reader.FieldCount
+                Dim val As Object
 
                 Do While reader.Read
                     For i As Integer = 0 To size - 1
-                        Call row.Add(reader.GetName(i), reader.GetValue(i))
+                        val = reader.GetValue(i)
+
+                        If IsDBNull(val) Then
+                            val = Nothing
+                        End If
+
+                        row.Add(reader.GetName(i), val)
                     Next
 
                     Exit Do
