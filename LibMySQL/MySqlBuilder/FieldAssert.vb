@@ -94,6 +94,32 @@ Namespace MySqlBuilder
             Return Me
         End Function
 
+        ''' <summary>
+        ''' this function will make sure that the special word example as 
+        ''' mysql keyword: select/insert/etc will be wrapped as `name`, 
+        ''' so that this will not cause the mysql syntax error.
+        ''' </summary>
+        ''' <returns></returns>
+        Public Function GetSafeName() As String
+            Return EnsureSafeName(name)
+        End Function
+
+        Public Shared Function EnsureSafeName(name As String) As String
+            If name.StringEmpty Then
+                Throw New Exception("the given name string is empty, can not be used as reference name!")
+            End If
+
+            If name.Last = "`"c Then
+                ' is already safe
+                Return name
+            ElseIf name.IndexOf("."c) > -1 Then
+                ' is already safe
+                Return name
+            Else
+                Return $"`{name}`"
+            End If
+        End Function
+
         Public Overrides Function ToString() As String
             Dim str As String
 
