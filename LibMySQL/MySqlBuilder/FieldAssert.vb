@@ -112,7 +112,10 @@ Namespace MySqlBuilder
             If name.Last = "`"c Then
                 ' is already safe
                 Return name
-            ElseIf name.IndexOf("."c) > -1 Then
+            ElseIf name.IndexOf("."c) > -1 OrElse
+                name.IndexOf(" "c) > -1 OrElse
+                name.IndexOf("*"c) > -1 Then
+
                 ' is already safe
                 Return name
             Else

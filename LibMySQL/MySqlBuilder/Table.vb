@@ -278,7 +278,7 @@ Namespace MySqlBuilder
             Dim left_join As String = If(query?.left_join_str, "")
             Dim order_by As String = If(query?.order_by_str, "")
             Dim group_by As String = If(query?.group_by_str, "")
-            Dim fieldSet As String = If(fields.IsNullOrEmpty, "*", fields.JoinBy(", "))
+            Dim fieldSet As String = If(fields.IsNullOrEmpty, "*", fields.Select(AddressOf FieldAssert.EnsureSafeName).JoinBy(", "))
             Dim sql As String = $"SELECT {fieldSet} FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {group_by} {order_by} LIMIT 1;"
             chain.m_getLastMySql = sql
             Return sql
@@ -343,7 +343,7 @@ Namespace MySqlBuilder
             Dim order_by As String = If(query?.order_by_str, "")
             Dim group_by As String = If(query?.group_by_str, "")
             Dim distinct As String = If(query?.distinct_str, "")
-            Dim fieldSet As String = If(fields.IsNullOrEmpty, "*", fields.JoinBy(", "))
+            Dim fieldSet As String = If(fields.IsNullOrEmpty, "*", fields.Select(AddressOf FieldAssert.EnsureSafeName).JoinBy(", "))
             ' 20240324 group by should before the order by
             ' or the sql expression syntax error
             Dim sql As String = $"SELECT {distinct} {fieldSet} FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {group_by} {order_by} {limit};"
@@ -379,7 +379,7 @@ Namespace MySqlBuilder
                     Throw New InvalidOperationException
                 End If
 
-                Call setFields.Add($"{field.name} = {field.val}")
+                Call setFields.Add($"{field.GetSafeName} = {field.val}")
             Next
 
             Dim sql As String = $"UPDATE `{schema.Database}`.`{schema.TableName}` SET {setFields.JoinBy(", ")} {where} {limit};"
@@ -394,7 +394,7 @@ Namespace MySqlBuilder
         ''' <param name="fields"></param>
         ''' <returns></returns>
         Public Function add(ParamArray fields As FieldAssert()) As Boolean
-            Dim names As String = fields.Select(Function(a) a.name).JoinBy(", ")
+            Dim names As String = fields.Select(Function(a) a.GetSafeName).JoinBy(", ")
             Dim vals As String = fields.Select(Function(a) a.val).JoinBy(", ")
             Dim sql As String = $"INSERT INTO `{schema.Database}`.`{schema.TableName}` ({names}) VALUES ({vals});"
             chain.m_getLastMySql = sql
