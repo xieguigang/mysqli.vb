@@ -1,52 +1,52 @@
 ﻿#Region "Microsoft.VisualBasic::95bb23f334896c18f864107dda5f9ced, src\mysqli\CodeSolution\SQL\SQLParser\CreateField.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
-
-
-    ' Code Statistics:
-
-    '   Total Lines: 90
-    '    Code Lines: 71
-    ' Comment Lines: 6
-    '   Blank Lines: 13
-    '     File Size: 4.32 KB
+' Summaries:
 
 
-    '     Module CreateField
-    ' 
-    '         Function: (+2 Overloads) CreateField
-    ' 
-    ' 
-    ' /********************************************************************************/
+' Code Statistics:
+
+'   Total Lines: 90
+'    Code Lines: 71
+' Comment Lines: 6
+'   Blank Lines: 13
+'     File Size: 4.32 KB
+
+
+'     Module CreateField
+' 
+'         Function: (+2 Overloads) CreateField
+' 
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -71,12 +71,12 @@ Namespace SQLParser
             Dim fieldName As String = tokens(0)
             Dim dataType As String = tokens(1)
             Dim commentText As String = r.Match(fieldDef, FIELD_COMMENTS).Value
-            Dim i As Integer = InStr(fieldDef, fieldName)
+            Dim i As Integer = Strings.InStr(fieldDef, fieldName)
             Dim defaultVal As String
 
             defaultVal = r.Match(fieldDef, FIELD_DEFAULT, RegexICSng).Value
             fieldDef = Mid(fieldDef, i + Len(fieldName))
-            i = InStr(fieldDef, dataType)
+            i = Strings.InStr(fieldDef, dataType)
             fieldDef = Mid(fieldDef, i + Len(dataType)).Replace(",", "").Trim
             fieldName = Mid(fieldName, 2, Len(fieldName) - 2)
 
@@ -90,7 +90,7 @@ Namespace SQLParser
                 defaultVal = Nothing
             End If
 
-            Dim pos% = InStr(fieldDef, "COMMENT '", CompareMethod.Text)
+            Dim pos% = Strings.InStr(fieldDef, "COMMENT '", CompareMethod.Text)
             Dim p As i32 = 0
 
             If pos = 0 Then
@@ -98,10 +98,10 @@ Namespace SQLParser
                 pos = Integer.MaxValue
             End If
 
-            Dim autoIncrement As Boolean = (p = InStr(fieldDef, "AUTO_INCREMENT", CompareMethod.Text)) > 0 AndAlso p < pos
-            Dim IsNotNull As Boolean = (p = InStr(fieldDef, "NOT NULL", CompareMethod.Text)) > 0 AndAlso p < pos
-            Dim unsigned As Boolean = (p = InStr(fieldDef, "UNSIGNED", CompareMethod.Text)) > 0 AndAlso p < pos
-            Dim zeroFill As Boolean = (p = InStr(fieldDef, "ZEROFILL", CompareMethod.Text)) > 0 AndAlso p < pos
+            Dim autoIncrement As Boolean = (p = Strings.InStr(fieldDef, "AUTO_INCREMENT", CompareMethod.Text)) > 0 AndAlso p < pos
+            Dim IsNotNull As Boolean = (p = Strings.InStr(fieldDef, "NOT NULL", CompareMethod.Text)) > 0 AndAlso p < pos
+            Dim unsigned As Boolean = (p = Strings.InStr(fieldDef, "UNSIGNED", CompareMethod.Text)) > 0 AndAlso p < pos
+            Dim zeroFill As Boolean = (p = Strings.InStr(fieldDef, "ZEROFILL", CompareMethod.Text)) > 0 AndAlso p < pos
             ' Some data type can be merged into a same type
             ' when we mapping a database table
             Dim field As New Field With {
