@@ -123,10 +123,17 @@ Namespace MySqlBuilder
             End If
         End Function
 
+        ''' <summary>
+        ''' generates the sql expression
+        ''' </summary>
+        ''' <returns></returns>
         Public Overrides Function ToString() As String
             Dim str As String
 
-            If op.TextEquals("between") Then
+            If op.TextEquals("or") AndAlso name.TextEquals("or") Then
+                ' a or b
+                str = $"(({val}) OR ({val2}))"
+            ElseIf op.TextEquals("between") Then
                 str = $"({name} BETWEEN {val} AND {val2})"
             ElseIf op.TextEquals(NameOf(ExpressionSyntax.match)) Then
                 str = $"MATCH({name}) against ('{val}' in {val2} mode)"
@@ -287,6 +294,17 @@ Namespace MySqlBuilder
         Public Overloads Shared Operator Not(field As FieldAssert) As FieldAssert
             field.unary_not = True
             Return field
+        End Operator
+
+        Public Overloads Shared Operator Or(a As FieldAssert, b As FieldAssert) As FieldAssert
+            Dim assert As New FieldAssert() With {
+                .name = "OR",
+                .op = "OR",
+                .val = a.ToString,
+                .val2 = b.ToString
+            }
+
+            Return assert
         End Operator
 
         Public Shared Function ParseFieldName(field As String, Optional strict As Boolean = False) As String
