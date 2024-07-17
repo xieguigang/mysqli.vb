@@ -774,8 +774,11 @@ NO_KEY:
             Dim sqlDump As String = Nothing
             Dim Schema As Table() = SQLParser.LoadSQLDoc(file, sqlDump)
             Dim CreateTables As String() = Regex.Split(sqlDump, SCHEMA_SECTIONS)
+            ' The first block of the text splits is the
+            ' SQL comments from the MySQL data
+            ' exporter. 
             Dim SchemaSQLLQuery = From tbl As String
-                                  In CreateTables.Skip(1)          ' The first block of the text splits is the SQL comments from the MySQL data exporter. 
+                                  In CreateTables.Skip(1)
                                   Let s_TableName As String = Regex.Match(tbl, "`.+?`").Value
                                   Select tableName = Mid(s_TableName, 2, Len(s_TableName) - 2),
                                       tbl
@@ -840,7 +843,9 @@ NO_KEY:
                               doc = table.classDef.GenerateSingleDocument(haveNamespace, [Namespace])).ToArray
             Return LQuery.ToDictionary(
                 Function(x) x.Table.TableName,
-                Function(x) x.doc)
+                Function(x)
+                    Return x.doc
+                End Function)
         End Function
 
         Private Function __schemaDb(DbName As String, ns As String) As String
