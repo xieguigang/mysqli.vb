@@ -193,7 +193,12 @@ Namespace VisualBasic
         ''' <returns></returns>
         ''' 
         <Extension>
-        Private Function vbCode(Sql As IEnumerable(Of Table), head$, fileName$, tableSql As Dictionary(Of String, String), namespace$) As String
+        Private Function vbCode(Sql As IEnumerable(Of Table),
+                                head$,
+                                fileName$,
+                                tableSql As Dictionary(Of String, String),
+                                namespace$) As String
+
             Dim vb As New StringBuilder(1024)
             Dim haveNamespace As Boolean = Not String.IsNullOrEmpty([namespace])
 
@@ -254,7 +259,8 @@ Namespace VisualBasic
         ''' <param name="DefSql"></param>
         ''' <returns></returns>
         ''' <remarks><see cref="SQLComments"/></remarks>
-        <Extension> Public Function VBClass(table As Table, DefSql$) As String
+        <Extension>
+        Public Function VBClass(table As Table, DefSql$) As String
             Dim tokens$() = DefSql.LineTokens
             Dim vb As New StringBuilder("''' <summary>" & vbCrLf)
             Dim DBName As String = table.Database
@@ -678,15 +684,19 @@ NO_KEY:
             Dim SqlDump As String = ""
             Dim Schema As Table() = SQLParser.LoadSQLDoc(file, SqlDump)
             Dim CreateTables As String() = Regex.Split(SqlDump, SCHEMA_SECTIONS)
+            ' The first block of the text splits is the SQL
+            ' comments from the MySQL data exporter. 
             Dim SchemaSQLLQuery = From tbl As String
-                                  In CreateTables.Skip(1)           ' The first block of the text splits is the SQL comments from the MySQL data exporter. 
+                                  In CreateTables.Skip(1)
                                   Let tableName As String = Regex.Match(tbl, "`.+?`").Value
                                   Select tableName = Mid(tableName, 2, Len(tableName) - 2),
                                       tbl
             Dim SchemaSQL As Dictionary(Of String, String) =
                 SchemaSQLLQuery _
                 .ToDictionary(Function(x) x.tableName,
-                              Function(x) x.tbl)
+                              Function(x)
+                                  Return x.tbl
+                              End Function)
 
             Return Schema.vbCode(
                 head:=CreateTables.First,
@@ -726,7 +736,7 @@ NO_KEY:
             Call sql.AppendLine($"Public MustInherit Class db_{dbname} : Inherits IDatabase")
 
             For Each name As String In tables
-                Call sql.AppendLine($"Protected ReadOnly {name} As Model")
+                Call sql.AppendLine($"Protected ReadOnly m_{name} As Model")
             Next
 
             Call sql.AppendLine("Protected Sub New(mysqli As ConnectionUri)")
@@ -735,7 +745,7 @@ NO_KEY:
             Call sql.AppendLine()
 
             For Each name As String In tables
-                Call sql.AppendLine($"Me.{name} = model(Of {name})()")
+                Call sql.AppendLine($"Me.m_{name} = model(Of {name})()")
             Next
 
             Call sql.AppendLine("End Sub")
