@@ -239,6 +239,12 @@ Namespace MySqlBuilder
             Return Not (field = any)
         End Operator
 
+        ''' <summary>
+        ''' the date value will be format to string via <see cref="ToMySqlDateTimeString"/> for avoid mysql format error
+        ''' </summary>
+        ''' <param name="field"></param>
+        ''' <param name="val"></param>
+        ''' <returns></returns>
         Public Overloads Shared Operator =(field As FieldAssert, val As Date) As FieldAssert
             Return field = val.ToMySqlDateTimeString
         End Operator
