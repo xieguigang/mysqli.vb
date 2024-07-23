@@ -5,7 +5,7 @@
     <AssemblyName>Oracle.LinuxCompatibility.LibMySQL</AssemblyName>
 	  <TargetFrameworks>net6.0-windows;net6.0;net48</TargetFrameworks>
     <Platforms>AnyCPU;x64</Platforms>
-    <Configurations>Debug;Release;Rsharp_app_release</Configurations>
+    <Configurations>Debug;Release;Rsharp_app_release;Desktop</Configurations>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>README.md</PackageLicenseFile>
@@ -24,7 +24,19 @@
     <DefineTrace>True</DefineTrace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Desktop|net6.0-windows|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Desktop|net6.0|AnyCPU'">
     <RemoveIntegerChecks>True</RemoveIntegerChecks>
     <DebugType>full</DebugType>
     <DefineTrace>True</DefineTrace>
@@ -36,7 +48,19 @@
     <DefineTrace>True</DefineTrace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Desktop|net48|AnyCPU'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-windows|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Desktop|net6.0-windows|x64'">
     <RemoveIntegerChecks>True</RemoveIntegerChecks>
     <DebugType>full</DebugType>
     <DefineTrace>True</DefineTrace>
@@ -48,7 +72,19 @@
     <DefineTrace>True</DefineTrace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Desktop|net6.0|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|x64'">
+    <RemoveIntegerChecks>True</RemoveIntegerChecks>
+    <DebugType>full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Desktop|net48|x64'">
     <RemoveIntegerChecks>True</RemoveIntegerChecks>
     <DebugType>full</DebugType>
     <DefineTrace>True</DefineTrace>
