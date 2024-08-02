@@ -2,8 +2,8 @@
   "profiles": {
     "Reflector": {
       "commandName": "Project",
-      "commandLineArgs": " --reflects /sql \"../../web/mysql/graphdb.sql\" -o ./ /namespace graphdb --language visualbasic /split",
-      "workingDirectory": "E:\\graphQL\\src\\graphMySQL\\graphdb"
+      "commandLineArgs": " /MySQL.Markdown /sql ./biocad_registry.sql  1>\\biocad_registry\\src/README.md",
+      "workingDirectory": "G:\\bioCAD\\mysql"
     }
   }
 }
