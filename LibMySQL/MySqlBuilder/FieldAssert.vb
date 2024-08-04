@@ -76,6 +76,17 @@ Namespace MySqlBuilder
             Me.name = name
         End Sub
 
+        ''' <summary>
+        ''' test current field value is null?
+        ''' </summary>
+        ''' <returns></returns>
+        Public Function is_nothing() As FieldAssert
+            op = "is"
+            val = "null"
+
+            Return Me
+        End Function
+
         Public Function against(text As String, booleanMode As Boolean) As FieldAssert
             Dim mode As String
 
@@ -170,10 +181,7 @@ Namespace MySqlBuilder
 
         Public Overloads Shared Operator =(field As FieldAssert, any As Object) As FieldAssert
             If any Is Nothing Then
-                field.op = "is"
-                field.val = "null"
-
-                Return field
+                Return field.is_nothing
             End If
 
             Select Case any.GetType
