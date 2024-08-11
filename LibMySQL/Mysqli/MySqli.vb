@@ -92,6 +92,7 @@ Public Class MySqli : Implements IDisposable
     Public Event ThrowException(Ex As Exception, SQL As String)
 
     Dim _lastError As Exception
+    Dim _lastMySql As String
 
     ''' <summary>
     ''' 20240319
@@ -113,6 +114,16 @@ Public Class MySqli : Implements IDisposable
     Public ReadOnly Property LastError As Exception
         Get
             Return _lastError
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' get last mysql statement that executed.
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property LastMySql As String
+        Get
+            Return _lastMySql
         End Get
     End Property
 
@@ -203,6 +214,7 @@ Public Class MySqli : Implements IDisposable
         Dim result As DataSet = Fetch(SQL.Trim.EnsureLimit1)
         Dim reader As DataTableReader = result?.CreateDataReader
         Dim value As T = DbReflector.ReadFirst(Of T)(reader)
+        _lastMySql = SQL
         Return value
     End Function
 
@@ -238,7 +250,7 @@ Public Class MySqli : Implements IDisposable
         ' 这个间接的转换方法比较安全，不容易崩溃
         Dim objValue$ = InputHandler.ToString(Reader.GetValue(Scan0))
         Dim value As T = InputHandler.CTypeDynamic(objValue, GetType(T))
-
+        _lastMySql = SQL
         Return value
     End Function
 
@@ -259,6 +271,8 @@ Public Class MySqli : Implements IDisposable
         Dim MySqlCommand As New MySqlCommand(SQL) With {
             .Connection = MySQL
         }
+
+        _lastMySql = SQL
 
         Try
             Call MySQL.Open()
@@ -295,6 +309,8 @@ Public Class MySqli : Implements IDisposable
             }
             Dim isInsert As Boolean = InStr(SQL.Trim, "insert", CompareMethod.Text) > 0
             Dim i%
+
+            _lastMySql = SQL
 
             Try
                 MySQL.Open()
@@ -340,6 +356,8 @@ Public Class MySqli : Implements IDisposable
         Dim Adapter As New MySqlDataAdapter() With {
             .SelectCommand = MySqlCommand
         }
+
+        _lastMySql = SQL
 
         Try
             Call Adapter.Fill(data)
@@ -460,7 +478,7 @@ Public Class MySqli : Implements IDisposable
     Public Function CreateQuery(SQL As String) As MySqlDataReader
         Dim MySql As MySqlConnection = New MySqlConnection(_UriMySQL) '[ConnectionString] is a compiled mysql connection string from our class constructor.
         Dim MySqlCommand As MySqlCommand = New MySqlCommand(SQL, MySql)
-
+        _lastMySql = SQL
         Try
             MySql.Open()
             Return MySqlCommand.ExecuteReader(CommandBehavior.CloseConnection)
@@ -529,7 +547,7 @@ Public Class MySqli : Implements IDisposable
             ' to Command object for a pending local transaction
             MyCommand.Connection = MyConnection
             MyCommand.Transaction = MyTrans
-
+            _lastMySql = transaction
             Try
                 MyCommand.CommandText = transaction
                 MyCommand.ExecuteNonQuery()
