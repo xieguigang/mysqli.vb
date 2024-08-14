@@ -11,7 +11,7 @@
     <ApplicationIcon>Project1.ico</ApplicationIcon>
     <Platforms>AnyCPU;x64</Platforms>
     <Configurations>Debug;Release;mysqli_X64_release</Configurations>
-    <UseApplicationFramework>False</UseApplicationFramework>
+    <UseApplicationFramework>True</UseApplicationFramework>
     <OutputPath>../App/</OutputPath>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>

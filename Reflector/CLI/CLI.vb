@@ -115,7 +115,7 @@ Module CLI
                 writer = args.OpenStreamOutput("-o")
             End If
 
-            Return __EXPORT(SQL, reader, ns, out, writer, split)
+            Return __EXPORT(SQL, reader, ns, If(split, out.GetDirectoryFullPath, out.GetFullPath), writer, split)
         Else
             Dim msg As String = $"The target schema sql dump file ""{SQL}"" is not exists on your file system!"
             Call VBDebugger.PrintException(msg)
