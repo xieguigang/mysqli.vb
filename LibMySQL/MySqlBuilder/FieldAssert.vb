@@ -300,7 +300,7 @@ Namespace MySqlBuilder
         ''' <param name="val"></param>
         ''' <returns></returns>
         Public Overloads Shared Operator Like(field As FieldAssert, val As String) As FieldAssert
-            field.val = value(val)
+            field.val = value(val, [like]:=True)
             field.op = "LIKE"
             Return field
         End Operator
@@ -374,13 +374,13 @@ Namespace MySqlBuilder
             Return tokens.Where(Function(s) s.Length > 0 AndAlso s <> "."c).Last
         End Function
 
-        Friend Shared Function value(val As String) As String
+        Friend Shared Function value(val As String, Optional [like] As Boolean = False) As String
             If val.StringEmpty Then
                 Return "''"
             ElseIf val.First = "~" Then
                 Return val.Substring(1)
             Else
-                Return $"'{val.MySqlEscaping}'"
+                Return $"'{val.MySqlEscaping([like])}'"
             End If
         End Function
     End Class

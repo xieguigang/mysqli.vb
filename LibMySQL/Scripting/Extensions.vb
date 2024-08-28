@@ -164,22 +164,32 @@ Namespace Scripting
         ''' 处理字符串之中的特殊字符的转义。(这是一个安全的函数，如果输入的字符串为空，则这个函数会输出空字符串)
         ''' </summary>
         ''' <param name="value"></param>
+        ''' <param name="like">
+        ''' % will not be escaped when do like pattern search
+        ''' </param>
         ''' <returns></returns>
         ''' 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
-        <Extension> Public Function MySqlEscaping(value$) As String
+        <Extension>
+        Public Function MySqlEscaping(value$, Optional [like] As Boolean = False) As String
             If value.StringEmpty Then
                 Return ""
             Else
-                Return replaceInternal(value)
+                Return replaceInternal(value, [like])
             End If
         End Function
 
-        Private Function replaceInternal(value As String) As String
+        Private Function replaceInternal(value As String, [like] As Boolean) As String
             Dim sb As New StringBuilder(value.Replace("\", "\\"))
 
             For Each x In escapingCodes
-                Call sb.Replace(x.Key, x.Value)
+                If x.Key = "%" Then
+                    If Not [like] Then
+                        Call sb.Replace(x.Key, x.Value)
+                    End If
+                Else
+                    Call sb.Replace(x.Key, x.Value)
+                End If
             Next
 
             Return sb.ToString
