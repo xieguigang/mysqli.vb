@@ -72,8 +72,9 @@ Namespace MySqlBuilder
                 parameter = GetNumberValue(type_define, 1)
 
                 If parameter = "1" Then
-                    ' boolean 
-                    type = Reflection.DbAttributes.MySqlDbType.Boolean
+                    ' 20240905
+                    ' byte
+                    type = Reflection.DbAttributes.MySqlDbType.Byte
                 Else
                     type = Reflection.DbAttributes.MySqlDbType.Int32
                 End If

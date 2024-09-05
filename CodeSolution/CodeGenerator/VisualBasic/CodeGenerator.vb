@@ -132,7 +132,7 @@ Namespace VisualBasic
                 Case MySqlDbType.BigInt, MySqlDbType.Int16, MySqlDbType.Int24, MySqlDbType.Int32, MySqlDbType.MediumInt
                     Return " As Integer"
 
-                Case MySqlDbType.Bit, MySqlDbType.Byte
+                Case MySqlDbType.Bit, MySqlDbType.Byte, MySqlDbType.TinyInt
                     Return " As Byte"
 
                 Case MySqlDbType.Date, MySqlDbType.DateTime
