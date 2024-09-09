@@ -304,12 +304,13 @@ Namespace MySqlBuilder
             Return result
         End Function
 
-        Public Function count() As Integer
+        Public Function count() As Long
             Dim where As String = If(query?.where_str, "")
             Dim group_by As String = If(query?.group_by_str, "")
             Dim sql As String = $"SELECT count(*) FROM `{schema.Database}`.`{schema.TableName}` {where} {group_by};"
             chain.m_getLastMySql = sql
-            Dim result = mysql.ExecuteAggregate(Of Integer)(sql)
+            ' bigint in mysql for count(*)
+            Dim result = mysql.ExecuteAggregate(Of Long)(sql)
             Return result
         End Function
 

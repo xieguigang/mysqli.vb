@@ -226,7 +226,7 @@ Public Class MySqli : Implements IDisposable
     ''' <returns></returns>
     Public Function ExecuteAggregate(Of T)(SQL As String) As T
         Try
-            Return __executeAggregate(Of T)(SQL)
+            Return ExecuteAggregateInternal(Of T)(SQL)
         Catch ex As Exception
             ex = __throwExceptionHelper(ex, SQL, False)
             Call ex.PrintException
@@ -238,7 +238,7 @@ Public Class MySqli : Implements IDisposable
         End Try
     End Function
 
-    Private Function __executeAggregate(Of T)(SQL As String) As T
+    Private Function ExecuteAggregateInternal(Of T)(SQL As String) As T
         Dim Result As DataSet = Fetch(SQL)
         Dim Reader As DataTableReader = Result.CreateDataReader
 
