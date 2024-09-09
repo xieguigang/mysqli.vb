@@ -383,5 +383,9 @@ Namespace MySqlBuilder
                 Return $"'{val.MySqlEscaping([like])}'"
             End If
         End Function
+
+        Public Shared Function MySqlEscaping(val As String) As String
+            Return val.MySqlEscaping([like]:=True)
+        End Function
     End Class
 End Namespace
