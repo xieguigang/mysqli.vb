@@ -59,7 +59,7 @@ Imports MySql.Data.MySqlClient
 Imports Oracle.LinuxCompatibility.MySQL
 
 ''' <summary>
-''' ``SHOW GLOBAL STATUS;``
+''' ``SHOW GLOBAL STATUS;`` string reader helper
 ''' </summary>
 Public Class GLOBAL_STATUS
 

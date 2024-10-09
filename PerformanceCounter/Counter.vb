@@ -145,6 +145,10 @@ Public Class Counter
         Me.current = Me.previous
     End Sub
 
+    ''' <summary>
+    ''' Pull the new statues data from mysql server
+    ''' </summary>
+    ''' <returns>returns the current counter object itself.</returns>
     Public Function PullNext() As Counter
         previous = current
         current = PerformanceCounter.GLOBAL_STATUS.Load(mysql)
