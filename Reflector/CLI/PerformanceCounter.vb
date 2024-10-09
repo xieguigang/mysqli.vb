@@ -23,7 +23,7 @@ Partial Module CLI
             .Port = port,
             .User = u
         }
-        Dim monitor As New Logger(uri)
+        Dim monitor As New Logger(uri, echo:=False)
         Dim service = New HttpDriver() _
             .HttpMethod("get", Sub(req, response)
                                    Dim url As URL = req.URL

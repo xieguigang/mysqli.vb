@@ -85,12 +85,18 @@ Public Class Logger : Implements IDisposable
     ''' </summary>
     ReadOnly resolution As Double = 1
     ReadOnly queue_size As Integer = 1000
+    ReadOnly echo As Boolean = True
 
     Private disposedValue As Boolean
 
-    Sub New(mysql As MySqli, Optional resolution As Double = 1, Optional queue_size As Integer = 1000)
+    Sub New(mysql As MySqli, Optional resolution As Double = 1,
+            Optional queue_size As Integer = 1000,
+            Optional echo As Boolean = True)
+
         Me.counter = New Counter(mysql)
         Me.resolution = resolution * 1000
+        Me.queue_size = queue_size
+        Me.echo = echo
     End Sub
 
     Public Sub Run()
@@ -115,7 +121,10 @@ Public Class Logger : Implements IDisposable
         Call push(global_status, counter.global_status)
         Call push(Innodb_data_read, counter.Innodb_data_read)
 
-        Call VBDebugger.EchoLine(ToString)
+        If echo Then
+            Call VBDebugger.EchoLine(ToString)
+        End If
+
         Call Thread.Sleep(resolution)
     End Sub
 
