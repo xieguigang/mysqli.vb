@@ -61,6 +61,7 @@ Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
+Imports ASCII = Microsoft.VisualBasic.Text.ASCII
 
 Public Module DataDumps
 

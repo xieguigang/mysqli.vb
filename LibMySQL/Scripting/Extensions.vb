@@ -56,6 +56,7 @@ Imports System.Text
 Imports Microsoft.VisualBasic.Text
 Imports r = System.Text.RegularExpressions.Regex
 Imports Table = Oracle.LinuxCompatibility.MySQL.Reflection.Schema.Table
+Imports ASCII = Microsoft.VisualBasic.Text.ASCII
 
 Namespace Scripting
 
