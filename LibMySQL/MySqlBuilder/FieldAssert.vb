@@ -76,6 +76,13 @@ Namespace MySqlBuilder
             Me.name = name
         End Sub
 
+        Public Function sounds_like(q As String) As FieldAssert
+            op = "SOUNDS LIKE"
+            val = value(q)
+
+            Return Me
+        End Function
+
         ''' <summary>
         ''' test current field value is null?
         ''' </summary>
