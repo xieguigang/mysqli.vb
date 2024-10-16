@@ -115,12 +115,18 @@ Namespace MySqlBuilder
             Return EnsureSafeName(name)
         End Function
 
+        ''' <summary>
+        ''' ensure that the given field name is safe when build sql query text
+        ''' </summary>
+        ''' <param name="name"></param>
+        ''' <returns></returns>
         Public Shared Function EnsureSafeName(name As String) As String
             If name.StringEmpty Then
                 Throw New Exception("the given name string is empty, can not be used as reference name!")
             End If
 
             If name.Last = "`"c Then
+                ' `name`
                 ' is already safe
                 Return name
             ElseIf name.IndexOf("."c) > -1 OrElse

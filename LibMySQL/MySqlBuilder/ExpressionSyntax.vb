@@ -66,19 +66,17 @@ Namespace MySqlBuilder
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <DebuggerStepThrough>
         Public Function field(name As String) As FieldAssert
-            If name.First <> "`" AndAlso name.Last <> "`" Then
-                name = $"`{name}`"
-            End If
-
-            Return New FieldAssert(name)
+            Return New FieldAssert(FieldAssert.EnsureSafeName(name))
         End Function
 
-        Public Function match(name As String) As FieldAssert
-            If name.First <> "`" AndAlso name.Last <> "`" Then
-                name = $"`{name}`"
-            End If
+        Public Function match(ParamArray names As String()) As FieldAssert
+            Dim fields As New List(Of String)
 
-            Return New FieldAssert(name) With {.op = NameOf(ExpressionSyntax.match)}
+            For Each name As String In names
+                Call fields.Add(FieldAssert.EnsureSafeName(name))
+            Next
+
+            Return New FieldAssert(fields.JoinBy(", ")) With {.op = NameOf(ExpressionSyntax.match)}
         End Function
 
         ''' <summary>
@@ -97,11 +95,7 @@ Namespace MySqlBuilder
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         <DebuggerStepThrough>
         Public Function f(name As String) As FieldAssert
-            If name.First <> "`" AndAlso name.Last <> "`" Then
-                name = $"`{name}`"
-            End If
-
-            Return New FieldAssert(name)
+            Return New FieldAssert(FieldAssert.EnsureSafeName(name))
         End Function
 
         <Extension>
