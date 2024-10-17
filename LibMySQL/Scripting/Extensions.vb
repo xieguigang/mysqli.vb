@@ -53,10 +53,9 @@
 
 Imports System.Runtime.CompilerServices
 Imports System.Text
-Imports Microsoft.VisualBasic.Text
+Imports ASCII = Microsoft.VisualBasic.Text.ASCII
 Imports r = System.Text.RegularExpressions.Regex
 Imports Table = Oracle.LinuxCompatibility.MySQL.Reflection.Schema.Table
-Imports ASCII = Microsoft.VisualBasic.Text.ASCII
 
 Namespace Scripting
 
@@ -159,6 +158,25 @@ Namespace Scripting
 
                 Return sb.ToString
             End If
+        End Function
+
+        ''' <summary>
+        ''' Removes the special operator character from the query text for avoid the unexpected query output
+        ''' </summary>
+        ''' <param name="value"></param>
+        ''' <returns></returns>
+        ''' 
+        <Extension>
+        Public Function FullTextEscape(value As String) As String
+            Dim s As New StringBuilder(Strings.Trim(value))
+
+            Static fulltext_op As Char() = {"+"c, "-"c, """"c, "*"c, ">"c, "<"c, "("c, ")"c}
+
+            For Each o As Char In fulltext_op
+                s.Replace(o, " ")
+            Next
+
+            Return s.ToString.Trim
         End Function
 
         ''' <summary>
