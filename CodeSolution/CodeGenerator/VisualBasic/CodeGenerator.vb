@@ -65,11 +65,11 @@ Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Scripting.Expressions
 Imports Microsoft.VisualBasic.Scripting.SymbolBuilder.VBLanguage
-Imports Microsoft.VisualBasic.Text
 Imports Microsoft.VisualBasic.Text.Xml
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
+Imports ASCII = Microsoft.VisualBasic.Text.ASCII
 Imports ColumnAttribute = System.ComponentModel.DataAnnotations.Schema.ColumnAttribute
 Imports DataType = Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes.DataType
 Imports MySqlScript = Oracle.LinuxCompatibility.MySQL.Scripting.Extensions
