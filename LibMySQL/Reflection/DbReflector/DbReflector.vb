@@ -237,7 +237,7 @@ Namespace Reflection
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Shared Function GetCurrentOrdinals(reader As DbDataReader) As IEnumerable(Of String)
             Return From r As DataRow
-                   In reader.GetSchemaTable
+                   In reader.GetSchemaTable.Rows
                    Let colname = r.Item("ColumnName").ToString
                    Select colname
         End Function
