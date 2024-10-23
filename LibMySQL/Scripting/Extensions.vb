@@ -170,7 +170,7 @@ Namespace Scripting
         Public Function FullTextEscape(value As String) As String
             Dim s As New StringBuilder(Strings.Trim(value))
 
-            Static fulltext_op As Char() = {"+"c, "-"c, """"c, "*"c, ">"c, "<"c, "("c, ")"c}
+            Static fulltext_op As Char() = {"+"c, "-"c, """"c, "*"c, ">"c, "<"c, "("c, ")"c, "@"c, "?"c}
 
             For Each o As Char In fulltext_op
                 s.Replace(o, " ")
