@@ -2,8 +2,8 @@
   "profiles": {
     "Reflector": {
       "commandName": "Project",
-      "commandLineArgs": "--reflects /sql \"../../../mysql/pubmed.sql\" -o ./ /namespace pubmed --language visualbasic /split",
-      "workingDirectory": "G:\\graphQL\\src\\graphMySQL\\pubmed"
+      "commandLineArgs": "--reflects /sql \"../../../mysql/pubmed_kb.sql\" -o ./ /namespace pubmed2 --language visualbasic /split",
+      "workingDirectory": "E:\\biodeep\\biodeepdb_v3\\biodeepdb_v3\\src\\BioDeepDB\\MySql\\pubmed"
     }
   }
 }

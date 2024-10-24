@@ -99,7 +99,7 @@ Namespace MySqlBuilder
 
                 type = Reflection.DbAttributes.MySqlDbType.DateTime
 
-            ElseIf Regex.Match(type_define, "text", RegexOptions.IgnoreCase).Success Then
+            ElseIf type_define.TextEquals("json") OrElse Regex.Match(type_define, "text", RegexOptions.IgnoreCase).Success Then
                 type = Reflection.DbAttributes.MySqlDbType.Text
 
             ElseIf Strings.InStr(type_define, "enum(", CompareMethod.Text) > 0 Then   ' enum类型转换为String类型？？？？
