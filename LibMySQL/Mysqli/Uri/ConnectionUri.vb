@@ -187,17 +187,20 @@ Namespace Uri
         End Sub
 
         ''' <summary>
-        ''' 复制值
+        ''' make parameter value copy of the mysql connection string.
         ''' </summary>
-        ''' <param name="o"></param>
-        Sub New(o As ConnectionUri, Optional DbName$ = Nothing)
-            Me.Database = DbName Or o.Database.AsDefault
-            Me.IPAddress = o.IPAddress
-            Me.Password = o.Password
-            Me.Port = o.Port
-            Me.TimeOut = o.TimeOut
-            Me.User = o.User
-            Me.error_log = If(o.error_log.StringEmpty, Nothing, o.error_log)
+        ''' <param name="uri"></param>
+        ''' <param name="DbName">
+        ''' the another database name
+        ''' </param>
+        Sub New(uri As ConnectionUri, Optional DbName$ = Nothing)
+            Me.Database = DbName Or uri.Database.AsDefault
+            Me.IPAddress = uri.IPAddress
+            Me.Password = uri.Password
+            Me.Port = uri.Port
+            Me.TimeOut = uri.TimeOut
+            Me.User = uri.User
+            Me.error_log = If(uri.error_log.StringEmpty, Nothing, uri.error_log)
         End Sub
 
         ''' <summary>
