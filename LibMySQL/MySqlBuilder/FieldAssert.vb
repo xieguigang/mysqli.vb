@@ -312,8 +312,13 @@ Namespace MySqlBuilder
         End Operator
 
         Public Overloads Shared Operator >(field As FieldAssert, val As String) As FieldAssert
+            If field.op = "func" Then
+                field = New FieldAssert With {.name = field.ToString}
+            End If
+
             field.val = value(val)
             field.op = ">"
+
             Return field
         End Operator
 
