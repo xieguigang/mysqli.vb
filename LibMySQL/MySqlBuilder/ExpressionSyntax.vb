@@ -109,12 +109,20 @@ Namespace MySqlBuilder
 
         <Extension>
         Public Function [in](Of T)(f As FieldAssert, vals As IEnumerable(Of T)) As FieldAssert
+            Dim check_vals As New List(Of String)
+
+            For Each v As T In vals.SafeQuery
+                If v Is Nothing Then
+                    Throw New NullReferenceException("One of the value for make 'IN' index check is nothing!")
+                Else
+                    Call check_vals.Add(FieldAssert.value(v.ToString))
+                End If
+            Next
+
             f.op = NameOf([in])
-            f.val = vals _
-                .SafeQuery _
-                .Select(Function(v) FieldAssert.value(v.ToString)) _
-                .JoinBy(", ")
+            f.val = check_vals.JoinBy(", ")
             f.val = $"({f.val})"
+
             Return f
         End Function
 
