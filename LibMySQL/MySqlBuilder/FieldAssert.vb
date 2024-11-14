@@ -227,15 +227,11 @@ Namespace MySqlBuilder
         End Operator
 
         Public Overloads Shared Operator =(field As FieldAssert, i As ULong) As FieldAssert
-            field.val = i
-            field.op = "="
-            Return field
+            Return AssignOperator(field, "=", i)
         End Operator
 
         Public Overloads Shared Operator <>(field As FieldAssert, i As ULong) As FieldAssert
-            field.val = i
-            field.op = "<>"
-            Return field
+            Return AssignOperator(field, "<>", i)
         End Operator
 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
@@ -244,33 +240,23 @@ Namespace MySqlBuilder
         End Operator
 
         Public Overloads Shared Operator <>(field As FieldAssert, i As Long) As FieldAssert
-            field.val = i
-            field.op = "<>"
-            Return field
+            Return AssignOperator(field, "<>", i)
         End Operator
 
         Public Overloads Shared Operator =(field As FieldAssert, i As UInteger) As FieldAssert
-            field.val = i
-            field.op = "="
-            Return field
+            Return AssignOperator(field, "=", i)
         End Operator
 
         Public Overloads Shared Operator <>(field As FieldAssert, i As UInteger) As FieldAssert
-            field.val = i
-            field.op = "<>"
-            Return field
+            Return AssignOperator(field, "<>", i)
         End Operator
 
         Public Overloads Shared Operator =(field As FieldAssert, d As Double) As FieldAssert
-            field.val = d
-            field.op = "="
-            Return field
+            Return AssignOperator(field, "=", d)
         End Operator
 
         Public Overloads Shared Operator <>(field As FieldAssert, d As Double) As FieldAssert
-            field.val = d
-            field.op = "<>"
-            Return field
+            Return AssignOperator(field, "<>", d)
         End Operator
 
         ''' <summary>
