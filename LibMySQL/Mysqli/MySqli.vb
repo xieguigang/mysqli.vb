@@ -404,7 +404,6 @@ Public Class MySqli : Implements IDisposable
     ''' </summary>
     ''' <typeparam name="T"></typeparam>
     ''' <param name="SQL"></param>
-    ''' <param name="Parallel"></param>
     ''' <param name="throwExp"></param>
     ''' <returns>
     ''' this function will returns nothing if the mysql query error, 

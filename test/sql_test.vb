@@ -54,12 +54,23 @@ Imports Oracle.LinuxCompatibility.MySQL.MySqlBuilder
 Public Module sql_test
 
     Sub Main2()
+        Call function_test()
+
         Call Console.WriteLine(FieldAssert.ParseFieldName("`a`.b"))
         Call Console.WriteLine(FieldAssert.ParseFieldName("b"))
         Call Console.WriteLine(FieldAssert.ParseFieldName("a.b"))
         Call Console.WriteLine(FieldAssert.ParseFieldName("a.`b.b`"))
         Call Console.WriteLine(FieldAssert.ParseFieldName("`a.a`.`b`"))
         Call Console.WriteLine(FieldAssert.ParseFieldName("`a`.`b`"))
+
+        Pause()
+    End Sub
+
+    Sub function_test()
+        Dim call_func = field("test").instr("aaa")
+        Dim assert = call_func = 1
+
+        Call Console.WriteLine(assert.ToString)
 
         Pause()
     End Sub
