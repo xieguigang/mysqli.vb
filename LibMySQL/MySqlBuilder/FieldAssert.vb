@@ -55,6 +55,7 @@
 
 #End Region
 
+Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Text.Parser
 Imports Oracle.LinuxCompatibility.MySQL.Scripting
@@ -237,10 +238,9 @@ Namespace MySqlBuilder
             Return field
         End Operator
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Overloads Shared Operator =(field As FieldAssert, i As Long) As FieldAssert
-            field.val = i
-            field.op = "="
-            Return field
+            Return AssignOperator(field, "=", i)
         End Operator
 
         Public Overloads Shared Operator <>(field As FieldAssert, i As Long) As FieldAssert
@@ -272,6 +272,30 @@ Namespace MySqlBuilder
             field.op = "<>"
             Return field
         End Operator
+
+        ''' <summary>
+        ''' 
+        ''' </summary>
+        ''' <param name="field"></param>
+        ''' <param name="op"></param>
+        ''' <param name="val_exp">
+        ''' the value expression, should be wrapped if it is a string before call this helper function
+        ''' </param>
+        ''' <returns></returns>
+        Private Shared Function AssignOperator(field As FieldAssert, op As String, val_exp As String) As FieldAssert
+            If field.op = "func" Then
+                ' assert of the function value
+                Return New FieldAssert With {
+                    .name = field.ToString,
+                    .op = op,
+                    .val = val_exp
+                }
+            Else
+                field.val = val_exp
+                field.op = op
+                Return field
+            End If
+        End Function
 
         Public Overloads Shared Operator <>(field As FieldAssert, any As Object) As FieldAssert
             Return Not (field = any)
