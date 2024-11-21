@@ -67,6 +67,9 @@ Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 Namespace MySqlBuilder
 
+    ''' <summary>
+    ''' 
+    ''' </summary>
     Public Class Model
 
         ReadOnly mysql As MySqli
