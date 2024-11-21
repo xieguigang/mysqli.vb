@@ -452,7 +452,7 @@ Namespace MySqlBuilder
             Dim query As New QueryBuilder(Me.query)
 
             If query.join_tmp.StringEmpty Then
-                Throw New InvalidCastException
+                Throw New InvalidCastException("no target table for make left join! A left_join function should be call at first!")
             Else
                 query.left_join.Add(New NamedCollection(Of FieldAssert)(query.join_tmp, fields))
                 query.join_tmp = Nothing
