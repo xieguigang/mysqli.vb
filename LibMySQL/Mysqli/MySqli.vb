@@ -410,7 +410,7 @@ Public Class MySqli : Implements IDisposable
     ''' this is different with empty array when for query no data.
     ''' </returns>
     Public Function Query(Of T As Class)(SQL As String, Optional throwExp As Boolean = True) As T()
-        Dim Result As DataSet = Fetch(SQL)
+        Dim Result As DataSet = Fetch(SQL, throwEx:=throwExp)
         Dim Reader As DataTableReader = Result?.CreateDataReader
         Dim Err As Value(Of String) = ""
         Dim table As T()

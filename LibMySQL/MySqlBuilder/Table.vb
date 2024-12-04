@@ -164,7 +164,8 @@ Namespace MySqlBuilder
             Dim sql As String = $"describe `{database}`.`{table}`;"
 
             If Not cache.ContainsKey(sql) Then
-                Dim desc As FieldDescription() = mysql.Query(Of FieldDescription)(sql)
+                ' default throw exception on create model
+                Dim desc As FieldDescription() = mysql.Query(Of FieldDescription)(sql, throwExp:=True)
                 Dim schema = desc.ToDictionary(Function(f) f.Field, Function(f) f.CreateField)
                 Dim model As New Table(schema) With {
                     .Database = database,
