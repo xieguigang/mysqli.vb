@@ -93,7 +93,12 @@ Namespace MySqlBuilder
             End Get
         End Property
 
+        ''' <summary>
+        ''' get the clr exception error data for the last sql query
+        ''' </summary>
+        ''' <returns></returns>
         Public ReadOnly Property GetLastError As Exception
+            <MethodImpl(MethodImplOptions.AggressiveInlining)>
             Get
                 Return mysql.LastError
             End Get
@@ -146,6 +151,7 @@ Namespace MySqlBuilder
             Me.chain = chain
         End Sub
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Function getDriver() As MySqli
             Return mysql
         End Function
