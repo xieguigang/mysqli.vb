@@ -108,6 +108,13 @@ Namespace MySqlBuilder
         End Function
 
         <Extension>
+        Public Function json_contains_path(f As FieldAssert, path As String, Optional one_or_all As String = "one") As FieldAssert
+            f.op = "func"
+            f.val = $"JSON_CONTAINS_PATH({f.name}, '{one_or_all}', '{path}')"
+            Return f
+        End Function
+
+        <Extension>
         Public Function [in](Of T)(f As FieldAssert, vals As IEnumerable(Of T), Optional nullFilter As Boolean = False) As FieldAssert
             Dim check_vals As New List(Of String)
 
