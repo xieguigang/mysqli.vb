@@ -310,7 +310,8 @@ Namespace MySqlBuilder
         End Operator
 
         Public Overloads Shared Operator =(field As FieldAssert, val As String) As FieldAssert
-            field.val = value(val)
+            ' disable escape for % like
+            field.val = value(val, True)
             field.op = "="
             Return field
         End Operator
