@@ -299,8 +299,9 @@ Namespace MySqlBuilder
         ''' this function returns nothing if no data could be found
         ''' </returns>
         Public Function find(ParamArray fields As String()) As Dictionary(Of String, Object)
+            Dim hasLimit1 = query?.limit_str Is Nothing
             Dim sql As String = selectSql(fields)
-            Dim reader As System.Data.DataTableReader = mysql.Fetch(sql)?.CreateDataReader
+            Dim reader As System.Data.DataTableReader = mysql.Fetch(If(hasLimit1, sql, sql.Trim(";"c) & " LIMIT 1"))?.CreateDataReader
             Dim value As Dictionary(Of String, Object) = DbReflector.ReadFirst(reader)
             Return value
         End Function
