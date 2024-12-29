@@ -477,6 +477,9 @@ Namespace MySqlBuilder
         ''' </summary>
         ''' <param name="fields"></param>
         ''' <returns></returns>
+        ''' <remarks>
+        ''' fields parameter data could be field name or an expression
+        ''' </remarks>
         Public Function order_by(ParamArray fields As String()) As Model
             Dim query As New QueryBuilder(Me.query)
             query.order_by = fields
