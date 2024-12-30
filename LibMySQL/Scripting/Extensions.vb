@@ -125,13 +125,11 @@ Namespace Scripting
         ReadOnly escapingCodes As New Dictionary(Of String, String) From {
             {ASCII.NUL, "\0"},
             {"'", "\'"},
-            {"""", "\"""},
             {ASCII.BS, "\b"},
             {ASCII.LF, "\n"},
             {ASCII.CR, "\r"},
             {ASCII.TAB, "\t"},
-            {ASCII.SUB, "\Z"},
-            {"%", "\%"}', {"_", "\_"}
+            {ASCII.SUB, "\Z"}
         }
 
         Const escapingSplash$ = "{$" & NameOf(escapingSplash) & "}"
