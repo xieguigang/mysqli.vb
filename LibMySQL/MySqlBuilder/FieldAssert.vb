@@ -96,6 +96,18 @@ Namespace MySqlBuilder
             Return Me
         End Function
 
+        ''' <summary>
+        ''' 
+        ''' </summary>
+        ''' <param name="expr">sql query expression</param>
+        ''' <returns></returns>
+        Public Function in_expr(expr As String) As FieldAssert
+            op = "in"
+            val = $"({expr})"
+
+            Return Me
+        End Function
+
         Public Function against(text As String, booleanMode As Boolean) As FieldAssert
             Dim mode As String
 
