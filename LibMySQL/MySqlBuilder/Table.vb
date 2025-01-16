@@ -300,7 +300,7 @@ Namespace MySqlBuilder
         ''' </returns>
         Public Function find(ParamArray fields As String()) As Dictionary(Of String, Object)
             Dim hasLimit1 = query?.limit_str Is Nothing
-            Dim sql As String = selectSql(fields)
+            Dim sql As String = selectSql(fields, assign_sql:=True)
             Dim reader As System.Data.DataTableReader = mysql.Fetch(If(hasLimit1, sql, sql.Trim(";"c) & " LIMIT 1"))?.CreateDataReader
             Dim value As Dictionary(Of String, Object) = DbReflector.ReadFirst(reader)
             Return value
@@ -332,20 +332,20 @@ Namespace MySqlBuilder
         ''' <param name="fields"></param>
         ''' <returns></returns>
         Public Function [select](Of T As {New, Class})(ParamArray fields As String()) As T()
-            Dim sql As String = selectSql(fields)
+            Dim sql As String = selectSql(fields, assign_sql:=True)
             Dim result = mysql.Query(Of T)(sql)
 
             Return result
         End Function
 
         Public Function [select](ParamArray fields As String()) As System.Data.DataTableReader
-            Dim sql As String = selectSql(fields)
+            Dim sql As String = selectSql(fields, assign_sql:=True)
             Dim result As System.Data.DataTableReader = mysql.Fetch(sql).CreateDataReader
 
             Return result
         End Function
 
-        Private Function selectSql(fields As String()) As String
+        Private Function selectSql(fields As String(), assign_sql As Boolean) As String
             Dim where As String = If(query?.where_str, "")
             Dim limit As String = If(query?.limit_str, "")
             Dim left_join As String = If(query?.left_join_str, "")
@@ -356,8 +356,20 @@ Namespace MySqlBuilder
             ' 20240324 group by should before the order by
             ' or the sql expression syntax error
             Dim sql As String = $"SELECT {distinct} {fieldSet} FROM `{schema.Database}`.`{schema.TableName}` {left_join} {where} {group_by} {order_by} {limit};"
-            chain.m_getLastMySql = sql
+            If assign_sql Then
+                chain.m_getLastMySql = sql
+            End If
             Return sql
+        End Function
+
+        ''' <summary>
+        ''' generates the sql expression of select query
+        ''' </summary>
+        ''' <param name="fields"></param>
+        ''' <returns></returns>
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function select_sql(ParamArray fields As String()) As String
+            Return selectSql(fields, assign_sql:=False)
         End Function
 
         ''' <summary>
@@ -367,7 +379,7 @@ Namespace MySqlBuilder
         ''' <param name="field">the field name to project as vector</param>
         ''' <returns></returns>
         Public Function project(Of T As IComparable)(field As String) As T()
-            Dim sql As String = selectSql({field})
+            Dim sql As String = selectSql({field}, assign_sql:=True)
             Dim fieldName As String = FieldAssert.ParseFieldName(field)
             Dim vector As T() = mysql.Project(Of T)(sql, fieldName)
             Return vector
