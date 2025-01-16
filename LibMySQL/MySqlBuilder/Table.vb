@@ -369,7 +369,7 @@ Namespace MySqlBuilder
         ''' <returns></returns>
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Function select_sql(ParamArray fields As String()) As String
-            Return selectSql(fields, assign_sql:=False)
+            Return selectSql(fields, assign_sql:=False).Trim(";"c, " "c)
         End Function
 
         ''' <summary>

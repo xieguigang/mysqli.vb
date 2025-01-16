@@ -162,5 +162,9 @@ Namespace MySqlBuilder
         Public Function [or](test As FieldAssert()) As String
             Return (From ti As FieldAssert In test Let sql = ti.ToString Select sql).JoinBy(" OR ")
         End Function
+
+        Public Function union(ParamArray parts_sql As String()) As String
+            Return $"({parts_sql.JoinBy(") UNION (")})"
+        End Function
     End Module
 End Namespace
