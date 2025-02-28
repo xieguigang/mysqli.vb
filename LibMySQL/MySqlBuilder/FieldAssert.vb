@@ -141,12 +141,18 @@ Namespace MySqlBuilder
         ''' </summary>
         ''' <param name="name"></param>
         ''' <returns></returns>
+        ''' <remarks>
+        ''' this function try to wrap the given name with **`** symbol. if the given name already
+        ''' have the wrapper **`**, then returns the original given name string from this 
+        ''' function.
+        ''' </remarks>
         Public Shared Function EnsureSafeName(name As String) As String
-            If name.StringEmpty Then
+            ' 20250228 allows the NULL, null, NA used as the name
+            If name.StringEmpty(, testEmptyFactor:=False) Then
                 Throw New Exception("the given name string is empty, can not be used as reference name!")
             End If
 
-            If name.Last = "`"c Then
+            If name.First = "`" OrElse name.Last = "`"c Then
                 ' `name`
                 ' is already safe
                 Return name

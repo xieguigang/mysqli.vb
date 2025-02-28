@@ -179,7 +179,7 @@ Namespace MySqlBuilder
                 Dim str As New List(Of String)
 
                 For Each tbl In left_join
-                    str.Add($"LEFT JOIN `{tbl.name}` ON ({tbl.value.JoinBy(" AND ")})")
+                    str.Add($"LEFT JOIN `{FieldAssert.EnsureSafeName(tbl.name)}` ON ({tbl.value.JoinBy(" AND ")})")
                 Next
 
                 Return str.JoinBy(" ")
