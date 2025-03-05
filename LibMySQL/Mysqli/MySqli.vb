@@ -219,6 +219,19 @@ Public Class MySqli : Implements IDisposable
     End Function
 
     ''' <summary>
+    ''' check of the query has matches inside the database?
+    ''' </summary>
+    ''' <param name="query"></param>
+    ''' <returns>
+    ''' result of ``SELECT EXISTS``
+    ''' </returns>
+    Public Function Exists(query As String) As Boolean
+        Dim sql As String = $"SELECT EXISTS({query}) AS has_match LIMIT 1;"
+        Dim check As Boolean = ExecuteAggregate(Of Long)(sql) > 0
+        Return check
+    End Function
+
+    ''' <summary>
     ''' 执行聚合函数并返回值
     ''' </summary>
     ''' <typeparam name="T"></typeparam>
@@ -239,16 +252,16 @@ Public Class MySqli : Implements IDisposable
     End Function
 
     Private Function ExecuteAggregateInternal(Of T)(SQL As String) As T
-        Dim Result As DataSet = Fetch(SQL)
-        Dim Reader As DataTableReader = Result.CreateDataReader
+        Dim result As DataSet = Fetch(SQL)
+        Dim reader As DataTableReader = result.CreateDataReader
 
-        Call Reader.Read()
+        Call reader.Read()
 
         ' 直接类型转换可能会存在类型不匹配的错误
         ' 因为在mysql表之中所有的字段值都是基本类型，所以在这里将结果值转换为字符串
         ' 在通过字符串转换为目标类型值
         ' 这个间接的转换方法比较安全，不容易崩溃
-        Dim objValue$ = InputHandler.ToString(Reader.GetValue(Scan0))
+        Dim objValue$ = InputHandler.ToString(reader.GetValue(Scan0))
         Dim value As T = InputHandler.CTypeDynamic(objValue, GetType(T))
         _lastMySql = SQL
         Return value
