@@ -351,6 +351,12 @@ Namespace MySqlBuilder
             Return field
         End Operator
 
+        ''' <summary>
+        ''' value comparision operator for evaluate: <paramref name="field"/> less than given <paramref name="val"/>
+        ''' </summary>
+        ''' <param name="field"></param>
+        ''' <param name="val"></param>
+        ''' <returns></returns>
         Public Overloads Shared Operator <(field As FieldAssert, val As String) As FieldAssert
             field.val = value(val)
             field.op = "<"
@@ -369,11 +375,22 @@ Namespace MySqlBuilder
             Return field
         End Operator
 
+        ''' <summary>
+        ''' unary not of the field assert logical result
+        ''' </summary>
+        ''' <param name="field"></param>
+        ''' <returns></returns>
         Public Overloads Shared Operator Not(field As FieldAssert) As FieldAssert
             field.unary_not = True
             Return field
         End Operator
 
+        ''' <summary>
+        ''' logical expression a or b in mysql
+        ''' </summary>
+        ''' <param name="a"></param>
+        ''' <param name="b"></param>
+        ''' <returns></returns>
         Public Overloads Shared Operator Or(a As FieldAssert, b As FieldAssert) As FieldAssert
             Dim assert As New FieldAssert() With {
                 .name = "OR",
