@@ -193,6 +193,9 @@ Namespace MySqlBuilder
             If op.TextEquals("or") AndAlso name.TextEquals("or") Then
                 ' a or b
                 str = $"(({val}) OR ({val2}))"
+            ElseIf op.TextEquals("and") AndAlso name.TextEquals("and") Then
+                ' a and b
+                str = $"(({val}) AND ({val2}))"
             ElseIf op.TextEquals("between") Then
                 str = $"({name} BETWEEN {val} AND {val2})"
             ElseIf op.TextEquals(NameOf(ExpressionSyntax.match)) Then
@@ -385,6 +388,16 @@ Namespace MySqlBuilder
             Return field
         End Operator
 
+        Public Overloads Shared Operator And(a As FieldAssert, b As FieldAssert) As FieldAssert
+            Dim assert As New FieldAssert With {
+                .name = "AND",
+                .op = "AND",
+                .val = a.ToString,
+                .val2 = b.ToString
+            }
+            Return assert
+        End Operator
+
         ''' <summary>
         ''' logical expression a or b in mysql
         ''' </summary>
@@ -392,6 +405,12 @@ Namespace MySqlBuilder
         ''' <param name="b"></param>
         ''' <returns></returns>
         Public Overloads Shared Operator Or(a As FieldAssert, b As FieldAssert) As FieldAssert
+            If a.checkEmptyValue Then
+                Return b
+            ElseIf b.checkEmptyValue Then
+                Return a
+            End If
+
             Dim assert As New FieldAssert() With {
                 .name = "OR",
                 .op = "OR",
@@ -401,6 +420,26 @@ Namespace MySqlBuilder
 
             Return assert
         End Operator
+
+        Private Function checkEmptyValue() As Boolean
+            Return name = NameOf(empty) AndAlso
+                op = NameOf(empty) AndAlso
+                unary_not = True AndAlso
+                val = NameOf(empty) AndAlso
+                val2 = NameOf(empty)
+        End Function
+
+        Public Shared ReadOnly Property empty As FieldAssert
+            Get
+                Return New FieldAssert With {
+                    .name = NameOf(empty),
+                    .op = NameOf(empty),
+                    .unary_not = True,
+                    .val = NameOf(empty),
+                    .val2 = NameOf(empty)
+                }
+            End Get
+        End Property
 
         Public Shared Function ParseFieldName(field As String, Optional strict As Boolean = False) As String
             If field Is Nothing OrElse field = "" Then
