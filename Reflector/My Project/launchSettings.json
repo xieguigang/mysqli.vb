@@ -2,8 +2,8 @@
   "profiles": {
     "Reflector": {
       "commandName": "Project",
-      "commandLineArgs": "--reflects /sql \"../../../mysql/pubmed_kb.sql\" -o ./ /namespace pubmed2 --language visualbasic /split",
-      "workingDirectory": "E:\\biodeep\\biodeepdb_v3\\biodeepdb_v3\\src\\BioDeepDB\\MySql\\pubmed"
+      "commandLineArgs": "--reflects /sql ./cad_registry20241221.sql -o \"../src/mysql\" /namespace biocad_registryModel --language visualbasic /split /auto_increment.disable",
+      "workingDirectory": "G:\\biocad_registry\\mysql"
     }
   }
 }
