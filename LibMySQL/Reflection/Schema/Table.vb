@@ -172,8 +172,15 @@ Namespace Reflection.Schema
             _databaseFields = databaseFields
         End Sub
 
-        Public Function GetPrimaryKeyFields() As Field()
-            Return PrimaryFields.Select(AddressOf __getField).ToArray
+        Public Iterator Function GetPrimaryKeyFields() As IEnumerable(Of Field)
+            For Each key As String In PrimaryFields.SafeQuery
+                Dim keys = Strings.Trim(key).Split(","c)
+
+                For Each key_str As String In keys
+                    key_str = key_str.Trim("`"c, " "c)
+                    Yield __getField(key_str)
+                Next
+            Next
         End Function
 
         Public Overrides Function ToString() As String

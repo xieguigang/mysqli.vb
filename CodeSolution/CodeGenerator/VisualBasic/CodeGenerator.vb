@@ -557,7 +557,7 @@ Namespace VisualBasic
         End Function
 
         Private Function ___UPDATE_SQL_Invoke(Schema As Reflection.Schema.Table, refConflict As Boolean) As String
-            Dim PrimaryKeys = Schema.GetPrimaryKeyFields
+            Dim PrimaryKeys = Schema.GetPrimaryKeyFields.ToArray
 
             If PrimaryKeys.IsNullOrEmpty Then
                 Return NameOf(___UPDATE_SQL_Invoke).__notImplementForIndex
@@ -588,7 +588,7 @@ Namespace VisualBasic
         Private Function ___DELETE_SQL_Invoke(schema As Table, refConflict As Boolean) As String
             Try
                 Dim SqlBuilder As String
-                Dim primaryKeys As Field() = schema.GetPrimaryKeyFields
+                Dim primaryKeys As Field() = schema.GetPrimaryKeyFields.ToArray
                 Dim refInvoke As String = primaryKeys _
                     .Select(Function(field)
                                 Return getExprInvoke(field, refConflict)
