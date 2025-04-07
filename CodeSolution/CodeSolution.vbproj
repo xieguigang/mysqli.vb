@@ -111,7 +111,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.23.2" />
+    <PackageReference Include="Google.Protobuf" Version="3.28.3" />
     <PackageReference Include="MySql.Data" Version="8.0.33" />
   </ItemGroup>
 
