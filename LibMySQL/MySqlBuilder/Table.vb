@@ -72,12 +72,22 @@ Namespace MySqlBuilder
     ''' </summary>
     Public Class Model
 
-        ReadOnly mysql As MySqli
-        ReadOnly schema As Table
         ReadOnly query As QueryBuilder
-        ReadOnly chain As Model
 
-        Dim m_getLastMySql As String
+        ''' <summary>
+        ''' the source chain model
+        ''' </summary>
+        Friend ReadOnly chain As Model
+        ''' <summary>
+        ''' current model table schema
+        ''' </summary>
+        Friend ReadOnly schema As Table
+        ''' <summary>
+        ''' the mysqli connection and data driver
+        ''' </summary>
+        Friend ReadOnly mysql As MySqli
+
+        Friend m_getLastMySql As String
 
         ''' <summary>
         ''' get last execute mysql script
@@ -413,8 +423,8 @@ Namespace MySqlBuilder
         ''' Create commit task data for make batch insert into current table
         ''' </summary>
         ''' <returns></returns>
-        Public Function batch_insert()
-
+        Public Function batch_insert() As CommitInsert
+            Return New CommitInsert(Me)
         End Function
 
         ''' <summary>
