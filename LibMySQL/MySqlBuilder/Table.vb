@@ -410,6 +410,14 @@ Namespace MySqlBuilder
         End Function
 
         ''' <summary>
+        ''' Create commit task data for make batch insert into current table
+        ''' </summary>
+        ''' <returns></returns>
+        Public Function batch_insert()
+
+        End Function
+
+        ''' <summary>
         ''' INSERT INTO
         ''' </summary>
         ''' <param name="fields"></param>
