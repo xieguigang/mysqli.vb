@@ -42,6 +42,7 @@ Namespace MySqlBuilder
             Next
         End Function
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Private Function fieldKeys() As String()
             Return cache.IteratesALL.Select(Function(a) a.name).Distinct.ToArray
         End Function
