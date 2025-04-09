@@ -88,6 +88,7 @@ Namespace MySqlBuilder
         Friend ReadOnly mysql As MySqli
 
         Friend m_getLastMySql As String
+        Friend m_delayed As Boolean = False
 
         ''' <summary>
         ''' get last execute mysql script
@@ -428,6 +429,18 @@ Namespace MySqlBuilder
         End Function
 
         ''' <summary>
+        ''' set delayed options for insert into
+        ''' </summary>
+        ''' <returns></returns>
+        ''' <remarks>
+        ''' this delayed options will be reste to no-delayed after insert has been called
+        ''' </remarks>
+        Public Function delayed() As Model
+            m_delayed = True
+            Return Me
+        End Function
+
+        ''' <summary>
         ''' INSERT INTO
         ''' </summary>
         ''' <param name="fields"></param>
@@ -435,7 +448,7 @@ Namespace MySqlBuilder
         Public Function add(ParamArray fields As FieldAssert()) As Boolean
             Dim names As String = fields.Select(Function(a) a.GetSafeName).JoinBy(", ")
             Dim vals As String = fields.Select(Function(a) a.val).JoinBy(", ")
-            Dim sql As String = $"INSERT INTO `{schema.Database}`.`{schema.TableName}` ({names}) VALUES ({vals});"
+            Dim sql As String = $"INSERT {If(m_delayed, "DELAYED", "")} INTO `{schema.Database}`.`{schema.TableName}` ({names}) VALUES ({vals});"
             chain.m_getLastMySql = sql
             Dim result = mysql.Execute(sql)
             Return result > 0
