@@ -423,8 +423,8 @@ Namespace MySqlBuilder
         ''' Create commit task data for make batch insert into current table
         ''' </summary>
         ''' <returns></returns>
-        Public Function batch_insert() As CommitInsert
-            Return New CommitInsert(Me)
+        Public Function batch_insert(Optional delayed As Boolean = False) As CommitInsert
+            Return New CommitInsert(Me, delayed)
         End Function
 
         ''' <summary>

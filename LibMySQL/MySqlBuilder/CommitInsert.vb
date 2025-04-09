@@ -8,16 +8,18 @@ Namespace MySqlBuilder
 
         ReadOnly model As Model
         ReadOnly cache As New List(Of (name$, val As FieldAssert)())
+        ReadOnly delayed As Boolean = False
 
-        Sub New(model As Model)
+        Sub New(model As Model, delayed As Boolean)
             Me.model = model
+            Me.delayed = delayed
         End Sub
 
         Public Function commit() As Boolean
             Dim names As String() = fieldKeys()
             Dim vals As String() = fieldValues(names).ToArray
             Dim schema As Table = model.schema
-            Dim sql As String = $"INSERT INTO `{schema.Database}`.`{schema.TableName}` ({names.JoinBy(", ")}) VALUES {vals.JoinBy(", ")};"
+            Dim sql As String = $"INSERT {If(delayed, "DELAYED", "")} INTO `{schema.Database}`.`{schema.TableName}` ({names.JoinBy(", ")}) VALUES {vals.JoinBy(", ")};"
             model.chain.m_getLastMySql = sql
             Dim result = model.mysql.Execute(sql)
             Return result > 0
