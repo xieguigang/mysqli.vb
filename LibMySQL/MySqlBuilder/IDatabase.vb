@@ -76,8 +76,8 @@ Public MustInherit Class IDatabase
     ''' <returns></returns>
     ''' 
     <MethodImpl(MethodImplOptions.AggressiveInlining)>
-    Protected Function model(Of T As MySQLTable)() As Model
-        Return New Model(TableName.GetTableName(Of T), mysqli)
+    Protected Function model(Of T As {New, MySQLTable})() As TableModel(Of T)
+        Return New TableModel(Of T)(mysqli)
     End Function
 
     ''' <summary>
@@ -94,6 +94,18 @@ Public MustInherit Class IDatabase
     <MethodImpl(MethodImplOptions.AggressiveInlining)>
     Public Function getDriver() As MySqli
         Return mysqli
+    End Function
+
+End Class
+
+Public Class TableModel(Of T As {New, MySQLTable}) : Inherits Model
+
+    Sub New(mysqli As MySqli)
+        Call MyBase.New(TableName.GetTableName(Of T), mysqli)
+    End Sub
+
+    Public Function find_object(ParamArray where As FieldAssert()) As T
+        Return Me.where(where).find(Of T)
     End Function
 
 End Class

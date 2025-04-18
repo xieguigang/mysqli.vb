@@ -736,7 +736,7 @@ NO_KEY:
             Call sql.AppendLine($"Public MustInherit Class db_{dbname} : Inherits IDatabase")
 
             For Each name As String In tables
-                Call sql.AppendLine($"Protected ReadOnly m_{name} As Model")
+                Call sql.AppendLine($"Protected ReadOnly m_{name} As TableModel(Of {name})")
             Next
 
             ' create new constructor
