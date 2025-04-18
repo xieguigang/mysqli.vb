@@ -739,6 +739,7 @@ NO_KEY:
                 Call sql.AppendLine($"Protected ReadOnly m_{name} As Model")
             Next
 
+            ' create new constructor
             Call sql.AppendLine("Protected Sub New(mysqli As ConnectionUri)")
             Call sql.AppendLine("Call MyBase.New(mysqli)")
 
