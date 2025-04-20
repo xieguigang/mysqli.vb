@@ -388,6 +388,12 @@ Namespace MySqlBuilder
             Return field
         End Operator
 
+        ''' <summary>
+        ''' Logical AND operator between two query condition
+        ''' </summary>
+        ''' <param name="a"></param>
+        ''' <param name="b"></param>
+        ''' <returns></returns>
         Public Overloads Shared Operator And(a As FieldAssert, b As FieldAssert) As FieldAssert
             Dim assert As New FieldAssert With {
                 .name = "AND",
