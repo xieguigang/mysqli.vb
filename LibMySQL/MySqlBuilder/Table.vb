@@ -67,10 +67,16 @@ Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 Namespace MySqlBuilder
 
+    Public Interface IModel
+
+        Function field(name As String) As FieldAssert
+
+    End Interface
+
     ''' <summary>
     ''' 
     ''' </summary>
-    Public Class Model
+    Public Class Model : Implements IModel
 
         ReadOnly query As QueryBuilder
 
@@ -230,8 +236,7 @@ Namespace MySqlBuilder
         ''' </summary>
         ''' <param name="name"></param>
         ''' <returns></returns>
-        <MethodImpl(MethodImplOptions.AggressiveInlining)>
-        Public Function field(name As String) As FieldAssert
+        Public Function field(name As String) As FieldAssert Implements IModel.field
             Static prefix As New Regex("([^\.]+\.)|(`[^\.]+`\.)", RegexPythonRawString)
 
             Dim prefix_s As Match = prefix.Match(name)

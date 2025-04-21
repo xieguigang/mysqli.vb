@@ -4,7 +4,7 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace MySqlBuilder
 
-    Public Class CommitInsert
+    Public Class CommitInsert : Implements IModel
 
         ReadOnly model As Model
         ReadOnly cache As New List(Of (name$, val As FieldAssert)())
@@ -57,5 +57,9 @@ Namespace MySqlBuilder
             Call cache.Add(fields.Select(Function(a) (a.GetSafeName, a)).ToArray)
         End Sub
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Private Function field(name As String) As FieldAssert Implements IModel.field
+            Return model.field(name)
+        End Function
     End Class
 End Namespace
