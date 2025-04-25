@@ -10,6 +10,28 @@
             Me.model = model
         End Sub
 
+        ''' <summary>
+        ''' set delayed options for insert into
+        ''' </summary>
+        ''' <returns></returns>
+        ''' <remarks>
+        ''' this delayed options will be reste to no-delayed after insert has been called
+        ''' </remarks>
+        Public Function delayed() As CommitTransaction
+            model.delayed()
+            Return Me
+        End Function
+
+        Public Function ignore() As CommitTransaction
+            model.ignore()
+            Return Me
+        End Function
+
+        Public Function clearOption() As CommitTransaction
+            model.clearOption()
+            Return Me
+        End Function
+
         Public Sub add(sql As String)
             Call trans_sql.Add(sql)
         End Sub

@@ -1,15 +1,22 @@
-﻿Imports System.Runtime.CompilerServices
+﻿Imports System.ComponentModel
+Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports Microsoft.VisualBasic.Linq
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace MySqlBuilder
 
+    Public Enum InsertOptions
+        <Description("")> None
+        <Description("DELAYED")> Delayed
+        <Description("IGNORE")> Ignore
+    End Enum
+
     Public Class CommitInsert : Implements IModel
 
         ReadOnly model As Model
         ReadOnly blocks As New List(Of Block)
-        ReadOnly delayed As Boolean = False
+        ReadOnly opt As String = InsertOptions.None.Description
 
         Dim maxBlockSize As Integer = 1024
 
@@ -36,7 +43,7 @@ Namespace MySqlBuilder
                 Dim names As String() = fieldKeys()
                 Dim vals As String() = fieldValues(names).ToArray
                 Dim schema As Table = commit.model.schema
-                Dim sql As String = $"INSERT {If(commit.delayed, "DELAYED", "")} INTO `{schema.Database}`.`{schema.TableName}` ({names.JoinBy(", ")}) VALUES {vals.JoinBy(", ")};"
+                Dim sql As String = $"INSERT {commit.opt} INTO `{schema.Database}`.`{schema.TableName}` ({names.JoinBy(", ")}) VALUES {vals.JoinBy(", ")};"
 
                 Return sql
             End Function
@@ -64,9 +71,9 @@ Namespace MySqlBuilder
             End Function
         End Class
 
-        Sub New(model As Model, delayed As Boolean, Optional maxBlockSize As Integer = 1024)
+        Sub New(model As Model, opt As InsertOptions, Optional maxBlockSize As Integer = 1024)
             Me.model = model
-            Me.delayed = delayed
+            Me.opt = opt.Description
             Me.maxBlockSize = maxBlockSize
 
             Call blocks.Add(New Block(Me))

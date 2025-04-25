@@ -94,7 +94,7 @@ Namespace MySqlBuilder
         Friend ReadOnly mysql As MySqli
 
         Friend m_getLastMySql As String
-        Friend m_delayed As Boolean = False
+        Friend m_opt As InsertOptions = InsertOptions.None
 
         ''' <summary>
         ''' get last execute mysql script
@@ -429,8 +429,8 @@ Namespace MySqlBuilder
         ''' Create commit task data for make batch insert into current table
         ''' </summary>
         ''' <returns></returns>
-        Public Function batch_insert(Optional max_blocksize As Integer = 1024, Optional delayed As Boolean = False) As CommitInsert
-            Return New CommitInsert(Me, delayed, maxBlockSize:=max_blocksize)
+        Public Function batch_insert(Optional max_blocksize As Integer = 1024, Optional opt As InsertOptions = InsertOptions.None) As CommitInsert
+            Return New CommitInsert(Me, opt, maxBlockSize:=max_blocksize)
         End Function
 
         Public Function open_transaction() As CommitTransaction
@@ -445,7 +445,17 @@ Namespace MySqlBuilder
         ''' this delayed options will be reste to no-delayed after insert has been called
         ''' </remarks>
         Public Function delayed() As Model
-            m_delayed = True
+            m_opt = InsertOptions.Delayed
+            Return Me
+        End Function
+
+        Public Function ignore() As Model
+            m_opt = InsertOptions.Ignore
+            Return Me
+        End Function
+
+        Public Function clearOption() As Model
+            m_opt = InsertOptions.None
             Return Me
         End Function
 
@@ -464,7 +474,7 @@ Namespace MySqlBuilder
         Friend Function add_sql(ParamArray fields As FieldAssert()) As String
             Dim names As String = fields.Select(Function(a) a.GetSafeName).JoinBy(", ")
             Dim vals As String = fields.Select(Function(a) a.val).JoinBy(", ")
-            Dim sql As String = $"INSERT {If(m_delayed, "DELAYED", "")} INTO `{schema.Database}`.`{schema.TableName}` ({names}) VALUES ({vals});"
+            Dim sql As String = $"INSERT {m_opt.Description} INTO `{schema.Database}`.`{schema.TableName}` ({names}) VALUES ({vals});"
             Return sql
         End Function
 
