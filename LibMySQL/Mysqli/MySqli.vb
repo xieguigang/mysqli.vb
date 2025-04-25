@@ -153,6 +153,14 @@ Public Class MySqli : Implements IDisposable
         Return UriMySQL.GetJson
     End Function
 
+    Public Function CheckAutoCommit() As Boolean
+        Dim check_sql = "SHOW VARIABLES LIKE 'autocommit'"
+        Dim result As DataSet = Fetch(check_sql)
+        Dim reader As DataTableReader = result?.CreateDataReader
+        Dim value As String = CStr(DbReflector.ReadFirst(reader)!Value)
+        Return value.ParseBoolean
+    End Function
+
     ''' <summary>
     ''' Connect to the database server using a assigned mysql connection helper object. The function returns the ping value of the client to the MYSQL database server.
     ''' (使用一个由用户所指定参数的连接字符串生成器来打开一个对服务器的连接，之后返回客户端对数据库服务器的ping值) 
