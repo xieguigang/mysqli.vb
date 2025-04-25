@@ -79,23 +79,34 @@ Namespace MySqlBuilder
         Public Function commit() As Boolean
             Dim sql As New StringBuilder
             Dim sql_str As String
-            Dim result As Integer
+            Dim result As Boolean
             Dim ex As Exception = Nothing
 
             For Each block As Block In blocks
-                Call sql.AppendLine(block.commit_sql)
+                If block.cache.Count > 0 Then
+                    Call sql.AppendLine(block.commit_sql)
+                End If
             Next
 
             sql_str = sql.ToString
-            model.chain.m_getLastMySql = sql_str
-            result = model.mysql.CommitTransaction(sql_str, ex)
 
-            Return result > 0
+            If sql_str = "" Then
+                ' empty data for make insert
+                Call "empty data list for make insert!".Warning
+                Return True
+            Else
+                model.chain.m_getLastMySql = sql_str
+                result = model.mysql.CommitTransaction(sql_str, ex)
+            End If
+
+            Return result
         End Function
 
         Public Sub commit(transaction As CommitTransaction)
             For Each block As Block In blocks
-                transaction.add(block.commit_sql)
+                If block.cache.Count > 0 Then
+                    Call transaction.add(block.commit_sql)
+                End If
             Next
         End Sub
 
