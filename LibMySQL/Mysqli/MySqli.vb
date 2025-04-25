@@ -63,6 +63,7 @@
 
 Imports System.Data
 Imports System.Runtime.CompilerServices
+Imports System.Runtime.InteropServices
 Imports Microsoft.VisualBasic.ApplicationServices.Debugging.Logging
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq.Extensions
@@ -553,7 +554,7 @@ Public Class MySqli : Implements IDisposable
     ''' (返回本事务是否被成功提交至数据库服务器)
     ''' </returns>
     ''' <remarks></remarks>
-    Public Function CommitTransaction(transaction$, Optional ByRef excep As Exception = Nothing) As Boolean
+    Public Function CommitTransaction(transaction$, <Out> Optional ByRef excep As Exception = Nothing) As Boolean
         Using MyConnection As New MySqlConnection(_UriMySQL)
             MyConnection.Open()
 

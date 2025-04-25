@@ -429,8 +429,8 @@ Namespace MySqlBuilder
         ''' Create commit task data for make batch insert into current table
         ''' </summary>
         ''' <returns></returns>
-        Public Function batch_insert(Optional delayed As Boolean = False) As CommitInsert
-            Return New CommitInsert(Me, delayed)
+        Public Function batch_insert(Optional max_blocksize As Integer = 1024, Optional delayed As Boolean = False) As CommitInsert
+            Return New CommitInsert(Me, delayed, maxBlockSize:=max_blocksize)
         End Function
 
         Public Function open_transaction() As CommitTransaction
