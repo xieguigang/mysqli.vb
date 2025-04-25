@@ -68,6 +68,8 @@ Namespace MySqlBuilder
             Me.model = model
             Me.delayed = delayed
             Me.maxBlockSize = maxBlockSize
+
+            Call blocks.Add(New Block(Me))
         End Sub
 
         ''' <summary>
