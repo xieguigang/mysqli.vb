@@ -433,6 +433,10 @@ Namespace MySqlBuilder
             Return New CommitInsert(Me, delayed)
         End Function
 
+        Public Function open_transaction() As CommitTransaction
+            Return New CommitTransaction(Me)
+        End Function
+
         ''' <summary>
         ''' set delayed options for insert into
         ''' </summary>
@@ -451,12 +455,17 @@ Namespace MySqlBuilder
         ''' <param name="fields"></param>
         ''' <returns></returns>
         Public Function add(ParamArray fields As FieldAssert()) As Boolean
-            Dim names As String = fields.Select(Function(a) a.GetSafeName).JoinBy(", ")
-            Dim vals As String = fields.Select(Function(a) a.val).JoinBy(", ")
-            Dim sql As String = $"INSERT {If(m_delayed, "DELAYED", "")} INTO `{schema.Database}`.`{schema.TableName}` ({names}) VALUES ({vals});"
+            Dim sql As String = add_sql(fields)
             chain.m_getLastMySql = sql
             Dim result = mysql.Execute(sql)
             Return result > 0
+        End Function
+
+        Friend Function add_sql(ParamArray fields As FieldAssert()) As String
+            Dim names As String = fields.Select(Function(a) a.GetSafeName).JoinBy(", ")
+            Dim vals As String = fields.Select(Function(a) a.val).JoinBy(", ")
+            Dim sql As String = $"INSERT {If(m_delayed, "DELAYED", "")} INTO `{schema.Database}`.`{schema.TableName}` ({names}) VALUES ({vals});"
+            Return sql
         End Function
 
         ''' <summary>

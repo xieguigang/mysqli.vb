@@ -568,6 +568,7 @@ Public Class MySqli : Implements IDisposable
             MyCommand.Connection = MyConnection
             MyCommand.Transaction = MyTrans
             _lastMySql = transaction
+
             Try
                 MyCommand.CommandText = transaction
                 MyCommand.ExecuteNonQuery()
@@ -575,12 +576,16 @@ Public Class MySqli : Implements IDisposable
 
                 Return True
             Catch e As Exception
+                excep = e
+
                 Try
-                    MyTrans.Rollback()
+                    Call App.LogException(e)
+                    Call MyTrans.Rollback()
                 Catch ex As MySqlException
                     e = New Exception(__throwExceptionHelper(ex, transaction, False).ToString, e)
+                    excep = e
                 End Try
-                excep = e
+
                 Return False
             Finally
                 MyConnection.Close()
