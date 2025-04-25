@@ -19,7 +19,7 @@
         End Sub
 
         Public Sub commit()
-            Call model.mysql.CommitTransaction(trans_sql.JoinBy(vbCrLf))
+            model.mysql.CommitTransaction(trans_sql.JoinBy(vbCrLf))
             disposedValue = True
         End Sub
 
