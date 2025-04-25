@@ -70,6 +70,10 @@ Namespace MySqlBuilder
             Me.maxBlockSize = maxBlockSize
         End Sub
 
+        ''' <summary>
+        ''' commit the batch insert transaction
+        ''' </summary>
+        ''' <returns></returns>
         Public Function commit() As Boolean
             Dim sql As New StringBuilder
             Dim sql_str As String
