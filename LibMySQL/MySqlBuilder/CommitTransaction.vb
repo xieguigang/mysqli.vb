@@ -19,8 +19,13 @@
         End Sub
 
         Public Sub commit()
-            model.mysql.CommitTransaction(trans_sql.JoinBy(vbCrLf))
-            disposedValue = True
+            Dim ex As Exception = Nothing
+
+            If Not model.mysql.CommitTransaction(trans_sql.JoinBy(vbCrLf), ex) Then
+                Throw ex
+            Else
+                disposedValue = True
+            End If
         End Sub
 
         ''' <summary>
