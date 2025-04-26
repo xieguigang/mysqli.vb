@@ -497,8 +497,9 @@ Public Class MySqli : Implements IDisposable
     End Function
 
     Public Function CreateQuery(SQL As String) As MySqlDataReader
-        Dim MySql As MySqlConnection = New MySqlConnection(_UriMySQL) '[ConnectionString] is a compiled mysql connection string from our class constructor.
-        Dim MySqlCommand As MySqlCommand = New MySqlCommand(SQL, MySql)
+        ' [ConnectionString] is a compiled mysql connection string from our class constructor.
+        Dim MySql As New MySqlConnection(_UriMySQL)
+        Dim MySqlCommand As New MySqlCommand(SQL, MySql)
         _lastMySql = SQL
         Try
             MySql.Open()
@@ -546,14 +547,15 @@ Public Class MySqli : Implements IDisposable
     ''' <summary>
     ''' Commit a transaction command collection to the database server and then return the 
     ''' result that this transaction is commit successfully or not. 
-    ''' (向数据库服务器提交一个事务之后返回本事务是否被成功提交)
     ''' </summary>
     ''' <param name="transaction"></param>
     ''' <returns>
     ''' Return the result that this transaction is commit succeedor not.
     ''' (返回本事务是否被成功提交至数据库服务器)
     ''' </returns>
-    ''' <remarks></remarks>
+    ''' <remarks>
+    ''' (向数据库服务器提交一个事务之后返回本事务是否被成功提交)
+    ''' </remarks>
     Public Function CommitTransaction(transaction$, <Out> Optional ByRef excep As Exception = Nothing) As Boolean
         Using MyConnection As New MySqlConnection(_UriMySQL)
             MyConnection.Open()
@@ -620,11 +622,12 @@ Public Class MySqli : Implements IDisposable
     ''' Test the connection of the client to the mysql database server and then 
     ''' return the communication delay time between the client and the server. 
     ''' This function should be call after you connection to a database server.
-    ''' (测试客户端和MySql数据库服务器之间的通信连接并且返回二者之间的通信延时。
-    ''' 这个函数应该在你连接上一个数据库服务器之后进行调用，-1值表示客户端与服务器之间通信失败.)
     ''' </summary>
     ''' <returns>当函数返回一个负数的时候，表明Ping操作失败，即无数据库服务器连接</returns>
-    ''' <remarks></remarks>
+    ''' <remarks>
+    ''' (测试客户端和MySql数据库服务器之间的通信连接并且返回二者之间的通信延时。
+    ''' 这个函数应该在你连接上一个数据库服务器之后进行调用，-1值表示客户端与服务器之间通信失败.)
+    ''' </remarks>
     Public Function Ping() As Double
         Dim Flag As Boolean
         Dim DelayTime As Double
