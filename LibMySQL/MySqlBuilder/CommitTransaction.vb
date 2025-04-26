@@ -1,4 +1,6 @@
-﻿Namespace MySqlBuilder
+﻿Imports System.Runtime.CompilerServices
+
+Namespace MySqlBuilder
 
     ''' <summary>
     ''' commit operation for the insert operation:
@@ -16,7 +18,37 @@
 
     End Interface
 
-    Public Class CommitTransaction : Implements IDisposable, IDataCommitOperation
+    ''' <summary>
+    ''' the abstract model for insert into sql
+    ''' </summary>
+    ''' <typeparam name="T"></typeparam>
+    Public Interface IInsertModel(Of T As IInsertModel(Of T))
+
+        ''' <summary>
+        ''' insert delayed into
+        ''' </summary>
+        ''' <returns></returns>
+        Function delayed() As T
+        ''' <summary>
+        ''' insert ignore into
+        ''' </summary>
+        ''' <returns></returns>
+        Function ignore() As T
+        ''' <summary>
+        ''' insert into
+        ''' </summary>
+        ''' <returns></returns>
+        Function clearOption() As T
+
+        ''' <summary>
+        ''' implements of the insert into
+        ''' </summary>
+        ''' <param name="fields"></param>
+        Function add(ParamArray fields As FieldAssert()) As Boolean
+
+    End Interface
+
+    Public Class CommitTransaction : Implements IDisposable, IDataCommitOperation, IModel, IInsertModel(Of CommitTransaction)
 
         Dim disposedValue As Boolean
         Dim model As Model
@@ -33,28 +65,34 @@
         ''' <remarks>
         ''' this delayed options will be reste to no-delayed after insert has been called
         ''' </remarks>
-        Public Function delayed() As CommitTransaction
+        Public Function delayed() As CommitTransaction Implements IInsertModel(Of CommitTransaction).delayed
             model.delayed()
             Return Me
         End Function
 
-        Public Function ignore() As CommitTransaction
+        Public Function ignore() As CommitTransaction Implements IInsertModel(Of CommitTransaction).ignore
             model.ignore()
             Return Me
         End Function
 
-        Public Function clearOption() As CommitTransaction
+        Public Function clearOption() As CommitTransaction Implements IInsertModel(Of CommitTransaction).clearOption
             model.clearOption()
             Return Me
+        End Function
+
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Private Function field(name As String) As FieldAssert Implements IModel.field
+            Return model.field(name)
         End Function
 
         Public Sub add(sql As String)
             Call trans_sql.Add(sql)
         End Sub
 
-        Public Sub add(ParamArray fields As FieldAssert())
+        Public Function add(ParamArray fields As FieldAssert()) As Boolean Implements IInsertModel(Of CommitTransaction).add
             Call add(model.add_sql(fields))
-        End Sub
+            Return True
+        End Function
 
         Public Sub commit() Implements IDataCommitOperation.Commit
             Dim ex As Exception = Nothing

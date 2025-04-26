@@ -76,7 +76,7 @@ Namespace MySqlBuilder
     ''' <summary>
     ''' 
     ''' </summary>
-    Public Class Model : Implements IModel
+    Public Class Model : Implements IModel, IInsertModel(Of Model)
 
         ReadOnly query As QueryBuilder
 
@@ -444,17 +444,17 @@ Namespace MySqlBuilder
         ''' <remarks>
         ''' this delayed options will be reste to no-delayed after insert has been called
         ''' </remarks>
-        Public Function delayed() As Model
+        Public Function delayed() As Model Implements IInsertModel(Of Model).delayed
             m_opt = InsertOptions.Delayed
             Return Me
         End Function
 
-        Public Function ignore() As Model
+        Public Function ignore() As Model Implements IInsertModel(Of Model).ignore
             m_opt = InsertOptions.Ignore
             Return Me
         End Function
 
-        Public Function clearOption() As Model
+        Public Function clearOption() As Model Implements IInsertModel(Of Model).clearOption
             m_opt = InsertOptions.None
             Return Me
         End Function
@@ -464,7 +464,7 @@ Namespace MySqlBuilder
         ''' </summary>
         ''' <param name="fields"></param>
         ''' <returns></returns>
-        Public Function add(ParamArray fields As FieldAssert()) As Boolean
+        Public Function add(ParamArray fields As FieldAssert()) As Boolean Implements IInsertModel(Of Model).add
             Dim sql As String = add_sql(fields)
             chain.m_getLastMySql = sql
             Dim result = mysql.Execute(sql)
