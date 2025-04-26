@@ -12,7 +12,7 @@ Namespace MySqlBuilder
         <Description("IGNORE")> Ignore
     End Enum
 
-    Public Class CommitInsert : Implements IModel
+    Public Class CommitInsert : Implements IModel, IDataCommitOperation
 
         ReadOnly model As Model
         ReadOnly blocks As New List(Of Block)
@@ -138,5 +138,9 @@ Namespace MySqlBuilder
         Private Function field(name As String) As FieldAssert Implements IModel.field
             Return model.field(name)
         End Function
+
+        Private Sub IDataCommitOperation_Commit() Implements IDataCommitOperation.Commit
+            Call commit()
+        End Sub
     End Class
 End Namespace

@@ -1,6 +1,22 @@
 ﻿Namespace MySqlBuilder
 
-    Public Class CommitTransaction : Implements IDisposable
+    ''' <summary>
+    ''' commit operation for the insert operation:
+    ''' 
+    ''' 1. <see cref="CommitInsert"/>
+    ''' 2. <see cref="CommitTransaction"/>
+    ''' 
+    ''' </summary>
+    ''' <remarks>
+    ''' this class is used to commit the insert operation
+    ''' </remarks>
+    Public Interface IDataCommitOperation
+
+        Sub Commit()
+
+    End Interface
+
+    Public Class CommitTransaction : Implements IDisposable, IDataCommitOperation
 
         Dim disposedValue As Boolean
         Dim model As Model
@@ -40,7 +56,7 @@
             Call add(model.add_sql(fields))
         End Sub
 
-        Public Sub commit()
+        Public Sub commit() Implements IDataCommitOperation.Commit
             Dim ex As Exception = Nothing
 
             If Not model.mysql.CommitTransaction(trans_sql.JoinBy(vbCrLf), ex) Then
