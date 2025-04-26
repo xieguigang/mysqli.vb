@@ -429,12 +429,15 @@ Namespace MySqlBuilder
         ''' Create commit task data for make batch insert into current table
         ''' </summary>
         ''' <returns></returns>
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Function batch_insert(Optional max_blocksize As Integer = 1024, Optional opt As InsertOptions = InsertOptions.None) As CommitInsert
             Return New CommitInsert(Me, opt, maxBlockSize:=max_blocksize)
         End Function
 
-        Public Function open_transaction() As CommitTransaction
-            Return New CommitTransaction(Me)
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function open_transaction(Optional blockSize As Integer = 1024) As CommitTransaction
+            Return New CommitTransaction(Me, blockSize)
         End Function
 
         ''' <summary>

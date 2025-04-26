@@ -53,9 +53,11 @@ Namespace MySqlBuilder
         Dim disposedValue As Boolean
         Dim model As Model
         Dim trans_sql As New List(Of String)
+        Dim blockSize As Integer = 1024
 
-        Sub New(model As Model)
+        Sub New(model As Model, Optional blockSize As Integer = 1024)
             Me.model = model
+            Me.blockSize = blockSize
         End Sub
 
         ''' <summary>
@@ -97,11 +99,13 @@ Namespace MySqlBuilder
         Public Sub commit() Implements IDataCommitOperation.Commit
             Dim ex As Exception = Nothing
 
-            If Not model.mysql.CommitTransaction(trans_sql.JoinBy(vbCrLf), ex) Then
-                Throw ex
-            Else
-                disposedValue = True
-            End If
+            For Each block As String() In trans_sql.SplitIterator(blockSize)
+                If Not model.mysql.CommitTransaction(block, ex) Then
+                    Throw ex
+                End If
+            Next
+
+            disposedValue = True
         End Sub
 
         ''' <summary>
