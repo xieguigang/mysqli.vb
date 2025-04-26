@@ -537,11 +537,12 @@ Public Class MySqli : Implements IDisposable
     End Function
 #End Region
 
-    Public Function CommitInserts(transaction As IEnumerable(Of MySQLTable), Optional ByRef ex As Exception = Nothing) As Boolean
-        Dim SQL$ = transaction _
+    Public Function CommitInserts(transaction As IEnumerable(Of MySQLTable), <Out> Optional ByRef ex As Exception = Nothing) As Boolean
+        Dim sql As String() = transaction _
             .Select(Function(x) x.GetInsertSQL) _
-            .JoinBy(vbLf)
-        Return CommitTransaction(SQL, ex)
+            .ToArray
+
+        Return CommitTransaction(sql, ex)
     End Function
 
     ''' <summary>
@@ -594,6 +595,42 @@ Public Class MySqli : Implements IDisposable
                 MyConnection.Close()
             End Try
         End Using
+    End Function
+
+    Public Function CommitTransaction(transaction As String(), <Out> Optional ByRef excep As Exception = Nothing) As Boolean
+        Using MyConnection As New MySqlConnection(_UriMySQL)
+            Call MyConnection.Open()
+
+            ' Start a local transaction
+            Dim MyTrans As MySqlTransaction = MyConnection.BeginTransaction()
+
+            Try
+                For Each sql As String In transaction
+                    _lastMySql = sql
+
+                    Using cmd As New MySqlCommand(sql, MyConnection, MyTrans)
+                        Call cmd.ExecuteNonQuery()
+                    End Using
+                Next
+
+                Call MyTrans.Commit()
+            Catch ex As Exception
+                excep = ex
+                App.LogException(ex)
+
+                Try
+                    Call MyTrans.Rollback()
+                Catch ex2 As Exception
+                    Call App.LogException(ex)
+                End Try
+
+                Return False
+            Finally
+                Call MyConnection.Close()
+            End Try
+        End Using
+
+        Return True
     End Function
 
     ''' <summary>
