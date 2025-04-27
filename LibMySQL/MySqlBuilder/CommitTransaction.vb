@@ -91,6 +91,11 @@ Namespace MySqlBuilder
             Call trans_sql.Add(sql)
         End Sub
 
+        ''' <summary>
+        ''' just create the insert into sql and added into the transaction memory cache pool
+        ''' </summary>
+        ''' <param name="fields"></param>
+        ''' <returns></returns>
         Public Function add(ParamArray fields As FieldAssert()) As Boolean Implements IInsertModel(Of CommitTransaction).add
             Call add(model.add_sql(fields))
             Return True
