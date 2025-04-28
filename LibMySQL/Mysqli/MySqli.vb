@@ -598,6 +598,11 @@ Public Class MySqli : Implements IDisposable
     End Function
 
     Public Function CommitTransaction(transaction As String(), <Out> Optional ByRef excep As Exception = Nothing) As Boolean
+        If transaction.IsNullOrEmpty Then
+            Call "No sql operation inside current transaction commit, skipped!".Warning
+            Return True
+        End If
+
         Using MyConnection As New MySqlConnection(_UriMySQL)
             Call MyConnection.Open()
 
@@ -608,6 +613,11 @@ Public Class MySqli : Implements IDisposable
                 For Each sql As String In transaction
                     _lastMySql = sql
 
+                    ' skip of the empty sql
+                    If sql = "" Then
+                        Continue For
+                    End If
+
                     Using cmd As New MySqlCommand(sql, MyConnection, MyTrans)
                         Call cmd.ExecuteNonQuery()
                     End Using
@@ -615,8 +625,8 @@ Public Class MySqli : Implements IDisposable
 
                 Call MyTrans.Commit()
             Catch ex As Exception
-                excep = ex
-                App.LogException(ex)
+                excep = New Exception(ex.Message & " -- " & _lastMySql, ex)
+                App.LogException(excep)
 
                 Try
                     Call MyTrans.Rollback()
