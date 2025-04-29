@@ -101,6 +101,9 @@ Namespace MySqlBuilder
             Return True
         End Function
 
+        ''' <summary>
+        ''' write the in-memory cache of the transaction data into database
+        ''' </summary>
         Public Sub commit() Implements IDataCommitOperation.Commit
             Dim ex As Exception = Nothing
 

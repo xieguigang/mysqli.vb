@@ -435,6 +435,14 @@ Namespace MySqlBuilder
             Return New CommitInsert(Me, opt, maxBlockSize:=max_blocksize)
         End Function
 
+        ''' <summary>
+        ''' 
+        ''' </summary>
+        ''' <param name="blockSize"></param>
+        ''' <returns></returns>
+        ''' <remarks>
+        ''' just create an in-memory cache of the batch transaction data
+        ''' </remarks>
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Function open_transaction(Optional blockSize As Integer = 1024) As CommitTransaction
             Return New CommitTransaction(Me, blockSize)
