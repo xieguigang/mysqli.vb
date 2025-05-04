@@ -231,6 +231,10 @@ Namespace MySqlBuilder
             Return New Model(mysql, schema, query, chain)
         End Function
 
+        Public Function having(ParamArray asserts As FieldAssert()) As Model
+
+        End Function
+
         ''' <summary>
         ''' `table`.`field`
         ''' </summary>

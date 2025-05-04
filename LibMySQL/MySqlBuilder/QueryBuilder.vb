@@ -57,9 +57,51 @@ Imports Microsoft.VisualBasic.Linq
 
 Namespace MySqlBuilder
 
-    Friend Class QueryBuilder
+    Friend Class FilterConditions
 
         Public where As New Dictionary(Of String, List(Of String))
+
+        Sub New()
+        End Sub
+
+        ''' <summary>
+        ''' make condition filter value copy
+        ''' </summary>
+        ''' <param name="clone"></param>
+        Sub New(clone As FilterConditions)
+            If Not clone.IsNullOrEmpty Then
+                where = New Dictionary(Of String, List(Of String))(clone.where)
+            End If
+        End Sub
+
+        Friend Function build_where_str() As String
+            Dim s As String = Nothing
+
+            If where.ContainsKey("sql") Then
+                s = where("sql").JoinBy(" AND ")
+            End If
+            If where.ContainsKey("and") Then
+                If s.StringEmpty Then
+                    s = $"({where("and").JoinBy(" AND ")})"
+                Else
+                    s = $"({s}) AND ({where("and").JoinBy(" AND ")})"
+                End If
+            End If
+            If where.ContainsKey("or") Then
+                If s.StringEmpty Then
+                    s = $"({where("or").JoinBy(" AND ")})"
+                Else
+                    s = $"({s}) OR ({where("or").JoinBy(" AND ")})"
+                End If
+            End If
+
+            Return s
+        End Function
+    End Class
+
+    Friend Class QueryBuilder
+
+        Public where As FilterConditions
         Public offset As Integer?
         Public page_size As Integer?
         Public left_join As New List(Of NamedCollection(Of FieldAssert))
@@ -68,10 +110,11 @@ Namespace MySqlBuilder
         Public order_by As String()
         Public order_desc As Boolean
         Public group_by As String()
+        Public having As FilterConditions
 
         Sub New(copy As QueryBuilder)
             If Not copy Is Nothing Then
-                where = New Dictionary(Of String, List(Of String))(copy.where)
+                where = New FilterConditions(copy.where)
                 offset = copy.offset
                 page_size = copy.page_size
                 left_join = New List(Of NamedCollection(Of FieldAssert))(copy.left_join)
@@ -134,32 +177,8 @@ Namespace MySqlBuilder
             If where.IsNullOrEmpty Then
                 Return ""
             Else
-                Return $"WHERE {build_where_str()}"
+                Return $"WHERE {where.build_where_str()}"
             End If
-        End Function
-
-        Private Function build_where_str() As String
-            Dim s As String = Nothing
-
-            If where.ContainsKey("sql") Then
-                s = where("sql").JoinBy(" AND ")
-            End If
-            If where.ContainsKey("and") Then
-                If s.StringEmpty Then
-                    s = $"({where("and").JoinBy(" AND ")})"
-                Else
-                    s = $"({s}) AND ({where("and").JoinBy(" AND ")})"
-                End If
-            End If
-            If where.ContainsKey("or") Then
-                If s.StringEmpty Then
-                    s = $"({where("or").JoinBy(" AND ")})"
-                Else
-                    s = $"({s}) OR ({where("or").JoinBy(" AND ")})"
-                End If
-            End If
-
-            Return s
         End Function
 
         Public Function limit_str() As String
