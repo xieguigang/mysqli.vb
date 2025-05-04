@@ -131,6 +131,7 @@ Namespace MySqlBuilder
         Sub New(copy As QueryBuilder)
             If Not copy Is Nothing Then
                 where = New FilterConditions(copy.where)
+                having = New FilterConditions(copy.having)
                 offset = copy.offset
                 page_size = copy.page_size
                 left_join = New List(Of NamedCollection(Of FieldAssert))(copy.left_join)
