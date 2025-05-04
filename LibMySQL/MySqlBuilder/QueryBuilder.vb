@@ -169,8 +169,11 @@ Namespace MySqlBuilder
             If group_by.IsNullOrEmpty Then
                 Return ""
             End If
-
-            Return $"GROUP BY {group_by.JoinBy(", ")}"
+            If having.IsNullOrEmpty Then
+                Return $"GROUP BY {group_by.JoinBy(", ")}"
+            Else
+                Return $"GROUP BY {group_by.JoinBy(", ")} HAVING ({having.build_where_str})"
+            End If
         End Function
 
         Public Function order_by_str() As String

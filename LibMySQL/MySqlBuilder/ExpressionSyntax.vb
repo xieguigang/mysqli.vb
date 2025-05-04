@@ -107,6 +107,18 @@ Namespace MySqlBuilder
             Return f
         End Function
 
+        ''' <summary>
+        ''' count(field) in mysql
+        ''' </summary>
+        ''' <param name="f"></param>
+        ''' <returns></returns>
+        <Extension>
+        Public Function count(f As FieldAssert) As FieldAssert
+            f.op = "func"
+            f.val = $"COUNT({f.name})"
+            Return f
+        End Function
+
         <Extension>
         Public Function json_contains_path(f As FieldAssert, path As String, Optional one_or_all As String = "one") As FieldAssert
             f.op = "func"
