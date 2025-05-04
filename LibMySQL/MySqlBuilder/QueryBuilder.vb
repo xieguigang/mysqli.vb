@@ -74,6 +74,22 @@ Namespace MySqlBuilder
             End If
         End Sub
 
+        Public Sub PushWhere(type As String, val As String)
+            If Not where.ContainsKey(type) Then
+                Call where.Add(type, New List(Of String))
+            End If
+
+            Call where(type).Add(val)
+        End Sub
+
+        Public Sub PushWhere(type As String, vals As IEnumerable(Of String))
+            If Not where.ContainsKey(type) Then
+                Call where.Add(type, New List(Of String))
+            End If
+
+            Call where(type).AddRange(vals.SafeQuery)
+        End Sub
+
         Friend Function build_where_str() As String
             Dim s As String = Nothing
 
@@ -130,21 +146,21 @@ Namespace MySqlBuilder
         End Sub
 
         Public Function PushWhere(type As String, val As String) As QueryBuilder
-            If Not where.ContainsKey(type) Then
-                where.Add(type, New List(Of String))
+            If where Is Nothing Then
+                where = New FilterConditions
             End If
 
-            where(type).Add(val)
+            Call where.PushWhere(type, val)
 
             Return Me
         End Function
 
         Public Function PushWhere(type As String, vals As IEnumerable(Of String)) As QueryBuilder
-            If Not where.ContainsKey(type) Then
-                where.Add(type, New List(Of String))
+            If where Is Nothing Then
+                where = New FilterConditions
             End If
 
-            where(type).AddRange(vals.SafeQuery)
+            Call where.PushWhere(type, vals)
 
             Return Me
         End Function
