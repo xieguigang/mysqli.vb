@@ -87,6 +87,22 @@ Namespace MySqlBuilder
             Return model.field(name)
         End Function
 
+        ''' <summary>
+        ''' delete on where condition filter records
+        ''' </summary>
+        ''' <param name="where"></param>
+        Public Sub delete(ParamArray where As FieldAssert())
+            If where.IsNullOrEmpty Then
+                Throw New InvalidOperationException("DELETE FROM must has condition for make record filtering!")
+            End If
+
+            Call add(sql:=model.where(where).delete_sql)
+        End Sub
+
+        ''' <summary>
+        ''' add transaction sql text into current memory cache
+        ''' </summary>
+        ''' <param name="sql"></param>
         Public Sub add(sql As String)
             Call trans_sql.Add(sql)
         End Sub

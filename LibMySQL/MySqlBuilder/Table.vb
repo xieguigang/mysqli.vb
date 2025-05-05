@@ -501,12 +501,17 @@ Namespace MySqlBuilder
         ''' </summary>
         ''' <returns></returns>
         Public Function delete() As Boolean
-            Dim where As String = query.where_str
-            Dim limit As String = query.limit_str
-            Dim sql As String = $"DELETE FROM `{schema.Database}`.`{schema.TableName}` {where} {limit};"
+            Dim sql As String = delete_sql()
             chain.m_getLastMySql = sql
             Dim result = mysql.Execute(sql)
             Return result > 0
+        End Function
+
+        Friend Function delete_sql() As String
+            Dim where As String = query.where_str
+            Dim limit As String = query.limit_str
+            Dim sql As String = $"DELETE FROM `{schema.Database}`.`{schema.TableName}` {where} {limit};"
+            Return sql
         End Function
 
         ''' <summary>
