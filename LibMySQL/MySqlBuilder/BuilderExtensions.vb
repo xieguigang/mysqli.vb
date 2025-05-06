@@ -3,15 +3,21 @@ Imports System.Runtime.CompilerServices
 
 Namespace MySqlBuilder
 
-    Module BuilderExtensions
+    Public Module BuilderExtensions
 
         <Extension>
-        Public Function IsNullOrEmpty(where As FilterConditions) As Boolean
+        Friend Function IsNullOrEmpty(where As FilterConditions) As Boolean
             If where Is Nothing Then
                 Return True
             Else
                 Return where.where.IsNullOrEmpty
             End If
+        End Function
+
+        <Extension>
+        Public Function Add(data As List(Of FieldAssert), fieldName As String, value As Object) As List(Of FieldAssert)
+            Call data.Add(field(fieldName) = value)
+            Return data
         End Function
 
     End Module
