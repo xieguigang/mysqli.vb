@@ -66,6 +66,18 @@ Public Module sql_test
         Pause()
     End Sub
 
+    Sub raw_expr_test()
+        Dim f1 = field("a") = "~ 3+3"
+        Dim f2 = field("b") = "~ not TRUE"
+        Dim f3 = field("c") = "~{s}-[2-[3-[[(2~{r})-4-[[[(2~{r},3~{s},4~{r},5~{r})-5-(6-Aminopurin-9-Yl)-4-Oxidanyl-3-Phosphonooxy-Oxolan-2-Yl]methoxy-Oxidanyl-Phosphoryl]oxy-Oxidanyl-Phosphoryl]oxy-3,3-Dimethyl-2-Oxidanyl-Butanoyl]amino]propanoylamino]ethyl] (~{e})-Dodec-2-Enethioate"
+
+        Call Console.WriteLine(f1)
+        Call Console.WriteLine(f2)
+        Call Console.WriteLine(f3)
+
+        Pause()
+    End Sub
+
     Sub function_test()
         Dim call_func = field("test").instr("aaa")
         Dim assert = call_func = 1

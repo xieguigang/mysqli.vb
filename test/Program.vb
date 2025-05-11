@@ -54,7 +54,9 @@ Imports Oracle.LinuxCompatibility.MySQL.MySqlBuilder
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 Module Program
+
     Sub Main(args As String())
+        Call raw_expr_test()
         Call sql_test.Main2()
         Call Module1.connectionStringTest()
         Call testLongText()

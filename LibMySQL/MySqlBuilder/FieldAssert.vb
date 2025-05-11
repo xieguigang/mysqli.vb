@@ -60,6 +60,7 @@ Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Text.Parser
 Imports Oracle.LinuxCompatibility.MySQL.Scripting
+Imports Script = Microsoft.VisualBasic.Math.Scripting.ScriptEngine
 
 Namespace MySqlBuilder
 
@@ -502,22 +503,9 @@ Namespace MySqlBuilder
         End Function
 
         Friend Shared Function value(val As String, Optional [like] As Boolean = False) As String
-            Const pattern As String =
-                "^(" &
-                "(\w+\s*(=|<>|>|<|>=|<=)\s*(\w+|'[^']*'|\d+))" &  ' 基础比较（a=1、b>'text'）
-                "|(NOT\s+\w+)" &                                   ' NOT运算符
-                "|($.*$)" &                                      ' 括号嵌套
-                "|(\w+\s+(AND|OR|XOR)\s+\w+)" &                    ' 逻辑运算符
-                ")+$"
-
-            Static checkSyntax As New Regex(pattern, RegexOptions.IgnoreCase)
-
             If val.StringEmpty Then
                 Return "''"
-            ElseIf val.First = "~" AndAlso
-                val <> "~" AndAlso
-                checkSyntax.IsMatch(val.Substring(1)) Then
-
+            ElseIf val.First = "~" AndAlso val <> "~" AndAlso Script.ParseExpression(val.Substring(1), throwEx:=False) IsNot Nothing Then
                 Return val.Substring(1)
             Else
                 Return $"'{val.MySqlEscaping([like])}'"
