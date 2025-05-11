@@ -67,6 +67,7 @@ Public Module sql_test
     End Sub
 
     Sub raw_expr_test()
+        Dim f4 = field("d") = "~ 9 > 1"
         Dim f1 = field("a") = "~ 3+3"
         Dim f2 = field("b") = "~ not TRUE"
         Dim f3 = field("c") = "~{s}-[2-[3-[[(2~{r})-4-[[[(2~{r},3~{s},4~{r},5~{r})-5-(6-Aminopurin-9-Yl)-4-Oxidanyl-3-Phosphonooxy-Oxolan-2-Yl]methoxy-Oxidanyl-Phosphoryl]oxy-Oxidanyl-Phosphoryl]oxy-3,3-Dimethyl-2-Oxidanyl-Butanoyl]amino]propanoylamino]ethyl] (~{e})-Dodec-2-Enethioate"
@@ -74,6 +75,7 @@ Public Module sql_test
         Call Console.WriteLine(f1)
         Call Console.WriteLine(f2)
         Call Console.WriteLine(f3)
+        Call Console.WriteLine(f4)
 
         Pause()
     End Sub
