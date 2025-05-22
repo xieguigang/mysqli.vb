@@ -363,7 +363,8 @@ Namespace MySqlBuilder
 
         Public Function [select](ParamArray fields As String()) As System.Data.DataTableReader
             Dim sql As String = selectSql(fields, assign_sql:=True)
-            Dim result As System.Data.DataTableReader = mysql.Fetch(sql).CreateDataReader
+            Dim resultSet As System.Data.DataSet = mysql.Fetch(sql)
+            Dim result As System.Data.DataTableReader = resultSet?.CreateDataReader
 
             Return result
         End Function
