@@ -129,6 +129,7 @@ Namespace MySqlBuilder
                 End If
             Next
 
+            trans_sql.Clear()
             disposedValue = True
         End Sub
 
