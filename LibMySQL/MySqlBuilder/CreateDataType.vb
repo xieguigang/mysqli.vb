@@ -116,9 +116,14 @@ Namespace MySqlBuilder
             ElseIf Regex.Match(type_define, "bit\(", RegexICSng).Success Then
                 type = Reflection.DbAttributes.MySqlDbType.Bit
                 parameter = GetNumberValue(type_define, 1)
+            ElseIf type_define = "bigint unsigned" Then
+                type = Reflection.DbAttributes.MySqlDbType.UInt64
+            ElseIf type_define = "smallint unsigned" Then
+                type = Reflection.DbAttributes.MySqlDbType.UInt16
             Else
                 ' More complex type is not support yet, but you can
                 ' easily extending the mapping code at here
+
                 Throw New NotImplementedException($"Type define is not support yet for    {NameOf(type_define)}   >>> ""{type_define}""")
             End If
 
