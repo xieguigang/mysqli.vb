@@ -410,11 +410,11 @@ Namespace MySqlBuilder
         End Function
 
         ''' <summary>
-        ''' UPDATE
+        ''' generates the update sql
         ''' </summary>
         ''' <param name="fields"></param>
         ''' <returns></returns>
-        Public Function save(ParamArray fields As FieldAssert()) As Boolean
+        Public Function save_sql(ParamArray fields As FieldAssert()) As String
             Dim where As String = query.where_str
             Dim limit As String = query.limit_str
             Dim setFields As New List(Of String)
@@ -427,7 +427,16 @@ Namespace MySqlBuilder
                 Call setFields.Add($"{field.GetSafeName} = {field.val}")
             Next
 
-            Dim sql As String = $"UPDATE `{schema.Database}`.`{schema.TableName}` SET {setFields.JoinBy(", ")} {where} {limit};"
+            Return $"UPDATE `{schema.Database}`.`{schema.TableName}` SET {setFields.JoinBy(", ")} {where} {limit};"
+        End Function
+
+        ''' <summary>
+        ''' UPDATE
+        ''' </summary>
+        ''' <param name="fields"></param>
+        ''' <returns></returns>
+        Public Function save(ParamArray fields As FieldAssert()) As Boolean
+            Dim sql As String = save_sql(fields)
             chain.m_getLastMySql = sql
             Dim result = mysql.Execute(sql)
             Return result > 0
