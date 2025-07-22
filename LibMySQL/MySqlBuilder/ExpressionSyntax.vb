@@ -114,14 +114,14 @@ Namespace MySqlBuilder
         ''' <returns></returns>
         <Extension>
         Public Function count(f As FieldAssert) As FieldAssert
-            f.op = "func"
+            f.op = op_func
             f.val = $"COUNT({f.name})"
             Return f
         End Function
 
         <Extension>
         Public Function json_contains_path(f As FieldAssert, path As String, Optional one_or_all As String = "one") As FieldAssert
-            f.op = "func"
+            f.op = op_func
             f.val = $"JSON_CONTAINS_PATH({f.name}, '{one_or_all}', '{path}')"
             Return f
         End Function
@@ -158,14 +158,23 @@ Namespace MySqlBuilder
 
         <Extension>
         Public Function instr(f As FieldAssert, substr As String) As FieldAssert
-            f.op = "func"
+            f.op = op_func
             f.val = $"INSTR({f.name}, '{substr.Replace("'", "\'")}')"
+            Return f
+        End Function
+
+        Public Const op_func As String = "func"
+
+        <Extension>
+        Public Function char_length(f As FieldAssert) As FieldAssert
+            f.op = op_func
+            f.val = $"CHAR_LENGTH({f.name})"
             Return f
         End Function
 
         <Extension>
         Public Function replace(f As FieldAssert, find As String, replaceTo As String) As FieldAssert
-            f.op = "func"
+            f.op = op_func
             f.val = $"REPLACE({f.name}, {FieldAssert.value(find)}, {FieldAssert.value(replaceTo)})"
             Return f
         End Function
