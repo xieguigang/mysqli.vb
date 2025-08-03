@@ -217,6 +217,14 @@ Namespace MySqlBuilder
         ''' <summary>
         ''' WHERE
         ''' </summary>
+        ''' <returns></returns>
+        Public Function where(list As IEnumerable(Of FieldAssert)) As Model
+            Return where(list.ToArray)
+        End Function
+
+        ''' <summary>
+        ''' WHERE
+        ''' </summary>
         ''' <param name="asserts"></param>
         ''' <returns></returns>
         Public Function where(ParamArray asserts As FieldAssert()) As Model
