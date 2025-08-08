@@ -525,7 +525,7 @@ Namespace MySqlBuilder
             Return result > 0
         End Function
 
-        Friend Function delete_sql() As String
+        Public Function delete_sql() As String
             Dim where As String = query.where_str
             Dim limit As String = query.limit_str
             Dim sql As String = $"DELETE FROM `{schema.Database}`.`{schema.TableName}` {where} {limit};"
