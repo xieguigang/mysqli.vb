@@ -120,6 +120,13 @@ Namespace MySqlBuilder
         End Function
 
         <Extension>
+        Public Function lower(f As FieldAssert) As FieldAssert
+            f.op = op_func
+            f.val = $"LOWER({f.name})"
+            Return f
+        End Function
+
+        <Extension>
         Public Function json_contains_path(f As FieldAssert, path As String, Optional one_or_all As String = "one") As FieldAssert
             f.op = op_func
             f.val = $"JSON_CONTAINS_PATH({f.name}, '{one_or_all}', '{path}')"
