@@ -185,6 +185,16 @@ Namespace MySqlBuilder
             }
         End Function
 
+        Private Shared Function check_op_func(ByRef field As FieldAssert) As FieldAssert
+            If field.op = "func" Then
+                field = New FieldAssert With {
+                    .name = field.ToString
+                }
+            End If
+
+            Return field
+        End Function
+
         ''' <summary>
         ''' generates the sql expression
         ''' </summary>
@@ -333,6 +343,7 @@ Namespace MySqlBuilder
         End Operator
 
         Public Overloads Shared Operator =(field As FieldAssert, val As String) As FieldAssert
+            field = check_op_func(field)
             ' disable escape for % like
             field.val = value(val, True)
             field.op = "="
@@ -340,16 +351,14 @@ Namespace MySqlBuilder
         End Operator
 
         Public Overloads Shared Operator <>(field As FieldAssert, val As String) As FieldAssert
+            field = check_op_func(field)
             field.val = value(val)
             field.op = "<>"
             Return field
         End Operator
 
         Public Overloads Shared Operator >(field As FieldAssert, val As String) As FieldAssert
-            If field.op = "func" Then
-                field = New FieldAssert With {.name = field.ToString}
-            End If
-
+            field = check_op_func(field)
             field.val = value(val)
             field.op = ">"
 
@@ -363,6 +372,7 @@ Namespace MySqlBuilder
         ''' <param name="val"></param>
         ''' <returns></returns>
         Public Overloads Shared Operator <(field As FieldAssert, val As String) As FieldAssert
+            field = check_op_func(field)
             field.val = value(val)
             field.op = "<"
             Return field
@@ -375,6 +385,7 @@ Namespace MySqlBuilder
         ''' <param name="val"></param>
         ''' <returns></returns>
         Public Overloads Shared Operator Like(field As FieldAssert, val As String) As FieldAssert
+            field = check_op_func(field)
             field.val = value(val, [like]:=True)
             field.op = "LIKE"
             Return field
