@@ -100,7 +100,7 @@ Public Class DumpTaskRunner : Implements IDisposable
                 Call .WriteLine(OptionsTempChange.Replace("%s", DBName))
 
                 If echo Then
-                    Call ("  --> " & DirectCast(.BaseStream, FileStream).Name).__INFO_ECHO
+                    Call ("  --> " & DirectCast(.BaseStream, FileStream).Name).info
                 End If
             End If
 
@@ -135,7 +135,7 @@ Public Class DumpTaskRunner : Implements IDisposable
                     Call .bufferData.Clear()
 
                     If echo Then
-                        Call $"write_buffer({tblName})".__DEBUG_ECHO
+                        Call $"write_buffer({tblName})".debug
                     End If
                 Else
                     Call .bufferData.Add(obj)

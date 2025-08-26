@@ -130,7 +130,7 @@ Namespace Reflection.Schema
             If _databaseFields.ContainsKey(name) Then
                 Return _databaseFields(name)
             Else
-                Call $"{TableName} => {name} is not exists....".__DEBUG_ECHO
+                Call $"{TableName} => {name} is not exists....".debug
                 Return Nothing
             End If
         End Function

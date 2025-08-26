@@ -98,13 +98,13 @@ Public Module LinqExports
 
         If singleTransaction Then
             If echo Then
-                Call $"Output single transaction SQL file to: {saveSQL}".__INFO_ECHO
+                Call $"Output single transaction SQL file to: {saveSQL}".info
             End If
 
             Call joinTransactionSql(saveSQL, DBName, EXPORT)
 
             If echo Then
-                Call "job done!".__INFO_ECHO
+                Call "job done!".info
             End If
         End If
     End Sub
