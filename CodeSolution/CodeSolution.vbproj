@@ -17,6 +17,8 @@
     <AssemblyName>Oracle.LinuxCompatibility.LibMySQL.CodeSolution</AssemblyName>
 
     <Title>MySQL ORM CodeSolution for VisualBasic/PHP</Title>
+
+    <PackageOutputPath>../../../.nuget</PackageOutputPath>
   </PropertyGroup>
 
 
