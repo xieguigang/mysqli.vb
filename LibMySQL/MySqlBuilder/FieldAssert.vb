@@ -514,15 +514,17 @@ Namespace MySqlBuilder
         End Function
 
         Friend Shared Function value(val As String, Optional [like] As Boolean = False) As String
-            If val.StringEmpty Then
-                Return "''"
-            ElseIf val.First = "~" AndAlso val <> "~" AndAlso Script.ParseExpression(val.Substring(1), throwEx:=False) IsNot Nothing Then
-                Return val.Substring(1)
-            Else
-                Return $"'{val.MySqlEscaping([like])}'"
-            End If
+            Select Case True
+                Case val Is Nothing : Return "null"
+                Case val = "" : Return "''"
+                Case val.First = "~" AndAlso val <> "~" AndAlso Script.ParseExpression(val.Substring(1), throwEx:=False) IsNot Nothing
+                    Return val.Substring(1)
+                Case Else
+                    Return $"'{val.MySqlEscaping([like])}'"
+            End Select
         End Function
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Shared Function MySqlEscaping(val As String) As String
             Return val.MySqlEscaping([like]:=True)
         End Function
