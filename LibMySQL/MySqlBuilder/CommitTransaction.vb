@@ -140,6 +140,7 @@ Namespace MySqlBuilder
             If Not disposedValue Then
                 If disposing Then
                     ' TODO: dispose managed state (managed objects)
+                    Call commit()
                 End If
 
                 ' TODO: free unmanaged resources (unmanaged objects) and override finalizer
