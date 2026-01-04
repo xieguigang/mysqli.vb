@@ -507,7 +507,7 @@ Namespace MySqlBuilder
             Return result > 0
         End Function
 
-        Friend Function add_sql(ParamArray fields As FieldAssert()) As String
+        Public Function add_sql(ParamArray fields As FieldAssert()) As String
             Dim names As String = fields.Select(Function(a) a.GetSafeName).JoinBy(", ")
             Dim vals As String = fields.Select(Function(a) a.val).JoinBy(", ")
             Dim sql As String = $"INSERT {m_opt.Description} INTO `{schema.Database}`.`{schema.TableName}` ({names}) VALUES ({vals});"
