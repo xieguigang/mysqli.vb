@@ -56,7 +56,6 @@
 #End Region
 
 Imports System.Runtime.CompilerServices
-Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Text.Parser
 Imports Oracle.LinuxCompatibility.MySQL.Scripting
@@ -75,6 +74,10 @@ Namespace MySqlBuilder
         Sub New()
         End Sub
 
+        ''' <summary>
+        ''' Create an mysql data expression
+        ''' </summary>
+        ''' <param name="name">table field name</param>
         <DebuggerStepThrough>
         Sub New(name As String)
             Me.name = name
@@ -213,6 +216,8 @@ Namespace MySqlBuilder
             ElseIf op.TextEquals(NameOf(ExpressionSyntax.match)) Then
                 str = $"MATCH({name}) against ('{val}' in {val2} mode)"
             ElseIf op.TextEquals("func") Then
+                str = val
+            ElseIf op.TextEquals("expression") Then
                 str = val
             Else
                 str = $"({name} {op} {val})"

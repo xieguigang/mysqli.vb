@@ -79,6 +79,14 @@ Namespace MySqlBuilder
             Return New FieldAssert(fields.JoinBy(", ")) With {.op = NameOf(ExpressionSyntax.match)}
         End Function
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function expr(expression As String) As FieldAssert
+            Return New FieldAssert("eval") With {
+                .op = "expression",
+                .val = expression
+            }
+        End Function
+
         ''' <summary>
         ''' Create a new table field reference
         ''' </summary>
