@@ -395,7 +395,7 @@ Namespace MySqlBuilder
         End Function
 
         ''' <summary>
-        ''' generates the sql expression of select query
+        ''' SQL SELECT
         ''' </summary>
         ''' <param name="fields"></param>
         ''' <returns></returns>
@@ -418,7 +418,7 @@ Namespace MySqlBuilder
         End Function
 
         ''' <summary>
-        ''' generates the update sql
+        ''' SQL UPDATE SET
         ''' </summary>
         ''' <param name="fields"></param>
         ''' <returns></returns>
@@ -507,6 +507,11 @@ Namespace MySqlBuilder
             Return result > 0
         End Function
 
+        ''' <summary>
+        ''' SQL INSERT INTO
+        ''' </summary>
+        ''' <param name="fields"></param>
+        ''' <returns></returns>
         Public Function add_sql(ParamArray fields As FieldAssert()) As String
             Dim names As String = fields.Select(Function(a) a.GetSafeName).JoinBy(", ")
             Dim vals As String = fields.Select(Function(a) a.val).JoinBy(", ")
@@ -525,6 +530,10 @@ Namespace MySqlBuilder
             Return result > 0
         End Function
 
+        ''' <summary>
+        ''' SQL DELETE FROM
+        ''' </summary>
+        ''' <returns></returns>
         Public Function delete_sql() As String
             Dim where As String = query.where_str
             Dim limit As String = query.limit_str
