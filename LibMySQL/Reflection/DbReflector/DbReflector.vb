@@ -205,6 +205,9 @@ Namespace Reflection
             Dim fillObject As Object = Activator.CreateInstance(type)
             Dim i%
 
+            Const bool_1 As Byte = 1
+            Const bool_0 As Byte = 0
+
             Try
                 ' Scan all of the fields in the field list
                 ' and get the field value.
@@ -215,7 +218,7 @@ Namespace Reflection
 
                     If Not IsDBNull(value) Then
                         If TypeOf value Is Boolean AndAlso prop.value.PropertyType Is GetType(Byte) Then
-                            value = If(CBool(value), 1, 0)
+                            value = If(CBool(value), bool_1, bool_0)
                         End If
 
                         Call prop.value.SetValue(fillObject, value, Nothing)
