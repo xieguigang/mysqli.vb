@@ -213,12 +213,15 @@ Public Class MySqli : Implements IDisposable
     ''' <summary>
     ''' Executes the query, and returns the first column of the first row in the 
     ''' result set returned by the query. Additional columns or rows are ignored.
-    ''' (请注意，这个函数会自动判断添加``LIMIT 1``限定在SQL语句末尾)
     ''' </summary>
     ''' <returns>如果数据表之中没有符合条件的结果数据，那么这个函数将会返回空值</returns>
     ''' <param name="SQL">
     ''' 这个函数会自动进行判断添加``LIMIT 1``限定，所以不需要刻意担心
     ''' </param>
+    ''' <remarks>
+    ''' 请注意，这个函数会自动判断添加``LIMIT 1``限定在SQL语句末尾，这个函数针对LIMIT 1的判断标准是使用正则表达式匹配(\sLIMIT\s+1\s*;?)来实现，
+    ''' 假若发现sql在已经存在LIMIT 1的情况下被追加了LIMIT 1导致语法错误，很可能是LIMIT前面缺少了一个空格导致的。
+    ''' </remarks>
     Public Function ExecuteScalar(Of T As {New, Class})(SQL As String) As T
         Dim result As DataSet = Fetch(SQL.Trim.EnsureLimit1)
         Dim reader As DataTableReader = result?.CreateDataReader
