@@ -214,6 +214,10 @@ Namespace Reflection
                     Dim value As Object = reader.GetValue(ordinal)
 
                     If Not IsDBNull(value) Then
+                        If TypeOf value Is Boolean AndAlso prop.value.PropertyType Is GetType(Byte) Then
+                            value = If(CBool(value), 1, 0)
+                        End If
+
                         Call prop.value.SetValue(fillObject, value, Nothing)
                     End If
                 Next
