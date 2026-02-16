@@ -3,7 +3,7 @@
 
   <PropertyGroup>
 
-    <TargetFrameworks>net8.0-windows;net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0-windows;net10.0</TargetFrameworks>
 
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
 
@@ -113,7 +113,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.34.0-rc1" />
+    <PackageReference Include="Google.Protobuf" Version="3.34.0-rc2" />
     <PackageReference Include="MySql.Data" Version="9.6.0" />
   </ItemGroup>
 
