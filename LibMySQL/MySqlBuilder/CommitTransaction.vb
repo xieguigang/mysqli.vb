@@ -18,11 +18,21 @@ Namespace MySqlBuilder
 
     End Interface
 
+    Public Interface IInsert
+
+        ''' <summary>
+        ''' implements of the insert into
+        ''' </summary>
+        ''' <param name="fields"></param>
+        Function add(ParamArray fields As FieldAssert()) As Boolean
+
+    End Interface
+
     ''' <summary>
     ''' the abstract model for insert into sql
     ''' </summary>
     ''' <typeparam name="T"></typeparam>
-    Public Interface IInsertModel(Of T As IInsertModel(Of T))
+    Public Interface IInsertModel(Of T As IInsertModel(Of T)) : Inherits IInsert
 
         ''' <summary>
         ''' insert delayed into
@@ -39,12 +49,6 @@ Namespace MySqlBuilder
         ''' </summary>
         ''' <returns></returns>
         Function clearOption() As T
-
-        ''' <summary>
-        ''' implements of the insert into
-        ''' </summary>
-        ''' <param name="fields"></param>
-        Function add(ParamArray fields As FieldAssert()) As Boolean
 
     End Interface
 
