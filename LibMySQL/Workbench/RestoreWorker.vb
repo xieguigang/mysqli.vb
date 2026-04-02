@@ -168,22 +168,30 @@ Namespace Workbench
                     Dim bytesRead As Integer
                     Dim stdin As Stream = proc.StandardInput.BaseStream
 
-                    Do
-                        bytesRead = fs.Read(buffer, 0, buffer.Length)
+                    Try
+                        Do
+                            bytesRead = fs.Read(buffer, 0, buffer.Length)
 
-                        If bytesRead > 0 Then
-                            ' 写入 MySQL 的标准输入流
-                            Call stdin.Write(buffer, 0, bytesRead)
-                        End If
-                    Loop While bytesRead > 0
+                            If bytesRead > 0 Then
+                                ' 写入 MySQL 的标准输入流
+                                Call stdin.Write(buffer, 0, bytesRead)
+                            End If
+                        Loop While bytesRead > 0
+                    Catch ex As Exception
+                        Call ex.Message.warning
+                    End Try
                 End Using
 
-                ' 告诉 MySQL 数据传输结束
-                Call proc.StandardInput.Flush()
-                Call proc.StandardInput.Close()
+                Try
+                    ' 告诉 MySQL 数据传输结束
+                    Call proc.StandardInput.Flush()
+                    Call proc.StandardInput.Close()
+                Catch ex As Exception
+
+                End Try
 
                 ' 等待进程退出并获取错误
-                Await Task.Run(Sub() proc.WaitForExit())
+                Await proc.WaitForExitAsync
 
                 If proc.ExitCode <> 0 OrElse Not String.IsNullOrEmpty(errorOutput = Await errorTask) Then
                     Call errors.Add(New MySqlError With {
