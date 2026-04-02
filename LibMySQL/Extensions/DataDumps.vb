@@ -87,7 +87,7 @@ Public Module DataDumps
     End Sub
 
     Public Const OptionsTempChange$ =
-        "-- MySQL dump 1.50  Distrib 5.7.12, for Microsoft VisualBasic.NET ORM code solution (x86_64)
+        "-- MySQL dump 2.0.1.112  Distrib 8.7.12, for Microsoft VisualBasic.NET MYSQL ORM Solution (x86_64)
 --
 -- Database: %s
 --
@@ -138,7 +138,7 @@ Public Module DataDumps
                                            Optional custom As Func(Of MySQLTable, String) = Nothing,
                                            Optional action$ = "insert",
                                            Optional distinct As Boolean = True,
-                                           Optional AI As Boolean = False)
+                                           Optional AI As Boolean = False, Optional batchSize As Integer = 250)
 
         Dim SQL As Func(Of MySQLTable, String)
 
@@ -161,7 +161,7 @@ Public Module DataDumps
         Call out.LockTable(tableName)
 
         If action.TextEquals("insert") Then
-            For Each block In source.Split(200)
+            For Each block As MySQLTable() In source.Split(batchSize)
                 Call block.DumpBlock(schemaTable, out, distinct, AI:=AI)
             Next
         Else
@@ -177,7 +177,7 @@ Public Module DataDumps
     <Extension>
     Public Sub LockTable(out As TextWriter, tableName$)
         Call out.WriteLine("--")
-        Call out.WriteLine($"-- Dumping data for table `{tableName}`")
+        Call out.WriteLine($"-- Dump data for table `{tableName}`")
         Call out.WriteLine("--")
         Call out.WriteLine()
 
@@ -317,7 +317,9 @@ Public Module DataDumps
             .ToArray
         Dim fields As Dictionary(Of String, Field) = header _
             .ToDictionary(Function(name) name,
-                          Function(name) simpleField(name))
+                          Function(name)
+                              Return simpleField(name)
+                          End Function)
         Dim schema As New Table(fields) With {
             .TableName = path.BaseName,
             .Comment = $"Auto-generated table schema from csv file: {path}",
