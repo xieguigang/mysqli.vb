@@ -60,18 +60,13 @@
 Imports System.Runtime.CompilerServices
 Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
+Imports Oracle.LinuxCompatibility.MySQL.MySqlBuilder.Expression
 Imports Oracle.LinuxCompatibility.MySQL.Reflection
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Helper
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 Namespace MySqlBuilder
-
-    Public Interface IModel
-
-        Function field(name As String) As FieldAssert
-
-    End Interface
 
     ''' <summary>
     ''' 

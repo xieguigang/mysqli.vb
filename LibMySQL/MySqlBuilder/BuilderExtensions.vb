@@ -1,5 +1,6 @@
 ﻿
 Imports System.Runtime.CompilerServices
+Imports Oracle.LinuxCompatibility.MySQL.MySqlBuilder.Expression
 
 Namespace MySqlBuilder
 

@@ -1,16 +1,9 @@
-﻿Imports System.ComponentModel
-Imports System.Runtime.CompilerServices
+﻿Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports Microsoft.VisualBasic.Linq
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace MySqlBuilder
-
-    Public Enum InsertOptions
-        <Description("")> None
-        <Description("DELAYED")> Delayed
-        <Description("IGNORE")> Ignore
-    End Enum
 
     Public Class CommitInsert : Implements IModel, IDataCommitOperation
 
