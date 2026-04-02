@@ -118,8 +118,6 @@ Public Module DataDumps
 
 -- Dump completed on {0}"
 
-    Const ActionNotAllows$ = "Only allowes ""insert/update/delete/replace"" actions."
-
     ''' <summary>
     ''' 生成用于将数据集合批量导入数据库的INSERT SQL事务
     ''' </summary>

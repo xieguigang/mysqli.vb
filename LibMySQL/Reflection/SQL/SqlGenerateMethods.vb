@@ -59,6 +59,8 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 
 Namespace Reflection.SQL
 
+    Public Delegate Function ISqlGenerateMethod(dataRow As MySQLTable) As String
+
     ''' <summary>
     ''' 请注意，Where语句之中的变量总是<see cref="Schema.Table.Index"></see>属性值中的值
     ''' </summary>
