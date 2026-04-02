@@ -109,7 +109,7 @@ Namespace Workbench
         End Sub
 
         Private Shared Sub WritePassFile(uri As ConnectionUri, passfile As String)
-            Call $"[client]{ASCII.LF}password=""{uri.Password}""".SaveTo(passfile)
+            Call $"[client]{ASCII.LF}password=""{uri.Password}""".SaveTo(passfile, encoding:=Encodings.UTF8WithoutBOM.CodePage)
         End Sub
 
         Private ReadOnly Property LastMysqlError As MySqlError
@@ -144,7 +144,8 @@ Namespace Workbench
                 .FileName = mysql,
                 .Arguments = mysql_cmdl,
                 .CreateNoWindow = True,
-                .UseShellExecute = False
+                .UseShellExecute = False,
+                .WorkingDirectory = mysql.ParentPath
             }
 
             ' 3. 核心：重定向输入流
@@ -172,12 +173,13 @@ Namespace Workbench
 
                         If bytesRead > 0 Then
                             ' 写入 MySQL 的标准输入流
-                            Await stdin.WriteAsync(buffer, 0, bytesRead)
+                            Call stdin.Write(buffer, 0, bytesRead)
                         End If
                     Loop While bytesRead > 0
                 End Using
 
                 ' 告诉 MySQL 数据传输结束
+                Call proc.StandardInput.Flush()
                 Call proc.StandardInput.Close()
 
                 ' 等待进程退出并获取错误
