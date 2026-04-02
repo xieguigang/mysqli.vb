@@ -1,22 +1,23 @@
 ﻿
 Imports System.Runtime.CompilerServices
-Imports Microsoft.VisualBasic.Language
-Imports Oracle.LinuxCompatibility.MySQL.MySqlBuilder
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 
-Public Class TableModel(Of T As {New, MySQLTable}) : Inherits Model
+Namespace MySqlBuilder
 
-    Sub New(mysqli As MySqli)
-        Call MyBase.New(TableName.GetTableName(Of T), mysqli)
-    End Sub
+    Public Class TableModel(Of T As {New, MySQLTable}) : Inherits Model
 
-    Public Function find_object(ParamArray where As FieldAssert()) As T
-        Return Me.where(where).find(Of T)
-    End Function
+        Sub New(mysqli As MySqli)
+            Call MyBase.New(TableName.GetTableName(Of T), mysqli)
+        End Sub
 
-    <MethodImpl(MethodImplOptions.AggressiveInlining)>
-    Public Function async() As AsyncModelTable
-        Return New AsyncModelTable(Me)
-    End Function
+        Public Function find_object(ParamArray where As FieldAssert()) As T
+            Return Me.where(where).find(Of T)
+        End Function
 
-End Class
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function async() As AsyncModelTable
+            Return New AsyncModelTable(Me)
+        End Function
+
+    End Class
+End Namespace

@@ -51,49 +51,50 @@
 #End Region
 
 Imports System.Runtime.CompilerServices
-Imports Oracle.LinuxCompatibility.MySQL.MySqlBuilder
-Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
-''' <summary>
-''' an abstract database wrapper for multiple database table models in clr types
-''' </summary>
-Public MustInherit Class IDatabase
+Namespace MySqlBuilder
 
     ''' <summary>
-    ''' the wrapper for the mysql query functions
+    ''' an abstract database wrapper for multiple database table models in clr types
     ''' </summary>
-    Protected mysqli As MySqli
+    Public MustInherit Class IDatabase
 
-    Public Sub New(mysqli As ConnectionUri)
-        Me.mysqli = mysqli
-    End Sub
+        ''' <summary>
+        ''' the wrapper for the mysql query functions
+        ''' </summary>
+        Protected mysqli As MySqli
 
-    ''' <summary>
-    ''' create a new data table model for create mysql query
-    ''' </summary>
-    ''' <typeparam name="T"></typeparam>
-    ''' <returns></returns>
-    ''' 
-    <MethodImpl(MethodImplOptions.AggressiveInlining)>
-    Protected Function model(Of T As {New, MySQLTable})() As TableModel(Of T)
-        Return New TableModel(Of T)(mysqli)
-    End Function
+        Public Sub New(mysqli As ConnectionUri)
+            Me.mysqli = mysqli
+        End Sub
 
-    ''' <summary>
-    ''' create a model reference to a specific table
-    ''' </summary>
-    ''' <param name="name">the table name</param>
-    ''' <returns></returns>
-    ''' 
-    <MethodImpl(MethodImplOptions.AggressiveInlining)>
-    Public Function CreateModel(name As String) As Model
-        Return New Model(name, mysqli)
-    End Function
+        ''' <summary>
+        ''' create a new data table model for create mysql query
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <returns></returns>
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Protected Function model(Of T As {New, MySQLTable})() As TableModel(Of T)
+            Return New TableModel(Of T)(mysqli)
+        End Function
 
-    <MethodImpl(MethodImplOptions.AggressiveInlining)>
-    Public Function getDriver() As MySqli
-        Return mysqli
-    End Function
+        ''' <summary>
+        ''' create a model reference to a specific table
+        ''' </summary>
+        ''' <param name="name">the table name</param>
+        ''' <returns></returns>
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function CreateModel(name As String) As Model
+            Return New Model(name, mysqli)
+        End Function
 
-End Class
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function getDriver() As MySqli
+            Return mysqli
+        End Function
+
+    End Class
+End Namespace
