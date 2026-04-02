@@ -89,8 +89,9 @@ Namespace Workbench
                                     End Sub, name:=Unknown)
         End Sub
 
-        Public Const OptionsTempChange$ =
-        "-- MySQL dump 2.0.1.112  Distrib 8.7.12, for Microsoft VisualBasic.NET MYSQL ORM Solution (x86_64)
+        Public Const OptionsTempChange$ = "
+
+-- MySQL dump 2.0.1.112  Distrib 8.7.12, for Microsoft VisualBasic.NET MYSQL ORM Solution (x86_64)
 --
 -- Database: %s
 --
@@ -102,13 +103,25 @@ Namespace Workbench
 /*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
+
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+-- Performance Optimization: Explicitly disable checks and start a large transaction
+SET FOREIGN_KEY_CHECKS=0;
+SET UNIQUE_CHECKS=0;
+SET AUTOCOMMIT=0;
+
 "
         Public Const OptionsRestore$ = "
+
+-- Performance Optimization: Commit large transaction and restore settings
+COMMIT;
+SET FOREIGN_KEY_CHECKS=1;
+SET UNIQUE_CHECKS=1;
+SET AUTOCOMMIT=1;
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -139,17 +152,29 @@ Namespace Workbench
                                    Optional action As SqlActions = SqlActions.Insert,
                                    Optional distinct As Boolean = True,
                                    Optional AI As Boolean = False,
-                                   Optional batchSize As Integer = 250)
+                                   Optional batchSize As Integer = 250,
+                                   Optional useLargeTransaction As Boolean = True)
 
             Dim SQL As ISqlGenerateMethod = Reflection.SQL.SQL.GetSqlGenerator(action, custom)
             Dim schemaTable As New Table(type)
             Dim tableName As String = schemaTable.TableName
 
-            Call sqlfile.LockTable(tableName)
+            ' 【关键修改】如果启用了大事务优化，绝对不能使用 LOCK TABLES
+            ' 因为 LOCK TABLES 会隐式提交事务，导致 SET AUTOCOMMIT=0 失效
+            If Not useLargeTransaction Then
+                Call sqlfile.LockTable(tableName)
+            Else
+                Call sqlfile.WriteLine("--")
+                Call sqlfile.WriteLine($"-- Dump data for table `{tableName}` (InnoDB Transaction Optimized)")
+                Call sqlfile.WriteLine("--")
+                Call sqlfile.WriteLine()
+            End If
 
             If action = SqlActions.Insert Then
                 Dim insert As New DataWriter(sqlfile, distinct, AI:=AI)
 
+                ' 20260402
+                ' 使用批量插入的方式来生成SQL语句，将多条记录整合在一条insert语句中进行数据插入，以提高性能
                 For Each block As MySQLTable() In source.SplitIterator(batchSize)
                     Call insert.CommitBatch(block, schemaTable)
                 Next
@@ -159,7 +184,9 @@ Namespace Workbench
                 Next
             End If
 
-            Call sqlfile.UnlockTable(tableName)
+            If Not useLargeTransaction Then
+                Call sqlfile.UnlockTable(tableName)
+            End If
         End Sub
 
         <Extension>
@@ -207,13 +234,16 @@ Namespace Workbench
                                                             Optional AI As Boolean = False) As String
 
             Dim dbName As String = TableName.GetTableName(Of T)?.Database Or Unknown
-            Dim writeString As Action(Of TextWriter) =
+            Dim writeSql As Action(Of TextWriter) =
                 Sub(buffer)
-                    Call source.DumpTransaction(buffer, GetType(T), custom, action:=action, distinct:=distinct, AI:=AI)
+                    Call source.DumpTransaction(buffer, GetType(T), custom,
+                                                action:=action,
+                                                distinct:=distinct,
+                                                AI:=AI)
                 End Sub
 
             With New StringBuilder
-                Call New StringWriter(.ByRef).DumpSession(writeString, name:=dbName)
+                Call New StringWriter(.ByRef).DumpSession(writeSql, name:=dbName)
                 Return .ToString
             End With
         End Function
@@ -240,14 +270,16 @@ Namespace Workbench
                                                             Optional AI As Boolean = False)
 
             Dim dbName As String = TableName.GetTableName(Of T)?.Database Or Unknown
+            Dim writeSql As Action(Of TextWriter) =
+                Sub(buffer)
+                    Call source.DumpTransaction(buffer, GetType(T), custom,
+                                                action:=type,
+                                                distinct:=distinct,
+                                                AI:=AI)
+                End Sub
 
             Using output As StreamWriter = path.OpenWriter
-                Call output.DumpSession(Sub(buffer)
-                                            Call source.DumpTransaction(buffer, GetType(T), custom,
-                                                                        action:=type,
-                                                                        distinct:=distinct,
-                                                                        AI:=AI)
-                                        End Sub, name:=dbName)
+                Call output.DumpSession(writeSql, name:=dbName)
             End Using
         End Sub
 
