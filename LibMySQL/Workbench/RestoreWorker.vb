@@ -56,7 +56,7 @@
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
-Namespace Workbench.Dump
+Namespace Workbench
 
     Public Class RestoreWorker
 

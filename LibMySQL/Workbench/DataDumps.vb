@@ -64,17 +64,19 @@ Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 Imports ASCII = Microsoft.VisualBasic.Text.ASCII
 
-Public Module DataDumps
+Namespace Workbench
 
-    ''' <summary>
-    ''' This function works for the tables that have foreign key constraint between each others.
-    ''' (这个函数只适用于比较小规模的数据库的导出)
-    ''' </summary>
-    ''' <param name="output"></param>
-    ''' <param name="tables"></param>
-    <Extension>
-    Public Sub DumpMySQL(output As StreamWriter, ParamArray tables As MySQLTable()())
-        Call output.DumpSession(
+    Public Module DataDumps
+
+        ''' <summary>
+        ''' This function works for the tables that have foreign key constraint between each others.
+        ''' (这个函数只适用于比较小规模的数据库的导出)
+        ''' </summary>
+        ''' <param name="output"></param>
+        ''' <param name="tables"></param>
+        <Extension>
+        Public Sub DumpMySQL(output As StreamWriter, ParamArray tables As MySQLTable()())
+            Call output.DumpSession(
             Sub(buffer)
                 Dim type As Type
 
@@ -85,9 +87,9 @@ Public Module DataDumps
                     End With
                 Next
             End Sub, name:=Unknown)
-    End Sub
+        End Sub
 
-    Public Const OptionsTempChange$ =
+        Public Const OptionsTempChange$ =
         "-- MySQL dump 2.0.1.112  Distrib 8.7.12, for Microsoft VisualBasic.NET MYSQL ORM Solution (x86_64)
 --
 -- Database: %s
@@ -106,7 +108,7 @@ Public Module DataDumps
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 "
-    Public Const OptionsRestore$ = "
+        Public Const OptionsRestore$ = "
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -120,89 +122,89 @@ Public Module DataDumps
 
 -- Dump completed on {0}"
 
-    ''' <summary>
-    ''' 生成用于将数据集合批量导入数据库的INSERT SQL事务
-    ''' </summary>
-    ''' <param name="source"></param>
-    ''' <param name="type">
-    ''' Only allowed action ``insert/update/delete/replace``, if the user custom SQL generator 
-    ''' <paramref name="custom"/> is nothing, then this parameter works.
-    ''' </param>
-    ''' <param name="custom">
-    ''' User custom SQL generator. If this parameter is not nothing, then <paramref name="type"/> will disabled.
-    ''' </param>
-    <Extension>
-    Public Sub DumpTransaction(source As IEnumerable(Of MySQLTable), sqlfile As TextWriter, type As Type,
+        ''' <summary>
+        ''' 生成用于将数据集合批量导入数据库的INSERT SQL事务
+        ''' </summary>
+        ''' <param name="source"></param>
+        ''' <param name="type">
+        ''' Only allowed action ``insert/update/delete/replace``, if the user custom SQL generator 
+        ''' <paramref name="custom"/> is nothing, then this parameter works.
+        ''' </param>
+        ''' <param name="custom">
+        ''' User custom SQL generator. If this parameter is not nothing, then <paramref name="type"/> will disabled.
+        ''' </param>
+        <Extension>
+        Public Sub DumpTransaction(source As IEnumerable(Of MySQLTable), sqlfile As TextWriter, type As Type,
                                Optional custom As Func(Of MySQLTable, String) = Nothing,
                                Optional action As SqlActions = SqlActions.Insert,
                                Optional distinct As Boolean = True,
                                Optional AI As Boolean = False,
                                Optional batchSize As Integer = 250)
 
-        Dim SQL As ISqlGenerateMethod = Reflection.SQL.SQL.GetSqlGenerator(action, custom)
-        Dim schemaTable As New Table(type)
-        Dim tableName$ = schemaTable.TableName
+            Dim SQL As ISqlGenerateMethod = Reflection.SQL.SQL.GetSqlGenerator(action, custom)
+            Dim schemaTable As New Table(type)
+            Dim tableName$ = schemaTable.TableName
 
-        Call sqlfile.LockTable(tableName)
+            Call sqlfile.LockTable(tableName)
 
-        If action = SqlActions.Insert Then
-            For Each block As MySQLTable() In source.SplitIterator(batchSize)
-                Call block.DumpBlock(schemaTable, sqlfile, distinct, AI:=AI)
-            Next
-        Else
-            For Each dataRow As MySQLTable In source.SafeQuery
-                Call sqlfile.WriteLine(SQL(dataRow))
-            Next
-        End If
+            If action = SqlActions.Insert Then
+                For Each block As MySQLTable() In source.SplitIterator(batchSize)
+                    Call block.DumpBlock(schemaTable, sqlfile, distinct, AI:=AI)
+                Next
+            Else
+                For Each dataRow As MySQLTable In source.SafeQuery
+                    Call sqlfile.WriteLine(SQL(dataRow))
+                Next
+            End If
 
-        Call sqlfile.UnlockTable(tableName)
-    End Sub
+            Call sqlfile.UnlockTable(tableName)
+        End Sub
 
-    <Extension>
-    Public Sub LockTable(out As TextWriter, tableName$)
-        Call out.WriteLine("--")
-        Call out.WriteLine($"-- Dump data for table `{tableName}`")
-        Call out.WriteLine("--")
-        Call out.WriteLine()
+        <Extension>
+        Public Sub LockTable(out As TextWriter, tableName$)
+            Call out.WriteLine("--")
+            Call out.WriteLine($"-- Dump data for table `{tableName}`")
+            Call out.WriteLine("--")
+            Call out.WriteLine()
 
-        Call out.WriteLine($"LOCK TABLES `{tableName}` WRITE;")
-        Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` DISABLE KEYS */;")
-    End Sub
+            Call out.WriteLine($"LOCK TABLES `{tableName}` WRITE;")
+            Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` DISABLE KEYS */;")
+        End Sub
 
-    <Extension>
-    Public Sub UnlockTable(out As TextWriter, tableName$)
-        Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` ENABLE KEYS */;")
-        Call out.WriteLine("UNLOCK TABLES;")
-    End Sub
+        <Extension>
+        Public Sub UnlockTable(out As TextWriter, tableName$)
+            Call out.WriteLine($"/*!40000 ALTER TABLE `{tableName}` ENABLE KEYS */;")
+            Call out.WriteLine("UNLOCK TABLES;")
+        End Sub
 
-    <Extension>
-    Private Sub DumpSession(buffer As TextWriter, dumping As Action(Of TextWriter), name$)
-        Call buffer.WriteLine(OptionsTempChange.Replace("%s", name))
-        Call dumping(buffer)
-        Call buffer.WriteLine(OptionsRestore, Now.ToString)
-    End Sub
+        <Extension>
+        Private Sub DumpSession(buffer As TextWriter, dumping As Action(Of TextWriter), name$)
+            Call buffer.WriteLine(OptionsTempChange.Replace("%s", name))
+            Call dumping(buffer)
+            Call buffer.WriteLine(OptionsRestore, Now.ToString)
+        End Sub
 
-    ''' <summary>
-    ''' 生成用于将数据集合批量导入数据库的INSERT SQL事务
-    ''' </summary>
-    ''' <typeparam name="T"></typeparam>
-    ''' <param name="source"></param>
-    ''' <param name="type">
-    ''' Only allowed action ``insert/update/delete/replace``, if the user custom SQL generator 
-    ''' <paramref name="custom"/> is nothing, then this parameter works.
-    ''' </param>
-    ''' <param name="custom">
-    ''' User custom SQL generator. If this parameter is not nothing, then <paramref name="type"/> will disabled.
-    ''' </param>
-    ''' <returns></returns>
-    <Extension>
-    Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
+        ''' <summary>
+        ''' 生成用于将数据集合批量导入数据库的INSERT SQL事务
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="source"></param>
+        ''' <param name="type">
+        ''' Only allowed action ``insert/update/delete/replace``, if the user custom SQL generator 
+        ''' <paramref name="custom"/> is nothing, then this parameter works.
+        ''' </param>
+        ''' <param name="custom">
+        ''' User custom SQL generator. If this parameter is not nothing, then <paramref name="type"/> will disabled.
+        ''' </param>
+        ''' <returns></returns>
+        <Extension>
+        Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
                                                         Optional custom As Func(Of MySQLTable, String) = Nothing,
                                                         Optional type$ = "insert",
                                                         Optional distinct As Boolean = True,
                                                         Optional AI As Boolean = False) As String
-        With New StringBuilder
-            Call New StringWriter(.ByRef).DumpSession(
+            With New StringBuilder
+                Call New StringWriter(.ByRef).DumpSession(
                 Sub(buffer)
                     Call source.DumpTransaction(
                         buffer,
@@ -213,31 +215,31 @@ Public Module DataDumps
                 End Sub,
                 name:=TableName.GetTableName(Of T)?.Database Or Unknown)
 
-            Return .ToString
-        End With
-    End Function
+                Return .ToString
+            End With
+        End Function
 
-    ReadOnly Unknown As [Default](Of String) = NameOf(Unknown)
+        ReadOnly Unknown As [Default](Of String) = NameOf(Unknown)
 
-    ''' <summary>
-    ''' Write a very large SQL table data collection into a SQL file.
-    ''' (适合导出一个非常大的mysql数据表)
-    ''' </summary>
-    ''' <typeparam name="T"></typeparam>
-    ''' <param name="source"></param>
-    ''' <param name="path$"></param>
-    ''' <param name="custom"></param>
-    ''' <param name="type$"></param>
-    ''' <param name="distinct"></param>
-    <Extension>
-    Public Sub DumpLargeTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
+        ''' <summary>
+        ''' Write a very large SQL table data collection into a SQL file.
+        ''' (适合导出一个非常大的mysql数据表)
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="source"></param>
+        ''' <param name="path$"></param>
+        ''' <param name="custom"></param>
+        ''' <param name="type$"></param>
+        ''' <param name="distinct"></param>
+        <Extension>
+        Public Sub DumpLargeTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
                                                         path$,
                                                         Optional custom As Func(Of MySQLTable, String) = Nothing,
                                                         Optional type$ = "insert",
                                                         Optional distinct As Boolean = True,
                                                         Optional AI As Boolean = False)
-        Using output As StreamWriter = path.OpenWriter
-            Call output.DumpSession(
+            Using output As StreamWriter = path.OpenWriter
+                Call output.DumpSession(
                 Sub(buffer)
                     Call source.DumpTransaction(
                         buffer,
@@ -247,44 +249,45 @@ Public Module DataDumps
                         AI:=AI)
                 End Sub,
                 name:=TableName.GetTableName(Of T)?.Database Or Unknown)
-        End Using
-    End Sub
+            End Using
+        End Sub
 
-    ''' <summary>
-    ''' This function is only works for the table that without any foreign key constraint.
-    ''' 
-    ''' (这个函数只适合于没有外键约束的数据表)
-    ''' 
-    ''' 从<see cref="MySQLTable"/>之中生成SQL语句之后保存到指定的文件句柄之上，
-    ''' + 假若所输入的文件句柄是带有``.sql``后缀的话，会直接保存为该文件，
-    ''' + 反之会被当作为文件夹，当前的集合对象会保存为与类型相同名称的sql文件
-    ''' </summary>
-    ''' <typeparam name="T"></typeparam>
-    ''' <param name="source"></param>
-    ''' <param name="path$">
-    ''' 请注意，在这里假若字符串是含有sql作为文件名后缀的话，会直接用作为文件路径来保存
-    ''' 假若不是以sql为后缀的话，会被当做文件夹来处理
-    ''' </param>
-    ''' <param name="encoding"></param>
-    ''' <param name="distinct">是否对<see cref="MySQLTable.GetDumpInsertValue"/>进行去重处理？默认是</param>
-    ''' <returns></returns>
-    <Extension>
-    Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
+        ''' <summary>
+        ''' This function is only works for the table that without any foreign key constraint.
+        ''' 
+        ''' (这个函数只适合于没有外键约束的数据表)
+        ''' 
+        ''' 从<see cref="MySQLTable"/>之中生成SQL语句之后保存到指定的文件句柄之上，
+        ''' + 假若所输入的文件句柄是带有``.sql``后缀的话，会直接保存为该文件，
+        ''' + 反之会被当作为文件夹，当前的集合对象会保存为与类型相同名称的sql文件
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="source"></param>
+        ''' <param name="path$">
+        ''' 请注意，在这里假若字符串是含有sql作为文件名后缀的话，会直接用作为文件路径来保存
+        ''' 假若不是以sql为后缀的话，会被当做文件夹来处理
+        ''' </param>
+        ''' <param name="encoding"></param>
+        ''' <param name="distinct">是否对<see cref="MySQLTable.GetDumpInsertValue"/>进行去重处理？默认是</param>
+        ''' <returns></returns>
+        <Extension>
+        Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
                                                         path$,
                                                         Optional encoding As Encodings = Encodings.Default,
                                                         Optional type$ = "insert",
                                                         Optional distinct As Boolean = True,
                                                         Optional auto_increment As Boolean = False) As Boolean
-        Dim sql$ = source.DumpTransaction(
+            Dim sql$ = source.DumpTransaction(
             type:=type,
             distinct:=distinct,
             AI:=auto_increment)
 
-        If Not path.ExtensionSuffix.TextEquals("sql") Then
-            Dim name$ = GetType(T).Name
-            path = path & "/" & name & ".sql"
-        End If
+            If Not path.ExtensionSuffix.TextEquals("sql") Then
+                Dim name$ = GetType(T).Name
+                path = path & "/" & name & ".sql"
+            End If
 
-        Return sql.SaveTo(path, encoding.CodePage)
-    End Function
-End Module
+            Return sql.SaveTo(path, encoding.CodePage)
+        End Function
+    End Module
+End Namespace
