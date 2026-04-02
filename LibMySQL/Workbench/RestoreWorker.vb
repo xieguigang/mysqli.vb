@@ -59,11 +59,12 @@ Imports Microsoft.VisualBasic.ApplicationServices.Terminal.ProgressBar.Tqdm
 Imports Microsoft.VisualBasic.ComponentModel.Ranges.Unit
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.UnixBash
+Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 Namespace Workbench
 
-    Public Class RestoreWorker
+    Public Class RestoreWorker : Implements IDisposable
 
         Public ReadOnly Property uri As ConnectionUri
 
@@ -91,6 +92,8 @@ Namespace Workbench
         ReadOnly bufferSize As Integer = 4 * ByteSize.MB
         ReadOnly errors As New List(Of MySqlError)
 
+        Private disposedValue As Boolean
+
         Private ReadOnly Property mysql_cmdl() As String
             Get
                 Return $"--defaults-file=""{passfile}"" --protocol=tcp --host={uri.IPAddress} --user={uri.User} --port={uri.Port} --default-character-set=utf8 --comments --database={uri.Database}"
@@ -101,6 +104,12 @@ Namespace Workbench
             Me.passfile = TempFileSystem.GetAppSysTempFile(".cnf", sessionID:=App.PID, prefix:="mysql_pass")
             Me.uri = uri
             Me.mysql = mysql.GetFullPath
+
+            Call WritePassFile(uri, passfile)
+        End Sub
+
+        Private Shared Sub WritePassFile(uri As ConnectionUri, passfile As String)
+            Call $"[client]{ASCII.LF}password=""{uri.Password}""".SaveTo(passfile)
         End Sub
 
         Private ReadOnly Property LastMysqlError As MySqlError
@@ -187,5 +196,31 @@ Namespace Workbench
                 End If
             End Using
         End Function
+
+        Protected Overridable Sub Dispose(disposing As Boolean)
+            If Not disposedValue Then
+                If disposing Then
+                    ' TODO: dispose managed state (managed objects)
+                    Call passfile.DeleteFile
+                End If
+
+                ' TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                ' TODO: set large fields to null
+                disposedValue = True
+            End If
+        End Sub
+
+        ' ' TODO: override finalizer only if 'Dispose(disposing As Boolean)' has code to free unmanaged resources
+        ' Protected Overrides Sub Finalize()
+        '     ' Do not change this code. Put cleanup code in 'Dispose(disposing As Boolean)' method
+        '     Dispose(disposing:=False)
+        '     MyBase.Finalize()
+        ' End Sub
+
+        Public Sub Dispose() Implements IDisposable.Dispose
+            ' Do not change this code. Put cleanup code in 'Dispose(disposing As Boolean)' method
+            Dispose(disposing:=True)
+            GC.SuppressFinalize(Me)
+        End Sub
     End Class
 End Namespace
