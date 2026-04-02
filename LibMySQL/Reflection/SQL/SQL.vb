@@ -79,7 +79,7 @@ Namespace Reflection.SQL
         ''' <summary>
         ''' 根据动作类型获取对应的SQL生成委托，消除重复的Select Case代码块
         ''' </summary>
-        Public Function GetSqlGenerator(sqlAction As SqlActions, Optional custom As Func(Of MySQLTable, String) = Nothing) As ISqlGenerateMethod
+        Public Shared Function GetSqlGenerator(sqlAction As SqlActions, Optional custom As Func(Of MySQLTable, String) = Nothing) As ISqlGenerateMethod
             If custom IsNot Nothing Then
                 Return New ISqlGenerateMethod(AddressOf custom.Invoke)
             End If

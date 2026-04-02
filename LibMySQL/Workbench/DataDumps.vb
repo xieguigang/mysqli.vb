@@ -57,9 +57,11 @@ Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.Default
+Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
+Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 Imports ASCII = Microsoft.VisualBasic.Text.ASCII
 
 Public Module DataDumps
@@ -129,43 +131,28 @@ Public Module DataDumps
     ''' <param name="custom">
     ''' User custom SQL generator. If this parameter is not nothing, then <paramref name="type"/> will disabled.
     ''' </param>
-    <Extension> Public Sub DumpTransaction(source As IEnumerable(Of MySQLTable),
-                                           out As TextWriter,
-                                           type As Type,
-                                           Optional custom As Func(Of MySQLTable, String) = Nothing,
-                                           Optional action$ = "insert",
-                                           Optional distinct As Boolean = True,
-                                           Optional AI As Boolean = False, Optional batchSize As Integer = 250)
+    <Extension>
+    Public Sub DumpTransaction(source As IEnumerable(Of MySQLTable), out As TextWriter, type As Type,
+                               Optional custom As Func(Of MySQLTable, String) = Nothing,
+                               Optional action As SqlActions = SqlActions.Insert,
+                               Optional distinct As Boolean = True,
+                               Optional AI As Boolean = False,
+                               Optional batchSize As Integer = 250)
 
-        Dim SQL As Func(Of MySQLTable, String)
-
-        If custom Is Nothing Then
-            Select Case LCase(action)
-                Case "insert" : SQL = Function(o) o.GetInsertSQL
-                Case "update" : SQL = Function(o) o.GetUpdateSQL
-                Case "delete" : SQL = Function(o) o.GetDeleteSQL
-                Case "replace" : SQL = Function(o) o.GetReplaceSQL
-                Case Else
-                    Throw New ArgumentException(ActionNotAllows, paramName:=NameOf(type))
-            End Select
-        Else
-            SQL = custom
-        End If
-
+        Dim SQL As ISqlGenerateMethod = Reflection.SQL.SQL.GetSqlGenerator(action, custom)
         Dim schemaTable As New Table(type)
         Dim tableName$ = schemaTable.TableName
 
         Call out.LockTable(tableName)
 
-        If action.TextEquals("insert") Then
-            For Each block As MySQLTable() In source.Split(batchSize)
+        If action = SqlActions.Insert Then
+            For Each block As MySQLTable() In source.SplitIterator(batchSize)
                 Call block.DumpBlock(schemaTable, out, distinct, AI:=AI)
             Next
         Else
-            Call source _
-                .Select(SQL) _
-                .JoinBy(ASCII.LF) _
-                .FlushTo(out)
+            For Each dataRow As MySQLTable In source.SafeQuery
+                Call out.WriteLine(SQL(dataRow))
+            Next
         End If
 
         Call out.UnlockTable(tableName)
