@@ -222,7 +222,6 @@ Namespace Workbench
 
         ''' <summary>
         ''' Write a very large SQL table data collection into a SQL file.
-        ''' (适合导出一个非常大的mysql数据表)
         ''' </summary>
         ''' <typeparam name="T"></typeparam>
         ''' <param name="source"></param>
@@ -230,6 +229,9 @@ Namespace Workbench
         ''' <param name="custom"></param>
         ''' <param name="type$"></param>
         ''' <param name="distinct"></param>
+        ''' <remarks>
+        ''' (适合导出一个非常大的mysql数据表)
+        ''' </remarks>
         <Extension>
         Public Sub DumpLargeTransaction(Of T As MySQLTable)(source As IEnumerable(Of T), path$,
                                                             Optional custom As Func(Of MySQLTable, String) = Nothing,
