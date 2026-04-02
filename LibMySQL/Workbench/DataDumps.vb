@@ -62,7 +62,6 @@ Imports Microsoft.VisualBasic.Text
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.DbAttributes
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
-Imports ASCII = Microsoft.VisualBasic.Text.ASCII
 
 Namespace Workbench
 
@@ -70,23 +69,24 @@ Namespace Workbench
 
         ''' <summary>
         ''' This function works for the tables that have foreign key constraint between each others.
-        ''' (这个函数只适用于比较小规模的数据库的导出)
         ''' </summary>
         ''' <param name="output"></param>
         ''' <param name="tables"></param>
+        ''' <remarks>
+        ''' (这个函数只适用于比较小规模的数据库的导出)
+        ''' </remarks>
         <Extension>
         Public Sub DumpMySQL(output As StreamWriter, ParamArray tables As MySQLTable()())
-            Call output.DumpSession(
-            Sub(buffer)
-                Dim type As Type
+            Call output.DumpSession(Sub(buffer)
+                                        Dim type As Type
 
-                For Each table As MySQLTable() In tables
-                    With table
-                        type = .First.GetType
-                        Call .DumpTransaction(buffer, type, distinct:=True, AI:=True)
-                    End With
-                Next
-            End Sub, name:=Unknown)
+                                        For Each table As MySQLTable() In tables
+                                            With table
+                                                type = .First.GetType
+                                                Call .DumpTransaction(buffer, type, distinct:=True, AI:=True)
+                                            End With
+                                        Next
+                                    End Sub, name:=Unknown)
         End Sub
 
         Public Const OptionsTempChange$ =
@@ -135,21 +135,23 @@ Namespace Workbench
         ''' </param>
         <Extension>
         Public Sub DumpTransaction(source As IEnumerable(Of MySQLTable), sqlfile As TextWriter, type As Type,
-                               Optional custom As Func(Of MySQLTable, String) = Nothing,
-                               Optional action As SqlActions = SqlActions.Insert,
-                               Optional distinct As Boolean = True,
-                               Optional AI As Boolean = False,
-                               Optional batchSize As Integer = 250)
+                                   Optional custom As Func(Of MySQLTable, String) = Nothing,
+                                   Optional action As SqlActions = SqlActions.Insert,
+                                   Optional distinct As Boolean = True,
+                                   Optional AI As Boolean = False,
+                                   Optional batchSize As Integer = 250)
 
             Dim SQL As ISqlGenerateMethod = Reflection.SQL.SQL.GetSqlGenerator(action, custom)
             Dim schemaTable As New Table(type)
-            Dim tableName$ = schemaTable.TableName
+            Dim tableName As String = schemaTable.TableName
 
             Call sqlfile.LockTable(tableName)
 
             If action = SqlActions.Insert Then
+                Dim insert As New DataWriter(sqlfile, distinct, AI:=AI)
+
                 For Each block As MySQLTable() In source.SplitIterator(batchSize)
-                    Call block.DumpBlock(schemaTable, sqlfile, distinct, AI:=AI)
+                    Call insert.CommitBatch(block, schemaTable)
                 Next
             Else
                 For Each dataRow As MySQLTable In source.SafeQuery
@@ -189,32 +191,29 @@ Namespace Workbench
         ''' </summary>
         ''' <typeparam name="T"></typeparam>
         ''' <param name="source"></param>
-        ''' <param name="type">
+        ''' <param name="action">
         ''' Only allowed action ``insert/update/delete/replace``, if the user custom SQL generator 
         ''' <paramref name="custom"/> is nothing, then this parameter works.
         ''' </param>
         ''' <param name="custom">
-        ''' User custom SQL generator. If this parameter is not nothing, then <paramref name="type"/> will disabled.
+        ''' User custom SQL generator. If this parameter is not nothing, then <paramref name="action"/> will disabled.
         ''' </param>
-        ''' <returns></returns>
+        ''' <returns>generated sql script text</returns>
         <Extension>
         Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
-                                                        Optional custom As Func(Of MySQLTable, String) = Nothing,
-                                                        Optional type$ = "insert",
-                                                        Optional distinct As Boolean = True,
-                                                        Optional AI As Boolean = False) As String
-            With New StringBuilder
-                Call New StringWriter(.ByRef).DumpSession(
-                Sub(buffer)
-                    Call source.DumpTransaction(
-                        buffer,
-                        GetType(T), custom,
-                        action:=type,
-                        distinct:=distinct,
-                        AI:=AI)
-                End Sub,
-                name:=TableName.GetTableName(Of T)?.Database Or Unknown)
+                                                            Optional custom As Func(Of MySQLTable, String) = Nothing,
+                                                            Optional action As SqlActions = SqlActions.Insert,
+                                                            Optional distinct As Boolean = True,
+                                                            Optional AI As Boolean = False) As String
 
+            Dim dbName As String = TableName.GetTableName(Of T)?.Database Or Unknown
+            Dim writeString As Action(Of TextWriter) =
+                Sub(buffer)
+                    Call source.DumpTransaction(buffer, GetType(T), custom, action:=action, distinct:=distinct, AI:=AI)
+                End Sub
+
+            With New StringBuilder
+                Call New StringWriter(.ByRef).DumpSession(writeString, name:=dbName)
                 Return .ToString
             End With
         End Function
@@ -232,23 +231,21 @@ Namespace Workbench
         ''' <param name="type$"></param>
         ''' <param name="distinct"></param>
         <Extension>
-        Public Sub DumpLargeTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
-                                                        path$,
-                                                        Optional custom As Func(Of MySQLTable, String) = Nothing,
-                                                        Optional type$ = "insert",
-                                                        Optional distinct As Boolean = True,
-                                                        Optional AI As Boolean = False)
+        Public Sub DumpLargeTransaction(Of T As MySQLTable)(source As IEnumerable(Of T), path$,
+                                                            Optional custom As Func(Of MySQLTable, String) = Nothing,
+                                                            Optional type As SqlActions = SqlActions.Insert,
+                                                            Optional distinct As Boolean = True,
+                                                            Optional AI As Boolean = False)
+
+            Dim dbName As String = TableName.GetTableName(Of T)?.Database Or Unknown
+
             Using output As StreamWriter = path.OpenWriter
-                Call output.DumpSession(
-                Sub(buffer)
-                    Call source.DumpTransaction(
-                        buffer,
-                        GetType(T), custom,
-                        action:=type,
-                        distinct:=distinct,
-                        AI:=AI)
-                End Sub,
-                name:=TableName.GetTableName(Of T)?.Database Or Unknown)
+                Call output.DumpSession(Sub(buffer)
+                                            Call source.DumpTransaction(buffer, GetType(T), custom,
+                                                                        action:=type,
+                                                                        distinct:=distinct,
+                                                                        AI:=AI)
+                                        End Sub, name:=dbName)
             End Using
         End Sub
 
@@ -271,20 +268,17 @@ Namespace Workbench
         ''' <param name="distinct">是否对<see cref="MySQLTable.GetDumpInsertValue"/>进行去重处理？默认是</param>
         ''' <returns></returns>
         <Extension>
-        Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T),
-                                                        path$,
-                                                        Optional encoding As Encodings = Encodings.Default,
-                                                        Optional type$ = "insert",
-                                                        Optional distinct As Boolean = True,
-                                                        Optional auto_increment As Boolean = False) As Boolean
-            Dim sql$ = source.DumpTransaction(
-            type:=type,
-            distinct:=distinct,
-            AI:=auto_increment)
+        Public Function DumpTransaction(Of T As MySQLTable)(source As IEnumerable(Of T), path$,
+                                                            Optional encoding As Encodings = Encodings.Default,
+                                                            Optional action As SqlActions = SqlActions.Insert,
+                                                            Optional distinct As Boolean = True,
+                                                            Optional auto_increment As Boolean = False) As Boolean
 
-            If Not path.ExtensionSuffix.TextEquals("sql") Then
-                Dim name$ = GetType(T).Name
-                path = path & "/" & name & ".sql"
+            Dim sql$ = source.DumpTransaction(action:=action, distinct:=distinct, AI:=auto_increment)
+            Dim isDir As Boolean = path.DirectoryExists AndAlso Not path.ExtensionSuffix("sql")
+
+            If isDir Then
+                path = path & "/" & GetType(T).Name & ".sql"
             End If
 
             Return sql.SaveTo(path, encoding.CodePage)

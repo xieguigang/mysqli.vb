@@ -1,15 +1,18 @@
 ﻿Imports System.IO
+Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.Linq
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
 Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 
 Namespace Workbench
 
-    Public Class DataWriter
+    Public Class DataWriter : Implements IDisposable
 
         ReadOnly out As TextWriter
         ReadOnly distinct As Boolean = True
         ReadOnly AI As Boolean = False
+
+        Private disposedValue As Boolean
 
         Sub New(out As TextWriter, Optional distinct As Boolean = True, Optional AI As Boolean = False)
             Me.out = out
@@ -20,10 +23,25 @@ Namespace Workbench
         Private Iterator Function GetBatchInsertSql(block As IEnumerable(Of MySQLTable)) As IEnumerable(Of String)
             For Each rowData As MySQLTable In block.SafeQuery
                 If Not rowData Is Nothing Then
-                    Yield r.GetDumpInsertValue(AI)
+                    Yield rowData.GetDumpInsertValue(AI)
                 End If
             Next
         End Function
+
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Sub WriteLine()
+            Call out.WriteLine()
+        End Sub
+
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Sub WriteLine(line As String)
+            Call out.WriteLine(line)
+        End Sub
+
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Sub UnlockTable(tableName As String)
+            Call out.UnlockTable(tableName)
+        End Sub
 
         Public Sub CommitBatch(block As IEnumerable(Of MySQLTable), schemaTable As Table)
             Dim insert_sql$ = schemaTable.GenerateInsertSql(trimAutoIncrement:=Not AI)
@@ -45,6 +63,33 @@ Namespace Workbench
             If Not insertBlocks.IsNullOrEmpty Then
                 Call out.WriteLine(SQL)
             End If
+        End Sub
+
+        Protected Overridable Sub Dispose(disposing As Boolean)
+            If Not disposedValue Then
+                If disposing Then
+                    ' TODO: dispose managed state (managed objects)
+                    Call out.Flush()
+                    Call out.Dispose()
+                End If
+
+                ' TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                ' TODO: set large fields to null
+                disposedValue = True
+            End If
+        End Sub
+
+        ' ' TODO: override finalizer only if 'Dispose(disposing As Boolean)' has code to free unmanaged resources
+        ' Protected Overrides Sub Finalize()
+        '     ' Do not change this code. Put cleanup code in 'Dispose(disposing As Boolean)' method
+        '     Dispose(disposing:=False)
+        '     MyBase.Finalize()
+        ' End Sub
+
+        Public Sub Dispose() Implements IDisposable.Dispose
+            ' Do not change this code. Put cleanup code in 'Dispose(disposing As Boolean)' method
+            Dispose(disposing:=True)
+            GC.SuppressFinalize(Me)
         End Sub
     End Class
 End Namespace

@@ -52,11 +52,7 @@
 Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.ApplicationServices
-Imports Microsoft.VisualBasic.ComponentModel.Collection
 Imports Microsoft.VisualBasic.Language.UnixBash
-Imports Microsoft.VisualBasic.Linq
-Imports Oracle.LinuxCompatibility.MySQL.Reflection.Schema
-Imports Oracle.LinuxCompatibility.MySQL.Reflection.SQL
 
 Namespace Workbench
 
@@ -75,11 +71,12 @@ Namespace Workbench
         ''' </param>
         <Extension>
         Public Sub ProjectDumping(source As IEnumerable(Of MySQLTable), EXPORT$,
-                              Optional bufferSize% = 500,
-                              Optional singleTransaction As Boolean = False,
-                              Optional echo As Boolean = True,
-                              Optional auto_increment As Boolean = False,
-                              Optional truncate As Boolean = False)
+                                  Optional bufferSize% = 500,
+                                  Optional singleTransaction As Boolean = False,
+                                  Optional echo As Boolean = True,
+                                  Optional auto_increment As Boolean = False,
+                                  Optional truncate As Boolean = False)
+
             Dim saveSQL$ = EXPORT
 
             If singleTransaction Then
@@ -87,13 +84,13 @@ Namespace Workbench
             End If
 
             Dim task As New DumpTaskRunner(
-            EXPORT:=EXPORT,
-            bufferSize:=bufferSize,
-            singleTransaction:=singleTransaction,
-            echo:=echo,
-            AI:=auto_increment,
-            truncate:=truncate
-        )
+                EXPORT:=EXPORT,
+                bufferSize:=bufferSize,
+                singleTransaction:=singleTransaction,
+                echo:=echo,
+                AI:=auto_increment,
+                truncate:=truncate
+            )
             Dim DBName$ = task.DumpRows(source)
 
             Call task.Dispose()
@@ -135,35 +132,6 @@ Namespace Workbench
                     Call .WriteLine(OptionsRestore, Now.ToString)
                 End With
             End Using
-        End Sub
-
-        <Extension>
-        Public Sub DumpBlock(block As IEnumerable(Of MySQLTable), schemaTable As Table, out As TextWriter,
-                         Optional distinct As Boolean = True,
-                         Optional AI As Boolean = False)
-
-            Dim INSERT$ = schemaTable.GenerateInsertSql(trimAutoIncrement:=Not AI)
-            Dim schema$ = INSERT.StringSplit("\)\s*VALUES\s*\(").First & ") VALUES "
-            Dim insertBlocks$() = block _
-            .Where(Function(r) Not r Is Nothing) _
-            .Select(Function(r) r.GetDumpInsertValue(AI)) _
-            .ToArray
-
-            If distinct Then
-                insertBlocks = insertBlocks _
-                .Distinct _
-                .ToArray
-            End If
-
-            ' Generates the SQL dumps data
-            Dim SQL$ = schema & insertBlocks.JoinBy(", ") & ";"
-
-            ' 在下面调用.IsNullOrEmpty进行判断来避免出现
-            ' INSERT INTO `tissue_locations` (`hash_code`, `uniprot_id`, `name`, `tissue_id`, `tissue_name`) VALUES ;
-            ' 这种尴尬的错误
-            If Not insertBlocks.IsNullOrEmpty Then
-                Call out.WriteLine(SQL)
-            End If
         End Sub
     End Module
 End Namespace

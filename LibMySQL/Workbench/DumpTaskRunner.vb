@@ -73,13 +73,7 @@ Namespace Workbench
 
         Private disposedValue As Boolean
 
-        Sub New(EXPORT$,
-            bufferSize%,
-            singleTransaction As Boolean,
-            echo As Boolean,
-            AI As Boolean,
-            truncate As Boolean)
-
+        Sub New(EXPORT$, bufferSize%, singleTransaction As Boolean, echo As Boolean, AI As Boolean, truncate As Boolean)
             Me.EXPORT = EXPORT
             Me.bufferSize = bufferSize
             Me.echo = echo
@@ -88,7 +82,7 @@ Namespace Workbench
             Me.singleTransaction = singleTransaction
         End Sub
 
-        Dim writer As New Dictionary(Of String, StreamWriter)
+        Dim writer As New Dictionary(Of String, DataWriter)
         Dim buffer As New Dictionary(Of String, (schema As Table, bufferData As List(Of MySQLTable)))
         Dim tableNames As New Dictionary(Of Type, String)
         Dim DBName$ = ""
@@ -112,7 +106,7 @@ Namespace Workbench
 
                 Call .LockTable(tblName)
                 Call .WriteLine()
-                Call writer.Add(tblName, .ByRef)
+                Call writer.Add(tblName, New DataWriter(.ByRef, AI:=AI))
             End With
         End Sub
 
@@ -133,7 +127,7 @@ Namespace Workbench
 
                 With buffer(tblName)
                     If .bufferData = bufferSize Then
-                        Call .bufferData.DumpBlock(.schema, writer(tblName), AI:=AI)
+                        Call writer(tblName).CommitBatch(.bufferData, .schema)
                         Call .bufferData.Clear()
 
                         If echo Then
@@ -151,7 +145,7 @@ Namespace Workbench
         Private Sub Close()
             For Each buf In buffer.EnumerateTuples
                 With buf.obj
-                    Call .bufferData.DumpBlock(.schema, writer(buf.name), AI:=AI)
+                    Call writer(buf.name).CommitBatch(.bufferData, .schema)
                 End With
 
                 With writer(buf.name)
@@ -159,14 +153,12 @@ Namespace Workbench
                     Call .UnlockTable(buf.name)
 
                     If Not singleTransaction Then
-                        Call .WriteLine(OptionsRestore, Now.ToString)
+                        Call .WriteLine(String.Format(OptionsRestore, Now.ToString))
                     End If
                 End With
             Next
 
-            For Each handle As StreamWriter In writer.Values
-                Call handle.Flush()
-                Call handle.Close()
+            For Each handle As DataWriter In writer.Values
                 Call handle.Dispose()
             Next
         End Sub
