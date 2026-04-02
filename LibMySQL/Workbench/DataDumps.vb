@@ -132,7 +132,7 @@ Public Module DataDumps
     ''' User custom SQL generator. If this parameter is not nothing, then <paramref name="type"/> will disabled.
     ''' </param>
     <Extension>
-    Public Sub DumpTransaction(source As IEnumerable(Of MySQLTable), out As TextWriter, type As Type,
+    Public Sub DumpTransaction(source As IEnumerable(Of MySQLTable), sqlfile As TextWriter, type As Type,
                                Optional custom As Func(Of MySQLTable, String) = Nothing,
                                Optional action As SqlActions = SqlActions.Insert,
                                Optional distinct As Boolean = True,
@@ -143,19 +143,19 @@ Public Module DataDumps
         Dim schemaTable As New Table(type)
         Dim tableName$ = schemaTable.TableName
 
-        Call out.LockTable(tableName)
+        Call sqlfile.LockTable(tableName)
 
         If action = SqlActions.Insert Then
             For Each block As MySQLTable() In source.SplitIterator(batchSize)
-                Call block.DumpBlock(schemaTable, out, distinct, AI:=AI)
+                Call block.DumpBlock(schemaTable, sqlfile, distinct, AI:=AI)
             Next
         Else
             For Each dataRow As MySQLTable In source.SafeQuery
-                Call out.WriteLine(SQL(dataRow))
+                Call sqlfile.WriteLine(SQL(dataRow))
             Next
         End If
 
-        Call out.UnlockTable(tableName)
+        Call sqlfile.UnlockTable(tableName)
     End Sub
 
     <Extension>
