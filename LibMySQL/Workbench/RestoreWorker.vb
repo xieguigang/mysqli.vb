@@ -119,7 +119,7 @@ Namespace Workbench
         End Property
 
         ''' <summary>
-        ''' 会需要动态编译
+        ''' 导入文件夹下的所有 SQL 文件到 MySQL 数据库中，要求每个 SQL 文件的文件名必须是对应的表名。
         ''' </summary>
         ''' <param name="dumpDir">
         ''' a data directory that contains multiple sql files, each file is a table dump, and the file name is the table name.
@@ -135,6 +135,12 @@ Namespace Workbench
                 End If
             Next
         End Sub
+
+        Public Iterator Function ImportsDataBatchShell(dumpDir As String) As IEnumerable(Of String)
+            For Each sqlfile As String In ls - l - r - "*.sql" <= dumpDir
+                Yield $"{mysql.CLIPath} {mysql_cmdl} < {sqlfile.CLIPath}"
+            Next
+        End Function
 
         ''' <summary>
         ''' 跨平台导入大型 SQL 文件
