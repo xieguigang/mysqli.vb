@@ -1,4 +1,6 @@
-﻿Namespace MySqlBuilder
+﻿Imports Microsoft.VisualBasic.Linq
+
+Namespace MySqlBuilder
 
     ''' <summary>
     ''' AsyncModelTable is a wrapper for Model class to provide asynchronous query and data manipulation functions,
@@ -64,6 +66,18 @@
 
         Public Function [or](ParamArray asserts As FieldAssert()) As AsyncModelTable
             Return New AsyncModelTable(table.or(asserts))
+        End Function
+
+        Public Function find_scalar(field As String) As Task(Of String)
+            Return Task.Run(Function()
+                                Return table.limit(1).project(Of String)(field).DefaultFirst
+                            End Function)
+        End Function
+
+        Public Function find_scalar(Of Val As {IComparable, Structure})(field As String) As Task(Of Val)
+            Return Task.Run(Function()
+                                Return table.limit(1).project(Of Val)(field).DefaultFirst
+                            End Function)
         End Function
 
         Public Function find(Of T As {New, Class})(ParamArray fields As String()) As System.Threading.Tasks.Task(Of T)
