@@ -223,9 +223,13 @@ Namespace MySqlBuilder
         ''' <param name="asserts"></param>
         ''' <returns></returns>
         Public Function where(ParamArray asserts As FieldAssert()) As Model
-            Dim query As New QueryBuilder(Me.query)
-            query.PushWhere("sql", asserts.Select(Function(f) f.ToString))
-            Return New Model(mysql, schema, query, chain)
+            If asserts.IsNullOrEmpty Then
+                Return Me
+            Else
+                Dim query As New QueryBuilder(Me.query)
+                query.PushWhere("sql", asserts.Select(Function(f) f.ToString))
+                Return New Model(mysql, schema, query, chain)
+            End If
         End Function
 
         Public Function group_by(ParamArray fields As String()) As Model

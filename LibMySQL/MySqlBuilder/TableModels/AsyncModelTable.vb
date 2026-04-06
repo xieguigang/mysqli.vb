@@ -36,6 +36,9 @@
         ''' <param name="asserts"></param>
         ''' <returns></returns>
         Public Function where(ParamArray asserts As FieldAssert()) As AsyncModelTable
+            If asserts.IsNullOrEmpty Then
+                Return Me
+            End If
             Return New AsyncModelTable(table.where(asserts))
         End Function
 
