@@ -203,6 +203,14 @@ Namespace Uri
             Me.error_log = If(uri.error_log.StringEmpty, Nothing, uri.error_log)
         End Sub
 
+        Sub New(user$, passwd$, database$, Optional host As String = "localhost", Optional port As Integer = 3306)
+            Me.Database = database
+            Me.IPAddress = host
+            Me.Password = passwd
+            Me.Port = port
+            Me.User = user
+        End Sub
+
         ''' <summary>
         ''' Get a connection string for the connection establish of a client to a mysql database 
         ''' server using the specific paramenter that was assigned by the user.
