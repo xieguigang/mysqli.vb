@@ -163,7 +163,8 @@ Namespace MySqlBuilder
                 Return name
             ElseIf name.IndexOf("."c) > -1 OrElse
                 name.IndexOf(" "c) > -1 OrElse
-                name.IndexOf("*"c) > -1 Then
+                name.IndexOf("*"c) > -1 OrElse
+                name.ToUpper.IndexOf(" AS ") > -1 Then
 
                 ' is already safe
                 Return name
