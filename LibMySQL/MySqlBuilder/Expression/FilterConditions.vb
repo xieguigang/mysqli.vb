@@ -4,7 +4,7 @@ Namespace MySqlBuilder.Expression
 
     Public Class FilterConditions
 
-        Public where As New Dictionary(Of String, List(Of String))
+        Friend ReadOnly where As New Dictionary(Of String, List(Of String))
 
         Sub New()
         End Sub

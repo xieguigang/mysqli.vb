@@ -58,16 +58,16 @@ Namespace MySqlBuilder.Expression
 
     Public Class QueryBuilder
 
-        Public where As FilterConditions
-        Public offset As Integer?
-        Public page_size As Integer?
-        Public left_join As New List(Of NamedCollection(Of FieldAssert))
-        Public join_tmp As String
-        Public distinct As Boolean
-        Public order_by As String()
-        Public order_desc As Boolean
-        Public group_by As String()
-        Public having As FilterConditions
+        Friend where As FilterConditions
+        Friend offset As Integer?
+        Friend page_size As Integer?
+        Friend left_join As New List(Of NamedCollection(Of FieldAssert))
+        Friend join_tmp As String
+        Friend distinct As Boolean
+        Friend order_by As String()
+        Friend order_desc As Boolean
+        Friend group_by As String()
+        Friend having As FilterConditions
 
         Sub New(copy As QueryBuilder)
             If Not copy Is Nothing Then
