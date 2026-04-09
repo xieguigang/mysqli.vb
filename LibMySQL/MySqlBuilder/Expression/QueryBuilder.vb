@@ -56,7 +56,7 @@ Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
 
 Namespace MySqlBuilder.Expression
 
-    Friend Class QueryBuilder
+    Public Class QueryBuilder
 
         Public where As FilterConditions
         Public offset As Integer?

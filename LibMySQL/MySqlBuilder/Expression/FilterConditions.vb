@@ -2,7 +2,7 @@
 
 Namespace MySqlBuilder.Expression
 
-    Friend Class FilterConditions
+    Public Class FilterConditions
 
         Public where As New Dictionary(Of String, List(Of String))
 

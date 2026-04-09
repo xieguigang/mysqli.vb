@@ -421,20 +421,8 @@ Namespace MySqlBuilder
         ''' </summary>
         ''' <param name="fields"></param>
         ''' <returns></returns>
-        Public Function save_sql(ParamArray fields As FieldAssert()) As String
-            Dim where As String = query.where_str
-            Dim limit As String = query.limit_str
-            Dim setFields As New List(Of String)
-
-            For Each field As FieldAssert In fields
-                If field.op <> "=" Then
-                    Throw New InvalidOperationException
-                End If
-
-                Call setFields.Add($"{field.GetSafeName} = {field.val}")
-            Next
-
-            Return $"UPDATE `{schema.Database}`.`{schema.TableName}` SET {setFields.JoinBy(", ")} {where} {limit};"
+        Public Function save_sql(ParamArray fields As FieldAssert()) As UpdateSql
+            Return New UpdateSql(fields, schema, query)
         End Function
 
         ''' <summary>
