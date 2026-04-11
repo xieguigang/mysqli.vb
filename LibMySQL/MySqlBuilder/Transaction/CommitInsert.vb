@@ -9,7 +9,7 @@ Namespace MySqlBuilder
 
         ReadOnly model As Model
         ReadOnly blocks As New List(Of Block)
-        ReadOnly opt As String = InsertOptions.None.Description
+        ReadOnly opt As String = DMLOptions.None.Description
 
         Dim maxBlockSize As Integer = 1024
 
@@ -64,7 +64,7 @@ Namespace MySqlBuilder
             End Function
         End Class
 
-        Sub New(model As Model, opt As InsertOptions, Optional maxBlockSize As Integer = 1024)
+        Sub New(model As Model, opt As DMLOptions, Optional maxBlockSize As Integer = 1024)
             Me.model = model
             Me.opt = opt.Description
             Me.maxBlockSize = maxBlockSize

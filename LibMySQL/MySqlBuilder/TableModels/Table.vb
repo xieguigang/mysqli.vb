@@ -89,7 +89,7 @@ Namespace MySqlBuilder
         Friend ReadOnly mysql As MySqli
 
         Friend m_getLastMySql As String
-        Friend m_opt As InsertOptions = InsertOptions.None
+        Friend m_opt As DMLOptions = DMLOptions.None
 
         ''' <summary>
         ''' get last execute mysql script
@@ -443,7 +443,7 @@ Namespace MySqlBuilder
         ''' <returns></returns>
         ''' 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
-        Public Function batch_insert(Optional max_blocksize As Integer = 1024, Optional opt As InsertOptions = InsertOptions.None) As CommitInsert
+        Public Function batch_insert(Optional max_blocksize As Integer = 1024, Optional opt As DMLOptions = DMLOptions.None) As CommitInsert
             Return New CommitInsert(Me, opt, maxBlockSize:=max_blocksize)
         End Function
 
@@ -468,17 +468,17 @@ Namespace MySqlBuilder
         ''' this delayed options will be reste to no-delayed after insert has been called
         ''' </remarks>
         Public Function delayed() As Model Implements IInsertModel(Of Model).delayed
-            m_opt = InsertOptions.Delayed
+            m_opt = DMLOptions.Delayed
             Return Me
         End Function
 
         Public Function ignore() As Model Implements IInsertModel(Of Model).ignore
-            m_opt = InsertOptions.Ignore
+            m_opt = DMLOptions.Ignore
             Return Me
         End Function
 
         Public Function clearOption() As Model Implements IInsertModel(Of Model).clearOption
-            m_opt = InsertOptions.None
+            m_opt = DMLOptions.None
             Return Me
         End Function
 

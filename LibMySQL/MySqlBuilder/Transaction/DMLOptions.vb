@@ -2,7 +2,10 @@
 
 Namespace MySqlBuilder
 
-    Public Enum InsertOptions
+    ''' <summary>
+    '''  Data manipulation options for delete/update/insert
+    ''' </summary>
+    Public Enum DMLOptions
         <Description("")> None
         <Description("DELAYED")> Delayed
         <Description("IGNORE")> Ignore
