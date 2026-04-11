@@ -69,6 +69,10 @@ Namespace MySqlBuilder.Expression
         Friend group_by As String()
         Friend having As FilterConditions
 
+        ''' <summary>
+        ''' make value copy
+        ''' </summary>
+        ''' <param name="copy"></param>
         Sub New(copy As QueryBuilder)
             If Not copy Is Nothing Then
                 where = New FilterConditions(copy.where)
@@ -84,7 +88,7 @@ Namespace MySqlBuilder.Expression
             End If
         End Sub
 
-        Sub New()
+        Private Sub New()
         End Sub
 
         Public Function PushWhere(type As String, val As String) As QueryBuilder

@@ -15,7 +15,9 @@ Namespace MySqlBuilder.Expression
         ''' <param name="clone"></param>
         Sub New(clone As FilterConditions)
             If Not clone.IsNullOrEmpty Then
-                where = New Dictionary(Of String, List(Of String))(clone.where)
+                For Each field As KeyValuePair(Of String, List(Of String)) In clone.where
+                    Call where.Add(field.Key, New List(Of String)(field.Value))
+                Next
             End If
         End Sub
 
