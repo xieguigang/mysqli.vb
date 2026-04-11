@@ -28,7 +28,7 @@ Namespace MySqlBuilder.Expression
                 Call setFields.Add($"{field.GetSafeName} = {field.val}")
             Next
 
-            Return $"UPDATE `{schema.Database}`.`{schema.TableName}` SET {setFields.JoinBy(", ")} {where} {limit};"
+            Return $"UPDATE {opt.Description} `{schema.Database}`.`{schema.TableName}` SET {setFields.JoinBy(", ")} {where} {limit};"
         End Function
 
     End Class

@@ -422,7 +422,7 @@ Namespace MySqlBuilder
         ''' <param name="fields"></param>
         ''' <returns></returns>
         Public Function save_sql(ParamArray fields As FieldAssert()) As UpdateSql
-            Return New UpdateSql(fields, schema, query)
+            Return New UpdateSql(fields, schema, query) With {.opt = m_opt}
         End Function
 
         ''' <summary>

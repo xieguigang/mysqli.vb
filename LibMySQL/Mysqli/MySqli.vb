@@ -600,12 +600,18 @@ Public Class MySqli : Implements IDisposable
         End Using
     End Function
 
-    Public Function CommitTransaction(transaction As String(), <Out> Optional ByRef excep As Exception = Nothing) As Boolean
-        If transaction.IsNullOrEmpty Then
-            Call "No sql operation inside current transaction commit, skipped!".Warning
-            Return True
-        End If
+    Public Function CommitTransaction(transaction As IEnumerable(Of String), <Out> Optional ByRef excep As Exception = Nothing) As Boolean
+        Dim transaction_sql As String() = transaction.SafeQuery.ToArray
 
+        If transaction_sql.Length = 0 Then
+            Call "No sql operation inside current transaction commit, skipped!".warning
+            Return True
+        Else
+            Return CommitInternal(transaction_sql, excep)
+        End If
+    End Function
+
+    Private Function CommitInternal(transaction As String(), ByRef excep As Exception) As Boolean
         Using MyConnection As New MySqlConnection(_UriMySQL)
             Call MyConnection.Open()
 
@@ -641,9 +647,9 @@ Public Class MySqli : Implements IDisposable
             Finally
                 Call MyConnection.Close()
             End Try
-        End Using
 
-        Return True
+            Return True
+        End Using
     End Function
 
     ''' <summary>

@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports Oracle.LinuxCompatibility.MySQL.MySqlBuilder.Expression
 
 Namespace MySqlBuilder
 
@@ -6,7 +7,7 @@ Namespace MySqlBuilder
 
         Dim disposedValue As Boolean
         Dim model As Model
-        Dim trans_sql As New List(Of String)
+        Dim trans_sql As New List(Of SQLModel)
         Dim blockSize As Integer = 1024
 
         Sub New(model As Model, Optional blockSize As Integer = 1024)
@@ -58,6 +59,10 @@ Namespace MySqlBuilder
         ''' </summary>
         ''' <param name="sql"></param>
         Public Sub add(sql As String)
+            Call trans_sql.Add(New SQLText(sql))
+        End Sub
+
+        Public Sub add(sql As SQLModel)
             Call trans_sql.Add(sql)
         End Sub
 
@@ -77,8 +82,13 @@ Namespace MySqlBuilder
         Public Sub commit() Implements IDataCommitOperation.Commit
             Dim ex As Exception = Nothing
 
-            For Each block As String() In trans_sql.SplitIterator(blockSize)
-                If Not model.mysql.CommitTransaction(block, ex) Then
+            For Each block As SQLModel() In trans_sql.SplitIterator(blockSize)
+                Dim sql As IEnumerable(Of String) = From line As SQLModel
+                                                    In block
+                                                    Let dml_sql As String = CStr(line)
+                                                    Select dml_sql
+
+                If Not model.mysql.CommitTransaction(sql, ex) Then
                     Throw ex
                 End If
             Next
