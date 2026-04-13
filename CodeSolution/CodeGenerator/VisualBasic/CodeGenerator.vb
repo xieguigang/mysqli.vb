@@ -398,7 +398,7 @@ Namespace VisualBasic
 
             If Not auto_id Is Nothing Then
                 Call vb.AppendLine()
-                Call vb.AppendLine($"Public Overloads Shared Narrowing Operator CType(x As {FixInvalids(table.TableName)}) As {__toDataType(auto_id.DataType)}")
+                Call vb.AppendLine($"Public Overloads Shared Narrowing Operator CType(x As {FixInvalids(table.TableName)}) {__toDataType(auto_id.DataType)}")
                 Call vb.AppendLine($"    Return If(x Is Nothing, 0, x.{FixInvalids(auto_id.FieldName)})")
                 Call vb.AppendLine($"End Operator")
                 Call vb.AppendLine()
