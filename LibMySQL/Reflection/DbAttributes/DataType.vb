@@ -63,7 +63,6 @@
 #End Region
 
 Imports System.Runtime.CompilerServices
-Imports Microsoft.VisualBasic.Language.Default
 
 Namespace Reflection.DbAttributes
 
@@ -93,6 +92,28 @@ Namespace Reflection.DbAttributes
             <MethodImpl(MethodImplOptions.AggressiveInlining)>
             Get
                 Return _argvs
+            End Get
+        End Property
+
+        Public ReadOnly Property IsInteger As Boolean
+            Get
+                Select Case _type
+                    Case MySqlDbType.BigInt,
+                         MySqlDbType.Int16,
+                         MySqlDbType.Int24,
+                         MySqlDbType.Int32,
+                         MySqlDbType.Int64,
+                         MySqlDbType.MediumInt,
+                         MySqlDbType.TinyInt,
+                         MySqlDbType.UInt16,
+                         MySqlDbType.UInt24,
+                         MySqlDbType.UInt32,
+                         MySqlDbType.UInt64
+
+                        Return True
+                    Case Else
+                        Return False
+                End Select
             End Get
         End Property
 

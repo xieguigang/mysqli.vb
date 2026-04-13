@@ -1,57 +1,57 @@
 ﻿#Region "Microsoft.VisualBasic::e92b1f1a099a4e4f97fa4f2ae7ecf1c6, src\mysqli\CodeSolution\CodeGenerator\VisualBasic\CodeGenerator.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
-
-
-    ' Code Statistics:
-
-    '   Total Lines: 824
-    '    Code Lines: 559
-    ' Comment Lines: 130
-    '   Blank Lines: 135
-    '     File Size: 37.83 KB
+' Summaries:
 
 
-    '     Module CodeGenerator
-    ' 
-    '         Function: ___DELETE_SQL, ___DELETE_SQL_Invoke, ___INSERT_SQL, ___INSERT_SQL_Invoke, ___REPLACE_SQL
-    '                   ___REPLACE_SQL_Invoke, ___UPDATE_SQL, ___UPDATE_SQL_Invoke, __clone, __createAttribute
-    '                   __generateCodeSplit, __INSERT_VALUES, __notImplementForIndex, __replaceInsertCommon, __replaceInsertInvokeCommon
-    '                   __schemaDb, __toDataType, Clone, FixInvalids, GenerateClass
-    '                   (+3 Overloads) GenerateCode, (+2 Overloads) GenerateCodeSplit, GenerateDbSchema, GenerateSingleDocument, getExprInvoke
-    '                   PropertyName, SQLComments, valueRef, VBClass, vbCode
-    ' 
-    ' 
-    ' /********************************************************************************/
+' Code Statistics:
+
+'   Total Lines: 824
+'    Code Lines: 559
+' Comment Lines: 130
+'   Blank Lines: 135
+'     File Size: 37.83 KB
+
+
+'     Module CodeGenerator
+' 
+'         Function: ___DELETE_SQL, ___DELETE_SQL_Invoke, ___INSERT_SQL, ___INSERT_SQL_Invoke, ___REPLACE_SQL
+'                   ___REPLACE_SQL_Invoke, ___UPDATE_SQL, ___UPDATE_SQL_Invoke, __clone, __createAttribute
+'                   __generateCodeSplit, __INSERT_VALUES, __notImplementForIndex, __replaceInsertCommon, __replaceInsertInvokeCommon
+'                   __schemaDb, __toDataType, Clone, FixInvalids, GenerateClass
+'                   (+3 Overloads) GenerateCode, (+2 Overloads) GenerateCodeSplit, GenerateDbSchema, GenerateSingleDocument, getExprInvoke
+'                   PropertyName, SQLComments, valueRef, VBClass, vbCode
+' 
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -294,6 +294,8 @@ Namespace VisualBasic
             Call vb.AppendLine($"Public Class {FixInvalids(table.TableName)}: Inherits {InheritsAbstract}")
             Call vb.AppendLine("#Region ""Public Property Mapping To Database Fields""")
 
+            Dim auto_id As Field = Nothing
+
             ' 生成Class之中的属性
             For Each Field As Field In table.Fields
 
@@ -313,6 +315,16 @@ Namespace VisualBasic
                 ' Generate the property data type
                 Call vb.Append(__toDataType(Field.DataType))
                 Call vb.AppendLine()
+
+                If table.PrimaryFields.Contains(Field.FieldName) Then
+                    ' is primary key
+                    If Field.AutoIncrement Then
+                        ' is auto increment
+                        If Field.DataType.IsInteger Then
+                            auto_id = Field
+                        End If
+                    End If
+                End If
             Next
 
             Call vb.AppendLine("#End Region")
@@ -383,6 +395,15 @@ Namespace VisualBasic
 #Region "Clone of the table data"
             Call vb.AppendLine(FixInvalids(table.TableName).__clone)
 #End Region
+
+            If Not auto_id Is Nothing Then
+                Call vb.AppendLine()
+                Call vb.AppendLine($"Public Overloads Shared Narrowing Operator CType(x As {FixInvalids(table.TableName)}) As {__toDataType(auto_id.DataType)}")
+                Call vb.AppendLine($"    Return If(x Is Nothing, 0, x.{FixInvalids(auto_id.FieldName)})")
+                Call vb.AppendLine($"End Operator")
+                Call vb.AppendLine()
+            End If
+
             Call vb.AppendLine("End Class")
 
             Return vb.ToString
