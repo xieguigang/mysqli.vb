@@ -493,7 +493,7 @@ Namespace MySqlBuilder
         ''' <param name="fields"></param>
         ''' <returns></returns>
         Public Function add(ParamArray fields As FieldAssert()) As Boolean Implements IInsertModel(Of Model).add
-            Dim sql As String = add_sql(fields)
+            Dim sql As String = CStr(add_sql(fields))
             Dim result = mysql.Execute(sql)
             chain.m_getLastMySql = sql
             Return result > 0
@@ -504,11 +504,10 @@ Namespace MySqlBuilder
         ''' </summary>
         ''' <param name="fields"></param>
         ''' <returns></returns>
-        Public Function add_sql(ParamArray fields As FieldAssert()) As String
-            Dim names As String = fields.Select(Function(a) a.GetSafeName).JoinBy(", ")
-            Dim vals As String = fields.Select(Function(a) a.val).JoinBy(", ")
-            Dim sql As String = $"INSERT {m_opt.Description} INTO `{schema.Database}`.`{schema.TableName}` ({names}) VALUES ({vals});"
-            Return sql
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Function add_sql(ParamArray fields As FieldAssert()) As InsertSql
+            Return New InsertSql(fields, schema, query) With {.opt = m_opt}
         End Function
 
         ''' <summary>
@@ -516,7 +515,7 @@ Namespace MySqlBuilder
         ''' </summary>
         ''' <returns></returns>
         Public Function delete() As Boolean
-            Dim sql As String = delete_sql()
+            Dim sql As String = CStr(delete_sql())
             Dim result = mysql.Execute(sql)
             chain.m_getLastMySql = sql
             Return result > 0
@@ -526,11 +525,8 @@ Namespace MySqlBuilder
         ''' SQL DELETE FROM
         ''' </summary>
         ''' <returns></returns>
-        Public Function delete_sql() As String
-            Dim where As String = query.where_str
-            Dim limit As String = query.limit_str
-            Dim sql As String = $"DELETE FROM `{schema.Database}`.`{schema.TableName}` {where} {limit};"
-            Return sql
+        Public Function delete_sql() As DeleteSql
+            Return New DeleteSql(schema, query) With {.opt = m_opt}
         End Function
 
         ''' <summary>
