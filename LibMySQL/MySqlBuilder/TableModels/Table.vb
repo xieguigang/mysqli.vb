@@ -333,6 +333,7 @@ Namespace MySqlBuilder
             Dim sql As String = selectSql(fields, assign_sql:=True)
             Dim reader As System.Data.DataTableReader = mysql.Fetch(If(hasLimit1, sql, sql.Trim(";"c) & " LIMIT 1"))?.CreateDataReader
             Dim value As Dictionary(Of String, Object) = DbReflector.ReadFirst(reader)
+
             Return value
         End Function
 
@@ -340,8 +341,10 @@ Namespace MySqlBuilder
             Dim where As String = If(query?.where_str, "")
             Dim group_by As String = If(query?.group_by_str, "")
             Dim sql As String = $"SELECT {exp} FROM `{schema.Database}`.`{schema.TableName}` {where} {group_by};"
-            chain.m_getLastMySql = sql
             Dim result = mysql.ExecuteAggregate(Of T)(sql)
+
+            chain.m_getLastMySql = sql
+
             Return result
         End Function
 
@@ -349,9 +352,11 @@ Namespace MySqlBuilder
             Dim where As String = If(query?.where_str, "")
             Dim group_by As String = If(query?.group_by_str, "")
             Dim sql As String = $"SELECT count(*) FROM `{schema.Database}`.`{schema.TableName}` {where} {group_by};"
-            chain.m_getLastMySql = sql
             ' bigint in mysql for count(*)
             Dim result = mysql.ExecuteAggregate(Of Long)(sql)
+
+            chain.m_getLastMySql = sql
+
             Return result
         End Function
 
@@ -431,9 +436,9 @@ Namespace MySqlBuilder
         ''' <param name="fields"></param>
         ''' <returns></returns>
         Public Function save(ParamArray fields As FieldAssert()) As Boolean
-            Dim sql As String = save_sql(fields)
-            chain.m_getLastMySql = sql
+            Dim sql As String = CStr(save_sql(fields))
             Dim result = mysql.Execute(sql)
+            chain.m_getLastMySql = sql
             Return result > 0
         End Function
 
@@ -489,8 +494,8 @@ Namespace MySqlBuilder
         ''' <returns></returns>
         Public Function add(ParamArray fields As FieldAssert()) As Boolean Implements IInsertModel(Of Model).add
             Dim sql As String = add_sql(fields)
-            chain.m_getLastMySql = sql
             Dim result = mysql.Execute(sql)
+            chain.m_getLastMySql = sql
             Return result > 0
         End Function
 
@@ -512,8 +517,8 @@ Namespace MySqlBuilder
         ''' <returns></returns>
         Public Function delete() As Boolean
             Dim sql As String = delete_sql()
-            chain.m_getLastMySql = sql
             Dim result = mysql.Execute(sql)
+            chain.m_getLastMySql = sql
             Return result > 0
         End Function
 
