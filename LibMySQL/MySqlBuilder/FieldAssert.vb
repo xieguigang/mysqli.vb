@@ -200,6 +200,18 @@ Namespace MySqlBuilder
         End Function
 
         ''' <summary>
+        ''' set field value to NULL
+        ''' </summary>
+        ''' <returns></returns>
+        Public Function set_nothing() As FieldAssert
+            Return New FieldAssert() With {
+                .name = name,
+                .op = "=",
+                .val = "NULL"
+            }
+        End Function
+
+        ''' <summary>
         ''' generates the sql expression
         ''' </summary>
         ''' <returns></returns>
