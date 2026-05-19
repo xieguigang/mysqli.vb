@@ -10,6 +10,16 @@ Namespace MySqlBuilder
         Dim trans_sql As New List(Of SQLModel)
         Dim blockSize As Integer = 1024
 
+        ''' <summary>
+        ''' the expression list size of current commit transaction
+        ''' </summary>
+        ''' <returns></returns>
+        Public ReadOnly Property size As Integer
+            Get
+                Return trans_sql.Count
+            End Get
+        End Property
+
         Sub New(model As Model, Optional blockSize As Integer = 1024)
             Me.model = model
             Me.blockSize = blockSize
