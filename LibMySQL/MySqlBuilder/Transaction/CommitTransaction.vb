@@ -15,6 +15,7 @@ Namespace MySqlBuilder
         ''' </summary>
         ''' <returns></returns>
         Public ReadOnly Property size As Integer
+            <MethodImpl(MethodImplOptions.AggressiveInlining)>
             Get
                 Return trans_sql.Count
             End Get
@@ -68,10 +69,12 @@ Namespace MySqlBuilder
         ''' add transaction sql text into current memory cache
         ''' </summary>
         ''' <param name="sql"></param>
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Sub add(sql As String)
             Call trans_sql.Add(New SQLText(sql))
         End Sub
 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Sub add(sql As SQLModel)
             Call trans_sql.Add(sql)
         End Sub
@@ -84,6 +87,11 @@ Namespace MySqlBuilder
         Public Function add(ParamArray fields As FieldAssert()) As Boolean Implements IInsertModel(Of CommitTransaction).add
             Call add(model.add_sql(fields))
             Return True
+        End Function
+
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Async Function commitTask() As Task
+            Await Task.Run(Sub() Call commit())
         End Function
 
         ''' <summary>
