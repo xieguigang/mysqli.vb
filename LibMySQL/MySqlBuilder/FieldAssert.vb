@@ -310,7 +310,6 @@ Namespace MySqlBuilder
             Return AssignOperator(field, "<>", d)
         End Operator
 
-
         Public Overloads Shared Operator <=(field As FieldAssert, i As Integer) As FieldAssert
             Return AssignOperator(field, "<=", i)
         End Operator
