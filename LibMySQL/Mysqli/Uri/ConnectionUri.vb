@@ -284,6 +284,9 @@ Namespace Uri
         ''' <param name="uri">MySQL连接字符串或者uri拓展格式</param>
         ''' <returns></returns>
         Public Shared Function TryParsing(uri As String) As ConnectionUri
+            If uri.StringEmpty Then
+                Return Nothing
+            End If
             If Not InStr(uri, "mysql://", CompareMethod.Text) > 0 Then
                 Return UriBuilder.MySQLParser(uri)
             Else
