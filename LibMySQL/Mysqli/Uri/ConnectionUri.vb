@@ -214,10 +214,9 @@ Namespace Uri
         ''' <summary>
         ''' Get a connection string for the connection establish of a client to a mysql database 
         ''' server using the specific paramenter that was assigned by the user.
-        ''' (获取一个由用户指定连接参数的用于建立客户端和MySql数据库服务器之间的连接的连接字符串)
         ''' </summary>
         ''' <returns></returns>
-        ''' <remarks></remarks>
+        ''' <remarks>获取一个由用户指定连接参数的用于建立客户端和MySql数据库服务器之间的连接的连接字符串</remarks>
         ''' 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Function GetConnectionString() As String
