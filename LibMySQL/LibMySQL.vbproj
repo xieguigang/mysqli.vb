@@ -276,17 +276,4 @@
   </ItemGroup>
 
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-windows'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore">
-      <Version>7.0.4</Version>
-    </PackageReference>
-  </ItemGroup>
-
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore">
-      <Version>7.0.4</Version>
-    </PackageReference>
-  </ItemGroup>
-
 </Project>
