@@ -10,6 +10,9 @@ Imports Oracle.LinuxCompatibility.LibMySQL.PerformanceCounter
 ''' </summary>
 Module Program
 
+    ' Rolling history buffers that feed the dashboard sparklines.
+    Private _history As MetricHistory = Nothing
+
     Private _running As Boolean = True
     Private _mysql As MySqli = Nothing
 
@@ -43,6 +46,7 @@ Module Program
         Dim procMon = New ProcessMonitor(vars)
         Dim procList = New ProcessListReader(_mysql)
         Dim dashboard = New Dashboard(opts, vars)
+        _history = New MetricHistory()
 
         ' Establish a first baseline snapshot so the first rendered delta is sane.
         Try
@@ -63,6 +67,7 @@ Module Program
             Dim c As Counter = Nothing
             Try
                 c = counter.PullNext()
+                _history.Sample(c)
             Catch ex As Exception
                 c = counter
             End Try
@@ -79,7 +84,7 @@ Module Program
             End Try
 
             ' Render and repaint the whole screen in one write (double buffered).
-            Dim frame = dashboard.Render(c, snap, slow, startTime)
+            Dim frame = dashboard.Render(c, snap, slow, startTime, _history)
             Console.Out.Write(Ansi.Home())
             Console.Out.Write(Ansi.ClearDown())
             Console.Out.Write(frame)

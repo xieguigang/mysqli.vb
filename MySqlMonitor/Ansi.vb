@@ -120,6 +120,67 @@ Public Module Ansi
         Return sb.ToString()
     End Function
 
+    ' ---- Sparkline (history trend) ----
+    ' Render a compact trend line of `width` cells from the given sample series using
+    ' Unicode block characters (▁▂▃▄▅▆▇█). The series is auto-scaled to its own min/max
+    ' so even a flat series is still drawn. Output is ANSI-safe: visible width == `width`,
+    ' so it never corrupts the Dashboard's column-merging visible-length math.
+    ' `color` is an SGR prefix (e.g. FgCyan()); if empty the terminal default is used.
+    Public Function Sparkline(values As Double(), width As Integer, Optional color As String = "") As String
+        If width <= 0 Then Return ""
+        If values Is Nothing OrElse values.Length = 0 Then
+            Return (If(color <> "", color, "")) & New String("·"c, width) & Reset()
+        End If
+
+        ' Build the sampled series: collapse/upsample `values` to exactly `width` points.
+        Dim n As Integer = values.Length
+        Dim sampled(width - 1) As Double
+        If n = 1 Then
+            For i As Integer = 0 To width - 1
+                sampled(i) = values(0)
+            Next
+        Else
+            For i As Integer = 0 To width - 1
+                Dim idx As Double = (CDbl(i) / (width - 1)) * (n - 1)
+                Dim lo As Integer = CInt(Math.Floor(idx))
+                Dim hi As Integer = CInt(Math.Ceiling(idx))
+                If lo = hi Then
+                    sampled(i) = values(lo)
+                Else
+                    Dim t As Double = idx - lo
+                    sampled(i) = values(lo) * (1 - t) + values(hi) * t
+                End If
+            Next
+        End If
+
+        ' Determine min/max for scaling.
+        Dim mn As Double = sampled(0)
+        Dim mx As Double = sampled(0)
+        For i As Integer = 0 To width - 1
+            If sampled(i) < mn Then mn = sampled(i)
+            If sampled(i) > mx Then mx = sampled(i)
+        Next
+
+        Const blocks As String = " ▁▂▃▄▅▆▇█"
+        Dim span As Double = mx - mn
+        Dim sb As New Text.StringBuilder()
+        If color <> "" Then sb.Append(color)
+        For i As Integer = 0 To width - 1
+            Dim level As Integer
+            If span <= Double.Epsilon Then
+                level = 4 ' mid block for a flat line
+            Else
+                Dim r As Double = (sampled(i) - mn) / span
+                level = CInt(Math.Round(r * 8))
+                If level < 1 Then level = 1
+                If level > 8 Then level = 8
+            End If
+            sb.Append(blocks(level))
+        Next
+        sb.Append(Reset())
+        Return sb.ToString()
+    End Function
+
     ' ---- Box drawing helpers ----
     Public Function HLine(width As Integer) As String
         Return New String("─"c, width)

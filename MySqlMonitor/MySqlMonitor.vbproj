@@ -1,16 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>MySqlMonitor</RootNamespace>
+    <RootNamespace>Oracle.LinuxCompatibility.MySQL</RootNamespace>
+    <AssemblyName>MySqlMonitor</AssemblyName>
     <TargetFramework>net10.0</TargetFramework>
     <Platforms>AnyCPU;x64</Platforms>
+    <Configurations>Debug;Release</Configurations>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <!-- 本地 GCModeller 源码(Core.vbproj)缺失，改为引用已预编译的运行时 DLL；
+         MySql.Data 由 NuGet 还原(需联网)。在 Ubuntu 上构建时请改用 dotnet publish，
+         或预先 dotnet build LibMySQL / PerformanceCounter 生成对应 DLL。 -->
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\GCModeller\src\runtime\sciBASIC#\Microsoft.VisualBasic.Core\src\Core.vbproj" />
-    <ProjectReference Include="..\LibMySQL\LibMySQL.vbproj" />
-    <ProjectReference Include="..\PerformanceCounter\PerformanceCounter.vbproj" />
+    <!-- MySQL 数据库驱动 (mysql-connector-net)，通过 NuGet 还原 -->
+    <PackageReference Include="MySql.Data" Version="9.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 引用已预编译的依赖程序集 (GCModeller VB 运行时 / LibMySQL / PerformanceCounter) -->
+    <Reference Include="Microsoft.VisualBasic.Runtime">
+      <HintPath>..\LibMySQL\bin\x64\Debug\net10.0\Microsoft.VisualBasic.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic.Math.Core">
+      <HintPath>..\LibMySQL\bin\x64\Debug\net10.0\Microsoft.VisualBasic.Math.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.LinuxCompatibility.LibMySQL">
+      <HintPath>..\LibMySQL\bin\x64\Debug\net10.0\Oracle.LinuxCompatibility.LibMySQL.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.LinuxCompatibility.MySQL.PerformanceCounter">
+      <HintPath>..\PerformanceCounter\bin\x64\Release\net10.0\Oracle.LinuxCompatibility.MySQL.PerformanceCounter.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
