@@ -138,7 +138,7 @@ Public Class MySqli : Implements IDisposable
     End Property
 
     Public Sub New(strUri As String, Optional logfile As String = Nothing)
-        Call Me.New(CType(strUri, ConnectionUri), logfile)
+        Call Me.New(ConnectionUri.TryParsing(strUri), logfile)
     End Sub
 
     ''' <summary>
