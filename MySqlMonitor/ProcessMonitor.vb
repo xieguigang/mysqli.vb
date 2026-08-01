@@ -109,7 +109,60 @@ Public Class ProcessMonitor
         Catch
         End Try
 
+        ' 3) Fallback: scan /proc by process comm name (mysqld / mariadbd).
+        '    Does not depend on pgrep being installed. Picks the first matching
+        '    process that exposes a readable /proc/<pid>/stat.
+        Dim procDir = "/proc"
+        If IO.Directory.Exists(procDir) Then
+            For Each dir In IO.Directory.GetDirectories(procDir)
+                Dim name = IO.Path.GetFileName(dir)
+                Dim n As Integer
+                If Not Integer.TryParse(name, n) OrElse n <= 0 Then
+                    Continue For
+                End If
+                If IsMatchingServerProcess(dir) Then
+                    _pid = n
+                    Return _pid
+                End If
+            Next
+        End If
+
         Return -1
+    End Function
+
+    ''' <summary>
+    ''' Returns true when the process directory under /proc points to a MySQL
+    ''' server process (mysqld or mariadbd), detected via /proc/&lt;pid&gt;/comm or
+    ''' the comm field inside /proc/&lt;pid&gt;/stat.
+    ''' </summary>
+    Private Shared Function IsMatchingServerProcess(procDir As String) As Boolean
+        ' Preferred: /proc/<pid>/comm holds the short executable name.
+        Dim commFile = IO.Path.Combine(procDir, "comm")
+        If IO.File.Exists(commFile) Then
+            Dim comm = IO.File.ReadAllText(commFile).Trim()
+            If comm = "mysqld" OrElse comm = "mariadbd" Then
+                Return True
+            End If
+        End If
+
+        ' Fallback: parse comm from /proc/<pid>/stat (between parentheses).
+        Dim statFile = IO.Path.Combine(procDir, "stat")
+        If IO.File.Exists(statFile) Then
+            Try
+                Dim stat = IO.File.ReadAllText(statFile)
+                Dim lp = stat.IndexOf("("c)
+                Dim rp = stat.IndexOf(")"c)
+                If lp >= 0 AndAlso rp > lp Then
+                    Dim comm = stat.Substring(lp + 1, rp - lp - 1).Trim()
+                    If comm = "mysqld" OrElse comm = "mariadbd" Then
+                        Return True
+                    End If
+                End If
+            Catch
+            End Try
+        End If
+
+        Return False
     End Function
 
     ''' <summary>
