@@ -22,19 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- 引用已预编译的依赖程序集 (GCModeller VB 运行时 / LibMySQL / PerformanceCounter) -->
-    <Reference Include="Microsoft.VisualBasic.Runtime">
-      <HintPath>..\LibMySQL\bin\x64\Debug\net10.0\Microsoft.VisualBasic.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualBasic.Math.Core">
-      <HintPath>..\LibMySQL\bin\x64\Debug\net10.0\Microsoft.VisualBasic.Math.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Oracle.LinuxCompatibility.LibMySQL">
-      <HintPath>..\LibMySQL\bin\x64\Debug\net10.0\Oracle.LinuxCompatibility.LibMySQL.dll</HintPath>
-    </Reference>
-    <Reference Include="Oracle.LinuxCompatibility.MySQL.PerformanceCounter">
-      <HintPath>..\PerformanceCounter\bin\x64\Release\net10.0\Oracle.LinuxCompatibility.MySQL.PerformanceCounter.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\..\..\GCModeller\src\runtime\sciBASIC#\Microsoft.VisualBasic.Core\src\Core.vbproj" />
+    <ProjectReference Include="..\LibMySQL\libmysql.vbproj" />
+    <ProjectReference Include="..\PerformanceCounter\PerformanceCounter.vbproj" />
   </ItemGroup>
 
 </Project>

@@ -56,7 +56,7 @@ Public Class Dashboard
     End Function
 
     ' ---- Main render ----
-    Public Function Render(counter As Counter, proc As ProcessSnapshot, slow As List(Of SlowQueryInfo), startTime As Date) As String
+    Public Function Render(counter As Counter, proc As ProcessSnapshot, slow As List(Of SlowQueryInfo), startTime As Date, history As MetricHistory) As String
         Dim sb As New StringBuilder()
         Dim w As Integer = _width
 
@@ -75,11 +75,11 @@ Public Class Dashboard
         If colW < 38 Then colW = w ' single column fallback for narrow terminals
 
         Dim left As New StringBuilder()
-        RenderThroughput(left, counter, colW)
-        RenderIoNetwork(left, counter, colW)
+        RenderThroughput(left, counter, colW, history)
+        RenderIoNetwork(left, counter, colW, history)
 
         Dim right As New StringBuilder()
-        RenderBufferPool(right, counter, colW)
+        RenderBufferPool(right, counter, colW, history)
         RenderConnections(right, counter, proc, colW)
 
         If colW >= w Then

@@ -114,5 +114,4 @@ Module Program
     Private Sub WriteError(msg As String)
         Console.Error.WriteLine(Ansi.Fg(255, 95, 86) & msg & Ansi.Reset())
     End Sub
-
 End Module
