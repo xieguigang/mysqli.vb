@@ -1,3 +1,5 @@
+Imports Oracle.LinuxCompatibility.MySQL.Uri
+
 ''' <summary>
 ''' Command line options for the MySqlMonitor console tool.
 ''' </summary>
@@ -89,9 +91,8 @@ Public Class MonitorOptions
     ''' Build a mysql connection uri string from the parsed options.
     ''' Format: mysql://user:password@host:port/database
     ''' </summary>
-    Public Function BuildConnectionUri() As String
-        Dim db = If(String.IsNullOrWhiteSpace(Database), "", "/" & Database)
-        Return $"mysql://{User}:{Password}@{Host}:{Port}{db}"
+    Public Function BuildConnectionUri() As ConnectionUri
+        Return New ConnectionUri(User, Password, Database, Host, Port)
     End Function
 
     ''' <summary>

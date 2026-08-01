@@ -1,6 +1,5 @@
-Imports System.Text
-Imports Oracle.LinuxCompatibility.MySQL
 Imports Oracle.LinuxCompatibility.LibMySQL.PerformanceCounter
+Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 ''' <summary>
 ''' MySqlMonitor - a realtime MySQL performance monitor for the console.
@@ -28,7 +27,7 @@ Module Program
         ' in the alternate-screen / hidden-cursor state.
         AddHandler Console.CancelKeyPress, AddressOf OnCancel
 
-        Dim uri = opts.BuildConnectionUri()
+        Dim uri As ConnectionUri = opts.BuildConnectionUri()
 
         Try
             ' The MySqli constructor establishes the connection (and validates it
@@ -36,7 +35,7 @@ Module Program
             _mysql = New MySqli(uri)
         Catch ex As Exception
             WriteError("Failed to connect to MySQL server:" &
-                       Environment.NewLine & "  " & uri.Replace(opts.Password, "******") &
+                       Environment.NewLine & "  " & uri.ToString.Replace(If(opts.Password.StringEmpty, "XXXXXXXXXXXXXX", opts.Password), "******") &
                        Environment.NewLine & "  " & ex.Message)
             Return
         End Try

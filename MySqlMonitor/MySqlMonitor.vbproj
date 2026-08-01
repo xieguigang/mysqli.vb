@@ -9,11 +9,19 @@
     <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <!-- 本地 GCModeller 源码(Core.vbproj)缺失，改为引用已预编译的运行时 DLL；
          MySql.Data 由 NuGet 还原(需联网)。在 Ubuntu 上构建时请改用 dotnet publish，
          或预先 dotnet build LibMySQL / PerformanceCounter 生成对应 DLL。 -->
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Optimize>False</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
