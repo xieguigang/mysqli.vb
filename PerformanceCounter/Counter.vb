@@ -115,9 +115,47 @@ Public Class Counter
         End Get
     End Property
 
+    Public ReadOnly Property NumOfCreate As Double
+        Get
+            Return (current.Creates - previous.Creates) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
+    Public ReadOnly Property NumOfAlter As Double
+        Get
+            Return (current.Alters - previous.Alters) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
+    Public ReadOnly Property NumOfDrop As Double
+        Get
+            Return (current.Drops - previous.Drops) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Slow queries per second (delta of Slow_queries / delta time).
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property NumOfSlow As Double
+        Get
+            Return (current.Slow_queries - previous.Slow_queries) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
     Public ReadOnly Property ClientConnections As Integer
         Get
             Return current.Threads_connected
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' The number of threads that are not sleeping (Threads_running), i.e. active queries.
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property ThreadsRunning As Integer
+        Get
+            Return current.Threads_running
         End Get
     End Property
 
@@ -136,6 +174,70 @@ Public Class Counter
     Public ReadOnly Property Innodb_data_read As Double
         Get
             Return (current.Innodb_data_read - previous.Innodb_data_read) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Number of times a page had to be read from disk because it was not in the buffer pool,
+    ''' per second (Innodb_buffer_pool_reads delta / delta time).
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Innodb_buffer_pool_disk_reads As Double
+        Get
+            Return (current.Innodb_buffer_pool_reads - previous.Innodb_buffer_pool_reads) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Buffer pool hit rate in range [0, 1]. Computed from the cumulative read requests
+    ''' versus physical disk reads (read requests served from memory / total read requests).
+    ''' Returns 1.0 when there are no read requests yet.
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property BufferPoolHitRate As Double
+        Get
+            Dim total = current.Innodb_buffer_pool_read_requests
+            If total <= 0 Then
+                Return 1.0
+            End If
+            Dim fromMem = total - current.Innodb_buffer_pool_reads
+            Return Math.Min(1.0, fromMem / CDbl(total))
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Buffer pool usage ratio in range [0, 1], i.e. the fraction of the pool that is occupied
+    ''' by data pages: Innodb_buffer_pool_pages_data / Innodb_buffer_pool_pages_total.
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property BufferPoolUsage As Double
+        Get
+            Dim total = current.Innodb_buffer_pool_pages_total
+            If total <= 0 Then
+                Return 0.0
+            End If
+            Return Math.Min(1.0, CDbl(current.Innodb_buffer_pool_pages_data) / CDbl(total))
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Number of times a page request had to wait because no clean page was available, per second.
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Innodb_buffer_pool_wait_free_rate As Double
+        Get
+            Return (current.Innodb_buffer_pool_wait_free - previous.Innodb_buffer_pool_wait_free) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Temporary tables created on disk instead of in memory, per second
+    ''' (Created_tmp_disk_tables delta / delta time).
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property CreatedTmpDiskTablesRate As Double
+        Get
+            Return (current.Created_tmp_disk_tables - previous.Created_tmp_disk_tables) / deltaTime.TotalSeconds
         End Get
     End Property
 

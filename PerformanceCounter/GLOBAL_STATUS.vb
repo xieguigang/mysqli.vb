@@ -108,6 +108,34 @@ Public Class GLOBAL_STATUS
         End Get
     End Property
 
+    Public ReadOnly Property Creates As ULong
+        Get
+            Return values.GetUInt64("Com_create")
+        End Get
+    End Property
+
+    Public ReadOnly Property Alters As ULong
+        Get
+            Return values.GetUInt64("Com_alter")
+        End Get
+    End Property
+
+    Public ReadOnly Property Drops As ULong
+        Get
+            Return values.GetUInt64("Com_drop")
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Total number of slow queries since the server started.
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Slow_queries As ULong
+        Get
+            Return values.GetUInt64("Slow_queries")
+        End Get
+    End Property
+
     ''' <summary>
     ''' number of client connection in current
     ''' </summary>
@@ -115,6 +143,16 @@ Public Class GLOBAL_STATUS
     Public ReadOnly Property Threads_connected As Integer
         Get
             Return values.GetInt32("Threads_connected")
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' The number of threads that are not sleeping.
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Threads_running As Integer
+        Get
+            Return values.GetInt32("Threads_running")
         End Get
     End Property
 
@@ -133,6 +171,68 @@ Public Class GLOBAL_STATUS
     Public ReadOnly Property Innodb_data_read As ULong
         Get
             Return values.GetUInt64("Innodb_data_read")
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Number of pages made young in the buffer pool (moved to the head of the LRU list).
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Innodb_buffer_pool_pages_data As ULong
+        Get
+            Return values.GetUInt64("Innodb_buffer_pool_pages_data")
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Number of free pages in the buffer pool.
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Innodb_buffer_pool_pages_free As ULong
+        Get
+            Return values.GetUInt64("Innodb_buffer_pool_pages_free")
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Total size of the buffer pool in pages (Innodb_buffer_pool_pages_total).
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Innodb_buffer_pool_pages_total As ULong
+        Get
+            Return values.GetUInt64("Innodb_buffer_pool_pages_total")
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Number of times a page was requested from the buffer pool but had to wait
+    ''' because no clean page was available (Innodb_buffer_pool_wait_free).
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Innodb_buffer_pool_wait_free As ULong
+        Get
+            Return values.GetUInt64("Innodb_buffer_pool_wait_free")
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Number of logical reads that InnoDB satisfied from the buffer pool.
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Innodb_buffer_pool_reads As ULong
+        Get
+            Return values.GetUInt64("Innodb_buffer_pool_reads")
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Number of temporary tables created on disk instead of in memory
+    ''' (Created_tmp_disk_tables), a sign of insufficient tmp_table_size / sort buffers.
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Created_tmp_disk_tables As ULong
+        Get
+            Return values.GetUInt64("Created_tmp_disk_tables")
         End Get
     End Property
 
