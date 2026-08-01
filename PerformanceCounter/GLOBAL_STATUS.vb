@@ -175,6 +175,16 @@ Public Class GLOBAL_STATUS
     End Property
 
     ''' <summary>
+    ''' Total number of bytes written to the InnoDB data files (from SHOW GLOBAL STATUS).
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Innodb_data_written As ULong
+        Get
+            Return values.GetUInt64("Innodb_data_written")
+        End Get
+    End Property
+
+    ''' <summary>
     ''' Number of pages made young in the buffer pool (moved to the head of the LRU list).
     ''' </summary>
     ''' <returns></returns>

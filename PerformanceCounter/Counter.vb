@@ -178,6 +178,16 @@ Public Class Counter
     End Property
 
     ''' <summary>
+    ''' InnoDB data bytes written per second (Innodb_data_written delta / delta time).
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property Innodb_data_written As Double
+        Get
+            Return (current.Innodb_data_written - previous.Innodb_data_written) / deltaTime.TotalSeconds
+        End Get
+    End Property
+
+    ''' <summary>
     ''' Number of times a page had to be read from disk because it was not in the buffer pool,
     ''' per second (Innodb_buffer_pool_reads delta / delta time).
     ''' </summary>
