@@ -21,24 +21,28 @@ Module Program
         If opts.ShowHelp Then
             MonitorOptions.PrintHelp()
             Return
+        Else
+            ' Cancel handling: restore the terminal on Ctrl+C instead of leaving it
+            ' in the alternate-screen / hidden-cursor state.
+            AddHandler Console.CancelKeyPress, AddressOf OnCancel
         End If
 
-        ' Cancel handling: restore the terminal on Ctrl+C instead of leaving it
-        ' in the alternate-screen / hidden-cursor state.
-        AddHandler Console.CancelKeyPress, AddressOf OnCancel
+        Call RunLoop(opts)
+    End Sub
 
+    Private Sub RunLoop(opts As MonitorOptions)
         Dim uri As ConnectionUri = opts.BuildConnectionUri()
 
-        Try
-            ' The MySqli constructor establishes the connection (and validates it
-            ' via a ping). A failure throws and is handled below.
-            _mysql = New MySqli(uri)
-        Catch ex As Exception
+        ' The MySqli constructor establishes the connection (and validates it
+        ' via a ping). A failure throws and is handled below.
+        _mysql = New MySqli(uri)
+
+        If _mysql.Ping < 0 Then
             WriteError("Failed to connect to MySQL server:" &
-                       Environment.NewLine & "  " & uri.ToString.Replace(If(opts.Password.StringEmpty, "XXXXXXXXXXXXXX", opts.Password), "******") &
-                       Environment.NewLine & "  " & ex.Message)
+                      Environment.NewLine & "  " & uri.ToString.Replace(If(opts.Password.StringEmpty, "XXXXXXXXXXXXXX", opts.Password), "******") &
+                      Environment.NewLine & "  " & _mysql.LastError?.Message)
             Return
-        End Try
+        End If
 
         Dim counter = New Counter(_mysql)
         Dim vars = New VariablesReader(_mysql)

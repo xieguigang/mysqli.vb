@@ -49,9 +49,9 @@ Public Class MonitorOptions
             Dim a = args(i)
 
             Select Case a
-                Case "-h"
+                Case "-host"
                     opt.Host = NextArg(args, i)
-                Case "-P"
+                Case "-port"
                     Integer.TryParse(NextArg(args, i), opt.Port)
                 Case "-u"
                     opt.User = NextArg(args, i)
