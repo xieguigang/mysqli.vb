@@ -241,23 +241,23 @@ Public Class Dashboard
     Private Sub RenderBufferPool(sb As StringBuilder, c As Counter, w As Integer)
         PanelStart(sb, "InnoDB Buffer Pool", w)
         Dim hit As Double = c.BufferPoolHitRate * 100.0
-        Dim hitColor As String = Ansi.GradeValue(hit, 90, 95)
+        Dim hitColor As String = _theme.Grade(hit, 90, 95)
         Dim hitBar As String = Ansi.Bar(Math.Min(1, c.BufferPoolHitRate), w - 26, hitColor)
-        PanelLine(sb, " " & Ansi.FgMuted() & "Hit Rate " & Ansi.Reset() & hitColor & Ansi.Bold(hit.ToString("F2").PadLeft(7) & "%") & Ansi.Reset() & " " & hitBar, w)
+        PanelLine(sb, " " & _theme.FgMuted() & "Hit Rate " & Ansi.Reset() & hitColor & Ansi.Bold(hit.ToString("F2").PadLeft(7) & "%") & Ansi.Reset() & " " & hitBar, w)
 
         Dim usage As Double = c.BufferPoolUsage * 100.0
-        Dim usageColor As String = Ansi.GradeValue(usage, 75, 90)
+        Dim usageColor As String = _theme.Grade(usage, 75, 90)
         Dim usageBar As String = Ansi.Bar(Math.Min(1, c.BufferPoolUsage), w - 28, usageColor)
-        PanelLine(sb, " " & Ansi.FgMuted() & "Usage   " & Ansi.Reset() & usageColor & Ansi.Bold(usage.ToString("F1").PadLeft(7) & "%") & Ansi.Reset() & " " & usageBar, w)
+        PanelLine(sb, " " & _theme.FgMuted() & "Usage   " & Ansi.Reset() & usageColor & Ansi.Bold(usage.ToString("F1").PadLeft(7) & "%") & Ansi.Reset() & " " & usageBar, w)
 
         Dim poolSize As String = FmtBytes(_vars.GetInnodbBufferPoolSize())
-        PanelLine(sb, " " & Ansi.FgMuted() & "Size    " & Ansi.Reset() & Ansi.FgReset() & poolSize.PadLeft(w - 11), w)
+        PanelLine(sb, " " & _theme.FgMuted() & "Size    " & Ansi.Reset() & Ansi.FgReset() & poolSize.PadLeft(w - 11), w)
 
         Dim reqs As String = FmtRate(c.Innodb_buffer_pool_read_requests) & " r/s  " & FmtRate(c.Innodb_buffer_pool_write_requests) & " w/s"
-        PanelLine(sb, " " & Ansi.FgMuted() & "Requests" & Ansi.Reset() & " " & reqs, w)
+        PanelLine(sb, " " & _theme.FgMuted() & "Requests" & Ansi.Reset() & " " & reqs, w)
 
         Dim disk As String = FmtRate(c.Innodb_buffer_pool_disk_reads) & " disk read/s"
-        PanelLine(sb, " " & Ansi.FgMuted() & "Disk Rds" & Ansi.Reset() & " " & disk, w)
+        PanelLine(sb, " " & _theme.FgMuted() & "Disk Rds" & Ansi.Reset() & " " & disk, w)
 
         PanelEnd(sb, w)
     End Sub
@@ -265,19 +265,19 @@ Public Class Dashboard
     ' ---------- Connections & Process ----------
     Private Sub RenderConnections(sb As StringBuilder, c As Counter, proc As ProcessSnapshot, w As Integer)
         PanelStart(sb, "Connections & mysqld Process", w)
-        PanelLine(sb, " " & Ansi.FgMuted() & "Threads Connected " & Ansi.Reset() & Ansi.FgReset() & Ansi.Bold(c.ClientConnections.ToString().PadLeft(w - 19)), w)
-        PanelLine(sb, " " & Ansi.FgMuted() & "Threads Running   " & Ansi.Reset() & Ansi.Fg(242, 193, 78) & Ansi.Bold(c.ThreadsRunning.ToString().PadLeft(w - 19)), w)
-        PanelLine(sb, " " & Ansi.FgMuted() & "Slow Queries     " & Ansi.Reset() & Ansi.Fg(242, 92, 84) & Ansi.Bold(c.NumOfSlow.ToString().PadLeft(w - 19)), w)
+        PanelLine(sb, " " & _theme.FgMuted() & "Threads Connected " & Ansi.Reset() & Ansi.FgReset() & Ansi.Bold(c.ClientConnections.ToString().PadLeft(w - 19)), w)
+        PanelLine(sb, " " & _theme.FgMuted() & "Threads Running   " & Ansi.Reset() & _theme.FgWarn() & Ansi.Bold(c.ThreadsRunning.ToString().PadLeft(w - 19)), w)
+        PanelLine(sb, " " & _theme.FgMuted() & "Slow Queries     " & Ansi.Reset() & _theme.FgDanger() & Ansi.Bold(c.NumOfSlow.ToString().PadLeft(w - 19)), w)
 
         If proc IsNot Nothing AndAlso proc.Available Then
-            Dim cpuColor As String = Ansi.GradeValue(proc.CpuPercent, 50, 80)
-            PanelLine(sb, " " & Ansi.FgMuted() & "mysqld CPU       " & Ansi.Reset() & cpuColor & Ansi.Bold(proc.CpuPercent.ToString("F1").PadLeft(w - 19) & "%"), w)
-            Dim memColor As String = Ansi.GradeValue(CDbl(proc.MemoryBytes) / (1024.0 * 1024.0 * 1024.0), 0.6, 0.85)
-            PanelLine(sb, " " & Ansi.FgMuted() & "mysqld Memory    " & Ansi.Reset() & memColor & Ansi.Bold(FmtBytes(proc.MemoryBytes).PadLeft(w - 19)), w)
-            PanelLine(sb, " " & Ansi.FgMuted() & "mysqld Threads   " & Ansi.Reset() & Ansi.FgReset() & Ansi.Bold(proc.ThreadCount.ToString().PadLeft(w - 19)), w)
+            Dim cpuColor As String = _theme.Grade(proc.CpuPercent, 50, 80)
+            PanelLine(sb, " " & _theme.FgMuted() & "mysqld CPU       " & Ansi.Reset() & cpuColor & Ansi.Bold(proc.CpuPercent.ToString("F1").PadLeft(w - 19) & "%"), w)
+            Dim memColor As String = _theme.Grade(CDbl(proc.MemoryBytes) / (1024.0 * 1024.0 * 1024.0), 0.6, 0.85)
+            PanelLine(sb, " " & _theme.FgMuted() & "mysqld Memory    " & Ansi.Reset() & memColor & Ansi.Bold(FmtBytes(proc.MemoryBytes).PadLeft(w - 19)), w)
+            PanelLine(sb, " " & _theme.FgMuted() & "mysqld Threads   " & Ansi.Reset() & Ansi.FgReset() & Ansi.Bold(proc.ThreadCount.ToString().PadLeft(w - 19)), w)
         Else
             Dim note As String = If(proc IsNot Nothing, proc.Note, "unavailable")
-            PanelLine(sb, " " & Ansi.FgMuted() & "mysqld process   " & Ansi.Reset() & Ansi.FgWarn() & "N/A" & Ansi.FgMuted() & " (" & note & ")", w)
+            PanelLine(sb, " " & _theme.FgMuted() & "mysqld process   " & Ansi.Reset() & _theme.FgWarn() & "N/A" & _theme.FgMuted() & " (" & note & ")", w)
         End If
         PanelEnd(sb, w)
     End Sub
@@ -288,7 +288,7 @@ Public Class Dashboard
         PanelStart(sb, title, w)
 
         If slow Is Nothing OrElse slow.Count = 0 Then
-            PanelLine(sb, " " & Ansi.FgOk() & "No slow queries running." & Ansi.Reset(), w)
+            PanelLine(sb, " " & _theme.FgOk() & "No slow queries running." & Ansi.Reset(), w)
             PanelEnd(sb, w)
             Return
         End If
@@ -310,7 +310,7 @@ Public Class Dashboard
         End If
 
         Dim header As String = " " &
-            Ansi.FgMuted() & "ID".PadRight(cId) & " " &
+            _theme.FgMuted() & "ID".PadRight(cId) & " " &
             "USER".PadRight(cUser) & " " &
             "HOST".PadRight(cHost) & " " &
             "DB".PadRight(cDb) & " " &
@@ -320,7 +320,7 @@ Public Class Dashboard
         PanelLine(sb, header, w)
 
         For Each q In slow
-            Dim timeColor As String = Ansi.GradeValue(CDbl(q.TimeSec), _opts.SlowThreshold, _opts.SlowThreshold * 2)
+            Dim timeColor As String = _theme.Grade(CDbl(q.TimeSec), _opts.SlowThreshold, _opts.SlowThreshold * 2)
             Dim idS As String = Trunc(q.Id.ToString(), cId)
             Dim userS As String = Trunc(q.User, cUser)
             Dim hostS As String = Trunc(q.Host, cHost)
@@ -330,10 +330,10 @@ Public Class Dashboard
             Dim sqlS As String = Trunc(If(q.Sql, ""), cSql)
             Dim line As String = " " &
                 Ansi.FgReset() & idS.PadRight(cId) & " " &
-                Ansi.Fg(63, 182, 201) & userS.PadRight(cUser) & " " & Ansi.Reset() &
-                Ansi.FgMuted() & hostS.PadRight(cHost) & " " & Ansi.Reset() &
+                _theme.FgUser() & userS.PadRight(cUser) & " " & Ansi.Reset() &
+                _theme.FgMuted() & hostS.PadRight(cHost) & " " & Ansi.Reset() &
                 Ansi.FgReset() & dbS.PadRight(cDb) & " " &
-                Ansi.FgMuted() & stateS.PadRight(cState) & " " & Ansi.Reset() &
+                _theme.FgMuted() & stateS.PadRight(cState) & " " & Ansi.Reset() &
                 timeColor & timeS.PadRight(cTime) & " " & Ansi.Reset() &
                 Ansi.FgReset() & sqlS
             PanelLine(sb, line, w)
@@ -376,8 +376,8 @@ Public Class Dashboard
 
         ' InnoDB Buffer Pool group — ratio class, reuse existing thresholds.
         RenderTrendGroup(sb, "InnoDB Buffer Pool", w, {
-            ("Hit Rate ", c.BufferPoolHitRate * 100.0, history.HitSeries, AddressOf FmtPct, Function(v) Ansi.GradeValue(v, 90, 95)),
-            ("Usage    ", c.BufferPoolUsage * 100.0, history.UsageSeries, AddressOf FmtPct, Function(v) Ansi.GradeValue(v, 75, 90))
+            ("Hit Rate ", c.BufferPoolHitRate * 100.0, history.HitSeries, AddressOf FmtPct, Function(v) _theme.Grade(v, 90, 95)),
+            ("Usage    ", c.BufferPoolUsage * 100.0, history.UsageSeries, AddressOf FmtPct, Function(v) _theme.Grade(v, 75, 90))
         }, labelW, valW, sparkW)
 
         ' Connections group.
@@ -397,7 +397,7 @@ Public Class Dashboard
         Dim color As String = grade(value)
         Dim spark As String = Ansi.Sparkline(series, sparkW, color)
         Dim valStr As String = fmt(value).PadLeft(valW)
-        Dim line As String = " " & Ansi.FgMuted() & label.PadRight(labelW) & Ansi.Reset() &
+        Dim line As String = " " & _theme.FgMuted() & label.PadRight(labelW) & Ansi.Reset() &
                              color & Ansi.Bold(valStr) & Ansi.Reset() & " " & spark
         PanelLine(sb, line, w)
     End Sub
@@ -406,22 +406,22 @@ Public Class Dashboard
     Private Sub RenderTrendGroup(sb As StringBuilder, groupTitle As String, w As Integer,
                                  rows As (String, Double, Double(), Func(Of Double, String), GradeDel)(),
                                  labelW As Integer, valW As Integer, sparkW As Integer)
-        PanelLine(sb, " " & Ansi.Fg(C_ACCENT.r, C_ACCENT.g, C_ACCENT.b) & Ansi.Bold(groupTitle) & Ansi.Reset(), w)
+        PanelLine(sb, " " & _theme.FgAccent() & Ansi.Bold(groupTitle) & Ansi.Reset(), w)
         For Each r In rows
             RenderTrendRow(sb, r.Item1, r.Item2, r.Item3, r.Item4, r.Item5, labelW, valW, sparkW, w)
         Next
     End Sub
 
     ' ---- value graders (higher = worse) ----
-    Private Shared Function GradeThroughput(v As Double) As String
-        Return Ansi.GradeValue(v, 5000, 20000)
+    Private Function GradeThroughput(v As Double) As String
+        Return _theme.Grade(v, 5000, 20000)
     End Function
-    Private Shared Function GradeIo(v As Double) As String
+    Private Function GradeIo(v As Double) As String
         ' v is bytes/s (from counter); grade on MB/s.
-        Return Ansi.GradeValue(v / (1024.0 * 1024.0), 50, 200)
+        Return _theme.Grade(v / (1024.0 * 1024.0), 50, 200)
     End Function
-    Private Shared Function GradeConns(v As Double) As String
-        Return Ansi.GradeValue(v, 80, 150)
+    Private Function GradeConns(v As Double) As String
+        Return _theme.Grade(v, 80, 150)
     End Function
 
     ' ---- extra formatters ----

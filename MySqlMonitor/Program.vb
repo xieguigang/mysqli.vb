@@ -48,7 +48,15 @@ Module Program
         Dim vars = New VariablesReader(_mysql)
         Dim procMon = New ProcessMonitor(vars)
         Dim procList = New ProcessListReader(_mysql)
-        Dim dashboard = New Dashboard(opts, vars)
+
+        ' Build the merged theme list (built-ins + any custom INI themes) and pick
+        ' the initial theme from -theme / DefaultTheme (falls back to the first).
+        Dim themes As List(Of Theme) = Theme.BuiltInThemes()
+        If Not String.IsNullOrEmpty(opts.ThemeFile) Then
+            themes.AddRange(Theme.FromIni(opts.ThemeFile))
+        End If
+        Dim themeIdx As Integer = Math.Max(0, themes.FindIndex(Function(t) t.Name.Equals(opts.DefaultTheme, StringComparison.OrdinalIgnoreCase)))
+        Dim dashboard = New Dashboard(opts, vars, themes(themeIdx))
         _history = New MetricHistory()
 
         ' Establish a first baseline snapshot so the first rendered delta is sane.
@@ -93,13 +101,28 @@ Module Program
             Console.Out.Write(frame)
             Console.Out.Flush()
 
-            ' Wait for the next interval without blocking Ctrl+C.
+            ' Wait for the next interval. While waiting we still poll for keys so
+            ' that the "t" hotkey can cycle themes and repaint immediately.
             Dim waited = 0
+            Dim dirty = False
             While _running AndAlso waited < CInt(opts.Interval * 1000)
+                If Console.KeyAvailable Then
+                    Dim key = Console.ReadKey(True)
+                    If key.Key = ConsoleKey.T Then
+                        ' Cycle to the next theme and repaint on the next pass.
+                        themeIdx = (themeIdx + 1) Mod themes.Count
+                        dashboard.SetTheme(themes(themeIdx))
+                        dirty = True
+                        Exit While
+                    End If
+                End If
                 Dim stepMs = Math.Min(100, CInt(opts.Interval * 1000) - waited)
                 Threading.Thread.Sleep(stepMs)
                 waited += stepMs
             End While
+
+            ' If a theme switch happened, loop back immediately to repaint.
+            If dirty Then Continue While
         End While
 
         ' Restore terminal state.

@@ -29,6 +29,12 @@ Public Class MonitorOptions
     ''' <summary>Maximum number of slow queries to display.</summary>
     Public Property MaxSlowRows As Integer = 20
 
+    ''' <summary>Initial color theme name (one of the built-in or INI-defined themes). Empty = first built-in (Ocean).</summary>
+    Public Property DefaultTheme As String = ""
+
+    ''' <summary>Path to an INI file providing custom themes (each [section] = one theme).</summary>
+    Public Property ThemeFile As String = ""
+
     ''' <summary>Show the help text and exit.</summary>
     Public Property ShowHelp As Boolean = False
 
