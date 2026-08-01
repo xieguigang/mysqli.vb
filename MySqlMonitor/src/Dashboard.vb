@@ -10,17 +10,13 @@ Public Class Dashboard
 
     Private ReadOnly _opts As MonitorOptions
     Private ReadOnly _vars As VariablesReader
+    Private _theme As Theme
     Private _width As Integer = 100
 
-    ' Theme colors
-    Private Shared ReadOnly C_BG As (r As Integer, g As Integer, b As Integer) = (11, 14, 20)         ' #0B0E14
-    Private Shared ReadOnly C_PANEL As (r As Integer, g As Integer, b As Integer) = (18, 23, 34)      ' #121722
-    Private Shared ReadOnly C_ACCENT As (r As Integer, g As Integer, b As Integer) = (63, 182, 201)   ' #3FB6C9
-    Private Shared ReadOnly C_BORDER As (r As Integer, g As Integer, b As Integer) = (63, 182, 201)   ' #3FB6C9
-
-    Public Sub New(opts As MonitorOptions, vars As VariablesReader)
+    Public Sub New(opts As MonitorOptions, vars As VariablesReader, theme As Theme)
         _opts = opts
         _vars = vars
+        _theme = If(theme, Theme.Ocean())
 
         ' Fill the terminal width. Prefer the buffer width (which on wide /
         ' ultra-wide monitors can be very large), falling back to the window
@@ -31,6 +27,16 @@ Public Class Dashboard
         If bufW <= 0 Then bufW = 80
         _width = Math.Max(80, bufW)
     End Sub
+
+    ' Swap the active theme at runtime (hotkey cycling) without rebuilding the
+    ' dashboard. The next Render() call picks up the new colors.
+    Public Sub SetTheme(theme As Theme)
+        If theme IsNot Nothing Then _theme = theme
+    End Sub
+
+    Public Function CurrentTheme() As Theme
+        Return _theme
+    End Function
 
     ' ---- Format helpers ----
     Private Shared Function FmtRate(v As Double) As String
