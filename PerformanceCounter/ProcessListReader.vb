@@ -15,13 +15,14 @@ Public Class ProcessListReader
     End Sub
 
     ''' <summary>
-    ''' Pull the list of currently executing slow queries.
+    ''' Pull the list of currently executing queries, sorted by execution time
+    ''' (descending) so the slowest ones are returned first. No long_query_time
+    ''' threshold filtering is applied -- every non-idle, statement-bearing process
+    ''' is considered. The <paramref name="maxRows"/> slowest queries are returned.
     ''' </summary>
-    ''' <param name="longQueryThreshold">slow query threshold in seconds</param>
-    ''' <param name="maxRows">maximum number of slow queries to return (most recent first)</param>
+    ''' <param name="maxRows">maximum number of queries to return (slowest first)</param>
     ''' <returns></returns>
-    Public Function GetSlowQueries(Optional longQueryThreshold As Double = 10,
-                                   Optional maxRows As Integer = 20) As List(Of SlowQueryInfo)
+    Public Function GetSlowQueries(Optional maxRows As Integer = 20) As List(Of SlowQueryInfo)
         Dim result As New List(Of SlowQueryInfo)
 
         Using reader As MySqlDataReader = mysql.ExecuteDataset("SHOW PROCESSLIST;")
@@ -30,23 +31,21 @@ Public Class ProcessListReader
                 Dim info As String = SafeGetString(reader, "Info")
 
                 ' Skip idle connections and empty statements
-                If command = "Sleep" OrElse String.IsNullOrWhiteSpace(info) Then
+                If String.IsNullOrWhiteSpace(info) Then
                     Continue Do
                 End If
 
                 Dim timeSec As Double = SafeGetDouble(reader, "Time")
 
-                If timeSec >= longQueryThreshold Then
-                    result.Add(New SlowQueryInfo With {
-                        .Id = SafeGetULong(reader, "Id"),
-                        .User = SafeGetString(reader, "User"),
-                        .Host = SafeGetString(reader, "Host"),
-                        .Database = SafeGetString(reader, "db"),
-                        .State = SafeGetString(reader, "State"),
-                        .TimeSec = timeSec,
-                        .Sql = info
-                    })
-                End If
+                result.Add(New SlowQueryInfo With {
+                    .Id = SafeGetULong(reader, "Id"),
+                    .User = SafeGetString(reader, "User"),
+                    .Host = SafeGetString(reader, "Host"),
+                    .Database = SafeGetString(reader, "db"),
+                    .State = SafeGetString(reader, "State"),
+                    .TimeSec = timeSec,
+                    .Sql = info
+                })
             Loop
         End Using
 
