@@ -89,7 +89,7 @@ Module Program
             ' Sample slow queries.
             Dim slow As List(Of SlowQueryInfo) = Nothing
             Try
-                slow = procList.GetSlowQueries(opts.SlowThreshold, opts.MaxSlowRows)
+                slow = procList.GetSlowQueries(opts.MaxSlowRows)
             Catch ex As Exception
                 slow = New List(Of SlowQueryInfo)
             End Try

@@ -2,7 +2,7 @@
   "profiles": {
     "MySqlMonitor": {
       "commandName": "Project",
-      "commandLineArgs": "-host 192.168.3.48 -port 3306 -u xieguigang -p 123456 -s 0.01"
+      "commandLineArgs": "-host 192.168.3.48 -port 3306 -u root -p 123456 -s 0.01"
     }
   }
 }

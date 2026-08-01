@@ -23,7 +23,11 @@ Public Class MonitorOptions
     ''' <summary>Refresh interval in seconds.</summary>
     Public Property Interval As Double = 2.0
 
-    ''' <summary>Slow query threshold in seconds (used for the slow query panel).</summary>
+    ''' <summary>
+    ''' Slow query threshold in seconds. No longer used to filter which queries are
+    ''' shown in the slow query panel (all running queries are listed, slowest first);
+    ''' it is only used to color-grade the TIME column in the panel (green/yellow/red).
+    ''' </summary>
     Public Property SlowThreshold As Double = 10.0
 
     ''' <summary>Maximum number of slow queries to display.</summary>
