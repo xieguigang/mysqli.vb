@@ -1,3 +1,4 @@
+Imports MySql.Data.MySqlClient
 Imports Oracle.LinuxCompatibility.MySQL
 
 ''' <summary>
