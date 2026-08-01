@@ -248,7 +248,7 @@ Public Class GLOBAL_STATUS
 
     Sub New(data As Dictionary(Of String, String))
         global_status = data
-        values = StringReader.WrapDictionary(data)
+        values = StringReader.WrapDictionary(data, unsafe:=False)
     End Sub
 
     Public Shared Function Load(mysql As MySqli) As GLOBAL_STATUS
