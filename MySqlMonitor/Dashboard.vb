@@ -75,11 +75,11 @@ Public Class Dashboard
         If colW < 38 Then colW = w ' single column fallback for narrow terminals
 
         Dim left As New StringBuilder()
-        RenderThroughput(left, counter, colW, history)
-        RenderIoNetwork(left, counter, colW, history)
+        RenderThroughput(left, counter, colW)
+        RenderIoNetwork(left, counter, colW)
 
         Dim right As New StringBuilder()
-        RenderBufferPool(right, counter, colW, history)
+        RenderBufferPool(right, counter, colW)
         RenderConnections(right, counter, proc, colW)
 
         If colW >= w Then

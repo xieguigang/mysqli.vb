@@ -1,6 +1,9 @@
-﻿' Rolling history buffers for the dashboard sparklines. Each series keeps at most
+﻿Imports Oracle.LinuxCompatibility.LibMySQL.PerformanceCounter
+
+' Rolling history buffers for the dashboard sparklines. Each series keeps at most
 ' `Capacity` most-recent samples; once full it drops the oldest (FIFO via Queue).
 ' Only numeric rate metrics are tracked; the capacity is fixed so memory stays bounded.
+
 Public Class MetricHistory
     Public Const Capacity As Integer = 40
     Private selectQ As New Queue(Of Double)()
