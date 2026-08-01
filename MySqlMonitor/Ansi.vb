@@ -22,6 +22,17 @@ Public Module Ansi
         Return Esc() & "[J"
     End Function
 
+    ' Enter the alternate screen buffer (so the dashboard does not scroll the
+    ' user's existing terminal contents). Pairs with AltScreenOff.
+    Public Function AltScreenOn() As String
+        Return Esc() & "[?1049h"
+    End Function
+
+    ' Leave the alternate screen buffer, restoring the previous view.
+    Public Function AltScreenOff() As String
+        Return Esc() & "[?1049l"
+    End Function
+
     ' Move cursor to a 1-based row/col.
     Public Function MoveTo(row As Integer, col As Integer) As String
         Return Esc() & "[" & row.ToString() & ";" & col.ToString() & "H"
