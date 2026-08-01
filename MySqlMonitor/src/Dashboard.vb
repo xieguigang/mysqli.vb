@@ -21,7 +21,15 @@ Public Class Dashboard
     Public Sub New(opts As MonitorOptions, vars As VariablesReader)
         _opts = opts
         _vars = vars
-        If Console.BufferWidth > 0 Then _width = Math.Min(Console.BufferWidth, 140)
+
+        ' Fill the terminal width. Prefer the buffer width (which on wide /
+        ' ultra-wide monitors can be very large), falling back to the window
+        ' width, then to a sane default. No artificial 140-column cap so the
+        ' dashboard spans ultra-wide ("带鱼屏") terminals.
+        Dim bufW As Integer = Console.BufferWidth
+        If bufW <= 0 Then bufW = Console.WindowWidth
+        If bufW <= 0 Then bufW = 80
+        _width = Math.Max(80, bufW)
     End Sub
 
     ' ---- Format helpers ----
@@ -49,10 +57,15 @@ Public Class Dashboard
         Return String.Format("{0:D2}:{1:D2}:{2:D2}", CInt(ts.TotalHours), ts.Minutes, ts.Seconds)
     End Function
 
-    ' Right-pad / truncate a string to exact width (preserving non-escape content length).
+    ' Right-pad / truncate a string to exact VISIBLE width. The string may
+    ' contain ANSI escape sequences; those must NOT count toward the length,
+    ' otherwise padding pushes the right border "│" out of alignment and
+    ' truncating on s.Length can cut an escape sequence in half (yielding
+    ' stray "Esc[" garbage). We reuse VisibleLen / TruncateVisible.
     Private Shared Function Pad(s As String, width As Integer) As String
-        If s.Length >= width Then Return s.Substring(0, width)
-        Return s & New String(" "c, width - s.Length)
+        Dim vis As Integer = VisibleLen(s)
+        If vis >= width Then Return TruncateVisible(s, width)
+        Return s & New String(" "c, width - vis)
     End Function
 
     ' ---- Main render ----
@@ -90,11 +103,11 @@ Public Class Dashboard
             MergeColumns(sb, left.ToString(), right.ToString(), colW, colGap, w)
         End If
 
-        ' ===== Slow queries (full width) =====
-        RenderSlowQueries(sb, slow, w)
-
         ' ===== History trends (full width) =====
         RenderTrends(sb, counter, history, w)
+
+        ' ===== Slow queries (full width, rendered last) =====
+        RenderSlowQueries(sb, slow, w)
 
         sb.Append(Ansi.Reset())
         sb.Append(Ansi.ShowCursor())
