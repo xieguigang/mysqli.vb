@@ -11,21 +11,11 @@ Public Class Dashboard
     Private ReadOnly _opts As MonitorOptions
     Private ReadOnly _vars As VariablesReader
     Private _theme As Theme
-    Private _width As Integer = 100
 
     Public Sub New(opts As MonitorOptions, vars As VariablesReader, theme As Theme)
         _opts = opts
         _vars = vars
         _theme = If(theme, Theme.Ocean())
-
-        ' Fill the terminal width. Prefer the buffer width (which on wide /
-        ' ultra-wide monitors can be very large), falling back to the window
-        ' width, then to a sane default. No artificial 140-column cap so the
-        ' dashboard spans ultra-wide ("带鱼屏") terminals.
-        Dim bufW As Integer = Console.BufferWidth
-        If bufW <= 0 Then bufW = Console.WindowWidth
-        If bufW <= 0 Then bufW = 80
-        _width = Math.Max(80, bufW)
     End Sub
 
     ' Swap the active theme at runtime (hotkey cycling) without rebuilding the
@@ -36,6 +26,18 @@ Public Class Dashboard
 
     Public Function CurrentTheme() As Theme
         Return _theme
+    End Function
+
+    Private Function GetWidth() As Integer
+        ' Fill the terminal width. Prefer the buffer width (which on wide /
+        ' ultra-wide monitors can be very large), falling back to the window
+        ' width, then to a sane default. No artificial 140-column cap so the
+        ' dashboard spans ultra-wide ("带鱼屏") terminals.
+        Dim bufW As Integer = Console.BufferWidth - 3
+        If bufW <= 0 Then bufW = Console.WindowWidth - 3
+        If bufW <= 0 Then bufW = 80
+
+        Return Math.Max(80, bufW)
     End Function
 
     ' ---- Format helpers ----
@@ -77,7 +79,7 @@ Public Class Dashboard
     ' ---- Main render ----
     Public Function Render(counter As Counter, proc As ProcessSnapshot, slow As List(Of SlowQueryInfo), startTime As Date, history As MetricHistory) As String
         Dim sb As New StringBuilder()
-        Dim w As Integer = _width
+        Dim w As Integer = GetWidth()
 
         sb.Append(Ansi.HideCursor())
         sb.Append(Ansi.Home())
