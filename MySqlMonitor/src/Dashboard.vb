@@ -81,7 +81,7 @@ Public Class Dashboard
 
         sb.Append(Ansi.HideCursor())
         sb.Append(Ansi.Home())
-        sb.Append(Ansi.Bg(C_BG.r, C_BG.g, C_BG.b))
+        sb.Append(_theme.FgBG())
         sb.Append(Ansi.FgReset())
         sb.Append(Ansi.ClearDown())
 
@@ -122,7 +122,7 @@ Public Class Dashboard
 
     ' ---------- Header ----------
     Private Sub RenderHeader(sb As StringBuilder, startTime As Date, w As Integer)
-        Dim title As String = Ansi.Bold(" MySqlMonitor ") & Ansi.FgMuted() & " real-time performance dashboard"
+        Dim title As String = Ansi.Bold(" MySqlMonitor ") & _theme.FgMuted() & " real-time performance dashboard"
         Dim uri As ConnectionUri = Nothing
         Dim target As String = ""
         Try
@@ -136,12 +136,12 @@ Public Class Dashboard
         Dim right As String = String.Format("target {0}  uptime {1}  interval {2}s  {3}",
                                             target, run, _opts.Interval, nowStr)
 
-        sb.Append(Ansi.Bg(C_PANEL.r, C_PANEL.g, C_PANEL.b))
-        sb.Append(Ansi.Fg(C_ACCENT.r, C_ACCENT.g, C_ACCENT.b))
-        sb.Append(Pad(title & Ansi.Reset() & Ansi.FgMuted() & "  " & right, w))
+        sb.Append(_theme.FgPanel())
+        sb.Append(_theme.FgAccent())
+        sb.Append(Pad(title & Ansi.Reset() & _theme.FgMuted() & "  " & right, w))
         sb.Append(Ansi.Reset())
         sb.AppendLine()
-        sb.Append(Ansi.Fg(C_BORDER.r, C_BORDER.g, C_BORDER.b))
+        sb.Append(_theme.FgBorder())
         sb.Append(Ansi.HLine(w))
         sb.Append(Ansi.Reset())
         sb.AppendLine()
@@ -149,35 +149,35 @@ Public Class Dashboard
 
     ' ---------- Panel frame ----------
     Private Sub PanelStart(sb As StringBuilder, title As String, w As Integer)
-        sb.Append(Ansi.Fg(C_BORDER.r, C_BORDER.g, C_BORDER.b))
+        sb.Append(_theme.FgBorder())
         sb.Append("╭" & Ansi.HLine(w - 2) & "╮")
         sb.Append(Ansi.Reset())
         sb.AppendLine()
         ' Title row with vertical borders
-        Dim inner As String = " " & Ansi.Bold(title) & Ansi.FgMuted()
-        sb.Append(Ansi.Fg(C_BORDER.r, C_BORDER.g, C_BORDER.b))
+        Dim inner As String = " " & Ansi.Bold(title) & _theme.FgMuted()
+        sb.Append(_theme.FgBorder())
         sb.Append("│")
         sb.Append(Ansi.Reset())
         sb.Append(Pad(inner, w - 2))
-        sb.Append(Ansi.Fg(C_BORDER.r, C_BORDER.g, C_BORDER.b))
+        sb.Append(_theme.FgBorder())
         sb.Append("│")
         sb.Append(Ansi.Reset())
         sb.AppendLine()
     End Sub
 
     Private Sub PanelEnd(sb As StringBuilder, w As Integer)
-        sb.Append(Ansi.Fg(C_BORDER.r, C_BORDER.g, C_BORDER.b))
+        sb.Append(_theme.FgBorder())
         sb.Append("╰" & Ansi.HLine(w - 2) & "╯")
         sb.Append(Ansi.Reset())
         sb.AppendLine()
     End Sub
 
     Private Sub PanelLine(sb As StringBuilder, text As String, w As Integer)
-        sb.Append(Ansi.Fg(C_BORDER.r, C_BORDER.g, C_BORDER.b))
+        sb.Append(_theme.FgBorder())
         sb.Append("│")
         sb.Append(Ansi.Reset())
         sb.Append(Pad(text, w - 2))
-        sb.Append(Ansi.Fg(C_BORDER.r, C_BORDER.g, C_BORDER.b))
+        sb.Append(_theme.FgBorder())
         sb.Append("│")
         sb.Append(Ansi.Reset())
         sb.AppendLine()
@@ -187,13 +187,13 @@ Public Class Dashboard
     Private Sub RenderThroughput(sb As StringBuilder, c As Counter, w As Integer)
         PanelStart(sb, "Query Throughput (ops/s)", w)
         Dim items As New List(Of (String, Double, String)) From {
-            ("SELECT", c.NumOfSelect, Ansi.Fg(61, 214, 140)),
-            ("INSERT", c.NumOfInsert, Ansi.Fg(63, 182, 201)),
-            ("UPDATE", c.NumOfUpdate, Ansi.Fg(63, 182, 201)),
-            ("DELETE", c.NumOfDelete, Ansi.Fg(242, 92, 84)),
-            ("CREATE", c.NumOfCreate, Ansi.Fg(242, 193, 78)),
-            ("ALTER ", c.NumOfAlter, Ansi.Fg(242, 193, 78)),
-            ("DROP  ", c.NumOfDrop, Ansi.Fg(242, 92, 84))
+            ("SELECT", c.NumOfSelect, _theme.FgSelect()),
+            ("INSERT", c.NumOfInsert, _theme.FgInsert()),
+            ("UPDATE", c.NumOfUpdate, _theme.FgUpdate()),
+            ("DELETE", c.NumOfDelete, _theme.FgDelete()),
+            ("CREATE", c.NumOfCreate, _theme.FgCreate()),
+            ("ALTER ", c.NumOfAlter, _theme.FgAlter()),
+            ("DROP  ", c.NumOfDrop, _theme.FgDrop())
         }
         Dim maxV As Double = 0
         For Each it In items
