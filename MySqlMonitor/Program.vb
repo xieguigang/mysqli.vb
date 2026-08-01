@@ -50,7 +50,7 @@ Module Program
         Catch ex As Exception
             WriteError("Failed to read initial GLOBAL STATUS:" & Environment.NewLine & "  " & ex.Message)
             Return
-        End If
+        End Try
 
         ' Enter the alternate screen and hide the cursor for a clean dashboard.
         Console.Out.Write(Ansi.AltScreenOn())

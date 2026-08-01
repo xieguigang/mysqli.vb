@@ -4,6 +4,7 @@
 
 Imports System.Text
 Imports Oracle.LinuxCompatibility.LibMySQL.PerformanceCounter
+Imports Oracle.LinuxCompatibility.MySQL.Uri
 
 Public Class Dashboard
 
@@ -103,8 +104,8 @@ Public Class Dashboard
         Dim uri As ConnectionUri = Nothing
         Dim target As String = ""
         Try
-            uri = ConnectionUri.CreateObject(_opts.BuildConnectionUri())
-            target = uri.Host & ":" & uri.Port
+            uri = ConnectionUri.TryParsing(_opts.BuildConnectionUri())
+            target = uri.IPAddress & ":" & uri.Port
         Catch
             target = "(unknown)"
         End Try

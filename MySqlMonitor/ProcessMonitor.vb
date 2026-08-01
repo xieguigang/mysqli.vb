@@ -114,7 +114,7 @@ Public Class ProcessMonitor
         '    process that exposes a readable /proc/<pid>/stat.
         Dim procDir = "/proc"
         If IO.Directory.Exists(procDir) Then
-            For Each dir In IO.Directory.GetDirectories(procDir)
+            For Each dir As String In IO.Directory.GetDirectories(procDir)
                 Dim name = IO.Path.GetFileName(dir)
                 Dim n As Integer
                 If Not Integer.TryParse(name, n) OrElse n <= 0 Then
