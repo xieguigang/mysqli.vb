@@ -93,6 +93,9 @@ Public Class Dashboard
         ' ===== Slow queries (full width) =====
         RenderSlowQueries(sb, slow, w)
 
+        ' ===== History trends (full width) =====
+        RenderTrends(sb, counter, history, w)
+
         sb.Append(Ansi.Reset())
         sb.Append(Ansi.ShowCursor())
         Return sb.ToString()
@@ -318,6 +321,97 @@ Public Class Dashboard
         Next
         PanelEnd(sb, w)
     End Sub
+
+    ' ---------- History Trends (sparkline) ----------
+    ' Full-width panel aggregating every metric sequence collected by MetricHistory
+    ' into compact sparkline trend charts. Color is graded by the latest value so a
+    ' rising/dangerous trend stands out (red = danger, yellow = warn, green = ok).
+    Private Sub RenderTrends(sb As StringBuilder, c As Counter, history As MetricHistory, w As Integer)
+        Dim title As String = "History Trends (last " & MetricHistory.Capacity.ToString() & " samples)"
+        PanelStart(sb, title, w)
+
+        ' Reserve room for label + current value; sparkline takes the rest.
+        Dim labelW As Integer = 12
+        Dim valW As Integer = 13
+        Dim sparkW As Integer = w - 2 - labelW - valW
+        If sparkW < 8 Then sparkW = 8
+
+        ' Throughput group (ops/s) — counter class, graded by absolute rate.
+        RenderTrendGroup(sb, "Query Throughput (ops/s)", w, {
+            ("SELECT", c.NumOfSelect, history.SelectSeries, AddressOf FmtRate, AddressOf GradeThroughput),
+            ("INSERT", c.NumOfInsert, history.InsertSeries, AddressOf FmtRate, AddressOf GradeThroughput),
+            ("UPDATE", c.NumOfUpdate, history.UpdateSeries, AddressOf FmtRate, AddressOf GradeThroughput),
+            ("DELETE", c.NumOfDelete, history.DeleteSeries, AddressOf FmtRate, AddressOf GradeThroughput),
+            ("CREATE", c.NumOfCreate, history.CreateSeries, AddressOf FmtRate, AddressOf GradeThroughput),
+            ("ALTER ", c.NumOfAlter, history.AlterSeries, AddressOf FmtRate, AddressOf GradeThroughput),
+            ("DROP  ", c.NumOfDrop, history.DropSeries, AddressOf FmtRate, AddressOf GradeThroughput)
+        }, labelW, valW, sparkW)
+
+        ' I/O & Network group (KB/s) — series are already in KB/s.
+        RenderTrendGroup(sb, "I/O & Network (KB/s)", w, {
+            ("Data Read ", c.Innodb_data_read, history.ReadKbSeries, AddressOf FmtKBs, AddressOf GradeIo),
+            ("Data Write", c.Innodb_data_written, history.WriteKbSeries, AddressOf FmtKBs, AddressOf GradeIo),
+            ("Net Recv  ", c.Bytes_received, history.RecvKbSeries, AddressOf FmtKBs, AddressOf GradeIo),
+            ("Net Send  ", c.Bytes_sent, history.SentKbSeries, AddressOf FmtKBs, AddressOf GradeIo)
+        }, labelW, valW, sparkW)
+
+        ' InnoDB Buffer Pool group — ratio class, reuse existing thresholds.
+        RenderTrendGroup(sb, "InnoDB Buffer Pool", w, {
+            ("Hit Rate ", c.BufferPoolHitRate * 100.0, history.HitSeries, AddressOf FmtPct, Function(v) Ansi.GradeValue(v, 90, 95)),
+            ("Usage    ", c.BufferPoolUsage * 100.0, history.UsageSeries, AddressOf FmtPct, Function(v) Ansi.GradeValue(v, 75, 90))
+        }, labelW, valW, sparkW)
+
+        ' Connections group.
+        RenderTrendGroup(sb, "Connections", w, {
+            ("Threads   ", CDbl(c.ClientConnections), history.ConnsSeries, AddressOf FmtInt, AddressOf GradeConns)
+        }, labelW, valW, sparkW)
+
+        PanelEnd(sb, w)
+    End Sub
+
+    ' Delegate: grade a current value into an ANSI color prefix.
+    Private Delegate Function GradeDel(v As Double) As String
+
+    ' Render one metric row: " label  value  sparkline".
+    Private Sub RenderTrendRow(sb As StringBuilder, label As String, value As Double, series As Double(),
+                               fmt As Func(Of Double, String), grade As GradeDel, labelW As Integer, valW As Integer, sparkW As Integer, w As Integer)
+        Dim color As String = grade(value)
+        Dim spark As String = Ansi.Sparkline(series, sparkW, color)
+        Dim valStr As String = fmt(value).PadLeft(valW)
+        Dim line As String = " " & Ansi.FgMuted() & label.PadRight(labelW) & Ansi.Reset() &
+                             color & Ansi.Bold(valStr) & Ansi.Reset() & " " & spark
+        PanelLine(sb, line, w)
+    End Sub
+
+    ' Render a titled group of trend rows inside the trends panel.
+    Private Sub RenderTrendGroup(sb As StringBuilder, groupTitle As String, w As Integer,
+                                 rows As (String, Double, Double(), Func(Of Double, String), GradeDel)(),
+                                 labelW As Integer, valW As Integer, sparkW As Integer)
+        PanelLine(sb, " " & Ansi.Fg(C_ACCENT.r, C_ACCENT.g, C_ACCENT.b) & Ansi.Bold(groupTitle) & Ansi.Reset(), w)
+        For Each r In rows
+            RenderTrendRow(sb, r.Item1, r.Item2, r.Item3, r.Item4, r.Item5, labelW, valW, sparkW, w)
+        Next
+    End Sub
+
+    ' ---- value graders (higher = worse) ----
+    Private Shared Function GradeThroughput(v As Double) As String
+        Return Ansi.GradeValue(v, 5000, 20000)
+    End Function
+    Private Shared Function GradeIo(v As Double) As String
+        ' v is bytes/s (from counter); grade on MB/s.
+        Return Ansi.GradeValue(v / (1024.0 * 1024.0), 50, 200)
+    End Function
+    Private Shared Function GradeConns(v As Double) As String
+        Return Ansi.GradeValue(v, 80, 150)
+    End Function
+
+    ' ---- extra formatters ----
+    Private Shared Function FmtPct(v As Double) As String
+        Return v.ToString("F1") & "%"
+    End Function
+    Private Shared Function FmtInt(v As Double) As String
+        Return v.ToString("F0")
+    End Function
 
     Private Shared Function Trunc(s As String, width As Integer) As String
         If s Is Nothing Then s = ""
