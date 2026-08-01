@@ -211,7 +211,7 @@ Public Class Dashboard
         For Each it In items
             Dim ratio As Double = If(maxV > 0, it.Item2 / maxV, 0)
             Dim bar As String = Ansi.Bar(ratio, barW, it.Item3)
-            Dim lbl As String = Ansi.FgMuted() & it.Item1 & " " & Ansi.Reset() & it.Item3 & Ansi.Bold(FmtRate(it.Item2).PadLeft(8)) & Ansi.Reset()
+            Dim lbl As String = _theme.FgMuted() & it.Item1 & " " & Ansi.Reset() & it.Item3 & Ansi.Bold(FmtRate(it.Item2).PadLeft(8)) & Ansi.Reset()
             Dim isPeak As Boolean = (it.Item1.Trim() = peakName)
             Dim line As String = " " & lbl & " " & bar
             If isPeak Then line = " " & Ansi.Inverse(lbl.Trim()) & " " & bar
