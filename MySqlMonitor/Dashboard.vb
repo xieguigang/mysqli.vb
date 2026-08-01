@@ -262,7 +262,7 @@ Public Class Dashboard
 
     ' ---------- Slow queries ----------
     Private Sub RenderSlowQueries(sb As StringBuilder, slow As List(Of SlowQueryInfo), w As Integer)
-        Dim title As String = "Current Slow Queries (threshold " & _opts.SlowThreshold.ToString() & "s, top " & _opts.MaxRows.ToString() & ")"
+        Dim title As String = "Current Slow Queries (threshold " & _opts.SlowThreshold.ToString() & "s, top " & _opts.MaxSlowRows.ToString() & ")"
         PanelStart(sb, title, w)
 
         If slow Is Nothing OrElse slow.Count = 0 Then
