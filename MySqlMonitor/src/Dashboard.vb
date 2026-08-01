@@ -224,14 +224,14 @@ Public Class Dashboard
     Private Sub RenderIoNetwork(sb As StringBuilder, c As Counter, w As Integer)
         PanelStart(sb, "I/O & Network (KB/s)", w)
         Dim rows As New List(Of (String, String, String)) From {
-            ("Data Read ", Ansi.Fg(61, 214, 140), FmtKBs(c.Innodb_data_read)),
-            ("Data Write", Ansi.Fg(63, 182, 201), FmtKBs(c.Innodb_data_written)),
-            ("Net Recv  ", Ansi.Fg(63, 182, 201), FmtKBs(c.Bytes_received)),
-            ("Net Send  ", Ansi.Fg(61, 214, 140), FmtKBs(c.Bytes_sent))
+            ("Data Read ", _theme.FgSelect(), FmtKBs(c.Innodb_data_read)),
+            ("Data Write", _theme.FgUpdate(), FmtKBs(c.Innodb_data_written)),
+            ("Net Recv  ", _theme.FgUser(), FmtKBs(c.Bytes_received)),
+            ("Net Send  ", _theme.FgSelect(), FmtKBs(c.Bytes_sent))
         }
         For Each r In rows
             Dim val As String = r.Item3.PadLeft(12)
-            Dim line As String = " " & Ansi.FgMuted() & r.Item1 & " " & Ansi.Reset() & r.Item2 & Ansi.Bold(val) & Ansi.Reset()
+            Dim line As String = " " & _theme.FgMuted() & r.Item1 & " " & Ansi.Reset() & r.Item2 & Ansi.Bold(val) & Ansi.Reset()
             PanelLine(sb, line, w)
         Next
         PanelEnd(sb, w)

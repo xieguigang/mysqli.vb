@@ -9,108 +9,98 @@
 ' (using GCModeller's Microsoft.VisualBasic.Core IniFile) where each [section]
 ' is one theme.
 
+Imports Microsoft.VisualBasic.ApplicationServices.Terminal
 Imports Microsoft.VisualBasic.ComponentModel.Settings.Inf
 
 Public Class Theme
-
-    ' A simple RGB triple.
-    Public Structure RGB
-        Public r, g, b As Integer
-        Public Sub New(r As Integer, g As Integer, b As Integer)
-            Me.r = r : Me.g = g : Me.b = b
-        End Sub
-        Public Overrides Function ToString() As String
-            Return r & "," & g & "," & b
-        End Function
-    End Structure
 
     ' ---- Identity ----
     Public Property Name As String = "Ocean"
 
     ' ---- Structural ----
-    Public Property BG As RGB = New RGB(11, 14, 20)
-    Public Property Panel As RGB = New RGB(18, 23, 34)
-    Public Property Border As RGB = New RGB(63, 182, 201)
-    Public Property Accent As RGB = New RGB(63, 182, 201)
+    Public Property BG As AnsiColor = AnsiColor.Rgb(11, 14, 20)
+    Public Property Panel As AnsiColor = AnsiColor.Rgb(18, 23, 34)
+    Public Property Border As AnsiColor = AnsiColor.Rgb(63, 182, 201)
+    Public Property Accent As AnsiColor = AnsiColor.Rgb(63, 182, 201)
 
     ' ---- Semantic ----
-    Public Property Muted As RGB = New RGB(130, 140, 155)
-    Public Property Ok As RGB = New RGB(61, 214, 140)
-    Public Property Warn As RGB = New RGB(242, 193, 78)
-    Public Property Danger As RGB = New RGB(242, 92, 84)
+    Public Property Muted As AnsiColor = AnsiColor.Rgb(130, 140, 155)
+    Public Property Ok As AnsiColor = AnsiColor.Rgb(61, 214, 140)
+    Public Property Warn As AnsiColor = AnsiColor.Rgb(242, 193, 78)
+    Public Property Danger As AnsiColor = AnsiColor.Rgb(242, 92, 84)
 
     ' ---- Per SQL verb ----
-    Public Property SelectC As RGB = New RGB(61, 214, 140)
-    Public Property InsertC As RGB = New RGB(63, 182, 201)
-    Public Property UpdateC As RGB = New RGB(63, 182, 201)
-    Public Property DeleteC As RGB = New RGB(242, 92, 84)
-    Public Property CreateC As RGB = New RGB(242, 193, 78)
-    Public Property AlterC As RGB = New RGB(242, 193, 78)
-    Public Property DropC As RGB = New RGB(242, 92, 84)
-    Public Property UserC As RGB = New RGB(63, 182, 201)
+    Public Property SelectC As AnsiColor = AnsiColor.Rgb(61, 214, 140)
+    Public Property InsertC As AnsiColor = AnsiColor.Rgb(63, 182, 201)
+    Public Property UpdateC As AnsiColor = AnsiColor.Rgb(63, 182, 201)
+    Public Property DeleteC As AnsiColor = AnsiColor.Rgb(242, 92, 84)
+    Public Property CreateC As AnsiColor = AnsiColor.Rgb(242, 193, 78)
+    Public Property AlterC As AnsiColor = AnsiColor.Rgb(242, 193, 78)
+    Public Property DropC As AnsiColor = AnsiColor.Rgb(242, 92, 84)
+    Public Property UserC As AnsiColor = AnsiColor.Rgb(63, 182, 201)
 
     ' ---- Grade colors (low value = ok, mid = warn, high = danger) ----
-    Public Property GradeOk As RGB = New RGB(61, 214, 140)
-    Public Property GradeWarn As RGB = New RGB(242, 193, 78)
-    Public Property GradeDanger As RGB = New RGB(242, 92, 84)
+    Public Property GradeOk As AnsiColor = AnsiColor.Rgb(61, 214, 140)
+    Public Property GradeWarn As AnsiColor = AnsiColor.Rgb(242, 193, 78)
+    Public Property GradeDanger As AnsiColor = AnsiColor.Rgb(242, 92, 84)
 
     ' ---- ANSI prefix builders ----
     Public Function FgBG() As String
-        Return Ansi.Bg(BG.r, BG.g, BG.b)
+        Return Ansi.Bg(BG.R, BG.G, BG.B)
     End Function
     Public Function FgPanel() As String
-        Return Ansi.Bg(Panel.r, Panel.g, Panel.b)
+        Return Ansi.Bg(Panel.R, Panel.G, Panel.B)
     End Function
     Public Function FgBorder() As String
-        Return Ansi.Fg(Border.r, Border.g, Border.b)
+        Return Ansi.Fg(Border.R, Border.G, Border.B)
     End Function
     Public Function FgAccent() As String
-        Return Ansi.Fg(Accent.r, Accent.g, Accent.b)
+        Return Ansi.Fg(Accent.R, Accent.G, Accent.B)
     End Function
     Public Function FgMuted() As String
-        Return Ansi.Fg(Muted.r, Muted.g, Muted.b)
+        Return Ansi.Fg(Muted.R, Muted.G, Muted.B)
     End Function
     Public Function FgOk() As String
-        Return Ansi.Fg(Ok.r, Ok.g, Ok.b)
+        Return Ansi.Fg(Ok.R, Ok.G, Ok.B)
     End Function
     Public Function FgWarn() As String
-        Return Ansi.Fg(Warn.r, Warn.g, Warn.b)
+        Return Ansi.Fg(Warn.R, Warn.G, Warn.B)
     End Function
     Public Function FgDanger() As String
-        Return Ansi.Fg(Danger.r, Danger.g, Danger.b)
+        Return Ansi.Fg(Danger.R, Danger.G, Danger.B)
     End Function
     Public Function FgSelect() As String
-        Return Ansi.Fg(SelectC.r, SelectC.g, SelectC.b)
+        Return Ansi.Fg(SelectC.R, SelectC.G, SelectC.B)
     End Function
     Public Function FgInsert() As String
-        Return Ansi.Fg(InsertC.r, InsertC.g, InsertC.b)
+        Return Ansi.Fg(InsertC.R, InsertC.G, InsertC.B)
     End Function
     Public Function FgUpdate() As String
-        Return Ansi.Fg(UpdateC.r, UpdateC.g, UpdateC.b)
+        Return Ansi.Fg(UpdateC.R, UpdateC.G, UpdateC.B)
     End Function
     Public Function FgDelete() As String
-        Return Ansi.Fg(DeleteC.r, DeleteC.g, DeleteC.b)
+        Return Ansi.Fg(DeleteC.R, DeleteC.G, DeleteC.B)
     End Function
     Public Function FgCreate() As String
-        Return Ansi.Fg(CreateC.r, CreateC.g, CreateC.b)
+        Return Ansi.Fg(CreateC.R, CreateC.G, CreateC.B)
     End Function
     Public Function FgAlter() As String
-        Return Ansi.Fg(AlterC.r, AlterC.g, AlterC.b)
+        Return Ansi.Fg(AlterC.R, AlterC.G, AlterC.B)
     End Function
     Public Function FgDrop() As String
-        Return Ansi.Fg(DropC.r, DropC.g, DropC.b)
+        Return Ansi.Fg(DropC.R, DropC.G, DropC.B)
     End Function
     Public Function FgUser() As String
-        Return Ansi.Fg(UserC.r, UserC.g, UserC.b)
+        Return Ansi.Fg(UserC.R, UserC.G, UserC.B)
     End Function
 
     ' Grade a value into an ANSI prefix. Same thresholds as the renderer's
     ' GradeValue usage: below <ok> -> ok color, below <warn> -> warn color,
     ' otherwise danger color.
     Public Function Grade(v As Double, ok As Double, warn As Double) As String
-        If v <= ok Then Return Ansi.Fg(GradeOk.r, GradeOk.g, GradeOk.b)
-        If v <= warn Then Return Ansi.Fg(GradeWarn.r, GradeWarn.g, GradeWarn.b)
-        Return Ansi.Fg(GradeDanger.r, GradeDanger.g, GradeDanger.b)
+        If v <= ok Then Return Ansi.Fg(GradeOk.R, GradeOk.G, GradeOk.B)
+        If v <= warn Then Return Ansi.Fg(GradeWarn.R, GradeWarn.G, GradeWarn.B)
+        Return Ansi.Fg(GradeDanger.R, GradeDanger.G, GradeDanger.B)
     End Function
 
     ' -----------------------------------------------------------------
@@ -130,25 +120,25 @@ Public Class Theme
     Public Shared Function Ocean() As Theme
         Return New Theme With {
             .Name = "Ocean",
-            .BG = New RGB(11, 14, 20),
-            .Panel = New RGB(18, 23, 34),
-            .Border = New RGB(63, 182, 201),
-            .Accent = New RGB(63, 182, 201),
-            .Muted = New RGB(130, 140, 155),
-            .Ok = New RGB(61, 214, 140),
-            .Warn = New RGB(242, 193, 78),
-            .Danger = New RGB(242, 92, 84),
-            .SelectC = New RGB(61, 214, 140),
-            .InsertC = New RGB(63, 182, 201),
-            .UpdateC = New RGB(63, 182, 201),
-            .DeleteC = New RGB(242, 92, 84),
-            .CreateC = New RGB(242, 193, 78),
-            .AlterC = New RGB(242, 193, 78),
-            .DropC = New RGB(242, 92, 84),
-            .UserC = New RGB(63, 182, 201),
-            .GradeOk = New RGB(61, 214, 140),
-            .GradeWarn = New RGB(242, 193, 78),
-            .GradeDanger = New RGB(242, 92, 84)
+            .BG = AnsiColor.Rgb(11, 14, 20),
+            .Panel = AnsiColor.Rgb(18, 23, 34),
+            .Border = AnsiColor.Rgb(63, 182, 201),
+            .Accent = AnsiColor.Rgb(63, 182, 201),
+            .Muted = AnsiColor.Rgb(130, 140, 155),
+            .Ok = AnsiColor.Rgb(61, 214, 140),
+            .Warn = AnsiColor.Rgb(242, 193, 78),
+            .Danger = AnsiColor.Rgb(242, 92, 84),
+            .SelectC = AnsiColor.Rgb(61, 214, 140),
+            .InsertC = AnsiColor.Rgb(63, 182, 201),
+            .UpdateC = AnsiColor.Rgb(63, 182, 201),
+            .DeleteC = AnsiColor.Rgb(242, 92, 84),
+            .CreateC = AnsiColor.Rgb(242, 193, 78),
+            .AlterC = AnsiColor.Rgb(242, 193, 78),
+            .DropC = AnsiColor.Rgb(242, 92, 84),
+            .UserC = AnsiColor.Rgb(63, 182, 201),
+            .GradeOk = AnsiColor.Rgb(61, 214, 140),
+            .GradeWarn = AnsiColor.Rgb(242, 193, 78),
+            .GradeDanger = AnsiColor.Rgb(242, 92, 84)
         }
     End Function
 
@@ -156,25 +146,25 @@ Public Class Theme
     Public Shared Function Light() As Theme
         Return New Theme With {
             .Name = "Light",
-            .BG = New RGB(245, 247, 250),
-            .Panel = New RGB(232, 236, 243),
-            .Border = New RGB(90, 110, 140),
-            .Accent = New RGB(20, 110, 160),
-            .Muted = New RGB(110, 120, 135),
-            .Ok = New RGB(20, 130, 80),
-            .Warn = New RGB(170, 120, 10),
-            .Danger = New RGB(190, 50, 45),
-            .SelectC = New RGB(20, 130, 80),
-            .InsertC = New RGB(20, 110, 160),
-            .UpdateC = New RGB(20, 110, 160),
-            .DeleteC = New RGB(190, 50, 45),
-            .CreateC = New RGB(170, 120, 10),
-            .AlterC = New RGB(170, 120, 10),
-            .DropC = New RGB(190, 50, 45),
-            .UserC = New RGB(20, 110, 160),
-            .GradeOk = New RGB(20, 130, 80),
-            .GradeWarn = New RGB(170, 120, 10),
-            .GradeDanger = New RGB(190, 50, 45)
+            .BG = AnsiColor.Rgb(245, 247, 250),
+            .Panel = AnsiColor.Rgb(232, 236, 243),
+            .Border = AnsiColor.Rgb(90, 110, 140),
+            .Accent = AnsiColor.Rgb(20, 110, 160),
+            .Muted = AnsiColor.Rgb(110, 120, 135),
+            .Ok = AnsiColor.Rgb(20, 130, 80),
+            .Warn = AnsiColor.Rgb(170, 120, 10),
+            .Danger = AnsiColor.Rgb(190, 50, 45),
+            .SelectC = AnsiColor.Rgb(20, 130, 80),
+            .InsertC = AnsiColor.Rgb(20, 110, 160),
+            .UpdateC = AnsiColor.Rgb(20, 110, 160),
+            .DeleteC = AnsiColor.Rgb(190, 50, 45),
+            .CreateC = AnsiColor.Rgb(170, 120, 10),
+            .AlterC = AnsiColor.Rgb(170, 120, 10),
+            .DropC = AnsiColor.Rgb(190, 50, 45),
+            .UserC = AnsiColor.Rgb(20, 110, 160),
+            .GradeOk = AnsiColor.Rgb(20, 130, 80),
+            .GradeWarn = AnsiColor.Rgb(170, 120, 10),
+            .GradeDanger = AnsiColor.Rgb(190, 50, 45)
         }
     End Function
 
@@ -182,25 +172,25 @@ Public Class Theme
     Public Shared Function Matrix() As Theme
         Return New Theme With {
             .Name = "Matrix",
-            .BG = New RGB(0, 8, 0),
-            .Panel = New RGB(0, 20, 0),
-            .Border = New RGB(0, 200, 70),
-            .Accent = New RGB(0, 230, 90),
-            .Muted = New RGB(70, 130, 80),
-            .Ok = New RGB(0, 230, 90),
-            .Warn = New RGB(180, 220, 60),
-            .Danger = New RGB(230, 70, 60),
-            .SelectC = New RGB(0, 230, 90),
-            .InsertC = New RGB(0, 200, 70),
-            .UpdateC = New RGB(0, 200, 70),
-            .DeleteC = New RGB(230, 70, 60),
-            .CreateC = New RGB(180, 220, 60),
-            .AlterC = New RGB(180, 220, 60),
-            .DropC = New RGB(230, 70, 60),
-            .UserC = New RGB(0, 200, 70),
-            .GradeOk = New RGB(0, 230, 90),
-            .GradeWarn = New RGB(180, 220, 60),
-            .GradeDanger = New RGB(230, 70, 60)
+            .BG = AnsiColor.Rgb(0, 8, 0),
+            .Panel = AnsiColor.Rgb(0, 20, 0),
+            .Border = AnsiColor.Rgb(0, 200, 70),
+            .Accent = AnsiColor.Rgb(0, 230, 90),
+            .Muted = AnsiColor.Rgb(70, 130, 80),
+            .Ok = AnsiColor.Rgb(0, 230, 90),
+            .Warn = AnsiColor.Rgb(180, 220, 60),
+            .Danger = AnsiColor.Rgb(230, 70, 60),
+            .SelectC = AnsiColor.Rgb(0, 230, 90),
+            .InsertC = AnsiColor.Rgb(0, 200, 70),
+            .UpdateC = AnsiColor.Rgb(0, 200, 70),
+            .DeleteC = AnsiColor.Rgb(230, 70, 60),
+            .CreateC = AnsiColor.Rgb(180, 220, 60),
+            .AlterC = AnsiColor.Rgb(180, 220, 60),
+            .DropC = AnsiColor.Rgb(230, 70, 60),
+            .UserC = AnsiColor.Rgb(0, 200, 70),
+            .GradeOk = AnsiColor.Rgb(0, 230, 90),
+            .GradeWarn = AnsiColor.Rgb(180, 220, 60),
+            .GradeDanger = AnsiColor.Rgb(230, 70, 60)
         }
     End Function
 
@@ -208,25 +198,25 @@ Public Class Theme
     Public Shared Function Amber() As Theme
         Return New Theme With {
             .Name = "Amber",
-            .BG = New RGB(20, 12, 0),
-            .Panel = New RGB(33, 20, 2),
-            .Border = New RGB(255, 176, 0),
-            .Accent = New RGB(255, 200, 40),
-            .Muted = New RGB(170, 120, 40),
-            .Ok = New RGB(120, 255, 120),
-            .Warn = New RGB(255, 210, 60),
-            .Danger = New RGB(255, 90, 50),
-            .SelectC = New RGB(120, 255, 120),
-            .InsertC = New RGB(255, 200, 40),
-            .UpdateC = New RGB(255, 200, 40),
-            .DeleteC = New RGB(255, 90, 50),
-            .CreateC = New RGB(255, 210, 60),
-            .AlterC = New RGB(255, 210, 60),
-            .DropC = New RGB(255, 90, 50),
-            .UserC = New RGB(255, 200, 40),
-            .GradeOk = New RGB(120, 255, 120),
-            .GradeWarn = New RGB(255, 210, 60),
-            .GradeDanger = New RGB(255, 90, 50)
+            .BG = AnsiColor.Rgb(20, 12, 0),
+            .Panel = AnsiColor.Rgb(33, 20, 2),
+            .Border = AnsiColor.Rgb(255, 176, 0),
+            .Accent = AnsiColor.Rgb(255, 200, 40),
+            .Muted = AnsiColor.Rgb(170, 120, 40),
+            .Ok = AnsiColor.Rgb(120, 255, 120),
+            .Warn = AnsiColor.Rgb(255, 210, 60),
+            .Danger = AnsiColor.Rgb(255, 90, 50),
+            .SelectC = AnsiColor.Rgb(120, 255, 120),
+            .InsertC = AnsiColor.Rgb(255, 200, 40),
+            .UpdateC = AnsiColor.Rgb(255, 200, 40),
+            .DeleteC = AnsiColor.Rgb(255, 90, 50),
+            .CreateC = AnsiColor.Rgb(255, 210, 60),
+            .AlterC = AnsiColor.Rgb(255, 210, 60),
+            .DropC = AnsiColor.Rgb(255, 90, 50),
+            .UserC = AnsiColor.Rgb(255, 200, 40),
+            .GradeOk = AnsiColor.Rgb(120, 255, 120),
+            .GradeWarn = AnsiColor.Rgb(255, 210, 60),
+            .GradeDanger = AnsiColor.Rgb(255, 90, 50)
         }
     End Function
 
@@ -263,8 +253,8 @@ Public Class Theme
 
         For Each sectionName In ini.SectionNames
             Dim t As New Theme With {.Name = sectionName}
-            Dim read As Func(Of String, RGB, RGB) =
-                Function(key As String, fallback As RGB) As RGB
+            Dim read As Func(Of String, AnsiColor, AnsiColor) =
+                Function(key As String, fallback As AnsiColor) As AnsiColor
                     Dim raw = ini.ReadValue(sectionName, key, "")
                     If String.IsNullOrWhiteSpace(raw) Then Return fallback
                     Dim parts = raw.Split(","c)
@@ -273,7 +263,7 @@ Public Class Theme
                     If Integer.TryParse(parts(0).Trim(), r) AndAlso
                        Integer.TryParse(parts(1).Trim(), g) AndAlso
                        Integer.TryParse(parts(2).Trim(), b) Then
-                        Return New RGB(r, g, b)
+                        Return AnsiColor.Rgb(r, g, b)
                     End If
                     Return fallback
                 End Function
