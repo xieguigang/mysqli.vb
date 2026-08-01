@@ -185,7 +185,7 @@ Public Module SchemaMarkdown
         Next
 
         If autoTOC Then
-            Return TOC.AddToc(md)
+            Return TOC.AddToc(md.ToString)
         Else
             Return md.ToString
         End If

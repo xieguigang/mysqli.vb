@@ -1,47 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net10.0-windows</TargetFrameworks>
-    <StartupObject>Sub Main</StartupObject>
-    <UseWindowsForms>true</UseWindowsForms>
-    <MyType>WindowsForms</MyType>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MySqlMonitor</RootNamespace>
+    <TargetFramework>net10.0</TargetFramework>
     <Platforms>AnyCPU;x64</Platforms>
-    <UseWPF>True</UseWPF>
-    <ApplicationIcon>Project1.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Project1.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Import Include="System.Data" />
-    <Import Include="System.Drawing" />
-    <Import Include="System.Windows.Forms" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\..\GCModeller\src\runtime\sciBASIC#\Microsoft.VisualBasic.Core\src\Core.vbproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="My Project\Application.Designer.vb">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Application.myapp</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="My Project\Application.myapp">
-      <Generator>MyApplicationCodeGenerator</Generator>
-      <LastGenOutput>Application.Designer.vb</LastGenOutput>
-    </None>
+    <ProjectReference Include="..\LibMySQL\libmysql.vbproj" />
+    <ProjectReference Include="..\PerformanceCounter\PerformanceCounter.vbproj" />
   </ItemGroup>
 
 </Project>
