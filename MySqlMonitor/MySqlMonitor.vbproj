@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <!-- MySQL 数据库驱动 (mysql-connector-net)，通过 NuGet 还原 -->
-    <PackageReference Include="MySql.Data" Version="9.7.0" />
+    <PackageReference Include="MySql.Data" Version="26.7.0" />
   </ItemGroup>
 
   <ItemGroup>
